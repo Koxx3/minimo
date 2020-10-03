@@ -59,10 +59,13 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
 - [ ] Other inputs/outputs
     - [X] Read current with WCS1700
     - [X] Read battery voltage
-    - [X] Read tempertature/humidity with DHT11
+    - [X] Read tempertature/humidity with DHT11/DHT22
     - [X] Read break handle position on serial
     - [ ] Read break handle position on standard brake handle
     - [X] Read break handle position on analog brake handle
+    - [X] Read buttons
+    - [X] Send break handle position to controler
+    - [X] Send LED status
 - [ ] Features    
     - [X] Save settings in non volatile memory
     - [X] Disable electric brake with full battery
