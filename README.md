@@ -17,15 +17,13 @@ Some examples :
 - it can lock the escooter with bluetooth proximity (with a beacon, the smartphone or any bluetooth device). When locked, the power is so reduced that nobody can ride it is you aren't close enouth.
 - you find the acceleration trigger to agressive at low speed ? you can change the acceleration curve for smooth trigger at low speed, and still have the beast once you push the trigger harder.
 - you want a mode for some weather conditions like 'rainy' with less torque ? no problem. Use the customized "mode Z" in addition to mode 1/2/3 with special P7/P8/P9/PA.
-- you find the electric brake too strong at full power ? the progressive electric braking adjust the brake power in real time.
+- you feel the electric brake too strong at full power ? the progressive electric braking adjust the brake power in real time.
 
 ### Main features
 ![Idea](/other/SmartLCD.png)
 
-## Case and size
-Current size : 6cm x 3cm x 2cm
-
-![Idea](/other/SmartLCD_3D_1.jpg)
+### Case and size
+![Idea](/other/SmartLCD_3D_1.png)
 
 ## Electronic
 ### Software
