@@ -1,9 +1,10 @@
 # SmartLCD Minimotors
 Warning : this is work in progress. I decline all responsability about using informations from this project.
 
-## What is SmartLCD
+## What is SmartLCD ?
 It's a combo of electronic and smartphone application. It extend all features from original Minimorots EYE LCD and controller.
 The electronic board will interract with most of the e-scooter electronic when you plug it.
+You simply place the little box inside the deck and connect it to the controller (and other electric parts if you want more features)
 
 ### What can be done ?
 I suggest you to have a look at all planed features in the image below.
@@ -13,9 +14,10 @@ The controller power cannot exceed the nominal power, but with a shunt, you can 
 Most settings will be configurable by the smartphone, and additionnal hardware buttons will allow you to control specific features.
 
 Some examples : 
-- it can lock the escooter with bluetooth proximity (with a beacon or with the smartphone). the power is so reduced that nobody can ride it is you aren't close enouth.
+- it can lock the escooter with bluetooth proximity (with a beacon, the smartphone or any bluetooth device). When locked, the power is so reduced that nobody can ride it is you aren't close enouth.
 - you find the acceleration trigger to agressive at low speed ? you can change the acceleration curve for smooth trigger at low speed, and still have the beast once you push the trigger harder.
 - you want a mode for some weather conditions like 'rainy' with less torque ? no problem. Use the customized "mode Z" in addition to mode 1/2/3 with special P7/P8/P9/PA.
+- you find the electric brake to strong at full power ? the progressive electric braking adjust the brake power in real time.
 
 ### Main features
 ![Idea](/SmartLCD.png)
@@ -27,7 +29,7 @@ The software is designed for ESP32 Dev Kit v4.
 ### Schematics
 https://easyeda.com/Koxx3/bettercontroller
 
-### Inspiration to understand controler electronic
+### Inspiration to understand controller electronic
 http://avdweb.nl/Article_files/Solarbike/Motor-controller/China-BLDC-motor-controller-36V-250W.pdf
 
 ## Applications
@@ -60,7 +62,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [ ] Read break handle position on standard brake handle
     - [X] Read break handle position on analog brake handle
     - [X] Read buttons
-    - [X] Send break handle position to controler
+    - [X] Send break handle position to controller
     - [X] Send LED status
 - [ ] Power
     - [X] Convert 12V to 5V
