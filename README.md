@@ -23,7 +23,7 @@ Some examples :
 ![Idea](/other/SmartLCD.png)
 
 ### Case and size
-![Idea](/other/SmartLCD_3D_1.png)
+![Idea](/other/SmartLCD_3D_1.jpg)
 
 ## Electronic
 ### Software
