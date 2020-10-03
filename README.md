@@ -53,7 +53,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [ ] SmartLCD connexion security
     - [ ] Beacon settings
 - [ ] Power
-    - [ ] Convert 12V to 5V
+    - [X] Convert 12V to 5V
     - [ ] Convert 80V to 5V
     - [ ] Convert 100V to 5V
 - [ ] Other inputs/outputs
