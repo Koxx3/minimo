@@ -52,10 +52,6 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [X] Anti-theth with beacon (scan & rssi detection)
     - [ ] SmartLCD connexion security
     - [ ] Beacon settings
-- [ ] Power
-    - [X] Convert 12V to 5V
-    - [ ] Convert 80V to 5V
-    - [ ] Convert 100V to 5V
 - [ ] Other inputs/outputs
     - [X] Read current with WCS1700
     - [X] Read battery voltage
@@ -66,6 +62,10 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [X] Read buttons
     - [X] Send break handle position to controler
     - [X] Send LED status
+- [ ] Power
+    - [X] Convert 12V to 5V
+    - [ ] Convert 80V to 5V
+    - [ ] Convert 100V to 5V
 - [ ] Features    
     - [X] Save settings in non volatile memory
     - [ ] Disable electric brake with full battery
