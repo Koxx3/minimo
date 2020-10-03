@@ -68,10 +68,10 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [X] Send LED status
 - [ ] Features    
     - [X] Save settings in non volatile memory
-    - [X] Disable electric brake with full battery
+    - [ ] Disable electric brake with full battery
     - [X] Progressive electric braking (software detection)
     - [ ] Progressive electric braking (hardware on/off detection)
-    - [ ] Progressive electric braking (hardware analog detection)
+    - [X] Progressive electric braking (hardware analog detection)
     - [X] OTA update
     - [X] Current measure auto calibration (at startup)
     - [X] Current measure manual calibration
