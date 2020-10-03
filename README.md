@@ -20,7 +20,10 @@ Some examples :
 - you find the electric brake too strong at full power ? the progressive electric braking adjust the brake power in real time.
 
 ### Main features
-![Idea](/SmartLCD.png)
+![Idea](/other/SmartLCD.png)
+
+### Case and size
+![Idea](/other/SmartLCD_3D_1.png)
 
 ## Electronic
 ### Software
