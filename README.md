@@ -23,6 +23,8 @@ Some examples :
 ![Idea](/other/SmartLCD.png)
 
 ### Case and size
+Current size : 6cm x 3cm x 2cm (will shrink a little at final stage)
+
 ![Idea](/other/SmartLCD_3D_1.jpg)
 
 ## Electronic
