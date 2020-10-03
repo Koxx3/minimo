@@ -22,7 +22,7 @@ Some examples :
 ### Main features
 ![Idea](/other/SmartLCD.png)
 
-### Case and size
+## Case and size
 ![Idea](/other/SmartLCD_3D_1.jpg)
 
 ## Electronic
