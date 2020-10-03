@@ -37,11 +37,12 @@
 #define DEBUG_DISPLAY_SPEED 0
 #define DEBUG_DISPLAY_MODE 0
 #define DEBUG_DISPLAY_BRAKE 0
+#define DEBUG_DISPLAY_ANALOG_BRAKE 0
 #define DEBUG_DISPLAY_ECO 0
 #define DEBUG_DISPLAY_ACCEL 0
 #define DEBUG_DISPLAY_BUTTON1 0
 #define DEBUG_DISPLAY_BUTTON2 0
-#define DEBUG_DISPLAY_VOLTAGE 1
+#define DEBUG_DISPLAY_VOLTAGE 0
 #define DEBUG_DISPLAY_CURRENT 0
 #define DEBUG_DISPLAY_DHT 0
 #define DEBUG_SERIAL_CHECKSUM_LCD_TO_CNTRL 0
@@ -74,6 +75,9 @@
 #define ANALOG_TO_VOLTS 46
 #define ANALOG_TO_CURRENT 35
 #define NB_CURRENT_CALIB 100
+
+#define ANALOG_BRAKE_MIN_VALUE 800
+#define ANALOG_BRAKE_MAX_VALUE 2300
 
 #define EEPROM_SIZE 1024
 #define EEPROM_ADDRESS_SETTINGS 0
@@ -227,9 +231,10 @@ uint8_t button2Status = 0;
 
 uint16_t voltageStatus = 0;
 uint32_t voltageInMilliVolts = 0;
-MedianFilter voltageFilter(200, 0);
-MedianFilter currentFilter(100, 0);
-MedianFilter currentFilterInit(100, 0);
+MedianFilter voltageFilter(200, 30000);
+MedianFilter voltageRawFilter(100, 0);
+MedianFilter currentFilter(100, 1830);
+MedianFilter currentFilterInit(100, 1830);
 
 BLEServer *pServer = NULL;
 BLECharacteristic *pCharacteristicSpeed = NULL;
@@ -1398,7 +1403,7 @@ uint8_t modifyPower(char var, char data_buffer[])
   return newPower;
 }
 
-uint8_t processBrakeFromLCD(char var, char data_buffer[])
+uint8_t getBrakeFromLCD(char var, char data_buffer[])
 {
 
   uint8_t brake = (var - data_buffer[3]) & 0x20;
@@ -1713,7 +1718,8 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
 
       if (i == 10)
       {
-        var = modifyBrakeFromLCD(var, data_buffer_ori);
+        //        var = modifyBrakeFromLCD(var, data_buffer_ori);
+        var = modifyBrakeFromAnalog(var, data_buffer_ori);
         isModified_LcdToCntrl = 1;
       }
 
@@ -1738,7 +1744,7 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
     {
       if (i == 4)
       {
-        processBrakeFromLCD(var, data_buffer_ori);
+        //getBrakeFromLCD(var, data_buffer_ori);
       }
 
       // modify speed
@@ -1938,49 +1944,93 @@ void processBLE()
   }
 }
 
-void processBrakeFromAnalog()
+uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 {
-  brakeAnalogValue = analogRead(PIN_IN_BRAKE);
-  button1 = digitalRead(PIN_IN_BUTTON1);
-  uint8_t button2 = digitalRead(PIN_IN_BUTTON2);
 
-  if (brakeAnalogValue > 900)
+  breakeSentOrder = settings.fields.Electric_brake_min_value;
+
+  brakeAnalogValue = analogRead(PIN_IN_BRAKE);
+
+  // alarm controler from braking
+  if (brakeAnalogValue > ANALOG_BRAKE_MIN_VALUE)
   {
     digitalWrite(PIN_OUT_BRAKE, 1);
-    digitalWrite(PIN_OUT_LED_BUTTON1, 1);
     /*
-    Serial.print("brake ON / button1 : ");
-    Serial.print(button1);
-    Serial.print(" / button2 : ");
-    Serial.print(button2);
+    Serial.print("brake ON");
     */
   }
   else
   {
     digitalWrite(PIN_OUT_BRAKE, 0);
-    digitalWrite(PIN_OUT_LED_BUTTON1, 0);
     /*
-    Serial.print("brake OFF / button1 : ");
-    Serial.print(button1);
-    Serial.print(" / button2 : ");
-    Serial.print(button2);
+    Serial.print("brake OFF");
     */
   }
 
-  /*
-  Serial.print(" / brakeAnalogValue : ");
-  Serial.println(brakeAnalogValue);
-  */
+  if (settings.fields.Electric_brake_progressive_mode == 1)
+  {
+
+    uint32_t step = 5000;
+    uint32_t diff = 0;
+    uint32_t diffStep = 0;
+
+    if (settings.fields.Electric_brake_max_value - settings.fields.Electric_brake_min_value > 0)
+    {
+      step = (ANALOG_BRAKE_MAX_VALUE - ANALOG_BRAKE_MIN_VALUE) / (settings.fields.Electric_brake_max_value - settings.fields.Electric_brake_min_value);
+      if (brakeAnalogValue > ANALOG_BRAKE_MIN_VALUE)
+      {
+        if (brakeAnalogValue > ANALOG_BRAKE_MAX_VALUE)
+          brakeAnalogValue = ANALOG_BRAKE_MAX_VALUE;
+
+        diff = (brakeAnalogValue - ANALOG_BRAKE_MIN_VALUE);
+        diffStep = diff / step;
+        breakeSentOrder = diffStep + settings.fields.Electric_brake_min_value;
+      }
+    }
+
+#if DEBUG_DISPLAY_ANALOG_BRAKE
+    Serial.print("breakeSentOrderOld : ");
+    Serial.print(breakeSentOrderOld);
+    #endif
+
+    // notify brake LCD value
+    if (breakeSentOrder != breakeSentOrderOld)
+    {
+      pCharacteristicBrakeSentOrder->setValue((uint8_t *)&breakeSentOrder, 1);
+      pCharacteristicBrakeSentOrder->notify();
+#if DEBUG_DISPLAY_ANALOG_BRAKE
+      Serial.print(" / brake notify => ");
+    #endif
+    }
+    breakeSentOrderOld = breakeSentOrder;
+
+#if DEBUG_DISPLAY_ANALOG_BRAKE
+    Serial.print(" / brakeAnalogValue : ");
+    Serial.print(brakeAnalogValue);
+    Serial.print(" / step : ");
+    Serial.print(step);
+    Serial.print(" / diff : ");
+    Serial.print(diff);
+    Serial.print(" / diffStep : ");
+    Serial.print(diffStep);
+    Serial.print(" / breakeSentOrder : ");
+    Serial.println(breakeSentOrder);
+    #endif
+  }
+
+  return breakeSentOrder;
 }
 
 void processButton1()
 {
   button1Status = digitalRead(PIN_IN_BUTTON1);
+  digitalWrite(PIN_OUT_LED_BUTTON1, button1Status);
 }
 
 void processButton2()
 {
   button2Status = digitalRead(PIN_IN_BUTTON2);
+  digitalWrite(PIN_OUT_LED_BUTTON2, button2Status);
 }
 
 void processDHT()
@@ -2030,12 +2080,13 @@ void processVoltage()
   //voltageInMilliVolts = correctedValue * 25.27 * 1000;
 
   voltageFilter.in(voltageInMilliVolts);
+  voltageRawFilter.in(voltageStatus);
 
 #if DEBUG_DISPLAY_VOLTAGE
   Serial.print("Voltage read : ");
   Serial.print(voltageStatus);
   Serial.print(" / in voltage mean : ");
-  Serial.print(voltageFilter.getMean());
+  Serial.print(voltageRawFilter.getMean());
   Serial.print(" / in volts : ");
   Serial.println(voltageInMilliVolts / 1000.0);
   /*
@@ -2113,7 +2164,7 @@ void loop()
 
   if (i_loop % 100 == 2)
   {
-    processBrakeFromAnalog();
+    //modifyBrakeFromAnalog();
     //displayBrake();
   }
 
