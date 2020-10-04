@@ -25,6 +25,7 @@
 #include "OTA_softap.h"
 #include "MedianFilter.h"
 #include "dht_nonblocking.h"
+#include "settings.h"
 
 //////------------------------------------
 ////// Defines
@@ -96,7 +97,7 @@
 #define BTLOCK_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a6"
 #define TEMPERATURE_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a7"
 #define HUMIDITY_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
-#define SETTINGS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a9"
+#define SETTINGS1_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a9"
 #define SPEED_LIMITER_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26aa"
 #define ECO_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ab"
 #define ACCEL_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ac"
@@ -104,58 +105,21 @@
 #define SWITCH_TO_OTA_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ae"
 #define LOGS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26af"
 #define FAST_UPDATE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b0"
+#define SETTINGS2_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b1"
+#define SETTINGS3_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b2"
 
 //////------------------------------------
 ////// Variables
-
-// settings
-
-#pragma pack(push, 1)
-struct field_s
-{
-  /*
-  uint8_t Button_1_short_press_action = 0;
-  uint8_t Button_1_short_press_action = 0;
-  uint8_t Button_1_long_press_action = 0;
-  uint8_t Button_2_short_press_action = 0;
-  uint8_t Button_2_long_press_action = 0;
-  uint16_t Button_long_press_duration = 500;
-   = 0;
-  uint8_t Bluetooth_pin_code = 0;
-  char Beacon_Mac_Address[20];
- */
-  int8_t Beacon_range;
-  uint8_t Mode_Z_Power_limitation;
-  uint8_t Mode_Z_Eco_mode;
-  uint8_t Mode_Z_Acceleration;
-  uint8_t Electric_brake_progressive_mode;
-  uint8_t Electric_brake_min_value;
-  uint8_t Electric_brake_max_value;
-  uint16_t Electric_brake_time_between_mode_shift;
-  uint8_t Electric_brake_disabled_condition;
-  uint8_t Electric_brake_disabled_voltage_limit;
-  uint8_t Current_loop_mode;
-  uint8_t Current_loop_max_current;
-  uint8_t Speed_loop_mode;
-  uint8_t Speed_limiter_at_startup;
-  uint8_t Wheel_size;
-  uint8_t Motor_pole_number;
-  uint8_t Bluetooth_lock_mode;
-  int8_t LCD_Speed_adjustement;
-
-} __attribute__((packed));
-#pragma pack(pop)
-
-union settings_bt
-{
-  struct field_s fields;
-  unsigned char buffer[sizeof(struct field_s)];
-} settings;
 
 // Time
 uint32_t timeLastNotifyBle = 0;
 uint32_t timeLastBrake = 0;
 uint32_t timeLoop = 0;
+
+// Settings 
+union settings_bt1 settings1;
+union settings_bt2 settings2;
+union settings_bt3 settings3;
 
 int begin_soft = 0;
 int begin_hard = 0;
@@ -246,7 +210,7 @@ BLECharacteristic *pCharacteristicPowerStatus = NULL;
 BLECharacteristic *pCharacteristicBtlockStatus = NULL;
 BLECharacteristic *pCharacteristicTemperatureStatus = NULL;
 BLECharacteristic *pCharacteristicHumidityStatus = NULL;
-BLECharacteristic *pCharacteristicSettings = NULL;
+BLECharacteristic *pCharacteristicSettings1 = NULL;
 BLECharacteristic *pCharacteristicSpeedLimiter = NULL;
 BLECharacteristic *pCharacteristicEco = NULL;
 BLECharacteristic *pCharacteristicAccel = NULL;
@@ -254,6 +218,9 @@ BLECharacteristic *pCharacteristicCurrentCalib = NULL;
 BLECharacteristic *pCharacteristicOtaSwitch = NULL;
 BLECharacteristic *pCharacteristicLogs = NULL;
 BLECharacteristic *pCharacteristicFastUpdate = NULL;
+BLECharacteristic *pCharacteristicSettings2 = NULL;
+BLECharacteristic *pCharacteristicSettings3 = NULL;
+
 
 bool deviceConnected = false;
 bool oldDeviceConnected = false;
@@ -301,13 +268,13 @@ class BLEServerCallback : public BLEServerCallbacks
 
     if (bleLockForced == 0)
     {
-      if (settings.fields.Bluetooth_lock_mode == 1)
+      if (settings1.fields.Bluetooth_lock_mode == 1)
       {
         bleLockStatus = false;
         Serial.println(" ==> device connected ==> UNLOCK decision");
         Serial.println("-------------------------------------");
       }
-      if (settings.fields.Bluetooth_lock_mode == 2)
+      if (settings1.fields.Bluetooth_lock_mode == 2)
       {
         bleLockStatus = false;
         Serial.println(" ==> device connected ==> UNLOCK decision");
@@ -327,13 +294,13 @@ class BLEServerCallback : public BLEServerCallbacks
 
     if (bleLockForced == 0)
     {
-      if (settings.fields.Bluetooth_lock_mode == 1)
+      if (settings1.fields.Bluetooth_lock_mode == 1)
       {
         bleLockStatus = true;
         Serial.println(" ==> device disconnected ==> LOCK decision");
         Serial.println("-------------------------------------");
       }
-      if (settings.fields.Bluetooth_lock_mode == 2)
+      if (settings1.fields.Bluetooth_lock_mode == 2)
       {
         if (!blePicclyVisible)
         {
@@ -395,23 +362,23 @@ class BLECharacteristicCallback : public BLECharacteristicCallbacks
       Serial.print("Write breakeSentOrder : ");
       Serial.println(print_buffer);
     }
-    else if (pCharacteristic->getUUID().toString() == SETTINGS_CHARACTERISTIC_UUID)
+    else if (pCharacteristic->getUUID().toString() == SETTINGS1_CHARACTERISTIC_UUID)
     {
       std::string rxValue = pCharacteristic->getValue();
 
       for (int i = 0; i < rxValue.length(); i++)
       {
-        settings.buffer[i] = rxValue[i];
+        settings1.buffer[i] = rxValue[i];
       }
 
-      //memcpy(&settings.buffer, &rxValue, sizeof(settings.buffer));
+      //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
 
-      Serial.print("Settings len : ");
+      Serial.print("Settings1 len : ");
       Serial.println(rxValue.length());
-      Serial.print("Settings size : ");
+      Serial.print("Settings1 size : ");
       Serial.println(rxValue.size());
 
-      Serial.print("Settings : ");
+      Serial.print("Settings1 : ");
       for (int i = 0; i < rxValue.length(); i++)
       {
         char print_buffer[5];
@@ -420,9 +387,65 @@ class BLECharacteristicCallback : public BLECharacteristicCallbacks
       }
       Serial.println("");
 
-      displaySettings();
+      displaySettings1(settings1);
 
-      saveSettings();
+    }
+    else if (pCharacteristic->getUUID().toString() == SETTINGS2_CHARACTERISTIC_UUID)
+    {
+      std::string rxValue = pCharacteristic->getValue();
+
+      for (int i = 0; i < rxValue.length(); i++)
+      {
+        settings2.buffer[i] = rxValue[i];
+      }
+
+      //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
+
+      Serial.print("Settings2 len : ");
+      Serial.println(rxValue.length());
+      Serial.print("Settings2 size : ");
+      Serial.println(rxValue.size());
+
+      Serial.print("Settings2 : ");
+      for (int i = 0; i < rxValue.length(); i++)
+      {
+        char print_buffer[5];
+        sprintf(print_buffer, "%02x ", rxValue[i]);
+        Serial.print(print_buffer);
+      }
+      Serial.println("");
+
+      displaySettings2(settings2);
+
+    }
+    else if (pCharacteristic->getUUID().toString() == SETTINGS3_CHARACTERISTIC_UUID)
+    {
+      std::string rxValue = pCharacteristic->getValue();
+
+      for (int i = 0; i < rxValue.length(); i++)
+      {
+        settings3.buffer[i] = rxValue[i];
+      }
+
+      //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
+
+      Serial.print("Settings3 len : ");
+      Serial.println(rxValue.length());
+      Serial.print("Settings3 size : ");
+      Serial.println(rxValue.size());
+
+      Serial.print("Settings3 : ");
+      for (int i = 0; i < rxValue.length(); i++)
+      {
+        char print_buffer[5];
+        sprintf(print_buffer, "%02x ", rxValue[i]);
+        Serial.print(print_buffer);
+      }
+      Serial.println("");
+
+      displaySettings3(settings3);
+
+      saveSettings(EEPROM_ADDRESS_SETTINGS, settings1, settings2, settings3);
     }
     else if (pCharacteristic->getUUID().toString() == SPEED_LIMITER_CHARACTERISTIC_UUID)
     {
@@ -681,13 +704,13 @@ void bleOnScanResults(BLEScanResults scanResults)
 
     if (addressStr == "ac:23:3f:56:ec:6c")
     {
-      if (blePicclyRSSI < settings.fields.Beacon_range)
+      if (blePicclyRSSI < settings1.fields.Beacon_range)
       {
 #if DEBUG_BLE_SCAN
         Serial.print(" ==> PICC-LY found ... but too far away / RSSI = ");
         Serial.print(blePicclyRSSI);
         Serial.print(" / min RSSI required = ");
-        Serial.print(settings.fields.Beacon_range);
+        Serial.print(settings1.fields.Beacon_range);
         Serial.println(" ==> lock from scan");
 #endif
         newBlePicclyVisible = false;
@@ -698,7 +721,7 @@ void bleOnScanResults(BLEScanResults scanResults)
         Serial.print(" ==> PICC-LY found  / RSSI = ");
         Serial.print(blePicclyRSSI);
         Serial.print(" / min RSSI required = ");
-        Serial.print(settings.fields.Beacon_range);
+        Serial.print(settings1.fields.Beacon_range);
         Serial.println(" ==> unlock from scan");
 #endif
         newBlePicclyVisible = true;
@@ -711,7 +734,7 @@ void bleOnScanResults(BLEScanResults scanResults)
 
   if (bleLockForced == 0)
   {
-    if (settings.fields.Bluetooth_lock_mode == 2)
+    if (settings1.fields.Bluetooth_lock_mode == 2)
     {
       if ((!blePicclyVisible) && (!deviceConnected))
       {
@@ -735,7 +758,7 @@ void bleOnScanResults(BLEScanResults scanResults)
       {
       }
     }
-    if (settings.fields.Bluetooth_lock_mode == 3)
+    if (settings1.fields.Bluetooth_lock_mode == 3)
     {
       if (!blePicclyVisible)
       {
@@ -898,8 +921,8 @@ void setupBLE()
       BLECharacteristic::PROPERTY_NOTIFY |
           BLECharacteristic::PROPERTY_READ);
 
-  pCharacteristicSettings = pService->createCharacteristic(
-      SETTINGS_CHARACTERISTIC_UUID,
+  pCharacteristicSettings1 = pService->createCharacteristic(
+      SETTINGS1_CHARACTERISTIC_UUID,
       BLECharacteristic::PROPERTY_WRITE |
           BLECharacteristic::PROPERTY_READ);
 
@@ -938,6 +961,16 @@ void setupBLE()
   pCharacteristicFastUpdate = pService->createCharacteristic(
       FAST_UPDATE_CHARACTERISTIC_UUID,
       BLECharacteristic::PROPERTY_WRITE);
+      
+  pCharacteristicSettings2 = pService->createCharacteristic(
+      SETTINGS2_CHARACTERISTIC_UUID,
+      BLECharacteristic::PROPERTY_WRITE |
+          BLECharacteristic::PROPERTY_READ);
+          
+  pCharacteristicSettings3 = pService->createCharacteristic(
+      SETTINGS3_CHARACTERISTIC_UUID,
+      BLECharacteristic::PROPERTY_WRITE |
+          BLECharacteristic::PROPERTY_READ);
 
   pCharacteristicSpeed->addDescriptor(new BLE2902());
   pCharacteristicMode->addDescriptor(new BLE2902());
@@ -948,7 +981,7 @@ void setupBLE()
   pCharacteristicBtlockStatus->addDescriptor(new BLE2902());
   pCharacteristicTemperatureStatus->addDescriptor(new BLE2902());
   pCharacteristicHumidityStatus->addDescriptor(new BLE2902());
-  pCharacteristicSettings->addDescriptor(new BLE2902());
+  pCharacteristicSettings1->addDescriptor(new BLE2902());
   pCharacteristicSpeedLimiter->addDescriptor(new BLE2902());
   pCharacteristicEco->addDescriptor(new BLE2902());
   pCharacteristicAccel->addDescriptor(new BLE2902());
@@ -956,6 +989,8 @@ void setupBLE()
   pCharacteristicOtaSwitch->addDescriptor(new BLE2902());
   pCharacteristicLogs->addDescriptor(new BLE2902());
   pCharacteristicFastUpdate->addDescriptor(new BLE2902());
+  pCharacteristicSettings2->addDescriptor(new BLE2902());
+  pCharacteristicSettings3->addDescriptor(new BLE2902());
 
   pCharacteristicSpeed->setCallbacks(new BLECharacteristicCallback());
   pCharacteristicMode->setCallbacks(new BLECharacteristicCallback());
@@ -966,7 +1001,7 @@ void setupBLE()
   pCharacteristicBtlockStatus->setCallbacks(new BLECharacteristicCallback());
   pCharacteristicTemperatureStatus->setCallbacks(new BLECharacteristicCallback());
   pCharacteristicHumidityStatus->setCallbacks(new BLECharacteristicCallback());
-  pCharacteristicSettings->setCallbacks(new BLECharacteristicCallback());
+  pCharacteristicSettings1->setCallbacks(new BLECharacteristicCallback());
   pCharacteristicSpeedLimiter->setCallbacks(new BLECharacteristicCallback());
   pCharacteristicEco->setCallbacks(new BLECharacteristicCallback());
   pCharacteristicAccel->setCallbacks(new BLECharacteristicCallback());
@@ -974,6 +1009,8 @@ void setupBLE()
   pCharacteristicOtaSwitch->setCallbacks(new BLECharacteristicCallback());
   pCharacteristicLogs->setCallbacks(new BLECharacteristicCallback());
   pCharacteristicFastUpdate->setCallbacks(new BLECharacteristicCallback());
+  pCharacteristicSettings2->setCallbacks(new BLECharacteristicCallback());
+  pCharacteristicSettings3->setCallbacks(new BLECharacteristicCallback());
 
   // Start the service
   pService->start();
@@ -1008,7 +1045,7 @@ void setupEPROMM()
 
 void initDataWithSettings()
 {
-  speedLimiter = (settings.fields.Speed_limiter_at_startup == 1);
+  speedLimiter = (settings1.fields.Speed_limiter_at_startup == 1);
 }
 
 ////// Setup
@@ -1042,8 +1079,10 @@ void setup()
     bleLockStatus = 1;
 
   Serial.println(PSTR("   settings ..."));
-  restoreSettings();
-  displaySettings();
+  restoreSettings(EEPROM_ADDRESS_SETTINGS, settings1, settings2, settings3);
+  displaySettings1(settings1);
+  displaySettings2(settings2);
+  displaySettings3(settings3);
 
   Serial.println(PSTR("   init data with settings ..."));
   initDataWithSettings();
@@ -1055,16 +1094,6 @@ void setup()
 //////------------------------------------
 //////------------------------------------
 ////// EEPROM functions
-
-void saveSettings()
-{
-  Serial.print("saveSettings : ");
-  Serial.print(sizeof(settings));
-  Serial.println(" bytes");
-
-  EEPROM.writeBytes(EEPROM_ADDRESS_SETTINGS, settings.buffer, sizeof(settings));
-  EEPROM.commit();
-}
 
 void saveBleLockForced()
 {
@@ -1079,14 +1108,6 @@ void saveBleLockForced()
   Serial.println(bleLockForced);
 }
 
-void restoreSettings()
-{
-
-  Serial.print("restoreSettings");
-  Serial.println(sizeof(settings));
-
-  EEPROM.readBytes(EEPROM_ADDRESS_SETTINGS, settings.buffer, sizeof(settings));
-}
 
 void restoreBleLockForced()
 {
@@ -1116,45 +1137,6 @@ uint8_t getCheckSum(char *string)
   return rtn;
 }
 
-void displaySettings()
-{
-  Serial.print("// Beacon_range : ");
-  Serial.println(settings.fields.Beacon_range);
-  Serial.print("// Mode_Z_Power_limitation : ");
-  Serial.println(settings.fields.Mode_Z_Power_limitation);
-  Serial.print("// Mode_Z_Eco_mode : ");
-  Serial.println(settings.fields.Mode_Z_Eco_mode);
-  Serial.print("// Mode_Z_Acceleration : ");
-  Serial.println(settings.fields.Mode_Z_Acceleration);
-  Serial.print("// Electric_brake_progressive_mode : ");
-  Serial.println(settings.fields.Electric_brake_progressive_mode);
-  Serial.print("// Electric_brake_min_value : ");
-  Serial.println(settings.fields.Electric_brake_min_value);
-  Serial.print("// Electric_brake_max_value : ");
-  Serial.println(settings.fields.Electric_brake_max_value);
-  Serial.print("// Electric_brake_time_between_mode_shift : ");
-  Serial.println(settings.fields.Electric_brake_time_between_mode_shift);
-  Serial.print("// Electric_brake_disabled_condition : ");
-  Serial.println(settings.fields.Electric_brake_disabled_condition);
-  Serial.print("// Electric_brake_disabled_voltage_limit : ");
-  Serial.println(settings.fields.Electric_brake_disabled_voltage_limit);
-  Serial.print("// Current_loop_mode : ");
-  Serial.println(settings.fields.Current_loop_mode);
-  Serial.print("// Current_loop_max_current : ");
-  Serial.println(settings.fields.Current_loop_max_current);
-  Serial.print("// Speed_loop_mode : ");
-  Serial.println(settings.fields.Speed_loop_mode);
-  Serial.print("// Speed_limiter_at_startup : ");
-  Serial.println(settings.fields.Speed_limiter_at_startup);
-  Serial.print("// Wheel_size : ");
-  Serial.println(settings.fields.Wheel_size);
-  Serial.print("// Motor_pole_number : ");
-  Serial.println(settings.fields.Motor_pole_number);
-  Serial.print("// Bluetooth_lock_mode : ");
-  Serial.println(settings.fields.Bluetooth_lock_mode);
-  Serial.print("// LCD_Speed_adjustement : ");
-  Serial.println(settings.fields.LCD_Speed_adjustement);
-}
 
 void displayFrame(int mode, char data_buffer[], byte checksum)
 {
@@ -1431,7 +1413,7 @@ uint8_t getBrakeFromLCD(char var, char data_buffer[])
     brakeStatus = brakeStatusNew;
 
     // reset to min
-    breakeSentOrder = settings.fields.Electric_brake_min_value;
+    breakeSentOrder = settings1.fields.Electric_brake_min_value;
 
 #if DEBUG_DISPLAY_BRAKE
     Serial.print("Brake released at : ");
@@ -1474,31 +1456,31 @@ uint8_t modifyBrakeFromLCD(char var, char data_buffer[])
     breakeSentOrder = var;
 
   // progressive mode
-  if (settings.fields.Electric_brake_progressive_mode == 1)
+  if (settings1.fields.Electric_brake_progressive_mode == 1)
   {
     if (brakeStatus == 1)
     {
-      if (breakeSentOrder < settings.fields.Electric_brake_max_value)
+      if (breakeSentOrder < settings1.fields.Electric_brake_max_value)
       {
-        if (currentTime - timeLastBrake > settings.fields.Electric_brake_time_between_mode_shift * 5)
+        if (currentTime - timeLastBrake > settings1.fields.Electric_brake_time_between_mode_shift * 5)
         {
-          breakeSentOrder = settings.fields.Electric_brake_min_value + 5;
+          breakeSentOrder = settings1.fields.Electric_brake_min_value + 5;
         }
-        else if (currentTime - timeLastBrake > settings.fields.Electric_brake_time_between_mode_shift * 4)
+        else if (currentTime - timeLastBrake > settings1.fields.Electric_brake_time_between_mode_shift * 4)
         {
-          breakeSentOrder = settings.fields.Electric_brake_min_value + 4;
+          breakeSentOrder = settings1.fields.Electric_brake_min_value + 4;
         }
-        else if (currentTime - timeLastBrake > settings.fields.Electric_brake_time_between_mode_shift * 3)
+        else if (currentTime - timeLastBrake > settings1.fields.Electric_brake_time_between_mode_shift * 3)
         {
-          breakeSentOrder = settings.fields.Electric_brake_min_value + 3;
+          breakeSentOrder = settings1.fields.Electric_brake_min_value + 3;
         }
-        else if (currentTime - timeLastBrake > settings.fields.Electric_brake_time_between_mode_shift * 2)
+        else if (currentTime - timeLastBrake > settings1.fields.Electric_brake_time_between_mode_shift * 2)
         {
-          breakeSentOrder = settings.fields.Electric_brake_min_value + 2;
+          breakeSentOrder = settings1.fields.Electric_brake_min_value + 2;
         }
-        else if (currentTime - timeLastBrake > settings.fields.Electric_brake_time_between_mode_shift * 1)
+        else if (currentTime - timeLastBrake > settings1.fields.Electric_brake_time_between_mode_shift * 1)
         {
-          breakeSentOrder = settings.fields.Electric_brake_min_value + 1;
+          breakeSentOrder = settings1.fields.Electric_brake_min_value + 1;
         }
       }
 
@@ -1509,7 +1491,7 @@ uint8_t modifyBrakeFromLCD(char var, char data_buffer[])
     else
     // progressive brake enabled but brake released
     {
-      breakeSentOrder = settings.fields.Electric_brake_min_value;
+      breakeSentOrder = settings1.fields.Electric_brake_min_value;
     }
   }
   else
@@ -1619,7 +1601,7 @@ uint8_t getSpeed()
   uint8_t low = (data_buffer_cntrl_ori[8] - data_buffer_cntrl_ori[3]);
 
   int speed = (((int)high2 * 256) + (low));
-  speed = speed * (settings.fields.Wheel_size / 10.0) / settings.fields.Motor_pole_number / 10.5;
+  speed = speed * (settings1.fields.Wheel_size / 10.0) / settings1.fields.Motor_pole_number / 10.5;
 
   return speed;
 }
@@ -1627,7 +1609,7 @@ uint8_t getSpeed()
 uint16_t generateSpeedRawValue(int fakeSpeed)
 {
   uint16_t rawValue;
-  rawValue = fakeSpeed / (settings.fields.Wheel_size / 10.0) * settings.fields.Motor_pole_number * 10.5;
+  rawValue = fakeSpeed / (settings1.fields.Wheel_size / 10.0) * settings1.fields.Motor_pole_number * 10.5;
 
   return rawValue;
 }
@@ -1638,9 +1620,9 @@ uint8_t modifySpeed(char var, char data_buffer[], int speedFake)
   uint8_t isModified = 0;
 
   // LCD Speed adjustement
-  if (settings.fields.LCD_Speed_adjustement != 0)
+  if (settings1.fields.LCD_Speed_adjustement != 0)
   {
-    uint16_t rawSpeed = generateSpeedRawValue(speedCurrent * ((settings.fields.LCD_Speed_adjustement + 100) / 100.0));
+    uint16_t rawSpeed = generateSpeedRawValue(speedCurrent * ((settings1.fields.LCD_Speed_adjustement + 100) / 100.0));
 
     uint8_t low = rawSpeed & 0xff;
     uint8_t high = (rawSpeed >> 8) & 0xff;
@@ -1947,7 +1929,7 @@ void processBLE()
 uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 {
 
-  breakeSentOrder = settings.fields.Electric_brake_min_value;
+  breakeSentOrder = settings1.fields.Electric_brake_min_value;
 
   brakeAnalogValue = analogRead(PIN_IN_BRAKE);
 
@@ -1967,16 +1949,16 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
     */
   }
 
-  if (settings.fields.Electric_brake_progressive_mode == 1)
+  if (settings1.fields.Electric_brake_progressive_mode == 1)
   {
 
     uint32_t step = 5000;
     uint32_t diff = 0;
     uint32_t diffStep = 0;
 
-    if (settings.fields.Electric_brake_max_value - settings.fields.Electric_brake_min_value > 0)
+    if (settings1.fields.Electric_brake_max_value - settings1.fields.Electric_brake_min_value > 0)
     {
-      step = (ANALOG_BRAKE_MAX_VALUE - ANALOG_BRAKE_MIN_VALUE) / (settings.fields.Electric_brake_max_value - settings.fields.Electric_brake_min_value);
+      step = (ANALOG_BRAKE_MAX_VALUE - ANALOG_BRAKE_MIN_VALUE) / (settings1.fields.Electric_brake_max_value - settings1.fields.Electric_brake_min_value);
       if (brakeAnalogValue > ANALOG_BRAKE_MIN_VALUE)
       {
         if (brakeAnalogValue > ANALOG_BRAKE_MAX_VALUE)
@@ -1984,7 +1966,7 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 
         diff = (brakeAnalogValue - ANALOG_BRAKE_MIN_VALUE);
         diffStep = diff / step;
-        breakeSentOrder = diffStep + settings.fields.Electric_brake_min_value;
+        breakeSentOrder = diffStep + settings1.fields.Electric_brake_min_value;
       }
     }
 
