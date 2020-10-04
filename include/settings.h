@@ -1,6 +1,7 @@
-#include "Arduino.h"
+//////------------------------------------
+////// Manage settings exchanged in BLE and stored in EEPOM
 
-// settings
+#include "Arduino.h"
 
 #ifndef _Settings_h
 
