@@ -3,7 +3,38 @@
 #include <EEPROM.h>
 #include "settings.h"
 
-void displaySettings1(union settings_bt1 settings1)
+Settings::Settings()
+{
+}
+
+Settings::field_s1 Settings::getS1F()
+{
+  return settings1.fields;
+}
+Settings::field_s2 Settings::getS2F()
+{
+  return settings2.fields;
+}
+Settings::field_s3 Settings::getS3F()
+{
+  return settings3.fields;
+}
+
+unsigned char* Settings::getS1B()
+{
+  return settings1.buffer;
+}
+unsigned char* Settings::getS2B()
+{
+  return settings2.buffer;
+}
+unsigned char* Settings::getS3B()
+{
+  return settings3.buffer;
+}
+
+
+void Settings::displaySettings1()
 {
   Serial.print("// Beacon_range : ");
   Serial.println(settings1.fields.Beacon_range);
@@ -43,13 +74,13 @@ void displaySettings1(union settings_bt1 settings1)
   Serial.println(settings1.fields.LCD_Speed_adjustement);
 }
 
-void displaySettings2(union settings_bt2 settings2)
+void Settings::displaySettings2()
 {
   Serial.print("// Beacon_Mac_Address : ");
   Serial.println(settings2.fields.Beacon_Mac_Address);
 }
 
-void displaySettings3(union settings_bt3 settings3)
+void Settings::displaySettings3()
 {
   Serial.print("// Button_1_short_press_action : ");
   Serial.println(settings3.fields.Button_1_short_press_action);
@@ -63,7 +94,14 @@ void displaySettings3(union settings_bt3 settings3)
   Serial.println(settings3.fields.Button_long_press_duration);
 }
 
-void saveSettings(uint32_t address, union settings_bt1 settings1, union settings_bt2 settings2, union settings_bt3 settings3)
+void Settings::displaySettings()
+{
+  displaySettings1();
+  displaySettings2();
+  displaySettings3();
+}
+
+void Settings::saveSettings(uint32_t address)
 {
   Serial.print("saveSettings : ");
   Serial.print(sizeof(settings1));
@@ -73,13 +111,14 @@ void saveSettings(uint32_t address, union settings_bt1 settings1, union settings
   Serial.print(sizeof(settings3));
   Serial.println(" bytes");
 
-  EEPROM.writeBytes(address, settings1.buffer, sizeof(settings1));
-  EEPROM.writeBytes(address + 25, settings2.buffer, sizeof(settings2));
-  EEPROM.writeBytes(address + 50, settings3.buffer, sizeof(settings3));
-  EEPROM.commit();
+  EEPROM.put(address + 00, settings1.buffer);
+  EEPROM.put(address + 25, settings2.buffer);
+  EEPROM.put(address + 50, settings3.buffer);
+
+  displaySettings2();
 }
 
-void restoreSettings(uint32_t address, union settings_bt1 settings1, union settings_bt2 settings2, union settings_bt3 settings3)
+void Settings::restoreSettings(uint32_t address)
 {
 
   Serial.print("restoreSettings : ");
@@ -90,7 +129,9 @@ void restoreSettings(uint32_t address, union settings_bt1 settings1, union setti
   Serial.print(sizeof(settings3));
   Serial.println(" bytes");
 
-  EEPROM.readBytes(address, settings1.buffer, sizeof(settings1));
-  EEPROM.readBytes(address + 25, settings2.buffer, sizeof(settings2));
-  EEPROM.readBytes(address + 50, settings2.buffer, sizeof(settings3));
+  EEPROM.get(address + 00, settings1.buffer);
+  EEPROM.get(address + 25, settings2.buffer);
+  EEPROM.get(address + 50, settings3.buffer);
+
+  displaySettings2();
 }
