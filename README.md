@@ -57,8 +57,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [X] Communication with Android
     - [X] Anti-theth with smartphone
     - [X] Anti-theth with beacon (scan & rssi detection)
+    - [X] Lock beacon or device settings
     - [ ] SmartLCD connexion security
-    - [ ] Beacon settings
 - [ ] Other inputs/outputs
     - [X] Read current with WCS1700
     - [X] Read battery voltage
