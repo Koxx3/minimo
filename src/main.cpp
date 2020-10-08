@@ -52,11 +52,11 @@
 #define DATA_BUFFER_SIZE 30
 #define BAUD_RATE 1200
 
-#define ANALOG_TO_VOLTS 39.15
+#define ANALOG_TO_VOLTS 36
 #define ANALOG_TO_CURRENT 35
 #define NB_CURRENT_CALIB 100
 
-#define ANALOG_BRAKE_MIN_VALUE 850
+#define ANALOG_BRAKE_MIN_VALUE 870
 #define ANALOG_BRAKE_MAX_VALUE 2300
 
 //////------------------------------------
@@ -93,6 +93,9 @@ uint16_t brakeAnalogValue = 0;
 
 uint16_t voltageStatus = 0;
 uint32_t voltageInMilliVolts = 0;
+
+uint8_t button1Status = 0;
+uint8_t button2Status = 0;
 
 int i_LcdToCntrl = 0;
 int i_CntrlToLcd = 0;
@@ -157,8 +160,6 @@ void setupPins()
   pinMode(PIN_OUT_BRAKE, OUTPUT);
   pinMode(PIN_OUT_LED_BUTTON1, OUTPUT);
   pinMode(PIN_OUT_LED_BUTTON2, OUTPUT);
-
-  analogSetClockDiv(255); // 1338mS
 }
 
 void setupSerial()
@@ -363,13 +364,13 @@ void displayBrake()
 void displayButton1()
 {
   Serial.print("Button1 : ");
-  Serial.println(shrd.button1Status);
+  Serial.println(button1Status);
 }
 
 void displayButton2()
 {
   Serial.print("Button2 : ");
-  Serial.println(shrd.button2Status);
+  Serial.println(button2Status);
 }
 
 void displayMode(char data_buffer[])
@@ -534,7 +535,7 @@ uint8_t getBrakeFromLCD(char var, char data_buffer[])
     shrd.brakeStatus = brakeStatusNew;
     timeLastBrake = millis();
 
-#if DEBUG_DISPLAY_BRAKE
+#if DEBUG_DISPLAY_DIGITAL_BRAKE
     Serial.print("Brake pressed at : ");
     Serial.println(timeLastBrake);
 #endif
@@ -549,7 +550,7 @@ uint8_t getBrakeFromLCD(char var, char data_buffer[])
     // reset to min
     shrd.breakeSentOrder = settings.getS1F().Electric_brake_min_value;
 
-#if DEBUG_DISPLAY_BRAKE
+#if DEBUG_DISPLAY_DIGITAL_BRAKE
     Serial.print("Brake released at : ");
     Serial.println(millis());
 #endif
@@ -640,7 +641,7 @@ uint8_t modifyBrakeFromLCD(char var, char data_buffer[])
     shrd.breakeSentOrderOld = shrd.breakeSentOrder;
   }
 
-#if DEBUG_DISPLAY_BRAKE
+#if DEBUG_DISPLAY_DIGITAL_BRAKE
   char print_buffer[500];
   sprintf(print_buffer, "%s %02x %s %02x %s %02x %s %d %s %d %s %d",
           "Brake Status : ",
@@ -1023,11 +1024,6 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
       }
     }
 
-#if DEBUG_DISPLAY_ANALOG_BRAKE
-    Serial.print("breakeSentOrderOld : ");
-    Serial.print(breakeSentOrderOld);
-#endif
-
     // notify brake LCD value
     if (shrd.breakeSentOrder != shrd.breakeSentOrderOld)
     {
@@ -1035,8 +1031,11 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 #if DEBUG_DISPLAY_ANALOG_BRAKE
       Serial.print(" / brake notify => ");
 #endif
+#if DEBUG_BLE_DISPLAY_ANALOG_BRAKE
+      char print_buffer[500] = "brake notify";
+      blh.notifyBleLogs(print_buffer);
+#endif
     }
-    shrd.breakeSentOrderOld = shrd.breakeSentOrder;
 
 #if DEBUG_DISPLAY_ANALOG_BRAKE
     Serial.print(" / brakeAnalogValue : ");
@@ -1048,23 +1047,36 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
     Serial.print(" / diffStep : ");
     Serial.print(diffStep);
     Serial.print(" / breakeSentOrder : ");
-    Serial.println(breakeSentOrder);
+    Serial.println(shrd.breakeSentOrder);
+#endif
+#if DEBUG_BLE_DISPLAY_ANALOG_BRAKE
+    char print_buffer[500];
+    sprintf(print_buffer, "brakeAnalogValue : %d / step : %d / diff : %d / diffStep : %d / breakeSentOrder : %d  / breakeSentOrderOld : %d ",
+            brakeAnalogValue,
+            step,
+            diff,
+            diffStep,
+            shrd.breakeSentOrder,
+            shrd.breakeSentOrderOld);
+    blh.notifyBleLogs(print_buffer);
 #endif
   }
+
+  shrd.breakeSentOrderOld = shrd.breakeSentOrder;
 
   return shrd.breakeSentOrder;
 }
 
 void processButton1()
 {
-  shrd.button1Status = digitalRead(PIN_IN_BUTTON1);
-  digitalWrite(PIN_OUT_LED_BUTTON1, shrd.button1Status);
+  button1Status = digitalRead(PIN_IN_BUTTON1);
+  digitalWrite(PIN_OUT_LED_BUTTON1, button1Status);
 }
 
 void processButton2()
 {
-  shrd.button2Status = digitalRead(PIN_IN_BUTTON2);
-  digitalWrite(PIN_OUT_LED_BUTTON2, shrd.button2Status);
+  button2Status = digitalRead(PIN_IN_BUTTON2);
+  digitalWrite(PIN_OUT_LED_BUTTON2, button2Status);
 }
 
 void processDHT()
@@ -1216,6 +1228,7 @@ void loop()
 {
 
   processSerial();
+
   blh.processBLE();
 
   processButton1();
@@ -1235,7 +1248,7 @@ void loop()
 
   if (i_loop % 10 == 2)
   {
-    //modifyBrakeFromAnalog();
+    //modifyBrakeFromLCD();
     //displayBrake();
     getBrakeFromAnalog();
   }

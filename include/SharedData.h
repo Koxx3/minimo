@@ -46,12 +46,8 @@ public:
     uint8_t brakeLcd = 0;
     int8_t brakeLcdOld = -1;
     int8_t breakeSentOrderOld = -1;
-    uint8_t button1 = 0;
 
     uint8_t currentCalibOrder = 1;
-
-    uint8_t button1Status = 0;
-    uint8_t button2Status = 0;
 
     uint32_t voltageFilterMean = 0;
     uint32_t currentFilterMean = 0;

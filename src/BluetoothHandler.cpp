@@ -650,7 +650,7 @@ void BluetoothHandler::init()
 void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
 {
 
-#if DEBUG_BLE_SCAN
+#if DEBUG_DISPLAY_BLE_SCAN
     Serial.print("BLE Scan Device found: ");
     Serial.println(scanResults.getCount());
 #endif
@@ -664,7 +664,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
         std::string address = scanResults.getDevice(i).getAddress().toString();
         String addressStr = address.c_str();
 
-#if DEBUG_BLE_SCAN
+#if DEBUG_DISPLAY_BLE_SCAN
         Serial.print("BLE device : ");
         Serial.print(name);
         Serial.print(" / adress : ");
@@ -681,7 +681,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
         {
             if (blePicclyRSSI < settings.getS1F().Beacon_range)
             {
-#if DEBUG_BLE_SCAN
+#if DEBUG_DISPLAY_BLE_SCAN
                 Serial.print(" ==> PICC-LY found ... but too far away / RSSI = ");
                 Serial.print(blePicclyRSSI);
                 Serial.print(" / min RSSI required = ");
@@ -692,7 +692,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
             }
             else
             {
-#if DEBUG_BLE_SCAN
+#if DEBUG_DISPLAY_BLE_SCAN
                 Serial.print(" ==> PICC-LY found  / RSSI = ");
                 Serial.print(blePicclyRSSI);
                 Serial.print(" / min RSSI required = ");
@@ -715,7 +715,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
             {
                 bleLockStatus = 1;
 
-#if DEBUG_BLE_SCAN
+#if DEBUG_DISPLAY_BLE_SCAN
                 Serial.println(" ==> PICLLY not visible // smartphone not connected ==> LOCK decision");
                 Serial.println("-------------------------------------");
 #endif
@@ -724,7 +724,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
             {
                 bleLockStatus = 0;
 
-#if DEBUG_BLE_SCAN
+#if DEBUG_DISPLAY_BLE_SCAN
                 Serial.println(" ==> PICLLY visible // smartphone connected ==> UNLOCK decision");
                 Serial.println("-------------------------------------");
 #endif
@@ -739,7 +739,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
             {
                 bleLockStatus = 1;
 
-#if DEBUG_BLE_SCAN
+#if DEBUG_DISPLAY_BLE_SCAN
                 Serial.println(" ==> PICLLY not visible ==> LOCK decision");
                 Serial.println("-------------------------------------");
 #endif
@@ -748,7 +748,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
             {
                 bleLockStatus = 0;
 
-#if DEBUG_BLE_SCAN
+#if DEBUG_DISPLAY_BLE_SCAN
                 Serial.println(" ==> PICLLY visible ==> UNLOCK decision");
                 Serial.println("-------------------------------------");
 #endif
@@ -793,7 +793,7 @@ void BluetoothHandler::notifyBleLock()
     pCharacteristicBtlockStatus->setValue((uint8_t *)&value, 4);
     pCharacteristicBtlockStatus->notify();
 
-#if DEBUG_BLE_NOTIFY
+#if DEBUG_DISPLAY_BLE_NOTIFY
     Serial.print("notifyBleLock : bleLockStatus = ");
     Serial.print(bleLockStatus);
     Serial.print(" / blePicclyVisible = ");
@@ -838,7 +838,7 @@ void BluetoothHandler::processBLE()
             pCharacteristicSpeed->setValue((uint8_t *)&shrd->speedCurrent, 1);
             pCharacteristicSpeed->notify();
 
-#if DEBUG_BLE_NOTIFY
+#if DEBUG_DISPLAY_BLE_NOTIFY
             Serial.print("BLH - Notify speed : ");
             Serial.println(shrd->speedCurrent);
 #endif
@@ -848,7 +848,7 @@ void BluetoothHandler::processBLE()
             pCharacteristicVoltageStatus->setValue((uint8_t *)&voltage, 4);
             pCharacteristicVoltageStatus->notify();
 
-#if DEBUG_BLE_NOTIFY
+#if DEBUG_DISPLAY_BLE_NOTIFY
             Serial.print("BLH - Notify voltage : ");
             Serial.println(voltage);
 #endif
@@ -857,7 +857,7 @@ void BluetoothHandler::processBLE()
             pCharacteristicCurrentStatus->setValue((uint8_t *)&current, 4);
             pCharacteristicCurrentStatus->notify();
 
-#if DEBUG_BLE_NOTIFY
+#if DEBUG_DISPLAY_BLE_NOTIFY
             Serial.print("BLH - Notify current : ");
             Serial.println(current);
 #endif
@@ -868,7 +868,7 @@ void BluetoothHandler::processBLE()
             pCharacteristicPowerStatus->setValue((uint8_t *)&power, 4);
             pCharacteristicPowerStatus->notify();
 
-#if DEBUG_BLE_NOTIFY
+#if DEBUG_DISPLAY_BLE_NOTIFY
             Serial.print("BLH - Notify power : ");
             Serial.println(power);
 #endif
@@ -876,7 +876,7 @@ void BluetoothHandler::processBLE()
             notifyBleLock();
 
 /*
-#if DEBUG_BLE_NOTIFY
+#if DEBUG_DISPLAY_BLE_NOTIFY
             Serial.print("Notify bleLock : ");
             Serial.println(shrd->bleLock);
 #endif
