@@ -24,6 +24,7 @@
 #include "BluetoothHandler.h"
 #include "SharedData.h"
 #include "debug.h"
+#include "OneButton.h"
 
 //////------------------------------------
 ////// Defines
@@ -83,6 +84,21 @@ HardwareSerial hwSerLcdToCntrl(2);
 
 DHT_nonblocking dht_sensor(PIN_IN_OUT_DHT, DHT_TYPE_22);
 
+OneButton button1(PIN_IN_BUTTON1, true);
+OneButton button2(PIN_IN_BUTTON2, true);
+
+// The actions I ca do...
+typedef enum
+{
+  ACTION_OFF, // set LED "OFF".
+  ACTION_ON   // set LED "ON"
+} MyActions;
+
+MyActions button1CStatus = ACTION_OFF;  // no action when starting
+uint32_t button1LpDuration = 0;         // no action when starting
+MyActions button2CStatus = ACTION_OFF;  // no action when starting
+MyActions button2DCStatus = ACTION_OFF; // no action when starting
+
 SharedData shrd;
 
 int i_loop = 0;
@@ -94,8 +110,7 @@ uint16_t brakeAnalogValue = 0;
 uint16_t voltageStatus = 0;
 uint32_t voltageInMilliVolts = 0;
 
-uint8_t button1Status = 0;
-uint8_t button2Status = 0;
+int8_t modeOrderBeforeNitro = -1;
 
 int i_LcdToCntrl = 0;
 int i_CntrlToLcd = 0;
@@ -180,6 +195,17 @@ void initDataWithSettings()
   shrd.speedLimiter = (settings.getS1F().Speed_limiter_at_startup == 1);
 }
 
+void setupButtons()
+{
+
+  button1.attachClick(processButton1Click);
+  button1.attachLongPressStart(processButton1LpStart);
+  button1.attachDuringLongPress(processButton1LpDuring);
+  button1.attachLongPressStop(processButton1LpStop);
+  button1.setDebounceTicks(50);
+  button1.setPressTicks(300);
+}
+
 ////// Setup
 void setup()
 {
@@ -210,6 +236,9 @@ void setup()
   Serial.println(PSTR("   eeprom ..."));
   setupEPROMM();
   restoreBleLockForced();
+
+  Serial.println(PSTR("   buttons ..."));
+  setupButtons();
 
   // force BLE lock mode
   blh.forceBleLock();
@@ -364,13 +393,13 @@ void displayBrake()
 void displayButton1()
 {
   Serial.print("Button1 : ");
-  Serial.println(button1Status);
+  Serial.println(button1CStatus);
 }
 
 void displayButton2()
 {
   Serial.print("Button2 : ");
-  Serial.println(button2Status);
+  Serial.println(button1CStatus);
 }
 
 void displayMode(char data_buffer[])
@@ -463,7 +492,7 @@ uint8_t getMode(char var, char data_buffer[])
 
 uint8_t modifyMode(char var, char data_buffer[])
 {
-  uint8_t newmodeLcd3;
+  uint8_t newModeLcd;
 
   uint32_t byteDiff = (var - data_buffer[2]);
   uint8_t modeLcd = (byteDiff & 0x03) + 1;
@@ -478,16 +507,56 @@ uint8_t modifyMode(char var, char data_buffer[])
     blh.notifyModeOrder(shrd.modeOrder);
   }
 
-  if (shrd.modeOrder == 1)
-    newmodeLcd3 = modeLcd0[(uint8_t)(data_buffer[2])];
-  else if (shrd.modeOrder == 2)
-    newmodeLcd3 = modeLcd1[(uint8_t)(data_buffer[2])];
-  else if (shrd.modeOrder == 3)
-    newmodeLcd3 = modeLcd2[(uint8_t)(data_buffer[2])];
-  else
-    newmodeLcd3 = modeLcd2[(uint8_t)(data_buffer[2])];
+  /*
+  Serial.print("button1LpDuration = ");
+  Serial.print(button1LpDuration);
+  Serial.print(" / settings.getS3F().Button_1_long_press_action = ");
+  Serial.print(settings.getS3F().Button_1_long_press_action);
+  Serial.print(" / settings.ACTION_Nitro_boost = ");
+  Serial.println(settings.ACTION_Nitro_boost);
+*/
 
-  return newmodeLcd3;
+  // Nitro boost
+  if (settings.getS3F().Button_1_long_press_action == settings.ACTION_Nitro_boost)
+  {
+    if (button1LpDuration > 0)
+    {
+      if (modeOrderBeforeNitro < 0)
+      {
+        modeOrderBeforeNitro = shrd.modeOrder;
+      }
+      shrd.modeOrder = 3;
+      blh.notifyModeOrder(shrd.modeOrder);
+
+      Serial.print(" !!!!!!!!!!!!! ACTION_Nitro_boost in PROGRESS !!!!!!!!!!!!! ");
+      Serial.println(shrd.modeOrder);
+    }
+    else
+    {
+      if (modeOrderBeforeNitro > 0)
+      {
+        shrd.modeOrder = modeOrderBeforeNitro;
+
+        blh.notifyModeOrder(shrd.modeOrder);
+
+        Serial.print(" !!!!!!!!!!!!! ACTION_Nitro_boost STOPPED !!!!!!!!!!!!! ");
+        Serial.println(shrd.modeOrder);
+
+        modeOrderBeforeNitro = -1;
+      }
+    }
+  }
+
+  if (shrd.modeOrder == 1)
+    newModeLcd = modeLcd0[(uint8_t)(data_buffer[2])];
+  else if (shrd.modeOrder == 2)
+    newModeLcd = modeLcd1[(uint8_t)(data_buffer[2])];
+  else if (shrd.modeOrder == 3)
+    newModeLcd = modeLcd2[(uint8_t)(data_buffer[2])];
+  else
+    newModeLcd = modeLcd2[(uint8_t)(data_buffer[2])];
+
+  return newModeLcd;
 }
 
 uint8_t modifyPower(char var, char data_buffer[])
@@ -1067,16 +1136,54 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
   return shrd.breakeSentOrder;
 }
 
+void processButton1Click()
+{
+  if (button1CStatus == ACTION_OFF)
+    button1CStatus = ACTION_ON;
+  else
+    button1CStatus = ACTION_OFF;
+
+  Serial.print("processButton1Click : ");
+  Serial.println(button1CStatus);
+
+}
+
+void processButton1LpStart()
+{
+  button1LpDuration = button1.getPressedTicks();
+  Serial.print("processButton1LpStart : ");
+  Serial.println(button1LpDuration);
+}
+void processButton1LpDuring()
+{
+  button1LpDuration = button1.getPressedTicks();
+  /*
+  Serial.print("processButton1LpDuring : ");
+  Serial.println(button1LpDuration);
+  */
+}
+
+void processButton1LpStop()
+{
+  Serial.print("processButton1LpStop : ");
+  Serial.println(button1LpDuration);
+  button1LpDuration = 0;
+}
+
 void processButton1()
 {
-  button1Status = digitalRead(PIN_IN_BUTTON1);
-  digitalWrite(PIN_OUT_LED_BUTTON1, button1Status);
+  if (button1CStatus == ACTION_ON)
+  {
+    digitalWrite(PIN_OUT_LED_BUTTON1, HIGH);
+  }
+  else if (button1CStatus == ACTION_OFF)
+  {
+    digitalWrite(PIN_OUT_LED_BUTTON1, LOW);
+  }
 }
 
 void processButton2()
 {
-  button2Status = digitalRead(PIN_IN_BUTTON2);
-  digitalWrite(PIN_OUT_LED_BUTTON2, button2Status);
 }
 
 void processDHT()
@@ -1231,6 +1338,8 @@ void loop()
 
   blh.processBLE();
 
+  button1.tick();
+  button2.tick();
   processButton1();
 #if DEBUG_DISPLAY_BUTTON1
   displayButton1();

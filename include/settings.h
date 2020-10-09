@@ -19,6 +19,15 @@ public:
   void restoreSettings(uint32_t);
   void saveSettings(uint32_t);
 
+// The actions I ca do...
+typedef enum ButtonAction
+{
+  ACTION_Mode_Z_enable_disable,
+  ACTION_Anti_theft_manual_lock,
+  ACTION_Nitro_boost,
+  ACTION_Startup_speed_limitation_disable
+} ButtonActions;
+
 #pragma pack(push, 1)
   struct field_s1
   {

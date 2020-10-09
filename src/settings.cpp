@@ -20,19 +20,18 @@ Settings::field_s3 Settings::getS3F()
   return settings3.fields;
 }
 
-unsigned char* Settings::getS1B()
+unsigned char *Settings::getS1B()
 {
   return settings1.buffer;
 }
-unsigned char* Settings::getS2B()
+unsigned char *Settings::getS2B()
 {
   return settings2.buffer;
 }
-unsigned char* Settings::getS3B()
+unsigned char *Settings::getS3B()
 {
   return settings3.buffer;
 }
-
 
 void Settings::displaySettings1()
 {
@@ -114,8 +113,8 @@ void Settings::saveSettings(uint32_t address)
   EEPROM.put(address + 00, settings1.buffer);
   EEPROM.put(address + 25, settings2.buffer);
   EEPROM.put(address + 50, settings3.buffer);
-
-  displaySettings2();
+  EEPROM.end();
+//  EEPROM.commit();
 }
 
 void Settings::restoreSettings(uint32_t address)
@@ -132,6 +131,4 @@ void Settings::restoreSettings(uint32_t address)
   EEPROM.get(address + 00, settings1.buffer);
   EEPROM.get(address + 25, settings2.buffer);
   EEPROM.get(address + 50, settings3.buffer);
-
-  displaySettings2();
 }
