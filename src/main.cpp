@@ -3,10 +3,11 @@
 // TODO : speed loop
 // TODO : speed adjustment
 // TODO : LCD error indicators
-// TODO : buttons management
+// TODO : buttons management : lock
+// TODO : buttons management : mode Z
+// TODO : buttons management : unlock speed
 // TODO : BT pin code
 // TODO : mode Z
-// TODO : brake disable with high voltage
 // TODO : auto mode shift on low battery
 //////////////////////////////////////////
 
@@ -94,11 +95,10 @@ typedef enum
   ACTION_ON   // set LED "ON"
 } MyActions;
 
-MyActions button1CStatus = ACTION_OFF;  // no action when starting
-uint32_t button1LpDuration = 0;         // no action when starting
-MyActions button2CStatus = ACTION_OFF;  // no action when starting
-MyActions button2DCStatus = ACTION_OFF; // no action when starting
-
+MyActions button1CStatus = ACTION_OFF;
+uint32_t button1LpDuration = 0;       
+MyActions button2CStatus = ACTION_OFF;
+uint32_t button2LpDuration = 0;
 SharedData shrd;
 
 int i_loop = 0;
@@ -508,12 +508,14 @@ uint8_t modifyMode(char var, char data_buffer[])
   }
 
   /*
+  #if DEBUG_DISPLAY_NITRO
   Serial.print("button1LpDuration = ");
   Serial.print(button1LpDuration);
   Serial.print(" / settings.getS3F().Button_1_long_press_action = ");
   Serial.print(settings.getS3F().Button_1_long_press_action);
   Serial.print(" / settings.ACTION_Nitro_boost = ");
   Serial.println(settings.ACTION_Nitro_boost);
+#endif
 */
 
   // Nitro boost
@@ -528,8 +530,10 @@ uint8_t modifyMode(char var, char data_buffer[])
       shrd.modeOrder = 3;
       blh.notifyModeOrder(shrd.modeOrder);
 
+#if DEBUG_DISPLAY_NITRO
       Serial.print(" !!!!!!!!!!!!! ACTION_Nitro_boost in PROGRESS !!!!!!!!!!!!! ");
       Serial.println(shrd.modeOrder);
+#endif
     }
     else
     {
@@ -539,13 +543,49 @@ uint8_t modifyMode(char var, char data_buffer[])
 
         blh.notifyModeOrder(shrd.modeOrder);
 
+#if DEBUG_DISPLAY_NITRO
         Serial.print(" !!!!!!!!!!!!! ACTION_Nitro_boost STOPPED !!!!!!!!!!!!! ");
         Serial.println(shrd.modeOrder);
+#endif
 
         modeOrderBeforeNitro = -1;
       }
     }
   }
+  if (settings.getS3F().Button_2_long_press_action == settings.ACTION_Nitro_boost)
+  {
+    if (button2LpDuration > 0)
+    {
+      if (modeOrderBeforeNitro < 0)
+      {
+        modeOrderBeforeNitro = shrd.modeOrder;
+      }
+      shrd.modeOrder = 3;
+      blh.notifyModeOrder(shrd.modeOrder);
+
+#if DEBUG_DISPLAY_NITRO
+      Serial.print(" !!!!!!!!!!!!! ACTION_Nitro_boost in PROGRESS !!!!!!!!!!!!! ");
+      Serial.println(shrd.modeOrder);
+#endif
+    }
+    else
+    {
+      if (modeOrderBeforeNitro > 0)
+      {
+        shrd.modeOrder = modeOrderBeforeNitro;
+
+        blh.notifyModeOrder(shrd.modeOrder);
+
+#if DEBUG_DISPLAY_NITRO
+        Serial.print(" !!!!!!!!!!!!! ACTION_Nitro_boost STOPPED !!!!!!!!!!!!! ");
+        Serial.println(shrd.modeOrder);
+#endif
+
+        modeOrderBeforeNitro = -1;
+      }
+    }
+  }
+
 
   if (shrd.modeOrder == 1)
     newModeLcd = modeLcd0[(uint8_t)(data_buffer[2])];
@@ -1145,7 +1185,6 @@ void processButton1Click()
 
   Serial.print("processButton1Click : ");
   Serial.println(button1CStatus);
-
 }
 
 void processButton1LpStart()

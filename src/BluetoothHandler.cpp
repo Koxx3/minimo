@@ -8,6 +8,10 @@
 #include "SharedData.h"
 #include "main.h"
 #include "debug.h"
+#include "esp_gap_ble_api.h"
+#include "esp_gatts_api.h"
+#include "esp_bt_defs.h"
+#include "esp_bt_main.h"
 
 // See the following for generating UUIDs: https://www.uuidgenerator.net/
 #define SERVICE_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
@@ -32,6 +36,8 @@
 #define SETTINGS3_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b2"
 
 #define BLE_MTU 128
+
+#define BLE_PIN_CODE 147258
 
 BLEScan *BluetoothHandler::pBLEScan;
 BLEServer *BluetoothHandler::pServer;
@@ -139,6 +145,48 @@ void BluetoothHandler::init()
             //Serial.println(advertisedDevice.toString().c_str());
         } // onResult
     };    // MyAdvertisedDeviceCallbacks
+
+    class BLESecurityCallback : public BLESecurityCallbacks
+    {
+
+        bool onConfirmPIN(uint32_t pin)
+        {
+            return false;
+        }
+
+        uint32_t onPassKeyRequest()
+        {
+            Serial.println("onPassKeyRequest");
+            return BLE_PIN_CODE;
+        }
+
+        void onPassKeyNotify(uint32_t pass_key)
+        {
+            Serial.print("onPassKeyNotify: On passkey Notify number:");
+            Serial.println(pass_key);
+        }
+
+        bool onSecurityRequest()
+        {
+            Serial.println("onSecurityRequest : On Security Request");
+            return true;
+        }
+
+        void onAuthenticationComplete(esp_ble_auth_cmpl_t cmpl)
+        {
+            if (cmpl.success)
+            {
+                uint16_t length;
+                esp_ble_gap_get_whitelist_size(&length);
+                Serial.print("onAuthenticationComplete : success");
+            }
+            else
+            {
+                Serial.println("onAuthenticationComplete : hummm ... failed / reason : ");
+                Serial.println(cmpl.fail_reason);
+            }
+        }
+    };
 
     class BLECharacteristicCallback : public BLECharacteristicCallbacks
     {
@@ -478,6 +526,11 @@ void BluetoothHandler::init()
     BLEDevice::init("SmartLCD");
     BLEDevice::setMTU(BLE_MTU);
 
+    /////
+    BLEDevice::setEncryptionLevel(ESP_BLE_SEC_ENCRYPT);
+    BLEDevice::setSecurityCallbacks(new BLESecurityCallback());
+    /////
+
     int mtu = BLEDevice::getMTU();
     Serial.print("BLH - MTU : ");
     Serial.println(mtu);
@@ -639,6 +692,12 @@ void BluetoothHandler::init()
     pAdvertising->setMinPreferred(0x0); // set value to 0x00 to not advertise this parameter
     BLEDevice::startAdvertising();
     Serial.println("Waiting a client connection to notify...");
+
+    // Security
+    BLESecurity *pSecurity = new BLESecurity();
+    pSecurity->setStaticPIN(BLE_PIN_CODE);
+    pSecurity->setInitEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
+    pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND);
 
     // Start scanning
     pBLEScan = BLEDevice::getScan();
@@ -824,7 +883,7 @@ void BluetoothHandler::processBLE()
         if (fastUpdate)
             period = 100;
 
-/*
+        /*
         Serial.print(millis());
         Serial.print(" / ");
         Serial.print(shrd->timeLastNotifyBle);
@@ -875,7 +934,7 @@ void BluetoothHandler::processBLE()
 
             notifyBleLock();
 
-/*
+            /*
 #if DEBUG_DISPLAY_BLE_NOTIFY
             Serial.print("Notify bleLock : ");
             Serial.println(shrd->bleLock);
