@@ -58,7 +58,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [X] Anti-theth with smartphone
     - [X] Anti-theth with beacon (scan & rssi detection)
     - [X] Lock beacon or device settings
-    - [ ] SmartLCD connexion security
+    - [X] SmartLCD connexion security (PIN code)
+    - [ ] SmartLCD connexion with multi devices (BT device choice)
 - [ ] Other inputs/outputs
     - [X] Read current with WCS1700
     - [X] Read battery voltage
@@ -86,7 +87,13 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [ ] Calibrate analog brake
     - [ ] Speed limiter at startup
     - [ ] Customize modes with different power / max speed
-    - [ ] Remote physical button to change mode (or other features)
+    - [ ] Remote physical button
+        - [X] Nitro Boost
+        - [ ] Mode Z
+        - [ ] Speed limiter
+        - [ ] Aux ON/OFF       
+        - [ ] Lock       
+    - [ ] Automatic ECO mode on low battery 
     - [ ] Speed loop regulation
     - [ ] Current loop regulation
     - [ ] Custom acceleration curve
