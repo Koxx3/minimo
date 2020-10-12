@@ -293,9 +293,6 @@ void BluetoothHandler::init(Settings *data)
                 }
                 Serial.println("");
 
-                Serial.print("pinCode : ");
-                Serial.println(settings->getS3F().Bluetooth_pin_code);
-
                 settings->displaySettings3();
 
                 // update BLE PIN code
