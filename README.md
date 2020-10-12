@@ -88,10 +88,10 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [ ] Speed limiter at startup
     - [ ] Customize modes with different power / max speed
     - [ ] Remote physical button
-            - [X] Nitro Boost
-            - [ ] Mode Z
-            - [ ] Speed limiter
-            - [ ] AUX ON/OFF            
+        - [X] Nitro Boost
+        - [ ] Mode Z
+        - [ ] Speed limiter
+        - [ ] AUX ON/OFF            
     - [ ] Speed loop regulation
     - [ ] Current loop regulation
     - [ ] Custom acceleration curve
