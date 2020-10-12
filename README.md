@@ -53,7 +53,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [X] Frame error detection
     - [ ] Error codes processing
 - [ ] Serial Kaabo / Zero / Appolo
-- [ ] Bluetooth 
+- [X] Bluetooth 
     - [X] Communication with Android
     - [X] Anti-theth with smartphone
     - [X] Anti-theth with beacon (scan & rssi detection)
