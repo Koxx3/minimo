@@ -91,7 +91,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
         - [X] Nitro Boost
         - [ ] Mode Z
         - [ ] Speed limiter
-        - [ ] AUX ON/OFF       
+        - [ ] Aux ON/OFF       
+        - [ ] Lock       
     - [ ] Automatic ECO mode on low battery 
     - [ ] Speed loop regulation
     - [ ] Current loop regulation
