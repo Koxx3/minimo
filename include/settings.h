@@ -16,8 +16,8 @@ public:
   void displaySettings2();
   void displaySettings3();
   void displaySettings();
-  void restoreSettings(uint32_t);
-  void saveSettings(uint32_t);
+  void restoreSettings();
+  void saveSettings();
 
 // The actions I ca do...
 typedef enum ButtonAction
@@ -69,6 +69,9 @@ typedef enum ButtonAction
     uint8_t Button_2_short_press_action;
     uint8_t Button_2_long_press_action;
     uint8_t Button_long_press_duration;
+    uint8_t Battery_saving_medium_voltage;
+    uint8_t Battery_saving_strong_voltage;
+    uint32_t Bluetooth_pin_code;
 
   } __attribute__((packed));
 #pragma pack(pop)

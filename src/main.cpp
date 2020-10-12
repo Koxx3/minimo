@@ -6,7 +6,6 @@
 // TODO : buttons management : lock
 // TODO : buttons management : mode Z
 // TODO : buttons management : unlock speed
-// TODO : BT pin code
 // TODO : mode Z
 // TODO : auto mode shift on low battery
 //////////////////////////////////////////
@@ -26,6 +25,7 @@
 #include "SharedData.h"
 #include "debug.h"
 #include "OneButton.h"
+#include "EEPROM_storage.h"
 
 //////------------------------------------
 ////// Defines
@@ -214,38 +214,32 @@ void setup()
   Serial.begin(115200);
   Serial.println(PSTR("\n\nsetup --- begin"));
 
-  delay(1000);
-
   shrd.timeLastNotifyBle = millis();
 
   Serial.println(PSTR("   serial ..."));
   setupSerial();
-  delay(10);
-
-  Serial.println(PSTR("   BLE ..."));
-  //setupBLE();
-  blh.init();
-  blh.setSharedData(&shrd);
-
-  delay(10);
-
-  Serial.println(PSTR("   pins ..."));
-  setupPins();
-  delay(10);
 
   Serial.println(PSTR("   eeprom ..."));
   setupEPROMM();
   restoreBleLockForced();
+  
+  Serial.println(PSTR("   settings ..."));
+  settings.restoreSettings();
+  settings.displaySettings();
+
+  Serial.println(PSTR("   BLE ..."));
+  //setupBLE();
+  blh.init(&settings);
+  blh.setSharedData(&shrd);
+
+  Serial.println(PSTR("   pins ..."));
+  setupPins();
 
   Serial.println(PSTR("   buttons ..."));
   setupButtons();
 
   // force BLE lock mode
   blh.forceBleLock();
-
-  Serial.println(PSTR("   settings ..."));
-  settings.restoreSettings(EEPROM_ADDRESS_SETTINGS);
-  settings.displaySettings();
 
   Serial.println(PSTR("   init data with settings ..."));
   initDataWithSettings();

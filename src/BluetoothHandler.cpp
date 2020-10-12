@@ -41,6 +41,7 @@
 
 BLEScan *BluetoothHandler::pBLEScan;
 BLEServer *BluetoothHandler::pServer;
+BLESecurity *BluetoothHandler::pSecurity;
 BLECharacteristic *BluetoothHandler::pCharacteristicSpeed;
 BLECharacteristic *BluetoothHandler::pCharacteristicMode;
 BLECharacteristic *BluetoothHandler::pCharacteristicBrakeSentOrder;
@@ -61,8 +62,6 @@ BLECharacteristic *BluetoothHandler::pCharacteristicFastUpdate;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings2;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings3;
 
-Settings BluetoothHandler::settings;
-
 int8_t BluetoothHandler::bleLockStatus;
 int8_t BluetoothHandler::blePicclyVisible;
 int8_t BluetoothHandler::blePicclyRSSI;
@@ -72,13 +71,14 @@ int8_t BluetoothHandler::fastUpdate;
 bool BluetoothHandler::deviceConnected;
 bool BluetoothHandler::oldDeviceConnected;
 
+Settings *BluetoothHandler::settings;
 SharedData *BluetoothHandler::shrd;
 
 BluetoothHandler::BluetoothHandler()
 {
 }
 
-void BluetoothHandler::init()
+void BluetoothHandler::init(Settings *data)
 {
 
     Serial.println("BLH - init");
@@ -92,13 +92,13 @@ void BluetoothHandler::init()
 
             if (bleLockForced == 0)
             {
-                if (settings.getS1F().Bluetooth_lock_mode == 1)
+                if (settings->getS1F().Bluetooth_lock_mode == 1)
                 {
                     bleLockStatus = false;
                     Serial.println(" ==> device connected ==> UNLOCK decision");
                     Serial.println("-------------------------------------");
                 }
-                if (settings.getS1F().Bluetooth_lock_mode == 2)
+                if (settings->getS1F().Bluetooth_lock_mode == 2)
                 {
                     bleLockStatus = false;
                     Serial.println(" ==> device connected ==> UNLOCK decision");
@@ -118,13 +118,13 @@ void BluetoothHandler::init()
 
             if (bleLockForced == 0)
             {
-                if (settings.getS1F().Bluetooth_lock_mode == 1)
+                if (settings->getS1F().Bluetooth_lock_mode == 1)
                 {
                     bleLockStatus = true;
                     Serial.println(" ==> device disconnected ==> LOCK decision");
                     Serial.println("-------------------------------------");
                 }
-                if (settings.getS1F().Bluetooth_lock_mode == 2)
+                if (settings->getS1F().Bluetooth_lock_mode == 2)
                 {
                     if (!blePicclyVisible)
                     {
@@ -141,7 +141,7 @@ void BluetoothHandler::init()
     {
         void onResult(BLEAdvertisedDevice advertisedDevice)
         {
-            //Serial.print("BLE Advertised Device found: ");
+            //Serial.print("BLH - BLE Advertised Device found: ");
             //Serial.println(advertisedDevice.toString().c_str());
         } // onResult
     };    // MyAdvertisedDeviceCallbacks
@@ -156,19 +156,21 @@ void BluetoothHandler::init()
 
         uint32_t onPassKeyRequest()
         {
-            Serial.println("onPassKeyRequest");
-            return BLE_PIN_CODE;
+            Serial.print("BLH - onPassKeyRequest : ");
+            uint32_t pinCode = settings->getS3F().Bluetooth_pin_code;
+            Serial.println(pinCode);
+            return pinCode;
         }
 
         void onPassKeyNotify(uint32_t pass_key)
         {
-            Serial.print("onPassKeyNotify: On passkey Notify number:");
+            Serial.print("BLH - onPassKeyNotify : ");
             Serial.println(pass_key);
         }
 
         bool onSecurityRequest()
         {
-            Serial.println("onSecurityRequest : On Security Request");
+            Serial.println("onSecurityRequest");
             return true;
         }
 
@@ -178,11 +180,11 @@ void BluetoothHandler::init()
             {
                 uint16_t length;
                 esp_ble_gap_get_whitelist_size(&length);
-                Serial.print("onAuthenticationComplete : success");
+                Serial.println("onAuthenticationComplete : success");
             }
             else
             {
-                Serial.println("onAuthenticationComplete : hummm ... failed / reason : ");
+                Serial.print("BLH - onAuthenticationComplete : hummm ... failed / reason : ");
                 Serial.println(cmpl.fail_reason);
             }
         }
@@ -199,7 +201,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", shrd->modeOrder);
-                Serial.print("Write mode : ");
+                Serial.print("BLH - Write mode : ");
                 Serial.println(print_buffer);
             }
             if (pCharacteristic->getUUID().toString() == BRAKE_STATUS_CHARACTERISTIC_UUID)
@@ -209,7 +211,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", shrd->breakeSentOrder);
-                Serial.print("Write breakeSentOrder : ");
+                Serial.print("BLH - Write breakeSentOrder : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == SETTINGS1_CHARACTERISTIC_UUID)
@@ -218,17 +220,17 @@ void BluetoothHandler::init()
 
                 for (int i = 0; i < rxValue.length(); i++)
                 {
-                    settings.getS1B()[i] = rxValue[i];
+                    settings->getS1B()[i] = rxValue[i];
                 }
 
                 //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
 
-                Serial.print("Settings1 len : ");
+                Serial.print("BLH - Settings1 len : ");
                 Serial.println(rxValue.length());
-                Serial.print("Settings1 size : ");
+                Serial.print("BLH - Settings1 size : ");
                 Serial.println(rxValue.size());
 
-                Serial.print("Settings1 : ");
+                Serial.print("BLH - Settings1 : ");
                 for (int i = 0; i < rxValue.length(); i++)
                 {
                     char print_buffer[5];
@@ -237,7 +239,7 @@ void BluetoothHandler::init()
                 }
                 Serial.println("");
 
-                settings.displaySettings1();
+                settings->displaySettings1();
             }
             else if (pCharacteristic->getUUID().toString() == SETTINGS2_CHARACTERISTIC_UUID)
             {
@@ -245,17 +247,17 @@ void BluetoothHandler::init()
 
                 for (int i = 0; i < rxValue.length(); i++)
                 {
-                    settings.getS2B()[i] = rxValue[i];
+                    settings->getS2B()[i] = rxValue[i];
                 }
 
                 //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
 
-                Serial.print("Settings2 len : ");
+                Serial.print("BLH - Settings2 len : ");
                 Serial.println(rxValue.length());
-                Serial.print("Settings2 size : ");
+                Serial.print("BLH - Settings2 size : ");
                 Serial.println(rxValue.size());
 
-                Serial.print("Settings2 : ");
+                Serial.print("BLH - Settings2 : ");
                 for (int i = 0; i < rxValue.length(); i++)
                 {
                     char print_buffer[5];
@@ -264,7 +266,7 @@ void BluetoothHandler::init()
                 }
                 Serial.println("");
 
-                settings.displaySettings2();
+                settings->displaySettings2();
             }
             else if (pCharacteristic->getUUID().toString() == SETTINGS3_CHARACTERISTIC_UUID)
             {
@@ -272,17 +274,17 @@ void BluetoothHandler::init()
 
                 for (int i = 0; i < rxValue.length(); i++)
                 {
-                    settings.getS3B()[i] = rxValue[i];
+                    settings->getS3B()[i] = rxValue[i];
                 }
 
                 //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
 
-                Serial.print("Settings3 len : ");
+                Serial.print("BLH - Settings3 len : ");
                 Serial.println(rxValue.length());
-                Serial.print("Settings3 size : ");
+                Serial.print("BLH - Settings3 size : ");
                 Serial.println(rxValue.size());
 
-                Serial.print("Settings3 : ");
+                Serial.print("BLH - Settings3 : ");
                 for (int i = 0; i < rxValue.length(); i++)
                 {
                     char print_buffer[5];
@@ -291,9 +293,15 @@ void BluetoothHandler::init()
                 }
                 Serial.println("");
 
-                settings.displaySettings3();
+                Serial.print("pinCode : ");
+                Serial.println(settings->getS3F().Bluetooth_pin_code);
 
-                settings.saveSettings(EEPROM_ADDRESS_SETTINGS);
+                settings->displaySettings3();
+
+                // update BLE PIN code
+                pSecurity->setStaticPIN(settings->getS3F().Bluetooth_pin_code);
+
+                settings->saveSettings();
             }
             else if (pCharacteristic->getUUID().toString() == SPEED_LIMITER_CHARACTERISTIC_UUID)
             {
@@ -302,7 +310,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", shrd->speedLimiter);
-                Serial.print("Write speedLimiter : ");
+                Serial.print("BLH - Write speedLimiter : ");
                 Serial.println(print_buffer);
 
                 // notify of current value
@@ -316,7 +324,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", shrd->ecoOrder);
-                Serial.print("Write eco : ");
+                Serial.print("BLH - Write eco : ");
                 Serial.println(print_buffer);
 
                 // notify of current value
@@ -330,7 +338,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", shrd->accelOrder);
-                Serial.print("Write accel : ");
+                Serial.print("BLH - Write accel : ");
                 Serial.println(print_buffer);
 
                 // notify of current value
@@ -344,7 +352,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", shrd->currentCalibOrder);
-                Serial.print("Write currentCalibOrder : ");
+                Serial.print("BLH - Write currentCalibOrder : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == BTLOCK_STATUS_CHARACTERISTIC_UUID)
@@ -354,7 +362,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", bleLockForced);
-                Serial.print("Write bleLockForced : ");
+                Serial.print("BLH - Write bleLockForced : ");
                 Serial.println(print_buffer);
 
                 bleLockStatus = bleLockForced;
@@ -388,7 +396,7 @@ void BluetoothHandler::init()
                 std::string rxValue = pCharacteristic->getValue();
                 fastUpdate = rxValue[0];
 
-                Serial.print("Fast update = ");
+                Serial.print("BLH - Fast update = ");
                 Serial.println(fastUpdate);
             }
         }
@@ -402,7 +410,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", shrd->modeOrder);
-                Serial.print("Read mode : ");
+                Serial.print("BLH - Read mode : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == SPEED_CHARACTERISTIC_UUID)
@@ -411,7 +419,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", shrd->speedCurrent);
-                Serial.print("Read speed : ");
+                Serial.print("BLH - Read speed : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == BRAKE_STATUS_CHARACTERISTIC_UUID)
@@ -420,7 +428,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", shrd->breakeSentOrder);
-                Serial.print("Read breakeSentOrder : ");
+                Serial.print("BLH - Read breakeSentOrder : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == VOLTAGE_STATUS_CHARACTERISTIC_UUID)
@@ -430,7 +438,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02f", voltage / 1000.0);
-                Serial.print("Read voltage : ");
+                Serial.print("BLH - Read voltage : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == CURRENT_STATUS_CHARACTERISTIC_UUID)
@@ -440,7 +448,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02d", current);
-                Serial.print("Read current : ");
+                Serial.print("BLH - Read current : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == POWER_STATUS_CHARACTERISTIC_UUID)
@@ -452,7 +460,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%04d", power);
-                Serial.print("Read power : ");
+                Serial.print("BLH - Read power : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == BTLOCK_STATUS_CHARACTERISTIC_UUID)
@@ -469,7 +477,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", bleLockStatus);
-                Serial.print("Read bleLock : ");
+                Serial.print("BLH - Read bleLock : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == TEMPERATURE_STATUS_CHARACTERISTIC_UUID)
@@ -479,7 +487,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%f", shrd->currentTemperature);
-                Serial.print("Read currentTemperature : ");
+                Serial.print("BLH - Read currentTemperature : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == HUMIDITY_STATUS_CHARACTERISTIC_UUID)
@@ -489,7 +497,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%f", shrd->currentHumidity);
-                Serial.print("Read currentHumidity : ");
+                Serial.print("BLH - Read currentHumidity : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == SPEED_LIMITER_CHARACTERISTIC_UUID)
@@ -498,7 +506,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%d", shrd->speedLimiter);
-                Serial.print("Read speedLimiter : ");
+                Serial.print("BLH - Read speedLimiter : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == ECO_CHARACTERISTIC_UUID)
@@ -507,7 +515,7 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%d", shrd->ecoOrder);
-                Serial.print("Read eco : ");
+                Serial.print("BLH - Read eco : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == ACCEL_CHARACTERISTIC_UUID)
@@ -516,14 +524,25 @@ void BluetoothHandler::init()
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%d", shrd->accelOrder);
-                Serial.print("Read accel : ");
+                Serial.print("BLH - Read accel : ");
                 Serial.println(print_buffer);
             }
         }
     };
 
+    // Init settings
+    settings = data;
+
     // Create the BLE Device
     BLEDevice::init("SmartLCD");
+    String smartLcdNameComp1 = BLEDevice::getAddress().toString().substr(12, 2).c_str();
+    String smartLcdNameComp2 = BLEDevice::getAddress().toString().substr(15, 2).c_str();
+    String smartLcdFullName = "SmartLCD-" + smartLcdNameComp1 + smartLcdNameComp2;
+    Serial.print("BLH - adress = ");
+    Serial.println(BLEDevice::getAddress().toString().c_str());
+    Serial.print("BLH - name = ");
+    Serial.println(smartLcdFullName);
+    esp_ble_gap_set_device_name(smartLcdFullName.c_str());
     BLEDevice::setMTU(BLE_MTU);
 
     /////
@@ -694,8 +713,11 @@ void BluetoothHandler::init()
     Serial.println("Waiting a client connection to notify...");
 
     // Security
-    BLESecurity *pSecurity = new BLESecurity();
-    pSecurity->setStaticPIN(BLE_PIN_CODE);
+    pSecurity = new BLESecurity();
+    Serial.print("BLH - pin code : ");
+    uint32_t pinCode = settings->getS3F().Bluetooth_pin_code;
+    Serial.println(pinCode);
+    pSecurity->setStaticPIN(pinCode);
     pSecurity->setInitEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
     pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND);
 
@@ -710,7 +732,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
 {
 
 #if DEBUG_DISPLAY_BLE_SCAN
-    Serial.print("BLE Scan Device found: ");
+    Serial.print("BLH - BLE Scan Device found: ");
     Serial.println(scanResults.getCount());
 #endif
 
@@ -724,27 +746,27 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
         String addressStr = address.c_str();
 
 #if DEBUG_DISPLAY_BLE_SCAN
-        Serial.print("BLE device : ");
+        Serial.print("BLH - BLE device : ");
         Serial.print(name);
-        Serial.print(" / adress : ");
+        Serial.print("BLH -  / adress : ");
         Serial.print(addressStr);
-        Serial.print(" / name : ");
+        Serial.print("BLH -  / name : ");
         Serial.print(name);
-        Serial.print(" / rssi ");
+        Serial.print("BLH -  / rssi ");
         Serial.println(blePicclyRSSI);
 #endif
 
-        String addressPicclySettings = settings.getS2F().Beacon_Mac_Address;
+        String addressPicclySettings = settings->getS2F().Beacon_Mac_Address;
 
         if (addressPicclySettings.equalsIgnoreCase(addressStr))
         {
-            if (blePicclyRSSI < settings.getS1F().Beacon_range)
+            if (blePicclyRSSI < settings->getS1F().Beacon_range)
             {
 #if DEBUG_DISPLAY_BLE_SCAN
-                Serial.print(" ==> PICC-LY found ... but too far away / RSSI = ");
+                Serial.print("BLH -  ==> PICC-LY found ... but too far away / RSSI = ");
                 Serial.print(blePicclyRSSI);
-                Serial.print(" / min RSSI required = ");
-                Serial.print(settings.getS1F().Beacon_range);
+                Serial.print("BLH -  / min RSSI required = ");
+                Serial.print(settings->getS1F().Beacon_range);
                 Serial.println(" ==> lock from scan");
 #endif
                 newBlePicclyVisible = false;
@@ -752,10 +774,10 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
             else
             {
 #if DEBUG_DISPLAY_BLE_SCAN
-                Serial.print(" ==> PICC-LY found  / RSSI = ");
+                Serial.print("BLH -  ==> PICC-LY found  / RSSI = ");
                 Serial.print(blePicclyRSSI);
-                Serial.print(" / min RSSI required = ");
-                Serial.print(settings.getS1F().Beacon_range);
+                Serial.print("BLH -  / min RSSI required = ");
+                Serial.print(settings->getS1F().Beacon_range);
                 Serial.println(" ==> unlock from scan");
 #endif
                 newBlePicclyVisible = true;
@@ -768,7 +790,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
 
     if (bleLockForced == 0)
     {
-        if (settings.getS1F().Bluetooth_lock_mode == 2)
+        if (settings->getS1F().Bluetooth_lock_mode == 2)
         {
             if ((!blePicclyVisible) && (!deviceConnected))
             {
@@ -792,7 +814,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
             {
             }
         }
-        if (settings.getS1F().Bluetooth_lock_mode == 3)
+        if (settings->getS1F().Bluetooth_lock_mode == 3)
         {
             if (!blePicclyVisible)
             {
@@ -853,14 +875,14 @@ void BluetoothHandler::notifyBleLock()
     pCharacteristicBtlockStatus->notify();
 
 #if DEBUG_DISPLAY_BLE_NOTIFY
-    Serial.print("notifyBleLock : bleLockStatus = ");
+    Serial.print("BLH - notifyBleLock : bleLockStatus = ");
     Serial.print(bleLockStatus);
-    Serial.print(" / blePicclyVisible = ");
+    Serial.print("BLH -  / blePicclyVisible = ");
     Serial.print(blePicclyVisible);
-    Serial.print(" / blePicclyRSSI = ");
+    Serial.print("BLH -  / blePicclyRSSI = ");
     Serial.print(blePicclyRSSI);
 
-    Serial.print(" / bleLockForced = ");
+    Serial.print("BLH -  / bleLockForced = ");
     Serial.print(bleLockForced);
     Serial.println("");
 #endif
@@ -885,9 +907,9 @@ void BluetoothHandler::processBLE()
 
         /*
         Serial.print(millis());
-        Serial.print(" / ");
+        Serial.print("BLH -  / ");
         Serial.print(shrd->timeLastNotifyBle);
-        Serial.print(" / ");
+        Serial.print("BLH -  / ");
         Serial.print(period);
         Serial.println(" / ");
         */
@@ -936,7 +958,7 @@ void BluetoothHandler::processBLE()
 
             /*
 #if DEBUG_DISPLAY_BLE_NOTIFY
-            Serial.print("Notify bleLock : ");
+            Serial.print("BLH - Notify bleLock : ");
             Serial.println(shrd->bleLock);
 #endif
 */

@@ -1,7 +1,7 @@
-
 #include <Arduino.h>
 #include <EEPROM.h>
 #include "settings.h"
+#include "EEPROM_storage.h"
 
 Settings::Settings()
 {
@@ -91,6 +91,12 @@ void Settings::displaySettings3()
   Serial.println(settings3.fields.Button_2_long_press_action);
   Serial.print("// Button_long_press_duration : ");
   Serial.println(settings3.fields.Button_long_press_duration);
+  Serial.print("// Battery_saving_medium_voltage : ");
+  Serial.println(settings3.fields.Battery_saving_medium_voltage);
+  Serial.print("// Battery_saving_strong_voltage : ");
+  Serial.println(settings3.fields.Battery_saving_strong_voltage);
+  Serial.print("// Bluetooth_pin_code : ");
+  Serial.println(settings3.fields.Bluetooth_pin_code);
 }
 
 void Settings::displaySettings()
@@ -100,7 +106,7 @@ void Settings::displaySettings()
   displaySettings3();
 }
 
-void Settings::saveSettings(uint32_t address)
+void Settings::saveSettings()
 {
   Serial.print("saveSettings : ");
   Serial.print(sizeof(settings1));
@@ -110,14 +116,13 @@ void Settings::saveSettings(uint32_t address)
   Serial.print(sizeof(settings3));
   Serial.println(" bytes");
 
-  EEPROM.put(address + 00, settings1.buffer);
-  EEPROM.put(address + 25, settings2.buffer);
-  EEPROM.put(address + 50, settings3.buffer);
-  EEPROM.end();
-//  EEPROM.commit();
+  EEPROM.put(EEPROM_ADDRESS_SETTINGS1, settings1.buffer);
+  EEPROM.put(EEPROM_ADDRESS_SETTINGS2, settings2.buffer);
+  EEPROM.put(EEPROM_ADDRESS_SETTINGS3, settings3.buffer);
+  EEPROM.commit();
 }
 
-void Settings::restoreSettings(uint32_t address)
+void Settings::restoreSettings()
 {
 
   Serial.print("restoreSettings : ");
@@ -128,7 +133,7 @@ void Settings::restoreSettings(uint32_t address)
   Serial.print(sizeof(settings3));
   Serial.println(" bytes");
 
-  EEPROM.get(address + 00, settings1.buffer);
-  EEPROM.get(address + 25, settings2.buffer);
-  EEPROM.get(address + 50, settings3.buffer);
+  EEPROM.get(EEPROM_ADDRESS_SETTINGS1, settings1.buffer);
+  EEPROM.get(EEPROM_ADDRESS_SETTINGS2, settings2.buffer);
+  EEPROM.get(EEPROM_ADDRESS_SETTINGS3, settings3.buffer);
 }

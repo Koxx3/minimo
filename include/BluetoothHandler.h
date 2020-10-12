@@ -18,7 +18,7 @@ class BluetoothHandler
 {
 public:
     BluetoothHandler();
-    static void init();
+    static void init(Settings *);
     static void bleOnScanResults(BLEScanResults);
     static void notifyBleLock();
     static void notifyBleLogs(char *);
@@ -34,6 +34,7 @@ public:
 
     static BLEScan *pBLEScan;
     static BLEServer *pServer;
+    static BLESecurity *pSecurity;
     static BLECharacteristic *pCharacteristicSpeed;
     static BLECharacteristic *pCharacteristicMode;
     static BLECharacteristic *pCharacteristicBrakeSentOrder;
@@ -53,7 +54,6 @@ public:
     static BLECharacteristic *pCharacteristicFastUpdate;
     static BLECharacteristic *pCharacteristicSettings2;
     static BLECharacteristic *pCharacteristicSettings3;
-    static Settings settings;
 
     static int8_t bleLockStatus;
     static int8_t blePicclyVisible;
@@ -65,6 +65,7 @@ public:
     static bool oldDeviceConnected;
 
     static SharedData *shrd;
+    static Settings *settings;
 
     static int8_t test2;
 
