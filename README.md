@@ -59,7 +59,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [X] Anti-theth with beacon (scan & rssi detection)
     - [X] Lock beacon or device settings
     - [X] SmartLCD connexion security (PIN code)
-    - [X] SmartLCD connexion with multi devices (BT device choice)
+    - [ ] SmartLCD connexion with multi devices (BT device choice)
 - [ ] Other inputs/outputs
     - [X] Read current with WCS1700
     - [X] Read battery voltage
