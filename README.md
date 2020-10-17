@@ -70,6 +70,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [X] Read buttons
     - [X] Send break handle position to controller
     - [X] Send LED status
+    - [ ] Send optocopler order
 - [ ] Power
     - [X] Convert 12V to 5V
     - [ ] Convert 80V to 5V
@@ -97,7 +98,6 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [ ] Automatic ECO mode on low battery 
     - [ ] Speed loop regulation
     - [ ] Current loop regulation
-    - [ ] Custom acceleration curve
     - [ ] Wifi connexion for dashboard display and settings
     - [ ] Advanced diagnosis (serial errors, throtle errors ...)
 - [ ] Android app
@@ -109,7 +109,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [ ] display : average speed, distance
 
 - [ ] iPhone app => for someone else
-
+- [ ] Custom acceleration curve ==> not possible with current hardware
+    
 ## Serial links data decoding
 [Excel](http://github.com/Koxx3/minimo/edit/master/MINIMO.xlsx
 
