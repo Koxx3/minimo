@@ -34,6 +34,7 @@
 #define FAST_UPDATE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b0"
 #define SETTINGS2_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b1"
 #define SETTINGS3_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b2"
+#define AUX_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b3"
 
 #define BLE_MTU 128
 
@@ -61,6 +62,7 @@ BLECharacteristic *BluetoothHandler::pCharacteristicLogs;
 BLECharacteristic *BluetoothHandler::pCharacteristicFastUpdate;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings2;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings3;
+BLECharacteristic *BluetoothHandler::pCharacteristicAux;
 
 int8_t BluetoothHandler::bleLockStatus;
 int8_t BluetoothHandler::blePicclyVisible;
@@ -396,6 +398,20 @@ void BluetoothHandler::init(Settings *data)
                 Serial.print("BLH - Fast update = ");
                 Serial.println(fastUpdate);
             }
+            else if (pCharacteristic->getUUID().toString() == AUX_CHARACTERISTIC_UUID)
+            {
+                std::string rxValue = pCharacteristic->getValue();
+                shrd->auxOrder = rxValue[0];
+
+                char print_buffer[500];
+                sprintf(print_buffer, "%02x", shrd->auxOrder);
+                Serial.print("BLH - Write aux : ");
+                Serial.println(print_buffer);
+
+                // notify of current value
+                pCharacteristicAux->setValue((uint8_t *)&shrd->auxOrder, 1);
+                pCharacteristicAux->notify();
+            }
         }
 
         void onRead(BLECharacteristic *pCharacteristic)
@@ -522,6 +538,15 @@ void BluetoothHandler::init(Settings *data)
                 char print_buffer[500];
                 sprintf(print_buffer, "%d", shrd->accelOrder);
                 Serial.print("BLH - Read accel : ");
+                Serial.println(print_buffer);
+            }
+            else if (pCharacteristic->getUUID().toString() == AUX_CHARACTERISTIC_UUID)
+            {
+                pCharacteristicAux->setValue((uint8_t *)&shrd->auxOrder, 1);
+
+                char print_buffer[500];
+                sprintf(print_buffer, "%d", shrd->auxOrder);
+                Serial.print("BLH - Read aux : ");
                 Serial.println(print_buffer);
             }
         }
@@ -658,6 +683,12 @@ void BluetoothHandler::init(Settings *data)
         BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
+    pCharacteristicAux = pService->createCharacteristic(
+        AUX_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_NOTIFY |
+            BLECharacteristic::PROPERTY_WRITE |
+            BLECharacteristic::PROPERTY_READ);
+
     pCharacteristicSpeed->addDescriptor(new BLE2902());
     pCharacteristicMode->addDescriptor(new BLE2902());
     pCharacteristicBrakeSentOrder->addDescriptor(new BLE2902());
@@ -677,6 +708,7 @@ void BluetoothHandler::init(Settings *data)
     pCharacteristicFastUpdate->addDescriptor(new BLE2902());
     pCharacteristicSettings2->addDescriptor(new BLE2902());
     pCharacteristicSettings3->addDescriptor(new BLE2902());
+    pCharacteristicAux->addDescriptor(new BLE2902());
 
     pCharacteristicSpeed->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicMode->setCallbacks(new BLECharacteristicCallback());
@@ -697,6 +729,7 @@ void BluetoothHandler::init(Settings *data)
     pCharacteristicFastUpdate->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettings2->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettings3->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicAux->setCallbacks(new BLECharacteristicCallback());
 
     // Start the service
     pService->start();
@@ -1001,6 +1034,7 @@ void BluetoothHandler::notifyEcoOrder(uint8_t val)
     pCharacteristicEco->setValue((uint8_t *)&val, 1);
     pCharacteristicEco->notify();
 }
+
 void BluetoothHandler::notifyAccelOrder(uint8_t val)
 {
     pCharacteristicAccel->setValue((uint8_t *)&val, 1);
@@ -1017,4 +1051,11 @@ void BluetoothHandler::notifyHumidityStatus(uint32_t val)
 {
     pCharacteristicHumidityStatus->setValue((uint8_t *)&val, 4);
     pCharacteristicHumidityStatus->notify();
+}
+
+
+void BluetoothHandler::notifyAuxOrder(uint8_t val)
+{
+    pCharacteristicAux->setValue((uint8_t *)&val, 1);
+    pCharacteristicAux->notify();
 }

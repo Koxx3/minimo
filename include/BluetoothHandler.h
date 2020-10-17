@@ -30,6 +30,7 @@ public:
     static void notifyAccelOrder(uint8_t);
     static void notifyTemperatureStatus(uint32_t);
     static void notifyHumidityStatus(uint32_t);
+    static void notifyAuxOrder(uint8_t);
     static void setSharedData(SharedData*);
 
     static BLEScan *pBLEScan;
@@ -54,6 +55,7 @@ public:
     static BLECharacteristic *pCharacteristicFastUpdate;
     static BLECharacteristic *pCharacteristicSettings2;
     static BLECharacteristic *pCharacteristicSettings3;
+    static BLECharacteristic *pCharacteristicAux;
 
     static int8_t bleLockStatus;
     static int8_t blePicclyVisible;

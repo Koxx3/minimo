@@ -6,6 +6,7 @@
 // TODO : buttons management : lock
 // TODO : buttons management : mode Z
 // TODO : buttons management : unlock speed
+// TODO : buttons management : aux on/off
 // TODO : mode Z
 // TODO : auto mode shift on low battery
 //////////////////////////////////////////
@@ -61,6 +62,12 @@
 #define ANALOG_BRAKE_MIN_VALUE 870
 #define ANALOG_BRAKE_MAX_VALUE 2300
 
+#define BUTTON_ACTION_1_MODE_Z 0
+#define BUTTON_ACTION_2_ANTI_THEFT 1
+#define BUTTON_ACTION_3_NITRO 2
+#define BUTTON_ACTION_4_SPEED_LMT 3
+#define BUTTON_ACTION_5_AUX 4
+
 //////------------------------------------
 ////// Variables
 
@@ -96,7 +103,7 @@ typedef enum
 } MyActions;
 
 MyActions button1CStatus = ACTION_OFF;
-uint32_t button1LpDuration = 0;       
+uint32_t button1LpDuration = 0;
 MyActions button2CStatus = ACTION_OFF;
 uint32_t button2LpDuration = 0;
 SharedData shrd;
@@ -222,7 +229,7 @@ void setup()
   Serial.println(PSTR("   eeprom ..."));
   setupEPROMM();
   restoreBleLockForced();
-  
+
   Serial.println(PSTR("   settings ..."));
   settings.restoreSettings();
   settings.displaySettings();
@@ -579,7 +586,6 @@ uint8_t modifyMode(char var, char data_buffer[])
       }
     }
   }
-
 
   if (shrd.modeOrder == 1)
     newModeLcd = modeLcd0[(uint8_t)(data_buffer[2])];
@@ -1173,9 +1179,15 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 void processButton1Click()
 {
   if (button1CStatus == ACTION_OFF)
+  {
     button1CStatus = ACTION_ON;
+  }
   else
+  {
     button1CStatus = ACTION_OFF;
+  }
+
+  processAuxEvent(1);
 
   Serial.print("processButton1Click : ");
   Serial.println(button1CStatus);
@@ -1187,6 +1199,7 @@ void processButton1LpStart()
   Serial.print("processButton1LpStart : ");
   Serial.println(button1LpDuration);
 }
+
 void processButton1LpDuring()
 {
   button1LpDuration = button1.getPressedTicks();
@@ -1200,6 +1213,9 @@ void processButton1LpStop()
 {
   Serial.print("processButton1LpStop : ");
   Serial.println(button1LpDuration);
+  
+  processAuxEvent(1);
+
   button1LpDuration = 0;
 }
 
@@ -1217,6 +1233,52 @@ void processButton1()
 
 void processButton2()
 {
+}
+
+void processAuxEvent(uint8_t buttonId)
+{
+
+  // process AUX order -- button 1
+  if ((buttonId == 1) && (settings.getS3F().Button_1_short_press_action == settings.ACTION_Aux_on_off))
+  {
+    if (shrd.auxOrder == 0)
+    {
+      shrd.auxOrder = 1;
+    }
+    else
+    {
+      shrd.auxOrder = 0;
+    }
+    blh.notifyAuxOrder(shrd.auxOrder);
+  }
+  
+  // process AUX order -- button 2
+  if ((buttonId == 2) && (settings.getS3F().Button_2_short_press_action == settings.ACTION_Aux_on_off))
+  {
+    if (shrd.auxOrder == 0)
+    {
+      shrd.auxOrder = 1;
+    }
+    else
+    {
+      shrd.auxOrder = 0;
+    }
+    blh.notifyAuxOrder(shrd.auxOrder);
+  }
+  
+}
+
+void processAux()
+{
+
+  if (shrd.auxOrder == 1)
+  {
+    digitalWrite(PIN_OUT_RELAY, 1);
+  }
+  else
+  {
+    digitalWrite(PIN_OUT_RELAY, 0);
+  }
 }
 
 void processDHT()
@@ -1382,6 +1444,8 @@ void loop()
 #if DEBUG_DISPLAY_BUTTON2
   displayButton2();
 #endif
+
+  processAux();
 
   if (i_loop % 100 == 0)
   {

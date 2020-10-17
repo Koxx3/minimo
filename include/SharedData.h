@@ -40,6 +40,8 @@ public:
     uint8_t ecoLcd = 3;
     uint8_t ecoLcdOld = 3;
 
+    uint8_t auxOrder = 0;
+
     uint8_t brakeStatus = 0;
     uint8_t brakeStatusOld = 0;
     int8_t breakeSentOrder = -1;

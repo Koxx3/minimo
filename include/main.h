@@ -13,3 +13,5 @@ void processButton1LpStop();
 
 void processButton2Click();
 void processButton2DoubleClick();
+
+void processAuxEvent(uint8_t buttonId, uint8_t buttonStatus);
