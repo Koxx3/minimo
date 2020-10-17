@@ -91,6 +91,10 @@ void Settings::displaySettings3()
   Serial.println(settings3.fields.Button_2_long_press_action);
   Serial.print("// Button_long_press_duration : ");
   Serial.println(settings3.fields.Button_long_press_duration);
+  Serial.print("// Battery_min_voltage : ");
+  Serial.println(settings3.fields.Battery_min_voltage);
+  Serial.print("// Battery_max_voltage : ");
+  Serial.println(settings3.fields.Battery_max_voltage);
   Serial.print("// Battery_saving_medium_voltage : ");
   Serial.println(settings3.fields.Battery_saving_medium_voltage);
   Serial.print("// Battery_saving_strong_voltage : ");
@@ -104,6 +108,7 @@ void Settings::displaySettings()
   displaySettings1();
   displaySettings2();
   displaySettings3();
+
 }
 
 void Settings::saveSettings()

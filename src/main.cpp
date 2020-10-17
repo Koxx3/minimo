@@ -59,7 +59,7 @@
 #define ANALOG_TO_CURRENT 35
 #define NB_CURRENT_CALIB 100
 
-#define ANALOG_BRAKE_MIN_VALUE 870
+#define ANALOG_BRAKE_MIN_VALUE 900
 #define ANALOG_BRAKE_MAX_VALUE 2300
 
 #define BUTTON_ACTION_1_MODE_Z 0
@@ -601,7 +601,26 @@ uint8_t modifyMode(char var, char data_buffer[])
 
 uint8_t modifyPower(char var, char data_buffer[])
 {
-  uint8_t newPower;
+  uint8_t newPower = 100;
+
+  float voltage = shrd.voltageFilterMean / 1000.0;
+  float bat_min = settings.getS3F().Battery_min_voltage / 10.0;
+  float bat_max = settings.getS3F().Battery_max_voltage / 10.0;
+  float bat_med_save = settings.getS3F().Battery_saving_medium_voltage;
+
+  float bat_med_save_voltage = ((bat_max - bat_min) * settings.getS3F().Battery_saving_medium_voltage / 100.0) + bat_min;
+
+  Serial.print("voltage : ");
+  Serial.print(voltage);
+  Serial.print("V / bat_min : ");
+  Serial.print(bat_min);
+  Serial.print("V / bat_max : ");
+  Serial.print(bat_max);
+  Serial.print("V / bat_med_save_pourcent : ");
+  Serial.print(bat_med_save);
+  Serial.print("% / bat_med_save_voltage : ");
+  Serial.print(bat_med_save_voltage);
+  Serial.print("V");
 
   // lock escooter by reducing power to 5%
   if (blh.bleLockStatus == true)
@@ -612,19 +631,42 @@ uint8_t modifyPower(char var, char data_buffer[])
   else if (shrd.speedLimiter == 1)
   {
     newPower = 37;
-
-    /*
-    Serial.print("Speed : ");
-    Serial.print(speedCurrent);
-    Serial.print(" / Power reduction : ");
-    Serial.print(powerReduction);
-    Serial.print(" / newPower : ");
-    Serial.println(newPower);
-    */
   }
   else
   {
-    newPower = var;
+
+    // override with battery status
+    int min_power = 20;
+    if (voltage < bat_min)
+    {
+      if (min_power < var)
+      {
+        newPower = min_power;
+      }
+    }
+    else if (voltage < bat_med_save_voltage)
+    {
+      float factor = ((min_power - 100) / (bat_min - bat_med_save_voltage));
+      Serial.print(" / factor = ");
+      Serial.print(factor);
+
+      float origin = 100 - (factor * bat_med_save_voltage);
+      Serial.print(" / origin = ");
+      Serial.print(origin);
+
+      if (newPower < var)
+      {
+        newPower = (voltage * factor) + origin;
+      }
+    }
+    else
+    {
+      newPower = var;
+    }
+
+    Serial.print(" / new_power = ");
+    Serial.print(newPower);
+    Serial.println("%");
   }
 
   return newPower;
@@ -1213,7 +1255,7 @@ void processButton1LpStop()
 {
   Serial.print("processButton1LpStop : ");
   Serial.println(button1LpDuration);
-  
+
   processAuxEvent(1);
 
   button1LpDuration = 0;
@@ -1251,7 +1293,7 @@ void processAuxEvent(uint8_t buttonId)
     }
     blh.notifyAuxOrder(shrd.auxOrder);
   }
-  
+
   // process AUX order -- button 2
   if ((buttonId == 2) && (settings.getS3F().Button_2_short_press_action == settings.ACTION_Aux_on_off))
   {
@@ -1265,7 +1307,6 @@ void processAuxEvent(uint8_t buttonId)
     }
     blh.notifyAuxOrder(shrd.auxOrder);
   }
-  
 }
 
 void processAux()

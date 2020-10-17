@@ -70,6 +70,8 @@ typedef enum ButtonAction
     uint8_t Button_2_short_press_action;
     uint8_t Button_2_long_press_action;
     uint8_t Button_long_press_duration;
+    uint16_t Battery_min_voltage;
+    uint16_t Battery_max_voltage;
     uint8_t Battery_saving_medium_voltage;
     uint8_t Battery_saving_strong_voltage;
     uint32_t Bluetooth_pin_code;

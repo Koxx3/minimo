@@ -301,6 +301,7 @@ void BluetoothHandler::init(Settings *data)
                 pSecurity->setStaticPIN(settings->getS3F().Bluetooth_pin_code);
 
                 settings->saveSettings();
+
             }
             else if (pCharacteristic->getUUID().toString() == SPEED_LIMITER_CHARACTERISTIC_UUID)
             {
@@ -1052,7 +1053,6 @@ void BluetoothHandler::notifyHumidityStatus(uint32_t val)
     pCharacteristicHumidityStatus->setValue((uint8_t *)&val, 4);
     pCharacteristicHumidityStatus->notify();
 }
-
 
 void BluetoothHandler::notifyAuxOrder(uint8_t val)
 {
