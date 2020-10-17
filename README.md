@@ -53,13 +53,13 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [X] Frame error detection
     - [ ] Error codes processing
 - [ ] Serial Kaabo / Zero / Appolo
-- [ ] Bluetooth 
+- [X] Bluetooth 
     - [X] Communication with Android
     - [X] Anti-theth with smartphone
     - [X] Anti-theth with beacon (scan & rssi detection)
     - [X] Lock beacon or device settings
     - [X] SmartLCD connexion security (PIN code)
-    - [ ] SmartLCD connexion with multi devices (BT device choice)
+    - [X] SmartLCD connexion with multi devices (BT device choice)
 - [ ] Other inputs/outputs
     - [X] Read current with WCS1700
     - [X] Read battery voltage
@@ -70,6 +70,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [X] Read buttons
     - [X] Send break handle position to controller
     - [X] Send LED status
+    - [ ] Send optocopler order
 - [ ] Power
     - [X] Convert 12V to 5V
     - [ ] Convert 80V to 5V
@@ -88,15 +89,15 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [ ] Speed limiter at startup
     - [ ] Customize modes with different power / max speed
     - [ ] Remote physical button
-        - [X] Nitro Boost
+        - [X] Nitro Boost continuous
+        - [ ] Nitro Boost ON/OFF
         - [ ] Mode Z
         - [ ] Speed limiter
-        - [ ] Aux ON/OFF       
+        - [X] Aux ON/OFF       
         - [ ] Lock       
     - [ ] Automatic ECO mode on low battery 
     - [ ] Speed loop regulation
     - [ ] Current loop regulation
-    - [ ] Custom acceleration curve
     - [ ] Wifi connexion for dashboard display and settings
     - [ ] Advanced diagnosis (serial errors, throtle errors ...)
 - [ ] Android app
@@ -108,7 +109,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [ ] display : average speed, distance
 
 - [ ] iPhone app => for someone else
-
+- [ ] Custom acceleration curve ==> not possible with current hardware
+    
 ## Serial links data decoding
 [Excel](http://github.com/Koxx3/minimo/edit/master/MINIMO.xlsx
 
