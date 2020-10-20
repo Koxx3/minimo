@@ -86,18 +86,18 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [X] Current measure manual calibration
     - [X] LCD Speed adjustment
     - [ ] Calibrate analog brake
-    - [ ] Speed limiter at startup
+    - [X] Speed limiter at startup
     - [ ] Customize modes with different power / max speed
     - [ ] Remote physical button
-        - [X] Nitro Boost continuous
-        - [ ] Nitro Boost ON/OFF
-        - [ ] Mode Z
-        - [ ] Speed limiter
-        - [X] Aux ON/OFF       
-        - [ ] Lock       
+        - [*] Nitro Boost continuous
+        - [*] Nitro Boost ON/OFF
+        - [ ] Mode Z ON/OFF
+        - [*] Speed limiter ON/OFF
+        - [*] Aux ON/OFF       
+        - [*] Lock ON      
     - [ ] Automatic ECO mode on low battery 
-    - [ ] Speed loop regulation
-    - [ ] Current loop regulation
+    - [ ] Configurable speed loop regulation
+    - [ ] Configurable current loop regulation
     - [ ] Wifi connexion for dashboard display and settings
     - [ ] Advanced diagnosis (serial errors, throtle errors ...)
 - [ ] Android app
