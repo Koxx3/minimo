@@ -104,9 +104,9 @@ typedef enum
   ACTION_ON   // set LED "ON"
 } MyActions;
 
-MyActions button1CStatus = ACTION_OFF;
+MyActions button1ClickStatus = ACTION_OFF;
 uint32_t button1LpDuration = 0;
-MyActions button2CStatus = ACTION_OFF;
+MyActions button2ClickStatus = ACTION_OFF;
 uint32_t button2LpDuration = 0;
 SharedData shrd;
 
@@ -425,13 +425,13 @@ void displayBrake()
 void displayButton1()
 {
   Serial.print("Button1 : ");
-  Serial.println(button1CStatus);
+  Serial.println(button1ClickStatus);
 }
 
 void displayButton2()
 {
   Serial.print("Button2 : ");
-  Serial.println(button1CStatus);
+  Serial.println(button1ClickStatus);
 }
 
 void displayMode(char data_buffer[])
@@ -551,70 +551,37 @@ uint8_t modifyMode(char var, char data_buffer[])
 */
 
   // Nitro boost
-  if (settings.getS3F().Button_1_long_press_action == settings.ACTION_Nitro_boost)
+  if (((settings.getS3F().Button_1_short_press_action == settings.ACTION_Nitro_boost) && (button1ClickStatus == ACTION_ON)) ||
+      ((settings.getS3F().Button_1_long_press_action == settings.ACTION_Nitro_boost) && (button1LpDuration > 0)) ||
+      ((settings.getS3F().Button_2_short_press_action == settings.ACTION_Nitro_boost) && (button2ClickStatus == ACTION_ON)) ||
+      ((settings.getS3F().Button_2_long_press_action == settings.ACTION_Nitro_boost) && (button2LpDuration > 0)))
   {
-    if (button1LpDuration > 0)
+    if (modeOrderBeforeNitro < 0)
     {
-      if (modeOrderBeforeNitro < 0)
-      {
-        modeOrderBeforeNitro = shrd.modeOrder;
-      }
-      shrd.modeOrder = 3;
-      blh.notifyModeOrder(shrd.modeOrder);
+      modeOrderBeforeNitro = shrd.modeOrder;
+    }
+    shrd.modeOrder = 3;
+    blh.notifyModeOrder(shrd.modeOrder);
 
 #if DEBUG_DISPLAY_NITRO
-      Serial.print(" !!!!!!!!!!!!! ACTION_Nitro_boost in PROGRESS !!!!!!!!!!!!! ");
-      Serial.println(shrd.modeOrder);
+    Serial.print(" !!!!!!!!!!!!! ACTION_Nitro_boost in PROGRESS !!!!!!!!!!!!! ");
+    Serial.println(shrd.modeOrder);
 #endif
-    }
-    else
-    {
-      if (modeOrderBeforeNitro > 0)
-      {
-        shrd.modeOrder = modeOrderBeforeNitro;
-
-        blh.notifyModeOrder(shrd.modeOrder);
-
-#if DEBUG_DISPLAY_NITRO
-        Serial.print(" !!!!!!!!!!!!! ACTION_Nitro_boost STOPPED !!!!!!!!!!!!! ");
-        Serial.println(shrd.modeOrder);
-#endif
-
-        modeOrderBeforeNitro = -1;
-      }
-    }
   }
-  if (settings.getS3F().Button_2_long_press_action == settings.ACTION_Nitro_boost)
+  else
   {
-    if (button2LpDuration > 0)
+    if (modeOrderBeforeNitro > 0)
     {
-      if (modeOrderBeforeNitro < 0)
-      {
-        modeOrderBeforeNitro = shrd.modeOrder;
-      }
-      shrd.modeOrder = 3;
+      shrd.modeOrder = modeOrderBeforeNitro;
+
       blh.notifyModeOrder(shrd.modeOrder);
 
 #if DEBUG_DISPLAY_NITRO
-      Serial.print(" !!!!!!!!!!!!! ACTION_Nitro_boost in PROGRESS !!!!!!!!!!!!! ");
+      Serial.print(" !!!!!!!!!!!!! ACTION_Nitro_boost STOPPED !!!!!!!!!!!!! ");
       Serial.println(shrd.modeOrder);
 #endif
-    }
-    else
-    {
-      if (modeOrderBeforeNitro > 0)
-      {
-        shrd.modeOrder = modeOrderBeforeNitro;
 
-        blh.notifyModeOrder(shrd.modeOrder);
-
-#if DEBUG_DISPLAY_NITRO
-        Serial.print(" !!!!!!!!!!!!! ACTION_Nitro_boost STOPPED !!!!!!!!!!!!! ");
-        Serial.println(shrd.modeOrder);
-#endif
-
-        modeOrderBeforeNitro = -1;
-      }
+      modeOrderBeforeNitro = -1;
     }
   }
 
@@ -990,8 +957,7 @@ uint8_t modifySpeed(char var, char data_buffer[])
             (data_buffer_cntrl_ori[5] - data_buffer_cntrl_ori[3]) & 0xff,
             (data_buffer_cntrl_ori[6]) & 0xff,
             (data_buffer_cntrl_ori[7] - data_buffer_cntrl_ori[3]) & 0xff,
-            (data_buffer_cntrl_ori[8] - data_buffer_cntrl_ori[3]) & 0xff
-            );
+            (data_buffer_cntrl_ori[8] - data_buffer_cntrl_ori[3]) & 0xff);
     Serial.println(print_buffer);
 
     data_buffer[7] = (((high + regulatorOffset) & 0xff) + data_buffer_cntrl_ori[3]) & 0xff;
@@ -1115,45 +1081,47 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
       {
 #if ALLOW_CNTRL_TO_LCD_MODIFICATIONS
         //var = data_buffer_cntrl_ori[3];
-        isModified_CntrlToLcd = true;
+//        isModified_CntrlToLcd = true;
 #endif
       }
     }
-  }
-  // GENERATE CHECKSUM
-  if (i == 14)
-  {
 
-    if ((isModified_LcdToCntrl == 1) && (serialMode == MODE_LCD_TO_CNTRL))
+    // GENERATE CHECKSUM
+    if (i == 14)
     {
-      var = getCheckSum(data_buffer_mod);
+
+      if ((isModified_LcdToCntrl == 1) && (serialMode == MODE_LCD_TO_CNTRL))
+      {
+        var = getCheckSum(data_buffer_mod);
 
 #if DEBUG_SERIAL_CHECKSUM_LCD_TO_CNTRL
-      char print_buffer[500];
-      sprintf(print_buffer, "%02x %02x",
-              oldChecksum,
-              var);
+        char print_buffer[500];
+        sprintf(print_buffer, "%02x %02x",
+                oldChecksum,
+                var);
 
-      Serial.print(" ===> modified checksum LCD_TO_CNTRL : ");
-      Serial.println(print_buffer);
+        Serial.print(" ===> modified checksum LCD_TO_CNTRL : ");
+        Serial.println(print_buffer);
 #endif
 
-      isModified_LcdToCntrl = 0;
-    }
-    else if (((isModified_CntrlToLcd) == 1) && (i == 14) && (serialMode == MODE_CNTRL_TO_LCD))
-    {
-      var = getCheckSum(data_buffer_mod);
+        isModified_LcdToCntrl = 0;
+      }
+      else if (((isModified_CntrlToLcd) == 1) && (i == 14) && (serialMode == MODE_CNTRL_TO_LCD))
+      {
+        var = getCheckSum(data_buffer_mod);
 
 #if DEBUG_SERIAL_CHECKSUM_CNTRL_TO_LCD
-      char print_buffer[500];
-      sprintf(print_buffer, "%02x",
-              var);
+        char print_buffer[500];
+        sprintf(print_buffer, "%02x %02x",
+                oldChecksum,
+                var);
 
-      Serial.print(" ===> modified checksum CNTRL_TO_LCD : ");
-      Serial.println(print_buffer);
+        Serial.print(" ===> modified checksum CNTRL_TO_LCD : ");
+        Serial.println(print_buffer);
 #endif
 
-      isModified_CntrlToLcd = 0;
+        isModified_CntrlToLcd = 0;
+      }
     }
 
     data_buffer_mod[i] = var;
@@ -1173,7 +1141,7 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
         notifyBleLogFrame(serialMode, data_buffer_mod, checksum);
 #endif
 #if DEBUG_DISPLAY_FRAME_CNTRL_TO_LCD
-        displayFrame(serialMode, data_buffer_mod, checksum);
+//        displayFrame(serialMode, data_buffer_mod, checksum);
         displayFrame(serialMode, data_buffer_ori, checksum);
 #endif
 #if DEBUG_DISPLAY_DECODED_FRAME_CNTRL_TO_LCD
@@ -1311,19 +1279,21 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 
 void processButton1Click()
 {
-  if (button1CStatus == ACTION_OFF)
+  if (button1ClickStatus == ACTION_OFF)
   {
-    button1CStatus = ACTION_ON;
+    button1ClickStatus = ACTION_ON;
   }
   else
   {
-    button1CStatus = ACTION_OFF;
+    button1ClickStatus = ACTION_OFF;
   }
 
-  processAuxEvent(1);
+  processAuxEvent(1, false);
+  processSpeedLimiterEvent(1, false);
+  processLockEvent(1, false);
 
   Serial.print("processButton1Click : ");
-  Serial.println(button1CStatus);
+  Serial.println(button1ClickStatus);
 }
 
 void processButton1LpStart()
@@ -1336,10 +1306,6 @@ void processButton1LpStart()
 void processButton1LpDuring()
 {
   button1LpDuration = button1.getPressedTicks();
-  /*
-  Serial.print("processButton1LpDuring : ");
-  Serial.println(button1LpDuration);
-  */
 }
 
 void processButton1LpStop()
@@ -1347,32 +1313,91 @@ void processButton1LpStop()
   Serial.print("processButton1LpStop : ");
   Serial.println(button1LpDuration);
 
-  processAuxEvent(1);
+  processAuxEvent(1, true);
+  processSpeedLimiterEvent(1, true);
+  processLockEvent(1, true);
 
   button1LpDuration = 0;
 }
 
 void processButton1()
 {
-  if (button1CStatus == ACTION_ON)
+  if (button1ClickStatus == ACTION_ON)
   {
     digitalWrite(PIN_OUT_LED_BUTTON1, HIGH);
   }
-  else if (button1CStatus == ACTION_OFF)
+  else if (button1ClickStatus == ACTION_OFF)
   {
     digitalWrite(PIN_OUT_LED_BUTTON1, LOW);
   }
 }
 
-void processButton2()
+////////////////////////////////////////////
+
+void processButton2Click()
 {
+  if (button2ClickStatus == ACTION_OFF)
+  {
+    button2ClickStatus = ACTION_ON;
+  }
+  else
+  {
+    button2ClickStatus = ACTION_OFF;
+  }
+
+  processAuxEvent(2, false);
+  processSpeedLimiterEvent(2, false);
+  processLockEvent(2, false);
+
+  Serial.print("processButton2Click : ");
+  Serial.println(button2ClickStatus);
 }
 
-void processAuxEvent(uint8_t buttonId)
+void processButton2LpStart()
+{
+  button2LpDuration = button2.getPressedTicks();
+  Serial.print("processButton2LpStart : ");
+  Serial.println(button2LpDuration);
+}
+
+void processButton2LpDuring()
+{
+  button2LpDuration = button2.getPressedTicks();
+}
+
+void processButton2LpStop()
+{
+  Serial.print("processButton2LpStop : ");
+  Serial.println(button2LpDuration);
+
+  processAuxEvent(2, true);
+  processSpeedLimiterEvent(2, true);
+  processLockEvent(2, true);
+
+  button2LpDuration = 0;
+}
+
+void processButton2()
+{
+  if (button2ClickStatus == ACTION_ON)
+  {
+    digitalWrite(PIN_OUT_LED_BUTTON2, HIGH);
+  }
+  else if (button2ClickStatus == ACTION_OFF)
+  {
+    digitalWrite(PIN_OUT_LED_BUTTON2, LOW);
+  }
+}
+//////////////////////////
+
+void processAuxEvent(uint8_t buttonId, bool isLongPress)
 {
 
   // process AUX order -- button 1
-  if ((buttonId == 1) && (settings.getS3F().Button_1_short_press_action == settings.ACTION_Aux_on_off))
+  if (((buttonId == 1) && (!isLongPress) && (settings.getS3F().Button_1_short_press_action == settings.ACTION_Aux_on_off)) ||
+      ((buttonId == 1) && (isLongPress) && (settings.getS3F().Button_1_long_press_action == settings.ACTION_Aux_on_off)) ||
+      ((buttonId == 2) && (!isLongPress) && (settings.getS3F().Button_2_short_press_action == settings.ACTION_Aux_on_off)) ||
+      ((buttonId == 2) && (isLongPress) && (settings.getS3F().Button_2_long_press_action == settings.ACTION_Aux_on_off)))
   {
     if (shrd.auxOrder == 0)
     {
@@ -1383,20 +1408,49 @@ void processAuxEvent(uint8_t buttonId)
       shrd.auxOrder = 0;
     }
     blh.notifyAuxOrder(shrd.auxOrder);
-  }
 
-  // process AUX order -- button 2
-  if ((buttonId == 2) && (settings.getS3F().Button_2_short_press_action == settings.ACTION_Aux_on_off))
+    Serial.print("processAuxEvent => ok / ");
+    Serial.println(shrd.auxOrder);
+  }
+}
+
+void processSpeedLimiterEvent(uint8_t buttonId, bool isLongPress)
+{
+
+  // process SpeedLimiter
+  if (((buttonId == 1) && (!isLongPress) && (settings.getS3F().Button_1_short_press_action == settings.ACTION_Startup_speed_limitation_disable)) ||
+      ((buttonId == 1) && (isLongPress) && (settings.getS3F().Button_1_long_press_action == settings.ACTION_Startup_speed_limitation_disable)) ||
+      ((buttonId == 2) && (!isLongPress) && (settings.getS3F().Button_2_short_press_action == settings.ACTION_Startup_speed_limitation_disable)) ||
+      ((buttonId == 2) && (isLongPress) && (settings.getS3F().Button_2_long_press_action == settings.ACTION_Startup_speed_limitation_disable)))
   {
-    if (shrd.auxOrder == 0)
+    if (shrd.speedLimiter == 0)
     {
-      shrd.auxOrder = 1;
+      shrd.speedLimiter = 1;
     }
     else
     {
-      shrd.auxOrder = 0;
+      shrd.speedLimiter = 0;
     }
-    blh.notifyAuxOrder(shrd.auxOrder);
+    blh.notifySpeedLimiterStatus(shrd.speedLimiter);
+
+    Serial.print("notifySpeedLimiterStatus => ok / ");
+    Serial.println(shrd.speedLimiter);
+  }
+}
+
+void processLockEvent(uint8_t buttonId, bool isLongPress)
+{
+
+  // process SpeedLimiter
+  if (((buttonId == 1) && (!isLongPress) && (settings.getS3F().Button_1_short_press_action == settings.ACTION_Anti_theft_manual_lock)) ||
+      ((buttonId == 1) && (isLongPress) && (settings.getS3F().Button_1_long_press_action == settings.ACTION_Anti_theft_manual_lock)) ||
+      ((buttonId == 2) && (!isLongPress) && (settings.getS3F().Button_2_short_press_action == settings.ACTION_Anti_theft_manual_lock)) ||
+      ((buttonId == 2) && (isLongPress) && (settings.getS3F().Button_2_long_press_action == settings.ACTION_Anti_theft_manual_lock)))
+  {
+    blh.forceBleLock();
+    blh.notifyBleLock();
+
+    Serial.println("processLockEvent => ok / ON");
   }
 }
 
@@ -1456,10 +1510,11 @@ void processVoltage()
   // eject false reading
   if (voltageStatus == 4095)
   {
+/*
     Serial.print("Voltage read : ");
     Serial.print(voltageStatus);
     Serial.println(" => eject ");
-
+*/
 #if DEBUG_BLE_DISPLAY_VOLTAGE
     char print_buffer[500];
     sprintf(print_buffer, "Voltage read 4095 ==> eject");
@@ -1470,9 +1525,11 @@ void processVoltage()
   }
   if (voltageStatus < 900)
   {
+    /*
     Serial.print("Voltage read : ");
     Serial.print(voltageStatus);
     Serial.println(" => eject ");
+    */
 
 #if DEBUG_BLE_DISPLAY_VOLTAGE
     char print_buffer[500];

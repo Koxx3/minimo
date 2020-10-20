@@ -31,6 +31,7 @@ public:
     static void notifyTemperatureStatus(uint32_t);
     static void notifyHumidityStatus(uint32_t);
     static void notifyAuxOrder(uint8_t);
+    static void notifySpeedLimiterStatus(uint8_t);
     static void setSharedData(SharedData*);
 
     static BLEScan *pBLEScan;

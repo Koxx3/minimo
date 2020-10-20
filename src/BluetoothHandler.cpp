@@ -536,7 +536,7 @@ void BluetoothHandler::init(Settings *data)
             }
             else if (pCharacteristic->getUUID().toString() == SPEED_LIMITER_CHARACTERISTIC_UUID)
             {
-                pCharacteristicHumidityStatus->setValue((uint8_t *)&shrd->speedLimiter, 1);
+                pCharacteristicSpeedLimiter->setValue((uint8_t *)&shrd->speedLimiter, 1);
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%d", shrd->speedLimiter);
@@ -1078,6 +1078,12 @@ void BluetoothHandler::notifyHumidityStatus(uint32_t val)
 {
     pCharacteristicHumidityStatus->setValue((uint8_t *)&val, 4);
     pCharacteristicHumidityStatus->notify();
+}
+
+void BluetoothHandler::notifySpeedLimiterStatus(uint8_t val)
+{
+    pCharacteristicSpeedLimiter->setValue((uint8_t *)&val, 1);
+    pCharacteristicSpeedLimiter->notify();
 }
 
 void BluetoothHandler::notifyAuxOrder(uint8_t val)

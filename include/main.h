@@ -12,7 +12,12 @@ void processButton1LpDuring();
 void processButton1LpStop();
 
 void processButton2Click();
-void processButton2DoubleClick();
+void processButton2LpStart();
+void processButton2LpDuring();
+void processButton2LpStop();
 
-void processAuxEvent(uint8_t buttonId);
+void processSpeedLimiterEvent(uint8_t, bool);
+void processLockEvent(uint8_t, bool);
+void processAuxEvent(uint8_t, bool);
+
 void resetPid();
