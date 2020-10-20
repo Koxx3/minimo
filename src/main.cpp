@@ -28,6 +28,8 @@
 #include "OneButton.h"
 #include "EEPROM_storage.h"
 
+#include <PID_v1.h>
+
 //////------------------------------------
 ////// Defines
 
@@ -136,6 +138,11 @@ Settings settings;
 
 BluetoothHandler blh;
 
+double pidSetpoint, pidInput, pidOutput;
+PID pidSpeed(&pidInput, &pidOutput, &pidSetpoint, shrd.speedPidKp, shrd.speedPidKi, shrd.speedPidKd, DIRECT);
+
+//*****************************
+
 // BYTE 3 FROM LCD TO CONTRL ... for each sequence number // brute force
 const byte modeLcd0[256] = {0x80, 0x05, 0x06, 0x2b, 0x34, 0x29, 0x2a, 0x2f, 0x28, 0x2d, 0x2e, 0x53, 0x7c, 0x51, 0x52, 0x57, 0x50, 0x55, 0x56, 0x7b, 0x84, 0x79, 0x7a, 0x7f, 0x78,
                             0x7d, 0x7e, 0x63, 0x0c, 0x61, 0x62, 0x67, 0x60, 0x65, 0x66, 0x0b, 0x14, 0x09, 0x0a, 0x0f, 0x08, 0x0d, 0x0e, 0x33, 0x5c, 0x31, 0x32, 0x37, 0x30, 0x35, 0x36, 0x5b, 0x64, 0x59, 0x5a,
@@ -197,6 +204,23 @@ void setupEPROMM()
   EEPROM.begin(EEPROM_SIZE);
 }
 
+void setupPID()
+{
+
+  pidSetpoint = shrd.speedLimit;
+
+  //turn the PID on
+  pidSpeed.SetMode(AUTOMATIC);
+  //myPID.SetSampleTime(10);
+  //myPID.SetOutputLimits(0,100);
+}
+
+void resetPid()
+{
+  pidSpeed.SetTunings(shrd.speedPidKp, shrd.speedPidKi, shrd.speedPidKd);
+  Serial.println("Set PID tunings");
+}
+
 void initDataWithSettings()
 {
   shrd.speedLimiter = (settings.getS1F().Speed_limiter_at_startup == 1);
@@ -244,6 +268,9 @@ void setup()
 
   Serial.println(PSTR("   buttons ..."));
   setupButtons();
+
+  Serial.println(PSTR("   PID ..."));
+  setupPID();
 
   // force BLE lock mode
   blh.forceBleLock();
@@ -334,7 +361,7 @@ void displayDecodedFrame(int mode, char data_buffer[], byte checksum)
   char print_buffer[500];
 
   // for excel
-  sprintf(print_buffer, "%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
+  sprintf(print_buffer, "%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x / %2.2f A / %2.2f V /  %2d /  %2d",
           data_buffer[1],
           (data_buffer[4] - data_buffer[3]) & 0xff,
           (data_buffer[5] - data_buffer[3]) & 0xff,
@@ -344,7 +371,11 @@ void displayDecodedFrame(int mode, char data_buffer[], byte checksum)
           (data_buffer[10] - data_buffer[3]) & 0xff,
           (data_buffer[11] - data_buffer[3]) & 0xff,
           (data_buffer[12] - data_buffer[3]) & 0xff,
-          (data_buffer[13] - data_buffer[3]) & 0xff);
+          (data_buffer[13] - data_buffer[3]) & 0xff,
+          ((float)shrd.currentFilterMean) / 1000.0,
+          ((float)shrd.voltageFilterMean) / 1000.0,
+          ((data_buffer[10] - data_buffer[3]) & 0xff) >> 1,
+          ((data_buffer[10] - data_buffer[3]) & 0xff) >> 2);
 
   Serial.println(print_buffer);
 }
@@ -610,6 +641,7 @@ uint8_t modifyPower(char var, char data_buffer[])
 
   float bat_med_save_voltage = ((bat_max - bat_min) * settings.getS3F().Battery_saving_medium_voltage / 100.0) + bat_min;
 
+  /*
   Serial.print("voltage : ");
   Serial.print(voltage);
   Serial.print("V / bat_min : ");
@@ -621,6 +653,7 @@ uint8_t modifyPower(char var, char data_buffer[])
   Serial.print("% / bat_med_save_voltage : ");
   Serial.print(bat_med_save_voltage);
   Serial.print("V");
+  */
 
   // lock escooter by reducing power to 5%
   if (blh.bleLockStatus == true)
@@ -630,7 +663,25 @@ uint8_t modifyPower(char var, char data_buffer[])
   }
   else if (shrd.speedLimiter == 1)
   {
-    newPower = 37;
+    //    newPower = 37;
+
+    // PID regulation for 25 km/h
+    newPower = pidOutput / 2.55;
+    if (newPower < 5)
+    {
+      newPower = 5;
+    }
+
+#if DEBUG_DISPLAY_SPEED_PID
+    Serial.print(" / output = ");
+    Serial.print(Output);
+#endif
+
+#if DEBUG_DISPLAY_SPEED_PID
+    Serial.print(" / new_power = ");
+    Serial.print(newPower);
+    Serial.println("%");
+#endif
   }
   else
   {
@@ -647,12 +698,15 @@ uint8_t modifyPower(char var, char data_buffer[])
     else if (voltage < bat_med_save_voltage)
     {
       float factor = ((min_power - 100) / (bat_min - bat_med_save_voltage));
-      Serial.print(" / factor = ");
-      Serial.print(factor);
 
       float origin = 100 - (factor * bat_med_save_voltage);
+
+      /*
+      Serial.print(" / factor = ");
+      Serial.print(factor);
       Serial.print(" / origin = ");
       Serial.print(origin);
+*/
 
       if (newPower < var)
       {
@@ -663,10 +717,6 @@ uint8_t modifyPower(char var, char data_buffer[])
     {
       newPower = var;
     }
-
-    Serial.print(" / new_power = ");
-    Serial.print(newPower);
-    Serial.println("%");
   }
 
   return newPower;
@@ -875,14 +925,14 @@ uint8_t modifyAccel(char var, char data_buffer[])
   return var;
 }
 
-uint8_t getSpeed()
+double getSpeed()
 {
   uint8_t high1 = (data_buffer_cntrl_ori[7] - data_buffer_cntrl_ori[3]) & 0xff;
   uint8_t offset_regul = (data_buffer_cntrl_ori[5] - data_buffer_cntrl_ori[3]) & 0xff;
   uint8_t high2 = (high1 - offset_regul) & 0xff;
   uint8_t low = (data_buffer_cntrl_ori[8] - data_buffer_cntrl_ori[3]);
 
-  int speed = (((int)high2 * 256) + (low));
+  double speed = (((int)high2 * 256) + (low));
   speed = speed * (settings.getS1F().Wheel_size / 10.0) / settings.getS1F().Motor_pole_number / 10.5;
 
   // eject error values
@@ -892,35 +942,62 @@ uint8_t getSpeed()
   return speed;
 }
 
-uint16_t generateSpeedRawValue(int fakeSpeed)
+uint16_t generateSpeedRawValue(double speed)
 {
   uint16_t rawValue;
-  rawValue = fakeSpeed / (settings.getS1F().Wheel_size / 10.0) * settings.getS1F().Motor_pole_number * 10.5;
+  double wheelFactor = (settings.getS1F().Wheel_size / 10.0);
+  double polesFactor = settings.getS1F().Motor_pole_number * 10.5;
+  rawValue = (uint16_t)(speed / wheelFactor * polesFactor);
 
   return rawValue;
 }
 
-uint8_t modifySpeed(char var, char data_buffer[], int speedFake)
+uint8_t modifySpeed(char var, char data_buffer[])
 {
 
   uint8_t isModified = 0;
 
   // LCD Speed adjustement
-  if (settings.getS1F().LCD_Speed_adjustement != 0)
+  if ((settings.getS1F().LCD_Speed_adjustement != 0) || (shrd.speedLimiter == 1))
   {
-    uint16_t rawSpeed = generateSpeedRawValue(shrd.speedCurrent * ((settings.getS1F().LCD_Speed_adjustement + 100) / 100.0));
+
+    double speedToProcess = shrd.speedCurrent; //shrd.speedCurrent * ((settings.getS1F().LCD_Speed_adjustement + 100) / 100.0);
+
+    if ((shrd.speedLimiter == 1) && (speedToProcess > shrd.speedLimit))
+    {
+      speedToProcess = shrd.speedLimit;
+    }
+
+    uint16_t rawSpeed = generateSpeedRawValue(speedToProcess);
 
     uint8_t low = rawSpeed & 0xff;
     uint8_t high = (rawSpeed >> 8) & 0xff;
 
-    uint8_t regulatorOffset = data_buffer[5] - data_buffer[3];
+    uint8_t regulatorOffset = (data_buffer_cntrl_ori[5] - data_buffer_cntrl_ori[3]) & 0xff;
     //uint8_t regulatorOffset = 0;
 
-    data_buffer[7] = (((high + regulatorOffset) & 0xff) + data_buffer[3]) & 0xff;
-    data_buffer[8] = (low + data_buffer[3]) & 0xff;
+    char print_buffer[500];
+    sprintf(print_buffer, "speed : %.2f / %02x %02x / %02x / %02x %02x / %02x %02x %02x %02x %02x %02x",
+            speedToProcess,
+            (((high + regulatorOffset) & 0xff) + data_buffer_cntrl_ori[3]) & 0xff,
+            (low + data_buffer_cntrl_ori[3]) & 0xff,
+            regulatorOffset,
+            data_buffer_cntrl_ori[7],
+            data_buffer_cntrl_ori[8],
 
-    isModified = 1;
+            (data_buffer_cntrl_ori[3] - data_buffer_cntrl_ori[3]) & 0xff,
+            (data_buffer_cntrl_ori[4] - data_buffer_cntrl_ori[3]) & 0xff,
+            (data_buffer_cntrl_ori[5] - data_buffer_cntrl_ori[3]) & 0xff,
+            (data_buffer_cntrl_ori[6]) & 0xff,
+            (data_buffer_cntrl_ori[7] - data_buffer_cntrl_ori[3]) & 0xff,
+            (data_buffer_cntrl_ori[8] - data_buffer_cntrl_ori[3]) & 0xff
+            );
+    Serial.println(print_buffer);
+
+    data_buffer[7] = (((high + regulatorOffset) & 0xff) + data_buffer_cntrl_ori[3]) & 0xff;
+    data_buffer[8] = (low + data_buffer_cntrl_ori[3]) & 0xff;
   }
+  isModified = 1;
 
   return isModified;
 }
@@ -1020,49 +1097,63 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
       {
 #if ALLOW_CNTRL_TO_LCD_MODIFICATIONS
         shrd.speedCurrent = getSpeed();
-        isModified_CntrlToLcd = modifySpeed(var, data_buffer_mod, shrd.speedFake);
+
+        pidInput = shrd.speedCurrent;
+        pidSpeed.Compute();
+
+#if DEBUG_DISPLAY_SPEED_PID
+        Serial.print("Input = ");
+        Serial.print(Input);
+#endif
+
+        isModified_CntrlToLcd = modifySpeed(var, data_buffer_mod);
 #endif
 
         shrd.speedOld = shrd.speedCurrent;
       }
-    }
-
-    // GENERATE CHECKSUM
-    if (i == 14)
-    {
-
-      if ((isModified_LcdToCntrl == 1) && (serialMode == MODE_LCD_TO_CNTRL))
+      if (i == 10)
       {
-        var = getCheckSum(data_buffer_mod);
+#if ALLOW_CNTRL_TO_LCD_MODIFICATIONS
+        //var = data_buffer_cntrl_ori[3];
+        isModified_CntrlToLcd = true;
+#endif
+      }
+    }
+  }
+  // GENERATE CHECKSUM
+  if (i == 14)
+  {
+
+    if ((isModified_LcdToCntrl == 1) && (serialMode == MODE_LCD_TO_CNTRL))
+    {
+      var = getCheckSum(data_buffer_mod);
 
 #if DEBUG_SERIAL_CHECKSUM_LCD_TO_CNTRL
-        char print_buffer[500];
-        sprintf(print_buffer, "%02x %02x",
-                oldChecksum,
-                var);
+      char print_buffer[500];
+      sprintf(print_buffer, "%02x %02x",
+              oldChecksum,
+              var);
 
-        Serial.print(" ===> modified checksum LCD_TO_CNTRL : ");
-        Serial.println(print_buffer);
+      Serial.print(" ===> modified checksum LCD_TO_CNTRL : ");
+      Serial.println(print_buffer);
 #endif
 
-        isModified_LcdToCntrl = 0;
-      }
-      else if (((isModified_CntrlToLcd) == 1) && (i == 14) && (serialMode == MODE_CNTRL_TO_LCD))
-      {
-        var = getCheckSum(data_buffer_mod);
+      isModified_LcdToCntrl = 0;
+    }
+    else if (((isModified_CntrlToLcd) == 1) && (i == 14) && (serialMode == MODE_CNTRL_TO_LCD))
+    {
+      var = getCheckSum(data_buffer_mod);
 
 #if DEBUG_SERIAL_CHECKSUM_CNTRL_TO_LCD
-        char print_buffer[500];
-        sprintf(print_buffer, "%02x %02x",
-                oldChecksum,
-                var);
+      char print_buffer[500];
+      sprintf(print_buffer, "%02x",
+              var);
 
-        Serial.print(" ===> modified checksum CNTRL_TO_LCD : ");
-        Serial.println(print_buffer);
+      Serial.print(" ===> modified checksum CNTRL_TO_LCD : ");
+      Serial.println(print_buffer);
 #endif
 
-        isModified_CntrlToLcd = 0;
-      }
+      isModified_CntrlToLcd = 0;
     }
 
     data_buffer_mod[i] = var;

@@ -15,3 +15,4 @@ void processButton2Click();
 void processButton2DoubleClick();
 
 void processAuxEvent(uint8_t buttonId);
+void resetPid();

@@ -22,9 +22,13 @@ public:
 
     uint8_t speedLimiter = 1;
 
-    uint8_t speedCurrent = 0;
-    uint8_t speedOld = 0;
-    uint8_t speedFake = 25;
+    double speedCurrent = 0.0;
+    double speedOld = 0;
+    double speedLimit = 25;
+    
+    uint32_t speedPidKp = 4;
+    uint32_t speedPidKi = 8;
+    uint32_t speedPidKd = 1;
 
     uint8_t powerReduction = 0;
 

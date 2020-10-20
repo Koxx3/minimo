@@ -56,6 +56,7 @@ public:
     static BLECharacteristic *pCharacteristicSettings2;
     static BLECharacteristic *pCharacteristicSettings3;
     static BLECharacteristic *pCharacteristicAux;
+    static BLECharacteristic *pCharacteristicSpeedPid;
 
     static int8_t bleLockStatus;
     static int8_t blePicclyVisible;

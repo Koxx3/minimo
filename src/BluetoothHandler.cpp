@@ -35,6 +35,7 @@
 #define SETTINGS2_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b1"
 #define SETTINGS3_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b2"
 #define AUX_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b3"
+#define SPEED_PID_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b4"
 
 #define BLE_MTU 128
 
@@ -63,6 +64,7 @@ BLECharacteristic *BluetoothHandler::pCharacteristicFastUpdate;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings2;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings3;
 BLECharacteristic *BluetoothHandler::pCharacteristicAux;
+BLECharacteristic *BluetoothHandler::pCharacteristicSpeedPid;
 
 int8_t BluetoothHandler::bleLockStatus;
 int8_t BluetoothHandler::blePicclyVisible;
@@ -301,7 +303,6 @@ void BluetoothHandler::init(Settings *data)
                 pSecurity->setStaticPIN(settings->getS3F().Bluetooth_pin_code);
 
                 settings->saveSettings();
-
             }
             else if (pCharacteristic->getUUID().toString() == SPEED_LIMITER_CHARACTERISTIC_UUID)
             {
@@ -412,6 +413,25 @@ void BluetoothHandler::init(Settings *data)
                 // notify of current value
                 pCharacteristicAux->setValue((uint8_t *)&shrd->auxOrder, 1);
                 pCharacteristicAux->notify();
+            }
+            else if (pCharacteristic->getUUID().toString() == SPEED_PID_CHARACTERISTIC_UUID)
+            {
+                std::string rxValue = pCharacteristic->getValue();
+
+                memcpy(&shrd->speedPidKp, &rxValue[0], 4);
+                memcpy(&shrd->speedPidKi, &rxValue[4], 4);
+                memcpy(&shrd->speedPidKd, &rxValue[8], 4);
+                /*
+                shrd->speedPidKp = rxValue[0];
+                shrd->speedPidKi = rxValue[1];
+                shrd->speedPidKd = rxValue[2];
+*/
+
+                char print_buffer[500];
+                sprintf(print_buffer, "BLH - Write : speedPidKp = %d / speedPidKi = %d / speedPidKd = %d", shrd->speedPidKp, shrd->speedPidKi, shrd->speedPidKd);
+                Serial.println(print_buffer);
+
+                resetPid();
             }
         }
 
@@ -690,6 +710,10 @@ void BluetoothHandler::init(Settings *data)
             BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
+    pCharacteristicSpeedPid = pService->createCharacteristic(
+        SPEED_PID_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_WRITE);
+
     pCharacteristicSpeed->addDescriptor(new BLE2902());
     pCharacteristicMode->addDescriptor(new BLE2902());
     pCharacteristicBrakeSentOrder->addDescriptor(new BLE2902());
@@ -710,6 +734,7 @@ void BluetoothHandler::init(Settings *data)
     pCharacteristicSettings2->addDescriptor(new BLE2902());
     pCharacteristicSettings3->addDescriptor(new BLE2902());
     pCharacteristicAux->addDescriptor(new BLE2902());
+    pCharacteristicSpeedPid->addDescriptor(new BLE2902());
 
     pCharacteristicSpeed->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicMode->setCallbacks(new BLECharacteristicCallback());
@@ -731,6 +756,7 @@ void BluetoothHandler::init(Settings *data)
     pCharacteristicSettings2->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettings3->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicAux->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicSpeedPid->setCallbacks(new BLECharacteristicCallback());
 
     // Start the service
     pService->start();
