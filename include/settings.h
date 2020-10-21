@@ -42,7 +42,7 @@ typedef enum ButtonAction
     uint8_t Electric_brake_max_value;
     uint16_t Electric_brake_time_between_mode_shift;
     uint8_t Electric_brake_disabled_condition;
-    uint8_t Electric_brake_disabled_voltage_limit;
+    uint8_t Electric_brake_disabled_percent_limit;
     uint8_t Current_loop_mode;
     uint8_t Current_loop_max_current;
     uint8_t Speed_loop_mode;
@@ -51,6 +51,7 @@ typedef enum ButtonAction
     uint8_t Motor_pole_number;
     uint8_t Bluetooth_lock_mode;
     int8_t LCD_Speed_adjustement;
+    int8_t Speed_limiter_max_speed;
 
   } __attribute__((packed));
 #pragma pack(pop)

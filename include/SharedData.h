@@ -24,7 +24,6 @@ public:
 
     double speedCurrent = 0.0;
     double speedOld = 0;
-    double speedLimit = 25;
     
     uint32_t speedPidKp = 4;
     uint32_t speedPidKi = 8;

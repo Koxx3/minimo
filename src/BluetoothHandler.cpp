@@ -452,13 +452,17 @@ void BluetoothHandler::init(Settings *data)
                 pCharacteristicSpeed->setValue((uint8_t *)&shrd->speedCurrent, 1);
 
                 char print_buffer[500];
-                sprintf(print_buffer, "%02x", (int) shrd->speedCurrent);
+                sprintf(print_buffer, "%02x", (int)shrd->speedCurrent);
                 Serial.print("BLH - Read speed : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == BRAKE_STATUS_CHARACTERISTIC_UUID)
             {
-                pCharacteristicBrakeSentOrder->setValue((uint8_t *)&shrd->breakeSentOrder, 1);
+
+                byte value[2];
+                value[0] = shrd->breakeSentOrder;
+                value[1] = shrd->brakeStatus;
+                pCharacteristicBrakeSentOrder->setValue((uint8_t *)&value, 2);
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", shrd->breakeSentOrder);
@@ -927,9 +931,12 @@ void BluetoothHandler::notifyModeOrder(uint8_t val)
     pCharacteristicMode->notify();
 }
 
-void BluetoothHandler::notifyBreakeSentOrder(uint8_t val)
+void BluetoothHandler::notifyBreakeSentOrder(uint8_t order, uint8_t isPressed)
 {
-    pCharacteristicBrakeSentOrder->setValue((uint8_t *)&val, 1);
+    byte value[2];
+    value[0] = order;
+    value[1] = isPressed;
+    pCharacteristicBrakeSentOrder->setValue((uint8_t *)&value, 2);
     pCharacteristicBrakeSentOrder->notify();
 }
 
@@ -1028,7 +1035,8 @@ void BluetoothHandler::processBLE()
 
         if (millis() > shrd->timeLastNotifyBle + period)
         {
-            pCharacteristicSpeed->setValue((uint8_t *)&shrd->speedCurrent, 1);
+            uint8_t speedInt = shrd->speedCurrent;
+            pCharacteristicSpeed->setValue((uint8_t *)&speedInt, 1);
             pCharacteristicSpeed->notify();
 
 #if DEBUG_DISPLAY_BLE_NOTIFY

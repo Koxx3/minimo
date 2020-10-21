@@ -25,7 +25,7 @@ public:
     static void setBleLock(bool);
     static void processBLE();
     static void notifyModeOrder(uint8_t);
-    static void notifyBreakeSentOrder(uint8_t);
+    static void notifyBreakeSentOrder(uint8_t,uint8_t);
     static void notifyEcoOrder(uint8_t);
     static void notifyAccelOrder(uint8_t);
     static void notifyTemperatureStatus(uint32_t);

@@ -53,8 +53,8 @@ void Settings::displaySettings1()
   Serial.println(settings1.fields.Electric_brake_time_between_mode_shift);
   Serial.print("// Electric_brake_disabled_condition : ");
   Serial.println(settings1.fields.Electric_brake_disabled_condition);
-  Serial.print("// Electric_brake_disabled_voltage_limit : ");
-  Serial.println(settings1.fields.Electric_brake_disabled_voltage_limit);
+  Serial.print("// Electric_brake_disabled_percent_limit : ");
+  Serial.println(settings1.fields.Electric_brake_disabled_percent_limit);
   Serial.print("// Current_loop_mode : ");
   Serial.println(settings1.fields.Current_loop_mode);
   Serial.print("// Current_loop_max_current : ");
@@ -71,6 +71,10 @@ void Settings::displaySettings1()
   Serial.println(settings1.fields.Bluetooth_lock_mode);
   Serial.print("// LCD_Speed_adjustement : ");
   Serial.println(settings1.fields.LCD_Speed_adjustement);
+  Serial.print("// Speed_limiter_max_speed : ");
+  Serial.println(settings1.fields.Speed_limiter_max_speed);
+  
+
 }
 
 void Settings::displaySettings2()

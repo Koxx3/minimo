@@ -1,14 +1,9 @@
 //////////////////////////////////////////
 // TODO : current loop
-// TODO : speed loop
-// TODO : speed adjustment
 // TODO : LCD error indicators
-// TODO : buttons management : lock
-// TODO : buttons management : mode Z
-// TODO : buttons management : unlock speed
-// TODO : buttons management : aux on/off
-// TODO : mode Z
+// TODO : mode Z button/settings
 // TODO : auto mode shift on low battery
+// BUG : mode Z / android
 //////////////////////////////////////////
 
 //////------------------------------------
@@ -53,6 +48,8 @@
 
 #define MODE_LCD_TO_CNTRL 0
 #define MODE_CNTRL_TO_LCD 1
+#define MODE_LCD_TO_CNTRL_START_BYTE 0xAA
+#define MODE_CNTRL_TO_LCD_START_BYTE 0x36
 
 #define DATA_BUFFER_SIZE 30
 #define BAUD_RATE 1200
@@ -141,7 +138,7 @@ BluetoothHandler blh;
 double pidSetpoint, pidInput, pidOutput;
 PID pidSpeed(&pidInput, &pidOutput, &pidSetpoint, shrd.speedPidKp, shrd.speedPidKi, shrd.speedPidKd, DIRECT);
 
-//*****************************
+//////------------------------------------
 
 // BYTE 3 FROM LCD TO CONTRL ... for each sequence number // brute force
 const byte modeLcd0[256] = {0x80, 0x05, 0x06, 0x2b, 0x34, 0x29, 0x2a, 0x2f, 0x28, 0x2d, 0x2e, 0x53, 0x7c, 0x51, 0x52, 0x57, 0x50, 0x55, 0x56, 0x7b, 0x84, 0x79, 0x7a, 0x7f, 0x78,
@@ -207,7 +204,7 @@ void setupEPROMM()
 void setupPID()
 {
 
-  pidSetpoint = shrd.speedLimit;
+  pidSetpoint = settings.getS1F().Speed_limiter_max_speed;
 
   //turn the PID on
   pidSpeed.SetMode(AUTOMATIC);
@@ -368,7 +365,9 @@ void displayDecodedFrame(int mode, char data_buffer[], byte checksum)
   char print_buffer[500];
 
   // for excel
-  sprintf(print_buffer, "%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x  %02x / %2.2f A / %2.2f V /  %2d /  %2d",
+  sprintf(print_buffer, "(%d) %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x  %02x /  %2d /  %2d",
+          mode,
+          data_buffer[0],
           data_buffer[1],
           data_buffer[2],
           data_buffer[3],
@@ -382,8 +381,6 @@ void displayDecodedFrame(int mode, char data_buffer[], byte checksum)
           (data_buffer[12] - data_buffer[3]) & 0xff,
           (data_buffer[13] - data_buffer[3]) & 0xff,
           data_buffer[14],
-          ((float)shrd.currentFilterMean) / 1000.0,
-          ((float)shrd.voltageFilterMean) / 1000.0,
           ((data_buffer[10] - data_buffer[3]) & 0xff) >> 1,
           ((data_buffer[10] - data_buffer[3]) & 0xff) >> 2);
 
@@ -423,6 +420,8 @@ void displaySpeed()
 
   Serial.print("speedCurrent : ");
   Serial.print(shrd.speedCurrent);
+  Serial.print(" / speedOld : ");
+  Serial.print(shrd.speedOld);
   Serial.println("");
 }
 
@@ -651,7 +650,7 @@ uint8_t modifyPower(char var, char data_buffer[])
 
 #if DEBUG_DISPLAY_SPEED_PID
     Serial.print(" / output = ");
-    Serial.print(Output);
+    Serial.print(pidOutput);
 #endif
 
 #if DEBUG_DISPLAY_SPEED_PID
@@ -703,14 +702,14 @@ uint8_t getBrakeFromLCD(char var, char data_buffer[])
 {
 
   uint8_t brake = (var - data_buffer[3]) & 0x20;
-  uint8_t brakeStatusNew = brake >> 5;
+  uint8_t brakeStatusFromLcdNew = brake >> 5;
 
   shrd.brakeLcd = var;
 
-  //uint8_t brakeStatusNew = brakeStatus;
-  if ((brakeStatusNew == 1) && (shrd.brakeStatusOld == 0))
+  //uint8_t brakeStatusFromLcdNew = brakeStatus;
+  if ((brakeStatusFromLcdNew == 1) && (shrd.brakeStatusOld == 0))
   {
-    shrd.brakeStatus = brakeStatusNew;
+    shrd.brakeStatus = brakeStatusFromLcdNew;
     timeLastBrake = millis();
 
 #if DEBUG_DISPLAY_DIGITAL_BRAKE
@@ -719,11 +718,11 @@ uint8_t getBrakeFromLCD(char var, char data_buffer[])
 #endif
 
     // notify bluetooth
-    blh.notifyBreakeSentOrder(shrd.breakeSentOrder);
+    blh.notifyBreakeSentOrder(shrd.breakeSentOrder, shrd.brakeStatus);
   }
-  else if ((brakeStatusNew == 0) && (shrd.brakeStatusOld == 1))
+  else if ((brakeStatusFromLcdNew == 0) && (shrd.brakeStatusOld == 1))
   {
-    shrd.brakeStatus = brakeStatusNew;
+    shrd.brakeStatus = brakeStatusFromLcdNew;
 
     // reset to min
     shrd.breakeSentOrder = settings.getS1F().Electric_brake_min_value;
@@ -734,11 +733,11 @@ uint8_t getBrakeFromLCD(char var, char data_buffer[])
 #endif
 
     // notify bluetooth
-    blh.notifyBreakeSentOrder(shrd.breakeSentOrder);
+    blh.notifyBreakeSentOrder(shrd.breakeSentOrder, shrd.brakeStatus);
   }
 
-  shrd.brakeStatusOld = brakeStatusNew;
-  shrd.brakeStatus = brakeStatusNew;
+  shrd.brakeStatusOld = brakeStatusFromLcdNew;
+  shrd.brakeStatus = brakeStatusFromLcdNew;
 
   /*
   char print_buffer[500];
@@ -756,6 +755,16 @@ uint8_t getBrakeFromLCD(char var, char data_buffer[])
 */
 
   return brake;
+}
+
+bool isElectricBrakeForbiden()
+{
+
+  float voltage = shrd.voltageFilterMean / 1000.0;
+  float bat_min = settings.getS3F().Battery_min_voltage / 10.0;
+  float bat_max = settings.getS3F().Battery_max_voltage / 10.0;
+
+  return (voltage > bat_min + (settings.getS1F().Electric_brake_disabled_percent_limit * (bat_max - bat_min)));
 }
 
 uint8_t modifyBrakeFromLCD(char var, char data_buffer[])
@@ -797,7 +806,7 @@ uint8_t modifyBrakeFromLCD(char var, char data_buffer[])
       }
 
       // notify bluetooth
-      blh.notifyBreakeSentOrder(shrd.breakeSentOrder);
+      blh.notifyBreakeSentOrder(shrd.breakeSentOrder, shrd.brakeStatus);
     }
     else
     // progressive brake enabled but brake released
@@ -813,7 +822,7 @@ uint8_t modifyBrakeFromLCD(char var, char data_buffer[])
     if (shrd.breakeSentOrder != shrd.breakeSentOrderOld)
     {
       // notify bluetooth
-      blh.notifyBreakeSentOrder(shrd.breakeSentOrder);
+      blh.notifyBreakeSentOrder(shrd.breakeSentOrder, shrd.brakeStatus);
     }
 
     shrd.breakeSentOrderOld = shrd.breakeSentOrder;
@@ -935,21 +944,23 @@ uint8_t modifySpeed(char var, char data_buffer[], uint8_t byte)
 {
 
   // LCD Speed adjustement
-  double speedToProcess = shrd.speedOld * ((settings.getS1F().LCD_Speed_adjustement + 100) / 100.0);
-
-  if ((shrd.speedLimiter == 1) && (speedToProcess > shrd.speedLimit))
+  if ((settings.getS1F().LCD_Speed_adjustement != 0) || (shrd.speedLimiter == 1))
   {
-    speedToProcess = shrd.speedLimit;
-  }
+    double speedToProcess = shrd.speedOld * ((settings.getS1F().LCD_Speed_adjustement + 100) / 100.0);
 
-  uint16_t rawSpeed = generateSpeedRawValue(speedToProcess);
+    if ((shrd.speedLimiter == 1) && (speedToProcess > settings.getS1F().Speed_limiter_max_speed))
+    {
+      speedToProcess = settings.getS1F().Speed_limiter_max_speed;
+    }
 
-  uint8_t low = rawSpeed & 0xff;
-  uint8_t high = (rawSpeed >> 8) & 0xff;
+    uint16_t rawSpeed = generateSpeedRawValue(speedToProcess);
 
-  uint8_t regulatorOffset = (data_buffer_cntrl_ori[5] - data_buffer_cntrl_ori[3]) & 0xff;
+    uint8_t low = rawSpeed & 0xff;
+    uint8_t high = (rawSpeed >> 8) & 0xff;
 
-  /*
+    uint8_t regulatorOffset = (data_buffer_cntrl_ori[5] - data_buffer_cntrl_ori[3]) & 0xff;
+
+    /*
     char print_buffer[500];
     sprintf(print_buffer, "speed : %.2f / reg %02x / mc %02x %02x / oc %02x %02x / md %02x %02x / od %02x %02x %02x %02x %02x %02x ",
             speedToProcess,
@@ -974,10 +985,12 @@ uint8_t modifySpeed(char var, char data_buffer[], uint8_t byte)
     Serial.print(print_buffer);
     */
 
-  if (byte == 0)
-    return (((high + regulatorOffset) & 0xff) + data_buffer_cntrl_ori[3]) & 0xff;
-  else
-    return (low + data_buffer_cntrl_ori[3]) & 0xff;
+    if (byte == 0)
+      return (((high + regulatorOffset) & 0xff) + data_buffer_cntrl_ori[3]) & 0xff;
+    else
+      return (low + data_buffer_cntrl_ori[3]) & 0xff;
+  }
+  return var;
 }
 
 int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_ori[], char data_buffer_mod[])
@@ -994,7 +1007,7 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
     // LCD -> CNTRL
     if (serialMode == MODE_LCD_TO_CNTRL)
     {
-      if ((var == 0xAA) && (begin_LcdToCntrl == 1))
+      if ((var == MODE_LCD_TO_CNTRL_START_BYTE) && (begin_LcdToCntrl == 1))
       {
         begin_LcdToCntrl = 0;
 
@@ -1008,7 +1021,7 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
     else
     // CNTRL -> LCD
     {
-      if ((var == 0x36) && (begin_CntrlToLcd == 1))
+      if ((var == MODE_CNTRL_TO_LCD_START_BYTE) && (begin_CntrlToLcd == 1))
       {
 
         begin_CntrlToLcd = 0;
@@ -1089,7 +1102,7 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
 
 #if DEBUG_DISPLAY_SPEED_PID
         Serial.print("Input = ");
-        Serial.print(Input);
+        Serial.print(pidInput);
 #endif
 
         var = modifySpeed(var, data_buffer_mod, 1);
@@ -1103,7 +1116,7 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
       if (i == 10)
       {
 #if ALLOW_CNTRL_TO_LCD_MODIFICATIONS
-        //var = data_buffer_cntrl_ori[3];
+//        var = data_buffer_cntrl_ori[3];
 //        isModified_CntrlToLcd = true;
 #endif
       }
@@ -1168,9 +1181,9 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
         displayFrame(serialMode, data_buffer_ori, checksum);
 #endif
 #if DEBUG_DISPLAY_DECODED_FRAME_CNTRL_TO_LCD
-        displayDecodedFrame(serialMode, data_buffer_ori, checksum);
+        //displayDecodedFrame(serialMode, data_buffer_ori, checksum);
         displayDecodedFrame(serialMode, data_buffer_mod, checksum);
-        Serial.println("");
+//        Serial.println("");
 #endif
 #if DEBUG_DISPLAY_SPEED
         displaySpeed();
@@ -1194,7 +1207,7 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
         notifyBleLogFrame(serialMode, data_buffer_mod, checksum);
 #endif
 #if DEBUG_DISPLAY_FRAME_LCD_TO_CNTRL
-        displayFrame(serialMode, data_buffer_mod, checksum);
+        displayFrame(serialMode, data_buffer_ori, checksum);
 #endif
 #if DEBUG_DISPLAY_MODE
         displayMode(data_buffer_mod);
@@ -1203,7 +1216,7 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
 
       if (checksum != data_buffer_ori[14])
       {
-        char log[] = "====> CHECKSUM error ==> reset";
+        char log[] = "====> CHECKSUM error ==> reset ";
         Serial.println(log);
         blh.notifyBleLogs(log);
 
@@ -1240,13 +1253,15 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
   shrd.breakeSentOrder = settings.getS1F().Electric_brake_min_value;
 
   // alarm controler from braking
-  if (brakeAnalogValue > ANALOG_BRAKE_MIN_VALUE)
+  if ((brakeAnalogValue > ANALOG_BRAKE_MIN_VALUE) && (!isElectricBrakeForbiden()))
   {
     digitalWrite(PIN_OUT_BRAKE, 1);
+    shrd.brakeStatus = 1;
   }
   else
   {
     digitalWrite(PIN_OUT_BRAKE, 0);
+    shrd.brakeStatus = 0;
   }
 
   if (settings.getS1F().Electric_brake_progressive_mode == 1)
@@ -1271,9 +1286,9 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
     }
 
     // notify brake LCD value
-    if (shrd.breakeSentOrder != shrd.breakeSentOrderOld)
+    if ((shrd.breakeSentOrder != shrd.breakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
     {
-      blh.notifyBreakeSentOrder(shrd.breakeSentOrder);
+      blh.notifyBreakeSentOrder(shrd.breakeSentOrder, shrd.brakeStatus);
 #if DEBUG_DISPLAY_ANALOG_BRAKE
       Serial.print(" / brake notify => ");
 #endif
@@ -1282,6 +1297,8 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
       blh.notifyBleLogs(print_buffer);
 #endif
     }
+
+    shrd.brakeStatusOld = shrd.brakeStatus;
 
 #if DEBUG_DISPLAY_ANALOG_BRAKE
     Serial.print(" / brakeAnalogValue : ");
