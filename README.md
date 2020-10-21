@@ -77,7 +77,6 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [ ] Convert 100V to 5V
 - [ ] Features    
     - [X] Save settings in non volatile memory
-    - [ ] Disable electric brake with full battery
     - [X] Progressive electric braking (software detection)
     - [ ] Progressive electric braking (hardware on/off detection)
     - [X] Progressive electric braking (hardware analog detection)
@@ -85,9 +84,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [X] Current measure auto calibration (at startup)
     - [X] Current measure manual calibration
     - [X] LCD Speed adjustment
-    - [ ] Calibrate analog brake
     - [X] Speed limiter at startup
-    - [ ] Customize modes with different power / max speed
     - [ ] Remote physical button
         - [*] Nitro Boost continuous
         - [*] Nitro Boost ON/OFF
@@ -95,9 +92,13 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
         - [*] Speed limiter ON/OFF
         - [*] Aux ON/OFF       
         - [*] Lock ON      
-    - [ ] Automatic ECO mode on low battery 
-    - [ ] Configurable speed loop regulation
+    - [*] Disable electric brake with full battery
+    - [*] Automatic ECO mode on low battery 
+    - [*] Configurable speed loop regulation
+    - [ ] Dynamic BLE debug infos
     - [ ] Configurable current loop regulation
+    - [ ] Customize mode Z with different power / max speed
+    - [ ] Calibrate analog brake
     - [ ] Wifi connexion for dashboard display and settings
     - [ ] Advanced diagnosis (serial errors, throtle errors ...)
 - [ ] Android app
