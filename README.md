@@ -94,7 +94,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
         - [*] Lock ON      
     - [*] Disable electric brake with full battery
     - [*] Automatic ECO mode on low battery 
-    - [ ] Configurable speed loop regulation
+    - [*] Configurable speed loop regulation
     - [ ] Dynamic BLE debug infos
     - [ ] Configurable current loop regulation
     - [ ] Customize mode Z with different power / max speed
