@@ -211,11 +211,11 @@ void BluetoothHandler::init(Settings *data)
             if (pCharacteristic->getUUID().toString() == BRAKE_STATUS_CHARACTERISTIC_UUID)
             {
                 std::string rxValue = pCharacteristic->getValue();
-                shrd->breakeSentOrder = rxValue[0];
+                shrd->brakeSentOrder = rxValue[0];
 
                 char print_buffer[500];
-                sprintf(print_buffer, "%02x", shrd->breakeSentOrder);
-                Serial.print("BLH - Write breakeSentOrder : ");
+                sprintf(print_buffer, "%02x", shrd->brakeSentOrder);
+                Serial.print("BLH - Write brakeSentOrder : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == SETTINGS1_CHARACTERISTIC_UUID)
@@ -460,12 +460,12 @@ void BluetoothHandler::init(Settings *data)
             {
 
                 byte value[2];
-                value[0] = shrd->breakeSentOrder;
+                value[0] = shrd->brakeSentOrder;
                 value[1] = shrd->brakeStatus;
                 pCharacteristicBrakeSentOrder->setValue((uint8_t *)&value, 2);
 
                 char print_buffer[500];
-                sprintf(print_buffer, "%02x", shrd->breakeSentOrder);
+                sprintf(print_buffer, "%02x", shrd->brakeSentOrder);
                 Serial.print("BLH - Read breakeSentOrder : ");
                 Serial.println(print_buffer);
             }

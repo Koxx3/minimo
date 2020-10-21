@@ -47,10 +47,10 @@ public:
 
     uint8_t brakeStatus = 0;
     uint8_t brakeStatusOld = 0;
-    int8_t breakeSentOrder = -1;
+    int8_t brakeSentOrder = -1;
     uint8_t brakeLcd = 0;
     int8_t brakeLcdOld = -1;
-    int8_t breakeSentOrderOld = -1;
+    int8_t brakeSentOrderOld = -1;
 
     uint8_t currentCalibOrder = 1;
 

@@ -4,6 +4,7 @@
 // TODO : mode Z button/settings
 // TODO : auto mode shift on low battery
 // BUG : mode Z / android
+// BUG : push button make brake analog read wrong
 //////////////////////////////////////////
 
 //////------------------------------------
@@ -560,9 +561,9 @@ uint8_t modifyMode(char var, char data_buffer[])
 */
 
   // Nitro boost
-  if (((settings.getS3F().Button_1_short_press_action == settings.ACTION_Nitro_boost_cont) && (button1ClickStatus == ACTION_ON)) ||
+  if (((settings.getS3F().Button_1_short_press_action == settings.ACTION_Nitro_boost_on_off) && (button1ClickStatus == ACTION_ON)) ||
       ((settings.getS3F().Button_1_long_press_action == settings.ACTION_Nitro_boost_cont) && (button1LpDuration > 0)) ||
-      ((settings.getS3F().Button_2_short_press_action == settings.ACTION_Nitro_boost_cont) && (button2ClickStatus == ACTION_ON)) ||
+      ((settings.getS3F().Button_2_short_press_action == settings.ACTION_Nitro_boost_on_off) && (button2ClickStatus == ACTION_ON)) ||
       ((settings.getS3F().Button_2_long_press_action == settings.ACTION_Nitro_boost_cont) && (button2LpDuration > 0)))
   {
     if (modeOrderBeforeNitro < 0)
@@ -718,14 +719,14 @@ uint8_t getBrakeFromLCD(char var, char data_buffer[])
 #endif
 
     // notify bluetooth
-    blh.notifyBreakeSentOrder(shrd.breakeSentOrder, shrd.brakeStatus);
+    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus);
   }
   else if ((brakeStatusFromLcdNew == 0) && (shrd.brakeStatusOld == 1))
   {
     shrd.brakeStatus = brakeStatusFromLcdNew;
 
     // reset to min
-    shrd.breakeSentOrder = settings.getS1F().Electric_brake_min_value;
+    shrd.brakeSentOrder = settings.getS1F().Electric_brake_min_value;
 
 #if DEBUG_DISPLAY_DIGITAL_BRAKE
     Serial.print("Brake released at : ");
@@ -733,7 +734,7 @@ uint8_t getBrakeFromLCD(char var, char data_buffer[])
 #endif
 
     // notify bluetooth
-    blh.notifyBreakeSentOrder(shrd.breakeSentOrder, shrd.brakeStatus);
+    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus);
   }
 
   shrd.brakeStatusOld = brakeStatusFromLcdNew;
@@ -773,45 +774,45 @@ uint8_t modifyBrakeFromLCD(char var, char data_buffer[])
   uint32_t currentTime = millis();
 
   // init from LCD brake mode
-  if (shrd.breakeSentOrder == -1)
-    shrd.breakeSentOrder = var;
+  if (shrd.brakeSentOrder == -1)
+    shrd.brakeSentOrder = var;
 
   // progressive mode
   if (settings.getS1F().Electric_brake_progressive_mode == 1)
   {
     if (shrd.brakeStatus == 1)
     {
-      if (shrd.breakeSentOrder < settings.getS1F().Electric_brake_max_value)
+      if (shrd.brakeSentOrder < settings.getS1F().Electric_brake_max_value)
       {
         if (currentTime - timeLastBrake > settings.getS1F().Electric_brake_time_between_mode_shift * 5)
         {
-          shrd.breakeSentOrder = settings.getS1F().Electric_brake_min_value + 5;
+          shrd.brakeSentOrder = settings.getS1F().Electric_brake_min_value + 5;
         }
         else if (currentTime - timeLastBrake > settings.getS1F().Electric_brake_time_between_mode_shift * 4)
         {
-          shrd.breakeSentOrder = settings.getS1F().Electric_brake_min_value + 4;
+          shrd.brakeSentOrder = settings.getS1F().Electric_brake_min_value + 4;
         }
         else if (currentTime - timeLastBrake > settings.getS1F().Electric_brake_time_between_mode_shift * 3)
         {
-          shrd.breakeSentOrder = settings.getS1F().Electric_brake_min_value + 3;
+          shrd.brakeSentOrder = settings.getS1F().Electric_brake_min_value + 3;
         }
         else if (currentTime - timeLastBrake > settings.getS1F().Electric_brake_time_between_mode_shift * 2)
         {
-          shrd.breakeSentOrder = settings.getS1F().Electric_brake_min_value + 2;
+          shrd.brakeSentOrder = settings.getS1F().Electric_brake_min_value + 2;
         }
         else if (currentTime - timeLastBrake > settings.getS1F().Electric_brake_time_between_mode_shift * 1)
         {
-          shrd.breakeSentOrder = settings.getS1F().Electric_brake_min_value + 1;
+          shrd.brakeSentOrder = settings.getS1F().Electric_brake_min_value + 1;
         }
       }
 
       // notify bluetooth
-      blh.notifyBreakeSentOrder(shrd.breakeSentOrder, shrd.brakeStatus);
+      blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus);
     }
     else
     // progressive brake enabled but brake released
     {
-      shrd.breakeSentOrder = settings.getS1F().Electric_brake_min_value;
+      shrd.brakeSentOrder = settings.getS1F().Electric_brake_min_value;
     }
   }
   else
@@ -819,13 +820,13 @@ uint8_t modifyBrakeFromLCD(char var, char data_buffer[])
   {
 
     // notify brake LCD value
-    if (shrd.breakeSentOrder != shrd.breakeSentOrderOld)
+    if (shrd.brakeSentOrder != shrd.brakeSentOrderOld)
     {
       // notify bluetooth
-      blh.notifyBreakeSentOrder(shrd.breakeSentOrder, shrd.brakeStatus);
+      blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus);
     }
 
-    shrd.breakeSentOrderOld = shrd.breakeSentOrder;
+    shrd.brakeSentOrderOld = shrd.brakeSentOrder;
   }
 
 #if DEBUG_DISPLAY_DIGITAL_BRAKE
@@ -833,7 +834,7 @@ uint8_t modifyBrakeFromLCD(char var, char data_buffer[])
   sprintf(print_buffer, "%s %02x %s %02x %s %02x %s %d %s %d %s %d",
           "Brake Status : ",
           brakeStatus,
-          " / breakeSentOrder  : ",
+          " / brakeSentOrder  : ",
           breakeSentOrder,
           " / Current LCD brake  : ",
           var,
@@ -847,7 +848,7 @@ uint8_t modifyBrakeFromLCD(char var, char data_buffer[])
   Serial.println(print_buffer);
 #endif
 
-  return shrd.breakeSentOrder;
+  return shrd.brakeSentOrder;
 }
 
 uint8_t modifyEco(char var, char data_buffer[])
@@ -1250,7 +1251,7 @@ void processSerial()
 uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 {
 
-  shrd.breakeSentOrder = settings.getS1F().Electric_brake_min_value;
+  shrd.brakeSentOrder = settings.getS1F().Electric_brake_min_value;
 
   // alarm controler from braking
   if ((brakeAnalogValue > ANALOG_BRAKE_MIN_VALUE) && (!isElectricBrakeForbiden()))
@@ -1281,14 +1282,14 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 
         diff = (brakeAnalogValue - ANALOG_BRAKE_MIN_VALUE);
         diffStep = diff / step;
-        shrd.breakeSentOrder = diffStep + settings.getS1F().Electric_brake_min_value;
+        shrd.brakeSentOrder = diffStep + settings.getS1F().Electric_brake_min_value;
       }
     }
 
     // notify brake LCD value
-    if ((shrd.breakeSentOrder != shrd.breakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
+    if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
     {
-      blh.notifyBreakeSentOrder(shrd.breakeSentOrder, shrd.brakeStatus);
+      blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus);
 #if DEBUG_DISPLAY_ANALOG_BRAKE
       Serial.print(" / brake notify => ");
 #endif
@@ -1301,7 +1302,7 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
     shrd.brakeStatusOld = shrd.brakeStatus;
 
 #if DEBUG_DISPLAY_ANALOG_BRAKE
-    Serial.print(" / brakeAnalogValue : ");
+    Serial.print("brakeAnalogValue : ");
     Serial.print(brakeAnalogValue);
     Serial.print(" / step : ");
     Serial.print(step);
@@ -1309,25 +1310,27 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
     Serial.print(diff);
     Serial.print(" / diffStep : ");
     Serial.print(diffStep);
-    Serial.print(" / breakeSentOrder : ");
-    Serial.println(shrd.breakeSentOrder);
+    Serial.print(" / brakeSentOrder : ");
+    Serial.print(shrd.brakeSentOrder);
+    Serial.print(" / brakeStatus : ");
+    Serial.println(shrd.brakeStatus);
 #endif
 #if DEBUG_BLE_DISPLAY_ANALOG_BRAKE
     char print_buffer[500];
-    sprintf(print_buffer, "brakeAnalogValue : %d / step : %d / diff : %d / diffStep : %d / breakeSentOrder : %d  / breakeSentOrderOld : %d ",
+    sprintf(print_buffer, "brakeAnalogValue : %d / step : %d / diff : %d / diffStep : %d / brakeSentOrder : %d  / brakeSentOrderOld : %d ",
             brakeAnalogValue,
             step,
             diff,
             diffStep,
-            shrd.breakeSentOrder,
-            shrd.breakeSentOrderOld);
+            shrd.brakeSentOrder,
+            shrd.brakeSentOrderOld);
     blh.notifyBleLogs(print_buffer);
 #endif
   }
 
-  shrd.breakeSentOrderOld = shrd.breakeSentOrder;
+  shrd.brakeSentOrderOld = shrd.brakeSentOrder;
 
-  return shrd.breakeSentOrder;
+  return shrd.brakeSentOrder;
 }
 
 void processButton1Click()
@@ -1366,9 +1369,12 @@ void processButton1LpStop()
   Serial.print("processButton1LpStop : ");
   Serial.println(button1LpDuration);
 
-  processAuxEvent(1, true);
-  processSpeedLimiterEvent(1, true);
-  processLockEvent(1, true);
+  if (button1LpDuration > settings.getS3F().Button_long_press_duration * 1000)
+  {
+    processAuxEvent(1, true);
+    processSpeedLimiterEvent(1, true);
+    processLockEvent(1, true);
+  }
 
   button1LpDuration = 0;
 }
@@ -1423,9 +1429,12 @@ void processButton2LpStop()
   Serial.print("processButton2LpStop : ");
   Serial.println(button2LpDuration);
 
-  processAuxEvent(2, true);
-  processSpeedLimiterEvent(2, true);
-  processLockEvent(2, true);
+  if (button1LpDuration > settings.getS3F().Button_long_press_duration * 1000)
+  {
+    processAuxEvent(2, true);
+    processSpeedLimiterEvent(2, true);
+    processLockEvent(2, true);
+  }
 
   button2LpDuration = 0;
 }
