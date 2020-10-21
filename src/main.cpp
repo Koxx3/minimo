@@ -59,7 +59,7 @@
 #define ANALOG_TO_CURRENT 35
 #define NB_CURRENT_CALIB 100
 
-#define ANALOG_BRAKE_MIN_VALUE 900
+#define ANALOG_BRAKE_MIN_VALUE 920
 #define ANALOG_BRAKE_MAX_VALUE 2300
 
 #define BUTTON_ACTION_1_MODE_Z 0
@@ -92,8 +92,8 @@ HardwareSerial hwSerLcdToCntrl(2);
 
 DHT_nonblocking dht_sensor(PIN_IN_OUT_DHT, DHT_TYPE_22);
 
-OneButton button1(PIN_IN_BUTTON1, true);
-OneButton button2(PIN_IN_BUTTON2, true);
+OneButton button1(PIN_IN_BUTTON1, true, true);
+OneButton button2(PIN_IN_BUTTON2, true, true);
 
 // The actions I ca do...
 typedef enum
@@ -215,6 +215,8 @@ void setupPID()
 
 void resetPid()
 {
+  
+  pidSetpoint = settings.getS1F().Speed_limiter_max_speed;
   pidSpeed.SetTunings(shrd.speedPidKp, shrd.speedPidKi, shrd.speedPidKd);
   Serial.println("Set PID tunings");
 }
@@ -1703,7 +1705,7 @@ void loop()
     processVoltage();
   }
 
-  if (i_loop % 10 == 2)
+  if (i_loop % 10 == 3)
   {
     //modifyBrakeFromLCD();
     //displayBrake();

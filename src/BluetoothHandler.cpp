@@ -302,6 +302,9 @@ void BluetoothHandler::init(Settings *data)
                 // update BLE PIN code
                 pSecurity->setStaticPIN(settings->getS3F().Bluetooth_pin_code);
 
+                // reset speed PID
+                resetPid();
+
                 settings->saveSettings();
             }
             else if (pCharacteristic->getUUID().toString() == SPEED_LIMITER_CHARACTERISTIC_UUID)
