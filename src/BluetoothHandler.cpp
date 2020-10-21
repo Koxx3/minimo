@@ -452,7 +452,7 @@ void BluetoothHandler::init(Settings *data)
                 pCharacteristicSpeed->setValue((uint8_t *)&shrd->speedCurrent, 1);
 
                 char print_buffer[500];
-                sprintf(print_buffer, "%02x", shrd->speedCurrent);
+                sprintf(print_buffer, "%02x", (int) shrd->speedCurrent);
                 Serial.print("BLH - Read speed : ");
                 Serial.println(print_buffer);
             }
@@ -921,6 +921,54 @@ void BluetoothHandler::notifyBleLogs(char *txt)
     pCharacteristicLogs->notify();
 }
 
+void BluetoothHandler::notifyModeOrder(uint8_t val)
+{
+    pCharacteristicMode->setValue((uint8_t *)&val, 1);
+    pCharacteristicMode->notify();
+}
+
+void BluetoothHandler::notifyBreakeSentOrder(uint8_t val)
+{
+    pCharacteristicBrakeSentOrder->setValue((uint8_t *)&val, 1);
+    pCharacteristicBrakeSentOrder->notify();
+}
+
+void BluetoothHandler::notifyEcoOrder(uint8_t val)
+{
+    pCharacteristicEco->setValue((uint8_t *)&val, 1);
+    pCharacteristicEco->notify();
+}
+
+void BluetoothHandler::notifyAccelOrder(uint8_t val)
+{
+    pCharacteristicAccel->setValue((uint8_t *)&val, 1);
+    pCharacteristicAccel->notify();
+}
+
+void BluetoothHandler::notifyTemperatureStatus(uint32_t val)
+{
+    pCharacteristicTemperatureStatus->setValue((uint8_t *)&val, 4);
+    pCharacteristicTemperatureStatus->notify();
+}
+
+void BluetoothHandler::notifyHumidityStatus(uint32_t val)
+{
+    pCharacteristicHumidityStatus->setValue((uint8_t *)&val, 4);
+    pCharacteristicHumidityStatus->notify();
+}
+
+void BluetoothHandler::notifySpeedLimiterStatus(uint8_t val)
+{
+    pCharacteristicSpeedLimiter->setValue((uint8_t *)&val, 1);
+    pCharacteristicSpeedLimiter->notify();
+}
+
+void BluetoothHandler::notifyAuxOrder(uint8_t val)
+{
+    pCharacteristicAux->setValue((uint8_t *)&val, 1);
+    pCharacteristicAux->notify();
+}
+
 void BluetoothHandler::notifyBleLock()
 {
     byte value[4];
@@ -945,9 +993,16 @@ void BluetoothHandler::notifyBleLock()
 #endif
 }
 
-void BluetoothHandler::forceBleLock()
+void BluetoothHandler::setBleLock(bool force)
 {
     // force locking
+    if (force)
+    {
+        bleLockForced = 1;
+        saveBleLockForced();
+    }
+
+    // update lock status
     if (bleLockForced == 1)
         bleLockStatus = 1;
 }
@@ -1042,52 +1097,4 @@ void BluetoothHandler::processBLE()
 void BluetoothHandler::setSharedData(SharedData *data)
 {
     shrd = data;
-}
-
-void BluetoothHandler::notifyModeOrder(uint8_t val)
-{
-    pCharacteristicMode->setValue((uint8_t *)&val, 1);
-    pCharacteristicMode->notify();
-}
-
-void BluetoothHandler::notifyBreakeSentOrder(uint8_t val)
-{
-    pCharacteristicBrakeSentOrder->setValue((uint8_t *)&val, 1);
-    pCharacteristicBrakeSentOrder->notify();
-}
-
-void BluetoothHandler::notifyEcoOrder(uint8_t val)
-{
-    pCharacteristicEco->setValue((uint8_t *)&val, 1);
-    pCharacteristicEco->notify();
-}
-
-void BluetoothHandler::notifyAccelOrder(uint8_t val)
-{
-    pCharacteristicAccel->setValue((uint8_t *)&val, 1);
-    pCharacteristicAccel->notify();
-}
-
-void BluetoothHandler::notifyTemperatureStatus(uint32_t val)
-{
-    pCharacteristicTemperatureStatus->setValue((uint8_t *)&val, 4);
-    pCharacteristicTemperatureStatus->notify();
-}
-
-void BluetoothHandler::notifyHumidityStatus(uint32_t val)
-{
-    pCharacteristicHumidityStatus->setValue((uint8_t *)&val, 4);
-    pCharacteristicHumidityStatus->notify();
-}
-
-void BluetoothHandler::notifySpeedLimiterStatus(uint8_t val)
-{
-    pCharacteristicSpeedLimiter->setValue((uint8_t *)&val, 1);
-    pCharacteristicSpeedLimiter->notify();
-}
-
-void BluetoothHandler::notifyAuxOrder(uint8_t val)
-{
-    pCharacteristicAux->setValue((uint8_t *)&val, 1);
-    pCharacteristicAux->notify();
 }

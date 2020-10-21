@@ -235,6 +235,13 @@ void setupButtons()
   button1.attachLongPressStop(processButton1LpStop);
   button1.setDebounceTicks(50);
   button1.setPressTicks(300);
+
+  button2.attachClick(processButton2Click);
+  button2.attachLongPressStart(processButton2LpStart);
+  button2.attachDuringLongPress(processButton2LpDuring);
+  button2.attachLongPressStop(processButton2LpStop);
+  button2.setDebounceTicks(50);
+  button2.setPressTicks(300);
 }
 
 ////// Setup
@@ -273,7 +280,7 @@ void setup()
   setupPID();
 
   // force BLE lock mode
-  blh.forceBleLock();
+  blh.setBleLock(false);
 
   Serial.println(PSTR("   init data with settings ..."));
   initDataWithSettings();
@@ -361,8 +368,10 @@ void displayDecodedFrame(int mode, char data_buffer[], byte checksum)
   char print_buffer[500];
 
   // for excel
-  sprintf(print_buffer, "%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x / %2.2f A / %2.2f V /  %2d /  %2d",
+  sprintf(print_buffer, "%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x  %02x / %2.2f A / %2.2f V /  %2d /  %2d",
           data_buffer[1],
+          data_buffer[2],
+          data_buffer[3],
           (data_buffer[4] - data_buffer[3]) & 0xff,
           (data_buffer[5] - data_buffer[3]) & 0xff,
           (data_buffer[7] - data_buffer[3]) & 0xff,
@@ -372,6 +381,7 @@ void displayDecodedFrame(int mode, char data_buffer[], byte checksum)
           (data_buffer[11] - data_buffer[3]) & 0xff,
           (data_buffer[12] - data_buffer[3]) & 0xff,
           (data_buffer[13] - data_buffer[3]) & 0xff,
+          data_buffer[14],
           ((float)shrd.currentFilterMean) / 1000.0,
           ((float)shrd.voltageFilterMean) / 1000.0,
           ((data_buffer[10] - data_buffer[3]) & 0xff) >> 1,
@@ -551,10 +561,10 @@ uint8_t modifyMode(char var, char data_buffer[])
 */
 
   // Nitro boost
-  if (((settings.getS3F().Button_1_short_press_action == settings.ACTION_Nitro_boost) && (button1ClickStatus == ACTION_ON)) ||
-      ((settings.getS3F().Button_1_long_press_action == settings.ACTION_Nitro_boost) && (button1LpDuration > 0)) ||
-      ((settings.getS3F().Button_2_short_press_action == settings.ACTION_Nitro_boost) && (button2ClickStatus == ACTION_ON)) ||
-      ((settings.getS3F().Button_2_long_press_action == settings.ACTION_Nitro_boost) && (button2LpDuration > 0)))
+  if (((settings.getS3F().Button_1_short_press_action == settings.ACTION_Nitro_boost_cont) && (button1ClickStatus == ACTION_ON)) ||
+      ((settings.getS3F().Button_1_long_press_action == settings.ACTION_Nitro_boost_cont) && (button1LpDuration > 0)) ||
+      ((settings.getS3F().Button_2_short_press_action == settings.ACTION_Nitro_boost_cont) && (button2ClickStatus == ACTION_ON)) ||
+      ((settings.getS3F().Button_2_long_press_action == settings.ACTION_Nitro_boost_cont) && (button2LpDuration > 0)))
   {
     if (modeOrderBeforeNitro < 0)
     {
@@ -604,7 +614,7 @@ uint8_t modifyPower(char var, char data_buffer[])
   float voltage = shrd.voltageFilterMean / 1000.0;
   float bat_min = settings.getS3F().Battery_min_voltage / 10.0;
   float bat_max = settings.getS3F().Battery_max_voltage / 10.0;
-  float bat_med_save = settings.getS3F().Battery_saving_medium_voltage;
+  //float bat_med_save = settings.getS3F().Battery_saving_medium_voltage;
 
   float bat_med_save_voltage = ((bat_max - bat_min) * settings.getS3F().Battery_saving_medium_voltage / 100.0) + bat_min;
 
@@ -916,41 +926,44 @@ uint16_t generateSpeedRawValue(double speed)
   double polesFactor = settings.getS1F().Motor_pole_number * 10.5;
   rawValue = (uint16_t)(speed / wheelFactor * polesFactor);
 
+  rawValue = rawValue;
+
   return rawValue;
 }
 
-uint8_t modifySpeed(char var, char data_buffer[])
+uint8_t modifySpeed(char var, char data_buffer[], uint8_t byte)
 {
 
-  uint8_t isModified = 0;
-
   // LCD Speed adjustement
-  if ((settings.getS1F().LCD_Speed_adjustement != 0) || (shrd.speedLimiter == 1))
+  double speedToProcess = shrd.speedOld * ((settings.getS1F().LCD_Speed_adjustement + 100) / 100.0);
+
+  if ((shrd.speedLimiter == 1) && (speedToProcess > shrd.speedLimit))
   {
+    speedToProcess = shrd.speedLimit;
+  }
 
-    double speedToProcess = shrd.speedCurrent; //shrd.speedCurrent * ((settings.getS1F().LCD_Speed_adjustement + 100) / 100.0);
+  uint16_t rawSpeed = generateSpeedRawValue(speedToProcess);
 
-    if ((shrd.speedLimiter == 1) && (speedToProcess > shrd.speedLimit))
-    {
-      speedToProcess = shrd.speedLimit;
-    }
+  uint8_t low = rawSpeed & 0xff;
+  uint8_t high = (rawSpeed >> 8) & 0xff;
 
-    uint16_t rawSpeed = generateSpeedRawValue(speedToProcess);
+  uint8_t regulatorOffset = (data_buffer_cntrl_ori[5] - data_buffer_cntrl_ori[3]) & 0xff;
 
-    uint8_t low = rawSpeed & 0xff;
-    uint8_t high = (rawSpeed >> 8) & 0xff;
-
-    uint8_t regulatorOffset = (data_buffer_cntrl_ori[5] - data_buffer_cntrl_ori[3]) & 0xff;
-    //uint8_t regulatorOffset = 0;
-
+  /*
     char print_buffer[500];
-    sprintf(print_buffer, "speed : %.2f / %02x %02x / %02x / %02x %02x / %02x %02x %02x %02x %02x %02x",
+    sprintf(print_buffer, "speed : %.2f / reg %02x / mc %02x %02x / oc %02x %02x / md %02x %02x / od %02x %02x %02x %02x %02x %02x ",
             speedToProcess,
+
+            regulatorOffset,
+
             (((high + regulatorOffset) & 0xff) + data_buffer_cntrl_ori[3]) & 0xff,
             (low + data_buffer_cntrl_ori[3]) & 0xff,
-            regulatorOffset,
+
             data_buffer_cntrl_ori[7],
             data_buffer_cntrl_ori[8],
+
+            high,
+            low,
 
             (data_buffer_cntrl_ori[3] - data_buffer_cntrl_ori[3]) & 0xff,
             (data_buffer_cntrl_ori[4] - data_buffer_cntrl_ori[3]) & 0xff,
@@ -958,14 +971,13 @@ uint8_t modifySpeed(char var, char data_buffer[])
             (data_buffer_cntrl_ori[6]) & 0xff,
             (data_buffer_cntrl_ori[7] - data_buffer_cntrl_ori[3]) & 0xff,
             (data_buffer_cntrl_ori[8] - data_buffer_cntrl_ori[3]) & 0xff);
-    Serial.println(print_buffer);
+    Serial.print(print_buffer);
+    */
 
-    data_buffer[7] = (((high + regulatorOffset) & 0xff) + data_buffer_cntrl_ori[3]) & 0xff;
-    data_buffer[8] = (low + data_buffer_cntrl_ori[3]) & 0xff;
-  }
-  isModified = 1;
-
-  return isModified;
+  if (byte == 0)
+    return (((high + regulatorOffset) & 0xff) + data_buffer_cntrl_ori[3]) & 0xff;
+  else
+    return (low + data_buffer_cntrl_ori[3]) & 0xff;
 }
 
 int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_ori[], char data_buffer_mod[])
@@ -1059,6 +1071,14 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
       }
 
       // modify speed
+      if (i == 7)
+      {
+        var = modifySpeed(var, data_buffer_mod, 0);
+
+        isModified_CntrlToLcd = 1;
+      }
+
+      // modify speed
       if (i == 8)
       {
 #if ALLOW_CNTRL_TO_LCD_MODIFICATIONS
@@ -1072,11 +1092,14 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
         Serial.print(Input);
 #endif
 
-        isModified_CntrlToLcd = modifySpeed(var, data_buffer_mod);
+        var = modifySpeed(var, data_buffer_mod, 1);
 #endif
 
         shrd.speedOld = shrd.speedCurrent;
+
+        isModified_CntrlToLcd = 1;
       }
+
       if (i == 10)
       {
 #if ALLOW_CNTRL_TO_LCD_MODIFICATIONS
@@ -1106,7 +1129,7 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
 
         isModified_LcdToCntrl = 0;
       }
-      else if (((isModified_CntrlToLcd) == 1) && (i == 14) && (serialMode == MODE_CNTRL_TO_LCD))
+      else if ((isModified_CntrlToLcd == 1) && (serialMode == MODE_CNTRL_TO_LCD))
       {
         var = getCheckSum(data_buffer_mod);
 
@@ -1141,16 +1164,29 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
         notifyBleLogFrame(serialMode, data_buffer_mod, checksum);
 #endif
 #if DEBUG_DISPLAY_FRAME_CNTRL_TO_LCD
-//        displayFrame(serialMode, data_buffer_mod, checksum);
+        //        displayFrame(serialMode, data_buffer_mod, checksum);
         displayFrame(serialMode, data_buffer_ori, checksum);
 #endif
 #if DEBUG_DISPLAY_DECODED_FRAME_CNTRL_TO_LCD
+        displayDecodedFrame(serialMode, data_buffer_ori, checksum);
         displayDecodedFrame(serialMode, data_buffer_mod, checksum);
-//        displayDecodedFrame(serialMode, data_buffer_ori, checksum);
+        Serial.println("");
 #endif
 #if DEBUG_DISPLAY_SPEED
         displaySpeed();
 #endif
+
+        /*
+        char print_buffer[500];
+        sprintf(print_buffer, " %02x %02x %02x %02x %02x ",
+
+                (data_buffer_cntrl_ori[9] - data_buffer_cntrl_ori[3]) & 0xff,
+                (data_buffer_cntrl_ori[10] - data_buffer_cntrl_ori[3]) & 0xff,
+                (data_buffer_cntrl_ori[11] - data_buffer_cntrl_ori[3]) & 0xff,
+                (data_buffer_cntrl_ori[12] - data_buffer_cntrl_ori[3]) & 0xff,
+                (data_buffer_cntrl_ori[13] - data_buffer_cntrl_ori[3]) & 0xff);
+        Serial.println(print_buffer);
+        */
       }
       else
       {
@@ -1418,10 +1454,10 @@ void processSpeedLimiterEvent(uint8_t buttonId, bool isLongPress)
 {
 
   // process SpeedLimiter
-  if (((buttonId == 1) && (!isLongPress) && (settings.getS3F().Button_1_short_press_action == settings.ACTION_Startup_speed_limitation_disable)) ||
-      ((buttonId == 1) && (isLongPress) && (settings.getS3F().Button_1_long_press_action == settings.ACTION_Startup_speed_limitation_disable)) ||
-      ((buttonId == 2) && (!isLongPress) && (settings.getS3F().Button_2_short_press_action == settings.ACTION_Startup_speed_limitation_disable)) ||
-      ((buttonId == 2) && (isLongPress) && (settings.getS3F().Button_2_long_press_action == settings.ACTION_Startup_speed_limitation_disable)))
+  if (((buttonId == 1) && (!isLongPress) && (settings.getS3F().Button_1_short_press_action == settings.ACTION_Startup_speed_limitation_on_off)) ||
+      ((buttonId == 1) && (isLongPress) && (settings.getS3F().Button_1_long_press_action == settings.ACTION_Startup_speed_limitation_on_off)) ||
+      ((buttonId == 2) && (!isLongPress) && (settings.getS3F().Button_2_short_press_action == settings.ACTION_Startup_speed_limitation_on_off)) ||
+      ((buttonId == 2) && (isLongPress) && (settings.getS3F().Button_2_long_press_action == settings.ACTION_Startup_speed_limitation_on_off)))
   {
     if (shrd.speedLimiter == 0)
     {
@@ -1442,12 +1478,12 @@ void processLockEvent(uint8_t buttonId, bool isLongPress)
 {
 
   // process SpeedLimiter
-  if (((buttonId == 1) && (!isLongPress) && (settings.getS3F().Button_1_short_press_action == settings.ACTION_Anti_theft_manual_lock)) ||
-      ((buttonId == 1) && (isLongPress) && (settings.getS3F().Button_1_long_press_action == settings.ACTION_Anti_theft_manual_lock)) ||
-      ((buttonId == 2) && (!isLongPress) && (settings.getS3F().Button_2_short_press_action == settings.ACTION_Anti_theft_manual_lock)) ||
-      ((buttonId == 2) && (isLongPress) && (settings.getS3F().Button_2_long_press_action == settings.ACTION_Anti_theft_manual_lock)))
+  if (((buttonId == 1) && (!isLongPress) && (settings.getS3F().Button_1_short_press_action == settings.ACTION_Anti_theft_manual_lock_on)) ||
+      ((buttonId == 1) && (isLongPress) && (settings.getS3F().Button_1_long_press_action == settings.ACTION_Anti_theft_manual_lock_on)) ||
+      ((buttonId == 2) && (!isLongPress) && (settings.getS3F().Button_2_short_press_action == settings.ACTION_Anti_theft_manual_lock_on)) ||
+      ((buttonId == 2) && (isLongPress) && (settings.getS3F().Button_2_long_press_action == settings.ACTION_Anti_theft_manual_lock_on)))
   {
-    blh.forceBleLock();
+    blh.setBleLock(true);
     blh.notifyBleLock();
 
     Serial.println("processLockEvent => ok / ON");

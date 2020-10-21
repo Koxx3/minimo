@@ -22,7 +22,7 @@ public:
     static void bleOnScanResults(BLEScanResults);
     static void notifyBleLock();
     static void notifyBleLogs(char *);
-    static void forceBleLock();
+    static void setBleLock(bool);
     static void processBLE();
     static void notifyModeOrder(uint8_t);
     static void notifyBreakeSentOrder(uint8_t);
