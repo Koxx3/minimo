@@ -86,12 +86,12 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [X] LCD Speed adjustment
     - [X] Speed limiter at startup
     - [ ] Remote physical button
-        - [*] Nitro Boost continuous
-        - [*] Nitro Boost ON/OFF
+        - [X] Speed limiter ON/OFF
+        - [X] Lock ON      
+        - [X] Nitro Boost continuous
+        - [X] Nitro Boost ON/OFF
+        - [X] Aux ON/OFF       
         - [ ] Mode Z ON/OFF
-        - [*] Speed limiter ON/OFF
-        - [*] Aux ON/OFF       
-        - [*] Lock ON      
     - [*] Disable electric brake with full battery
     - [*] Automatic ECO mode on low battery 
     - [*] Configurable speed loop regulation
