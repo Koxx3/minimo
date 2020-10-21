@@ -92,12 +92,13 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
         - [*] Speed limiter ON/OFF
         - [*] Aux ON/OFF       
         - [*] Lock ON      
-    - [ ] Disable electric brake with full battery
-    - [ ] Calibrate analog brake
-    - [ ] Automatic ECO mode on low battery 
+    - [*] Disable electric brake with full battery
+    - [*] Automatic ECO mode on low battery 
     - [ ] Configurable speed loop regulation
+    - [ ] Dynamic BLE debug infos
     - [ ] Configurable current loop regulation
     - [ ] Customize mode Z with different power / max speed
+    - [ ] Calibrate analog brake
     - [ ] Wifi connexion for dashboard display and settings
     - [ ] Advanced diagnosis (serial errors, throtle errors ...)
 - [ ] Android app
