@@ -83,8 +83,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
     - [X] OTA update
     - [X] Current measure auto calibration (at startup)
     - [X] Current measure manual calibration
-    - [X] LCD Speed adjustment
     - [X] Speed limiter at startup
+    - [X] Configurable speed loop regulation
     - [ ] Remote physical button
         - [X] Speed limiter ON/OFF
         - [X] Lock ON      
@@ -94,7 +94,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know.
         - [ ] Mode Z ON/OFF
     - [*] Disable electric brake with full battery
     - [*] Automatic ECO mode on low battery 
-    - [*] Configurable speed loop regulation
+    - [*] LCD Speed adjustment
     - [ ] Dynamic BLE debug infos
     - [ ] Configurable current loop regulation
     - [ ] Customize mode Z with different power / max speed
