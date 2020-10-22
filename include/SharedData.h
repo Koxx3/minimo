@@ -53,6 +53,7 @@ public:
     int8_t brakeSentOrderOld = -1;
 
     uint8_t currentCalibOrder = 1;
+    uint8_t brakeCalibOrder = 1;
 
     uint32_t voltageFilterMean = 0;
     uint32_t currentFilterMean = 0;

@@ -3,6 +3,7 @@
 // TODO : LCD error indicators
 // TODO : mode Z button/settings
 // TODO : auto mode shift on low battery
+// TODO : original regulator perturbation
 // BUG : mode Z / android
 // BUG : push button make brake analog read wrong
 //////////////////////////////////////////
@@ -32,10 +33,10 @@
 #define ALLOW_LCD_TO_CNTRL_MODIFICATIONS 1
 #define ALLOW_CNTRL_TO_LCD_MODIFICATIONS 1
 
-#define PIN_SERIAL_LCD_TO_ESP 25
-#define PIN_SERIAL_ESP_TO_CNTRL 32
-#define PIN_SERIAL_CNTRL_TO_ESP 26
 #define PIN_SERIAL_ESP_TO_LCD 13
+#define PIN_SERIAL_ESP_TO_CNTRL 32
+#define PIN_SERIAL_LCD_TO_ESP 25
+#define PIN_SERIAL_CNTRL_TO_ESP 26
 #define PIN_OUT_RELAY 12
 #define PIN_IN_VOLTAGE 33
 #define PIN_IN_CURRENT 35
@@ -58,8 +59,10 @@
 #define ANALOG_TO_VOLTS 36
 #define ANALOG_TO_CURRENT 35
 #define NB_CURRENT_CALIB 100
+#define NB_BRAKE_CALIB 100
 
 #define ANALOG_BRAKE_MIN_VALUE 920
+#define ANALOG_BRAKE_MIN_OFFSET 75
 #define ANALOG_BRAKE_MAX_VALUE 2300
 
 #define BUTTON_ACTION_1_MODE_Z 0
@@ -111,8 +114,7 @@ SharedData shrd;
 int i_loop = 0;
 
 uint32_t iCurrentCalibOrder = 0;
-
-uint16_t brakeAnalogValue = 0;
+uint32_t iBrakeCalibOrder = 0;
 
 uint16_t voltageStatus = 0;
 uint32_t voltageInMilliVolts = 0;
@@ -130,7 +132,9 @@ int isModified_CntrlToLcd = 0;
 MedianFilter voltageFilter(100, 30000);
 MedianFilter voltageRawFilter(100, 2000);
 MedianFilter currentFilter(100, 1830);
-MedianFilter currentFilterInit(100, 1830);
+MedianFilter currentFilterInit(NB_CURRENT_CALIB, 1830);
+MedianFilter brakeFilter(10, 900);
+MedianFilter brakeFilterInit(NB_BRAKE_CALIB, 900);
 
 Settings settings;
 
@@ -215,10 +219,10 @@ void setupPID()
 
 void resetPid()
 {
-  
+
   pidSetpoint = settings.getS1F().Speed_limiter_max_speed;
   pidSpeed.SetTunings(shrd.speedPidKp, shrd.speedPidKi, shrd.speedPidKd);
-  Serial.println("Set PID tunings");
+  Serial.println("set PID tunings");
 }
 
 void initDataWithSettings()
@@ -510,7 +514,23 @@ uint8_t modifyModeOld(char var, char data_buffer[])
 
 void getBrakeFromAnalog()
 {
-  brakeAnalogValue = analogRead(PIN_IN_BRAKE);
+  uint16_t brakeAnalogValue = analogRead(PIN_IN_BRAKE);
+
+  if (brakeAnalogValue > ANALOG_BRAKE_MAX_VALUE)
+    brakeAnalogValue = ANALOG_BRAKE_MAX_VALUE;
+
+  brakeFilter.in(brakeAnalogValue);
+
+  if ((brakeAnalogValue < 1000) && (shrd.currentCalibOrder == 1))
+
+    brakeFilterInit.in(brakeAnalogValue);
+
+  iBrakeCalibOrder++;
+  if (iBrakeCalibOrder > NB_BRAKE_CALIB)
+  {
+    iBrakeCalibOrder = 0;
+    shrd.brakeCalibOrder = 0;
+  }
 }
 
 uint8_t getMode(char var, char data_buffer[])
@@ -1219,9 +1239,19 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
 
       if (checksum != data_buffer_ori[14])
       {
-        char log[] = "====> CHECKSUM error ==> reset ";
-        Serial.println(log);
-        blh.notifyBleLogs(log);
+
+        if (serialMode == MODE_CNTRL_TO_LCD)
+        {
+          char log[] = "====> CHECKSUM error MODE_CNTRL_TO_LCD ==> reset ";
+          Serial.println(log);
+          blh.notifyBleLogs(log);
+        }
+        else
+        {
+          char log[] = "====> CHECKSUM error MODE_LCD_TO_CNTRL ==> reset ";
+          Serial.println(log);
+          blh.notifyBleLogs(log);
+        }
 
         if (serialMode == MODE_LCD_TO_CNTRL)
           begin_LcdToCntrl = 1;
@@ -1256,7 +1286,7 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
   shrd.brakeSentOrder = settings.getS1F().Electric_brake_min_value;
 
   // alarm controler from braking
-  if ((brakeAnalogValue > ANALOG_BRAKE_MIN_VALUE) && (!isElectricBrakeForbiden()))
+  if ((brakeFilter.getMean() > brakeFilterInit.getMean() + ANALOG_BRAKE_MIN_OFFSET) && (!isElectricBrakeForbiden()))
   {
     digitalWrite(PIN_OUT_BRAKE, 1);
     shrd.brakeStatus = 1;
@@ -1277,12 +1307,10 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
     if (settings.getS1F().Electric_brake_max_value - settings.getS1F().Electric_brake_min_value > 0)
     {
       step = (ANALOG_BRAKE_MAX_VALUE - ANALOG_BRAKE_MIN_VALUE) / (settings.getS1F().Electric_brake_max_value - settings.getS1F().Electric_brake_min_value);
-      if (brakeAnalogValue > ANALOG_BRAKE_MIN_VALUE)
+      if (brakeFilter.getMean() > ANALOG_BRAKE_MIN_VALUE)
       {
-        if (brakeAnalogValue > ANALOG_BRAKE_MAX_VALUE)
-          brakeAnalogValue = ANALOG_BRAKE_MAX_VALUE;
 
-        diff = (brakeAnalogValue - ANALOG_BRAKE_MIN_VALUE);
+        diff = (brakeFilter.getMean() - ANALOG_BRAKE_MIN_VALUE);
         diffStep = diff / step;
         shrd.brakeSentOrder = diffStep + settings.getS1F().Electric_brake_min_value;
       }
@@ -1304,8 +1332,8 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
     shrd.brakeStatusOld = shrd.brakeStatus;
 
 #if DEBUG_DISPLAY_ANALOG_BRAKE
-    Serial.print("brakeAnalogValue : ");
-    Serial.print(brakeAnalogValue);
+    Serial.print("brakeFilter : ");
+    Serial.print(brakeFilter.getMean());
     Serial.print(" / step : ");
     Serial.print(step);
     Serial.print(" / diff : ");
@@ -1315,12 +1343,15 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
     Serial.print(" / brakeSentOrder : ");
     Serial.print(shrd.brakeSentOrder);
     Serial.print(" / brakeStatus : ");
-    Serial.println(shrd.brakeStatus);
+    Serial.print(shrd.brakeStatus);
+    Serial.print(" / brakeFilterInit : ");
+    Serial.println(brakeFilterInit.getMean());
+
 #endif
 #if DEBUG_BLE_DISPLAY_ANALOG_BRAKE
     char print_buffer[500];
     sprintf(print_buffer, "brakeAnalogValue : %d / step : %d / diff : %d / diffStep : %d / brakeSentOrder : %d  / brakeSentOrderOld : %d ",
-            brakeAnalogValue,
+            brakeFilter.getMean(),
             step,
             diff,
             diffStep,
