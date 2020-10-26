@@ -21,3 +21,5 @@ void processLockEvent(uint8_t, bool);
 void processAuxEvent(uint8_t, bool);
 
 void resetPid();
+
+bool isElectricBrakeForbiden();

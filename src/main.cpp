@@ -63,7 +63,7 @@
 #define NB_BRAKE_CALIB 100
 
 #define ANALOG_BRAKE_MIN_VALUE 920
-#define ANALOG_BRAKE_MIN_OFFSET 75
+#define ANALOG_BRAKE_MIN_OFFSET 100
 #define ANALOG_BRAKE_MAX_VALUE 2300
 
 #define BUTTON_ACTION_1_MODE_Z 0
@@ -119,6 +119,8 @@ uint32_t iBrakeCalibOrder = 0;
 
 uint16_t voltageStatus = 0;
 uint32_t voltageInMilliVolts = 0;
+
+uint16_t brakeAnalogValue = 0;
 
 int8_t modeOrderBeforeNitro = -1;
 
@@ -515,7 +517,7 @@ uint8_t modifyModeOld(char var, char data_buffer[])
 
 void getBrakeFromAnalog()
 {
-  uint16_t brakeAnalogValue = analogRead(PIN_IN_BRAKE);
+  brakeAnalogValue = analogRead(PIN_IN_BRAKE);
 
   if (brakeAnalogValue > ANALOG_BRAKE_MAX_VALUE)
     brakeAnalogValue = ANALOG_BRAKE_MAX_VALUE;
@@ -531,6 +533,60 @@ void getBrakeFromAnalog()
   {
     iBrakeCalibOrder = 0;
     shrd.brakeCalibOrder = 0;
+  }
+
+  if (settings.getS1F().Electric_brake_progressive_mode == 1)
+  {
+    // alarm controler from braking
+    if ((brakeFilter.getMean() > brakeFilterInit.getMean() + ANALOG_BRAKE_MIN_OFFSET) && (!isElectricBrakeForbiden()))
+    {
+      digitalWrite(PIN_OUT_BRAKE, 1);
+      shrd.brakeStatus = 1;
+    }
+    else
+    {
+      digitalWrite(PIN_OUT_BRAKE, 0);
+      shrd.brakeStatus = 0;
+    }
+
+    // notify brake LCD value
+    if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
+    {
+      blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus);
+#if DEBUG_DISPLAY_ANALOG_BRAKE
+      Serial.println("brake notify");
+#endif
+      char print_buffer[500];
+          sprintf(print_buffer, "brakeNotify = filter : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / filterInit : %d",
+            brakeFilter.getMean(),
+            brakeAnalogValue,
+            shrd.brakeSentOrder,
+            shrd.brakeSentOrderOld,
+            shrd.brakeStatus,
+            brakeFilterInit.getMean());
+      blh.notifyBleLogs(print_buffer);
+    }
+
+    shrd.brakeStatusOld = shrd.brakeStatus;
+    shrd.brakeSentOrderOld = shrd.brakeSentOrder;
+
+#if DEBUG_BLE_DISPLAY_ANALOG_BRAKE
+    char print_buffer[500];
+    sprintf(print_buffer, "brake = filter : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / filterInit : %d",
+            brakeFilter.getMean(),
+            brakeAnalogValue,
+            shrd.brakeSentOrder,
+            shrd.brakeSentOrderOld,
+            shrd.brakeStatus,
+            brakeFilterInit.getMean());
+
+    Serial.println(print_buffer);
+
+    if (i_loop % 100 == 0)
+    {
+      blh.notifyBleLogs(print_buffer);
+    }
+#endif
   }
 }
 
@@ -1283,24 +1339,16 @@ void processSerial()
 uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 {
 
-  shrd.brakeSentOrder = settings.getS1F().Electric_brake_min_value;
+  //*********************************
+  // shrd.brakeSentOrder = var;
+  // BUG TO FIX ???
 
-  // alarm controler from braking
-  if ((brakeFilter.getMean() > brakeFilterInit.getMean() + ANALOG_BRAKE_MIN_OFFSET) && (!isElectricBrakeForbiden()))
-  {
-    digitalWrite(PIN_OUT_BRAKE, 1);
-    shrd.brakeStatus = 1;
-  }
-  else
-  {
-    digitalWrite(PIN_OUT_BRAKE, 0);
-    shrd.brakeStatus = 0;
-  }
+  shrd.brakeSentOrder = settings.getS1F().Electric_brake_min_value;
 
   if (settings.getS1F().Electric_brake_progressive_mode == 1)
   {
 
-    uint32_t step = 5000;
+    uint32_t step = 0;
     uint32_t diff = 0;
     uint32_t diffStep = 0;
 
@@ -1316,52 +1364,22 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
       }
     }
 
-    // notify brake LCD value
-    if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
-    {
-      blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus);
-#if DEBUG_DISPLAY_ANALOG_BRAKE
-      Serial.print(" / brake notify => ");
-#endif
-      char print_buffer[500] = "brake notify";
-      blh.notifyBleLogs(print_buffer);
-    }
-
-    shrd.brakeStatusOld = shrd.brakeStatus;
-
-#if DEBUG_DISPLAY_ANALOG_BRAKE
-    Serial.print("brakeFilter : ");
-    Serial.print(brakeFilter.getMean());
-    Serial.print(" / step : ");
-    Serial.print(step);
-    Serial.print(" / diff : ");
-    Serial.print(diff);
-    Serial.print(" / diffStep : ");
-    Serial.print(diffStep);
-    Serial.print(" / brakeSentOrder : ");
-    Serial.print(shrd.brakeSentOrder);
-    Serial.print(" / brakeStatus : ");
-    Serial.print(shrd.brakeStatus);
-    Serial.print(" / brakeFilterInit : ");
-    Serial.println(brakeFilterInit.getMean());
-
-#endif
-    /*
-#if DEBUG_BLE_DISPLAY_ANALOG_BRAKE
+#ifdef DEBUG_DISPLAY_ANALOG_BRAKE
+/*
     char print_buffer[500];
-    sprintf(print_buffer, "brakeAnalogValue : %d / step : %d / diff : %d / diffStep : %d / brakeSentOrder : %d  / brakeSentOrderOld : %d ",
+    sprintf(print_buffer, "brakeFilter : %d / brakeAnalogValue : %d / brakeSentOrder : %d  / brakeSentOrderOld : %d / shrd.brakeStatus : %d / brakeFilterInit : %d ",
             brakeFilter.getMean(),
-            step,
-            diff,
-            diffStep,
+            brakeAnalogValue,
             shrd.brakeSentOrder,
-            shrd.brakeSentOrderOld);
+            shrd.brakeSentOrderOld,
+            shrd.brakeStatus,
+            brakeFilterInit.getMean());
     blh.notifyBleLogs(print_buffer);
-#endif
-*/
-  }
 
-  shrd.brakeSentOrderOld = shrd.brakeSentOrder;
+    Serial.print(print_buffer);
+*/
+#endif
+  }
 
   return shrd.brakeSentOrder;
 }
@@ -1383,6 +1401,10 @@ void processButton1Click()
 
   Serial.print("processButton1Click : ");
   Serial.println(button1ClickStatus);
+
+  char print_buffer[500];
+  sprintf(print_buffer, "processButton1Click : %d", button1ClickStatus);
+  blh.notifyBleLogs(print_buffer);
 }
 
 void processButton1LpStart()
@@ -1390,6 +1412,10 @@ void processButton1LpStart()
   button1LpDuration = button1.getPressedTicks();
   Serial.print("processButton1LpStart : ");
   Serial.println(button1LpDuration);
+
+  char print_buffer[500];
+  sprintf(print_buffer, "processButton1LpStart : %d", button1LpDuration);
+  blh.notifyBleLogs(print_buffer);
 }
 
 void processButton1LpDuring()
@@ -1401,6 +1427,10 @@ void processButton1LpStop()
 {
   Serial.print("processButton1LpStop : ");
   Serial.println(button1LpDuration);
+
+  char print_buffer[500];
+  sprintf(print_buffer, "processButton1LpStop : %d", button1LpDuration);
+  blh.notifyBleLogs(print_buffer);
 
   if (button1LpDuration > settings.getS3F().Button_long_press_duration * 1000)
   {
@@ -1443,6 +1473,10 @@ void processButton2Click()
 
   Serial.print("processButton2Click : ");
   Serial.println(button2ClickStatus);
+
+  char print_buffer[500];
+  sprintf(print_buffer, "processButton2Click : %d", button2ClickStatus);
+  blh.notifyBleLogs(print_buffer);
 }
 
 void processButton2LpStart()
@@ -1450,6 +1484,10 @@ void processButton2LpStart()
   button2LpDuration = button2.getPressedTicks();
   Serial.print("processButton2LpStart : ");
   Serial.println(button2LpDuration);
+
+  char print_buffer[500];
+  sprintf(print_buffer, "processButton2LpStart : %d", button2LpDuration);
+  blh.notifyBleLogs(print_buffer);
 }
 
 void processButton2LpDuring()
@@ -1461,6 +1499,10 @@ void processButton2LpStop()
 {
   Serial.print("processButton2LpStop : ");
   Serial.println(button2LpDuration);
+
+  char print_buffer[500];
+  sprintf(print_buffer, "processButton2LpStop : %d", button2LpDuration);
+  blh.notifyBleLogs(print_buffer);
 
   if (button2LpDuration > settings.getS3F().Button_long_press_duration * 1000)
   {
@@ -1506,6 +1548,10 @@ void processAuxEvent(uint8_t buttonId, bool isLongPress)
 
     Serial.print("processAuxEvent => ok / ");
     Serial.println(shrd.auxOrder);
+
+    char print_buffer[500];
+    sprintf(print_buffer, "processAuxEvent : %d", shrd.auxOrder);
+    blh.notifyBleLogs(print_buffer);
   }
 }
 
@@ -1530,6 +1576,10 @@ void processSpeedLimiterEvent(uint8_t buttonId, bool isLongPress)
 
     Serial.print("notifySpeedLimiterStatus => ok / ");
     Serial.println(shrd.speedLimiter);
+
+    char print_buffer[500];
+    sprintf(print_buffer, "notifySpeedLimiterStatus : %d", shrd.speedLimiter);
+    blh.notifyBleLogs(print_buffer);
   }
 }
 
@@ -1546,6 +1596,10 @@ void processLockEvent(uint8_t buttonId, bool isLongPress)
     blh.notifyBleLock();
 
     Serial.println("processLockEvent => ok / ON");
+
+    char print_buffer[500];
+    sprintf(print_buffer, "processLockEvent");
+    blh.notifyBleLogs(print_buffer);
   }
 }
 
@@ -1605,7 +1659,7 @@ void processVoltage()
   // eject false reading
   if (voltageStatus == 4095)
   {
-/*
+    /*
     Serial.print("Voltage read : ");
     Serial.print(voltageStatus);
     Serial.println(" => eject ");
@@ -1764,7 +1818,7 @@ void loop()
   delay(1);
   i_loop++;
 
-/*
+  /*
   Serial.print("time loop");
   Serial.println(millis() - timeLoop);
 */
