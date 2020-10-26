@@ -56,7 +56,8 @@
 #define DATA_BUFFER_SIZE 30
 #define BAUD_RATE 1200
 
-#define ANALOG_TO_VOLTS 36
+#define ANALOG_TO_VOLTS 41.789 // 1985	= 47,5
+
 #define ANALOG_TO_CURRENT 35
 #define NB_CURRENT_CALIB 100
 #define NB_BRAKE_CALIB 100
@@ -1034,7 +1035,7 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
       {
         begin_LcdToCntrl = 0;
 
-        char log[] = PSTR(" ===> detect begin 0xAA / LCD_TO_ESP");
+        char log[] = PSTR(" ===> detect begin 0xAA / MODE_LCD_TO_CNTRL");
         Serial.println(log);
         blh.notifyBleLogs(log);
 
@@ -1049,7 +1050,7 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
 
         begin_CntrlToLcd = 0;
 
-        char log[] = PSTR(" ===> detect begin 0x36 / CNTRL_TO_ESP");
+        char log[] = PSTR(" ===> detect begin 0x36 / MODE_CNTRL_TO_LCD");
         Serial.println(log);
         blh.notifyBleLogs(log);
 
@@ -1245,18 +1246,17 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
           char log[] = "====> CHECKSUM error MODE_CNTRL_TO_LCD ==> reset ";
           Serial.println(log);
           blh.notifyBleLogs(log);
+
+          begin_CntrlToLcd = 1;
         }
         else
         {
           char log[] = "====> CHECKSUM error MODE_LCD_TO_CNTRL ==> reset ";
           Serial.println(log);
           blh.notifyBleLogs(log);
-        }
 
-        if (serialMode == MODE_LCD_TO_CNTRL)
           begin_LcdToCntrl = 1;
-        else
-          begin_CntrlToLcd = 1;
+        }
       }
 
       i = 0;
@@ -1323,10 +1323,8 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 #if DEBUG_DISPLAY_ANALOG_BRAKE
       Serial.print(" / brake notify => ");
 #endif
-#if DEBUG_BLE_DISPLAY_ANALOG_BRAKE
       char print_buffer[500] = "brake notify";
       blh.notifyBleLogs(print_buffer);
-#endif
     }
 
     shrd.brakeStatusOld = shrd.brakeStatus;
@@ -1348,6 +1346,7 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
     Serial.println(brakeFilterInit.getMean());
 
 #endif
+    /*
 #if DEBUG_BLE_DISPLAY_ANALOG_BRAKE
     char print_buffer[500];
     sprintf(print_buffer, "brakeAnalogValue : %d / step : %d / diff : %d / diffStep : %d / brakeSentOrder : %d  / brakeSentOrderOld : %d ",
@@ -1359,6 +1358,7 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
             shrd.brakeSentOrderOld);
     blh.notifyBleLogs(print_buffer);
 #endif
+*/
   }
 
   shrd.brakeSentOrderOld = shrd.brakeSentOrder;
@@ -1462,7 +1462,7 @@ void processButton2LpStop()
   Serial.print("processButton2LpStop : ");
   Serial.println(button2LpDuration);
 
-  if (button1LpDuration > settings.getS3F().Button_long_press_duration * 1000)
+  if (button2LpDuration > settings.getS3F().Button_long_press_duration * 1000)
   {
     processAuxEvent(2, true);
     processSpeedLimiterEvent(2, true);
@@ -1610,11 +1610,10 @@ void processVoltage()
     Serial.print(voltageStatus);
     Serial.println(" => eject ");
 */
-#if DEBUG_BLE_DISPLAY_VOLTAGE
+
     char print_buffer[500];
     sprintf(print_buffer, "Voltage read 4095 ==> eject");
     blh.notifyBleLogs(print_buffer);
-#endif
 
     return;
   }
@@ -1626,11 +1625,9 @@ void processVoltage()
     Serial.println(" => eject ");
     */
 
-#if DEBUG_BLE_DISPLAY_VOLTAGE
     char print_buffer[500];
     sprintf(print_buffer, "Voltage read <900 ==> eject");
     blh.notifyBleLogs(print_buffer);
-#endif
 
     return;
   }
@@ -1663,11 +1660,13 @@ void processVoltage()
   Serial.println(correctedValue * 25.27); 
   */
 #endif
+  /*
 #if DEBUG_BLE_DISPLAY_VOLTAGE
   char print_buffer[500];
   sprintf(print_buffer, "Voltage / read : %d / mean : %d / mean volts : %0.1f ", voltageStatus, voltageRawFilter.getMean(), voltageFilter.getMean() / 1000.0);
   blh.notifyBleLogs(print_buffer);
 #endif
+*/
 }
 
 void processCurrent()
@@ -1764,6 +1763,11 @@ void loop()
   // Give a time for ESP
   delay(1);
   i_loop++;
+
+/*
+  Serial.print("time loop");
+  Serial.println(millis() - timeLoop);
+*/
 
   timeLoop = millis();
 }
