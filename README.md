@@ -116,12 +116,27 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉.
     - [ ] Advanced diagnosis (serial errors, throtle errors ...)
 
 - [ ] Android application 📱
-    - [✅] display : speed, mode, voltage, current, power, brake mode (PA), max speed, max power, max current, temperature, humidity, time, moving time
-    - [✅] auto-launch app with NFC tag
-    - [✅] parameters custom settings
+    - [ ] Display : 
+        - [✅] Speed
+        - [ ] Average speed
+        - [ ] Distance
+        - [✅] Mode
+        - [✅] Voltage
+        - [✅] Current
+        - [✅] Power
+        - [✅] Brake mode (PA)
+        - [✅] Max speed
+        - [✅] Max power
+        - [✅] Max current
+        - [✅] Temperature
+        - [✅] Humidity
+        - [✅] Time
+        - [✅] Moving time
+    - [✅] Auto-launch app with NFC tag
+    - [✅] Parameters custom settings
     - [✅] Data logging
-    - [✅] history graphics
-    - [ ] display : average speed, distance
+    - [✅] History graphics
+    
 
 - [ ] iPhone application 🍏
     - [ ] A kind developper to do this part ? 😇
