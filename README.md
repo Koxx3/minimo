@@ -34,7 +34,7 @@ Current size : 6cm x 3cm x 2cm (will shrink a little at final stage)
 
 ## Electronic
 ### Software
-The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html).
+The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html)
 
 ### Schematics
 - [Better Controller PCB schematic](https://easyeda.com/Koxx3/bettercontroller)
@@ -50,7 +50,7 @@ The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/proje
 - [Minimo App - Github repo](https://github.com/Koxx3/minimo_android)
 
 ### iPhone
-I have no skills in iPhone apps. If anyone wants to develop, let me know 😉.
+I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 
 ## TODO
 
