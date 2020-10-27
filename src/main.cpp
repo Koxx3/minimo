@@ -62,9 +62,11 @@
 #define NB_CURRENT_CALIB 100
 #define NB_BRAKE_CALIB 100
 
+#define ANALOG_BRAKE_MIN_ERR_VALUE 500
 #define ANALOG_BRAKE_MIN_VALUE 920
 #define ANALOG_BRAKE_MIN_OFFSET 100
 #define ANALOG_BRAKE_MAX_VALUE 2300
+#define ANALOG_BRAKE_MAX_ERR_VALUE 3500
 
 #define BUTTON_ACTION_1_MODE_Z 0
 #define BUTTON_ACTION_2_ANTI_THEFT 1
@@ -519,6 +521,42 @@ void getBrakeFromAnalog()
 {
   brakeAnalogValue = analogRead(PIN_IN_BRAKE);
 
+  // ignore out of range datas ... and notify
+  if (brakeAnalogValue < ANALOG_BRAKE_MIN_ERR_VALUE)
+  {
+#if DEBUG_DISPLAY_ANALOG_BRAKE
+    Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE");
+#endif
+    char print_buffer[500];
+    sprintf(print_buffer, "brake ANALOG_BRAKE_MIN_ERR_VALUE / filter : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / filterInit : %d",
+            brakeFilter.getMean(),
+            brakeAnalogValue,
+            shrd.brakeSentOrder,
+            shrd.brakeSentOrderOld,
+            shrd.brakeStatus,
+            brakeFilterInit.getMean());
+    blh.notifyBleLogs(print_buffer);
+    return;
+  }
+
+  // ignore out of range datas ... and notify
+  if (brakeAnalogValue > ANALOG_BRAKE_MAX_ERR_VALUE)
+  {
+#if DEBUG_DISPLAY_ANALOG_BRAKE
+    Serial.println("brake ANALOG_BRAKE_MAX_ERR_VALUE");
+#endif
+    char print_buffer[500];
+    sprintf(print_buffer, "brake ANALOG_BRAKE_MAX_ERR_VALUE / filter : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / filterInit : %d",
+            brakeFilter.getMean(),
+            brakeAnalogValue,
+            shrd.brakeSentOrder,
+            shrd.brakeSentOrderOld,
+            shrd.brakeStatus,
+            brakeFilterInit.getMean());
+    blh.notifyBleLogs(print_buffer);
+    return;
+  }
+
   if (brakeAnalogValue > ANALOG_BRAKE_MAX_VALUE)
     brakeAnalogValue = ANALOG_BRAKE_MAX_VALUE;
 
@@ -553,17 +591,20 @@ void getBrakeFromAnalog()
     if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
     {
       blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus);
+
 #if DEBUG_DISPLAY_ANALOG_BRAKE
-      Serial.println("brake notify");
+      Serial.print("brake notify : ");
+      Serial.println(shrd.brakeSentOrder);
 #endif
+
       char print_buffer[500];
-          sprintf(print_buffer, "brakeNotify = filter : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / filterInit : %d",
-            brakeFilter.getMean(),
-            brakeAnalogValue,
-            shrd.brakeSentOrder,
-            shrd.brakeSentOrderOld,
-            shrd.brakeStatus,
-            brakeFilterInit.getMean());
+      sprintf(print_buffer, "brakeNotify = filter : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / filterInit : %d",
+              brakeFilter.getMean(),
+              brakeAnalogValue,
+              shrd.brakeSentOrder,
+              shrd.brakeSentOrderOld,
+              shrd.brakeStatus,
+              brakeFilterInit.getMean());
       blh.notifyBleLogs(print_buffer);
     }
 

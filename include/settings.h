@@ -22,6 +22,7 @@ public:
 // The actions I ca do...
 typedef enum ButtonAction
 {
+  ACTION_None = 0,
   ACTION_Mode_Z_on_off,
   ACTION_Anti_theft_manual_lock_on,
   ACTION_Nitro_boost_cont,
