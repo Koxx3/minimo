@@ -51,8 +51,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉.
     - [✅] Read/write serial link CNTRL_TO_LCD
     - [✅] Decode speed/mode/brake/regulator from serial link
     - [✅] Frame error detection
-    - [☑️] Error codes processing
-- [☑️] Serial Kaabo / Zero / Appolo
+    - [ ] Error codes processing
+- [ ] Serial Kaabo / Zero / Appolo
 - [✅] Bluetooth 
     - [✅] Communication with Android
     - [✅] Anti-theth with smartphone
@@ -60,57 +60,57 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉.
     - [✅] Lock beacon or device settings
     - [✅] SmartLCD connexion security (PIN code)
     - [✅] SmartLCD connexion with multi devices (BT device choice)
-- [☑️] Other inputs/outputs
+- [ ] Other inputs/outputs
     - [✅] Read current with WCS1700
     - [✅] Read battery voltage
     - [✅] Read tempertature/humidity with DHT11/DHT22
     - [✅] Read break handle position on serial
-    - [☑️] Read break handle position on standard brake handle
+    - [ ] Read break handle position on standard brake handle
     - [✅] Read break handle position on analog brake handle
     - [✅] Read buttons
     - [✅] Send break handle position to controller
     - [✅] Send LED status
-    - [☑️] Send optocopler order
-- [☑️] Power
+    - [ ] Send optocopler order
+- [ ] Power
     - [✅] Convert 12V to 5V
-    - [☑️] Convert 80V to 5V
-    - [☑️] Convert 100V to 5V
-- [☑️] Features    
+    - [ ] Convert 80V to 5V
+    - [ ] Convert 100V to 5V
+- [ ] Features    
     - [✅] Save settings in non volatile memory
     - [✅] Progressive electric braking (software detection)
-    - [☑️] Progressive electric braking (hardware on/off detection)
+    - [ ] Progressive electric braking (hardware on/off detection)
     - [✅] Progressive electric braking (hardware analog detection)
     - [✅] OTA update
     - [✅] Current measure auto calibration (at startup)
     - [✅] Current measure manual calibration
     - [✅] Speed limiter at startup
     - [✅] Configurable speed loop regulation
-    - [☑️] Remote physical button
+    - [ ] Remote physical button
         - [✅] Speed limiter ON/OFF
         - [✅] Lock ON      
         - [✅] Nitro Boost continuous
         - [✅] Nitro Boost ON/OFF
         - [✅] Aux ON/OFF       
-        - [☑️] Mode Z ON/OFF
+        - [ ] Mode Z ON/OFF
     - [*] Disable electric brake with full battery
     - [*] Automatic ECO mode on low battery 
     - [*] LCD Speed adjustment
-    - [☑️] Dynamic BLE debug infos
-    - [☑️] Configurable current loop regulation
-    - [☑️] Customize mode Z with different power / max speed
-    - [☑️] Calibrate analog brake
-    - [☑️] Wifi connexion for dashboard display and settings
-    - [☑️] Advanced diagnosis (serial errors, throtle errors ...)
-- [☑️] Android app
+    - [ ] Dynamic BLE debug infos
+    - [ ] Configurable current loop regulation
+    - [ ] Customize mode Z with different power / max speed
+    - [ ] Calibrate analog brake
+    - [ ] Wifi connexion for dashboard display and settings
+    - [ ] Advanced diagnosis (serial errors, throtle errors ...)
+- [ ] Android app
     - [✅] display : speed, mode, voltage, current, power, brake mode (PA), max speed, max power, max current, temperature, humidity, time, moving time
     - [✅] auto-launch app with NFC tag
     - [✅] parameters custom settings
     - [✅] Data logging
     - [✅] history graphics
-    - [☑️] display : average speed, distance
+    - [ ] display : average speed, distance
 
-- [☑️] iPhone app => for someone else
-- [☑️] Custom acceleration curve ==> not possible with current hardware
+- [ ] iPhone app => for someone else
+- [ ] Custom acceleration curve ==> not possible with current hardware
     
 ## Serial links data decoding
 - [Excel Recording XLSX](http://github.com/Koxx3/minimo/edit/master/MINIMO.xlsx)
