@@ -30,8 +30,8 @@
 //////------------------------------------
 ////// Defines
 
-#define ALLOW_LCD_TO_CNTRL_MODIFICATIONS 1
-#define ALLOW_CNTRL_TO_LCD_MODIFICATIONS 1
+#define ALLOW_LCD_TO_CNTRL_MODIFICATIONS true
+#define ALLOW_CNTRL_TO_LCD_MODIFICATIONS true
 
 #define PIN_SERIAL_ESP_TO_LCD 13
 #define PIN_SERIAL_ESP_TO_CNTRL 32
