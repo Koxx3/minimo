@@ -1,7 +1,7 @@
 # [ SmartLCD Minimotors ]
 ⚠️ **Warning : this is work in progress. I decline all responsability about using informations from this project** ⚠️
 
-![Temporary Logo](img/logo_tmp.png)
+![Temporary Logo](img/logo_tmp.png?style=centerme)
 
 ## What is SmartLCD ?
 It's a combo of electronic and smartphone application. It extend all features from original Minimorots EYE LCD and controller.
