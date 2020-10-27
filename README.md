@@ -70,7 +70,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉.
     - [✅] Lock beacon or device settings
     - [✅] SmartLCD connexion security (PIN code)
     - [✅] SmartLCD connexion with multi devices (BT device choice)
-    *
+
 - [ ] Other inputs/outputs ↔️
     - [✅] Read current with WCS1700
     - [✅] Read battery voltage
@@ -105,9 +105,9 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉.
         - [✅] Nitro Boost ON/OFF
         - [✅] Aux ON/OFF       
         - [ ] Mode Z ON/OFF
-    - [*] Disable electric brake with full battery
-    - [*] Automatic ECO mode on low battery 
-    - [*] LCD Speed adjustment
+    - [IN PROGRESS 🔄] Disable electric brake with full battery
+    - [IN PROGRESS 🔄] Automatic ECO mode on low battery 
+    - [IN PROGRESS 🔄] LCD Speed adjustment
     - [ ] Dynamic BLE debug infos
     - [ ] Configurable current loop regulation
     - [ ] Customize mode Z with different power / max speed
