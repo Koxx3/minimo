@@ -22,14 +22,22 @@ public:
 // The actions I ca do...
 typedef enum ButtonAction
 {
-  ACTION_None = 0,
-  ACTION_Mode_Z_on_off,
-  ACTION_Anti_theft_manual_lock_on,
-  ACTION_Nitro_boost_cont,
-  ACTION_Startup_speed_limitation_on_off,
-  ACTION_Aux_on_off, 
-  ACTION_Nitro_boost_on_off,
+  LIST_Button_press_action_None = 0,
+  LIST_Button_press_action_Mode_Z_on_off,
+  LIST_Button_press_action_Anti_theft_manual_lock_on,
+  LIST_Button_press_action_Nitro_boost_cont,
+  LIST_Button_press_action_Startup_speed_limitation_on_off,
+  LIST_Button_press_action_Aux_on_off, 
+  LIST_Button_press_action_Nitro_boost_on_off,
 } ButtonActions;
+
+// The actions I ca do...
+typedef enum Electric_Brake_Type
+{
+  LIST_Electric_brake_type_none = 0,
+  LIST_Electric_brake_type_digital,
+  LIST_Electric_brake_type_analog
+} Electric_Brake_Type;
 
 #pragma pack(push, 1)
   struct field_s1
@@ -61,6 +69,7 @@ typedef enum ButtonAction
   struct field_s2
   {
     char Beacon_Mac_Address[17];
+    int8_t Electric_brake_type;
 
   } __attribute__((packed));
 #pragma pack(pop)
