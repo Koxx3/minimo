@@ -46,6 +46,8 @@
          int getMax();
          int getMean();
          int getStDev();
+         
+         int getMeanWithoutExtremes(int extremeNb);
 
          /*
          void printData();		// used for debugging
