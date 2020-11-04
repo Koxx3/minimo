@@ -13,9 +13,9 @@
 #include "JQuery.h"
 
 const char* sw_version = "20202009";
-const char* host = "smartlcd";
-const char* ssid = "SmartLCD";
-const char* password = "SmartLCD$";
+const char* host = "smartcontroller";
+const char* ssid = "SmartController";
+const char* password = "SmartController$";
 
 
 static WebServer server(80);

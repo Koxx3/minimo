@@ -1,9 +1,9 @@
-# [ SmartLCD Minimotors ]
+# [ SmartController Minimotors ]
 ⚠️ **Warning : this is work in progress. I decline all responsability about using informations from this project** ⚠️
 
 ![Temporary Logo](img/logo_tmp.png)
 
-## What is SmartLCD ?
+## What is SmartController ?
 It's a combo of electronic and smartphone application. It extend all features from original Minimotors EYE LCD and controller.
 The electronic board will interract with most of the e-scooter electronic when you plug it.
 You simply place the little box inside the deck and connect it to the controller (and other electric parts if you want more features)
@@ -25,12 +25,12 @@ Some examples :
 - You feel the electric brake too strong at full power ? the progressive electric braking adjust the brake power in real time.
 
 ### Main features
-![Idea](/other/SmartLCD.png)
+![Idea](/other/SmartController.png)
 
 ## Case and size
 Current size : 6cm x 3cm x 2cm (will shrink a little at final stage)
 
-![Idea](/other/SmartLCD_3D_1.jpg)
+![Idea](/other/SmartController_3D_1.jpg)
 
 ## Electronic
 ### Software
@@ -68,8 +68,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Anti-theth with smartphone
     - [✅] Anti-theth with beacon (scan & rssi detection)
     - [✅] Lock beacon or device settings
-    - [✅] SmartLCD connexion security (PIN code)
-    - [✅] SmartLCD connexion with multi devices (BT device choice)
+    - [✅] SmartController connexion security (PIN code)
+    - [✅] SmartController connexion with multi devices (BT device choice)
 
 - [ ] Other inputs/outputs ↔️
     - [✅] Read current with WCS1700
