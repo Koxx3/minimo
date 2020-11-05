@@ -105,9 +105,9 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Nitro Boost ON/OFF
         - [✅] Aux ON/OFF       
         - [ ] Mode Z ON/OFF
-    - [IN PROGRESS 🔄] Disable electric brake with full battery
+    - [IN TEST 🔄] Disable electric brake with full battery
     - [IN PROGRESS 🔄] Automatic ECO mode on low battery 
-    - [IN PROGRESS 🔄] LCD Speed adjustment
+    - [IN TEST 🔄] LCD Speed adjustment
     - [ ] Dynamic BLE debug infos
     - [ ] Configurable current loop regulation
     - [ ] Customize mode Z with different power / max speed
@@ -119,7 +119,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [ ] Display : 
         - [✅] Speed
         - [ ] Average speed
-        - [ ] Distance
+        - [IN TEST 🔄] Distance
         - [✅] Mode
         - [✅] Voltage
         - [✅] Current
