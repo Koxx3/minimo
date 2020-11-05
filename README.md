@@ -71,22 +71,21 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] SmartController connexion security (PIN code)
     - [✅] SmartController connexion with multi devices (BT device choice)
 
-- [ ] Other inputs/outputs ↔️
+- [✅] Other inputs/outputs ↔️
     - [✅] Read current with WCS1700
     - [✅] Read battery voltage
     - [✅] Read tempertature/humidity with DHT11/DHT22
     - [✅] Read break handle position on serial
-    - [ ] Read break handle position on standard brake handle
+    - [✅] Read break handle position on standard brake handle
     - [✅] Read break handle position on analog brake handle
     - [✅] Read buttons
     - [✅] Send break handle position to controller
     - [✅] Send LED status
-    - [ ] Send optocopler order
+    - [✅] Send optocopler order
 
 - [ ] Power 🔋
     - [✅] Convert 12V to 5V
     - [ ] Convert 80V to 5V
-    - [ ] Convert 100V to 5V
 
 - [ ] Features ⚙️
     - [✅] Save settings in non volatile memory
