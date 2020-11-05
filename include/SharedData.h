@@ -24,7 +24,9 @@ public:
 
     double speedCurrent = 0.0;
     double speedOld = 0;
-    
+
+    uint32_t distance = 0;
+
     uint32_t speedPidKp = 4;
     uint32_t speedPidKi = 8;
     uint32_t speedPidKd = 1;

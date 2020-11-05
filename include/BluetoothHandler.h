@@ -25,14 +25,14 @@ public:
     static void setBleLock(bool);
     static void processBLE();
     static void notifyModeOrder(uint8_t);
-    static void notifyBreakeSentOrder(uint8_t,uint8_t);
+    static void notifyBreakeSentOrder(uint8_t, uint8_t);
     static void notifyEcoOrder(uint8_t);
     static void notifyAccelOrder(uint8_t);
-    static void notifyTemperatureStatus(uint32_t);
+    static void notifyTemperatureHumidityStatus(uint32_t, uint32_t);
     static void notifyHumidityStatus(uint32_t);
     static void notifyAuxOrder(uint8_t);
     static void notifySpeedLimiterStatus(uint8_t);
-    static void setSharedData(SharedData*);
+    static void setSharedData(SharedData *);
 
     static BLEScan *pBLEScan;
     static BLEServer *pServer;
@@ -44,8 +44,7 @@ public:
     static BLECharacteristic *pCharacteristicCurrentStatus;
     static BLECharacteristic *pCharacteristicPowerStatus;
     static BLECharacteristic *pCharacteristicBtlockStatus;
-    static BLECharacteristic *pCharacteristicTemperatureStatus;
-    static BLECharacteristic *pCharacteristicHumidityStatus;
+    static BLECharacteristic *pCharacteristicTemperatureHumidityStatus;
     static BLECharacteristic *pCharacteristicSettings1;
     static BLECharacteristic *pCharacteristicSpeedLimiter;
     static BLECharacteristic *pCharacteristicEco;
@@ -58,6 +57,7 @@ public:
     static BLECharacteristic *pCharacteristicSettings3;
     static BLECharacteristic *pCharacteristicAux;
     static BLECharacteristic *pCharacteristicSpeedPid;
+    static BLECharacteristic *pCharacteristicDistance;
 
     static int8_t bleLockStatus;
     static int8_t blePicclyVisible;
@@ -72,8 +72,6 @@ public:
     static Settings *settings;
 
     static int8_t test2;
-
 };
-
 
 #endif

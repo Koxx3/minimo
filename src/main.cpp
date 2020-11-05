@@ -120,6 +120,8 @@ uint16_t brakeAnalogValue = 0;
 
 int8_t modeOrderBeforeNitro = -1;
 
+uint32_t distancePrevTime = 0;
+
 int i_LcdToCntrl = 0;
 int i_CntrlToLcd = 0;
 int begin_LcdToCntrl = 1;
@@ -1083,6 +1085,17 @@ double getSpeed()
   double speed = (((int)high2 * 256) + (low));
   speed = speed * (settings.getS1F().Wheel_size / 10.0) / settings.getS1F().Motor_pole_number / 10.5;
 
+  // calculate distance
+  uint32_t distanceCurTime = millis();
+  uint32_t distanceDiffTime = distanceCurTime - distancePrevTime;
+  shrd.distance = shrd.distance + ((speed * (distanceDiffTime)) / 360);
+  distancePrevTime = millis();
+
+  Serial.print("distance = ");
+  Serial.print(shrd.distance / 10);
+  Serial.print(" / distanceDiffTime = ");
+  Serial.println(distanceDiffTime);
+
   // eject error values
   if (speed > 150)
     return shrd.speedOld;
@@ -1727,10 +1740,8 @@ void processDHT()
       shrd.currentHumidity = humidity;
 
       uint32_t temp = temperature * 1000;
-      blh.notifyTemperatureStatus(temp);
-
-      temp = humidity * 1000;
-      blh.notifyHumidityStatus(temp);
+      uint32_t hr = humidity * 1000;
+      blh.notifyTemperatureHumidityStatus(temp, hr);
     }
   }
 }

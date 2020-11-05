@@ -22,8 +22,8 @@
 #define CURRENT_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a4"
 #define POWER_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a5"
 #define BTLOCK_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a6"
-#define TEMPERATURE_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a7"
-#define HUMIDITY_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+#define TEMPERATURE_HUMIDITY_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a7"
+//#define HUMIDITY_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
 #define SETTINGS1_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a9"
 #define SPEED_LIMITER_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26aa"
 #define ECO_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ab"
@@ -36,6 +36,7 @@
 #define SETTINGS3_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b2"
 #define AUX_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b3"
 #define SPEED_PID_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b4"
+#define DISTANCE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b5"
 
 #define BLE_MTU 128
 
@@ -51,8 +52,7 @@ BLECharacteristic *BluetoothHandler::pCharacteristicVoltageStatus;
 BLECharacteristic *BluetoothHandler::pCharacteristicCurrentStatus;
 BLECharacteristic *BluetoothHandler::pCharacteristicPowerStatus;
 BLECharacteristic *BluetoothHandler::pCharacteristicBtlockStatus;
-BLECharacteristic *BluetoothHandler::pCharacteristicTemperatureStatus;
-BLECharacteristic *BluetoothHandler::pCharacteristicHumidityStatus;
+BLECharacteristic *BluetoothHandler::pCharacteristicTemperatureHumidityStatus;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings1;
 BLECharacteristic *BluetoothHandler::pCharacteristicSpeedLimiter;
 BLECharacteristic *BluetoothHandler::pCharacteristicEco;
@@ -65,6 +65,7 @@ BLECharacteristic *BluetoothHandler::pCharacteristicSettings2;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings3;
 BLECharacteristic *BluetoothHandler::pCharacteristicAux;
 BLECharacteristic *BluetoothHandler::pCharacteristicSpeedPid;
+BLECharacteristic *BluetoothHandler::pCharacteristicDistance;
 
 int8_t BluetoothHandler::bleLockStatus;
 int8_t BluetoothHandler::blePicclyVisible;
@@ -417,6 +418,20 @@ void BluetoothHandler::init(Settings *data)
                 pCharacteristicAux->setValue((uint8_t *)&shrd->auxOrder, 1);
                 pCharacteristicAux->notify();
             }
+            else if (pCharacteristic->getUUID().toString() == DISTANCE_CHARACTERISTIC_UUID)
+            {
+                std::string rxValue = pCharacteristic->getValue();
+                shrd->distance = 0;
+
+                char print_buffer[500];
+                sprintf(print_buffer, "%02x", shrd->distance);
+                Serial.print("BLH - Write distance : ");
+                Serial.println(print_buffer);
+
+                // notify of current value
+                pCharacteristicDistance->setValue((uint8_t *)&shrd->distance, 4);
+                pCharacteristicDistance->notify();
+            }
             else if (pCharacteristic->getUUID().toString() == SPEED_PID_CHARACTERISTIC_UUID)
             {
                 std::string rxValue = pCharacteristic->getValue();
@@ -521,24 +536,18 @@ void BluetoothHandler::init(Settings *data)
                 Serial.print("BLH - Read bleLock : ");
                 Serial.println(print_buffer);
             }
-            else if (pCharacteristic->getUUID().toString() == TEMPERATURE_STATUS_CHARACTERISTIC_UUID)
+            else if (pCharacteristic->getUUID().toString() == TEMPERATURE_HUMIDITY_STATUS_CHARACTERISTIC_UUID)
             {
                 int32_t temp = shrd->currentTemperature * 1000.0;
-                pCharacteristicTemperatureStatus->setValue((uint8_t *)&temp, 4);
+                int32_t hr = shrd->currentHumidity * 1000.0;
+                char txValue[8];
+                memcpy(&txValue[0], &temp, 4);
+                memcpy(&txValue[4], &hr, 4);
+                pCharacteristicTemperatureHumidityStatus->setValue((uint8_t *)&txValue[0], 8);
 
                 char print_buffer[500];
-                sprintf(print_buffer, "%f", shrd->currentTemperature);
-                Serial.print("BLH - Read currentTemperature : ");
-                Serial.println(print_buffer);
-            }
-            else if (pCharacteristic->getUUID().toString() == HUMIDITY_STATUS_CHARACTERISTIC_UUID)
-            {
-                int32_t temp = shrd->currentHumidity * 1000.0;
-                pCharacteristicHumidityStatus->setValue((uint8_t *)&temp, 4);
-
-                char print_buffer[500];
-                sprintf(print_buffer, "%f", shrd->currentHumidity);
-                Serial.print("BLH - Read currentHumidity : ");
+                sprintf(print_buffer, "%f / %f", shrd->currentTemperature, shrd->currentHumidity);
+                Serial.print("BLH - Read currentTemperature / currentHumidity : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == SPEED_LIMITER_CHARACTERISTIC_UUID)
@@ -577,6 +586,15 @@ void BluetoothHandler::init(Settings *data)
                 Serial.print("BLH - Read aux : ");
                 Serial.println(print_buffer);
             }
+            else if (pCharacteristic->getUUID().toString() == DISTANCE_CHARACTERISTIC_UUID)
+            {
+                pCharacteristicDistance->setValue((uint8_t *)&shrd->distance, 4);
+
+                char print_buffer[500];
+                sprintf(print_buffer, "%d", shrd->distance);
+                Serial.print("BLH - Read distance : ");
+                Serial.println(print_buffer);
+            }
         }
     };
 
@@ -609,7 +627,7 @@ void BluetoothHandler::init(Settings *data)
     pServer->setCallbacks(new BLEServerCallback());
 
     // Create the BLE Service
-    BLEService *pService = pServer->createService(BLEUUID(SERVICE_UUID), 80);
+    BLEService *pService = pServer->createService(BLEUUID(SERVICE_UUID), 100);
 
     // Create a BLE Characteristic
     pCharacteristicSpeed = pService->createCharacteristic(
@@ -650,13 +668,8 @@ void BluetoothHandler::init(Settings *data)
             BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
-    pCharacteristicTemperatureStatus = pService->createCharacteristic(
-        TEMPERATURE_STATUS_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_READ);
-
-    pCharacteristicHumidityStatus = pService->createCharacteristic(
-        HUMIDITY_STATUS_CHARACTERISTIC_UUID,
+    pCharacteristicTemperatureHumidityStatus = pService->createCharacteristic(
+        TEMPERATURE_HUMIDITY_STATUS_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_READ);
 
@@ -717,6 +730,12 @@ void BluetoothHandler::init(Settings *data)
             BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
+    pCharacteristicDistance = pService->createCharacteristic(
+        DISTANCE_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_NOTIFY |
+            BLECharacteristic::PROPERTY_WRITE |
+            BLECharacteristic::PROPERTY_READ);
+
     pCharacteristicSpeedPid = pService->createCharacteristic(
         SPEED_PID_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_WRITE);
@@ -728,8 +747,7 @@ void BluetoothHandler::init(Settings *data)
     pCharacteristicCurrentStatus->addDescriptor(new BLE2902());
     pCharacteristicPowerStatus->addDescriptor(new BLE2902());
     pCharacteristicBtlockStatus->addDescriptor(new BLE2902());
-    pCharacteristicTemperatureStatus->addDescriptor(new BLE2902());
-    pCharacteristicHumidityStatus->addDescriptor(new BLE2902());
+    pCharacteristicTemperatureHumidityStatus->addDescriptor(new BLE2902());
     pCharacteristicSettings1->addDescriptor(new BLE2902());
     pCharacteristicSpeedLimiter->addDescriptor(new BLE2902());
     pCharacteristicEco->addDescriptor(new BLE2902());
@@ -742,6 +760,7 @@ void BluetoothHandler::init(Settings *data)
     pCharacteristicSettings3->addDescriptor(new BLE2902());
     pCharacteristicAux->addDescriptor(new BLE2902());
     pCharacteristicSpeedPid->addDescriptor(new BLE2902());
+    pCharacteristicDistance->addDescriptor(new BLE2902());
 
     pCharacteristicSpeed->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicMode->setCallbacks(new BLECharacteristicCallback());
@@ -750,8 +769,7 @@ void BluetoothHandler::init(Settings *data)
     pCharacteristicCurrentStatus->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicPowerStatus->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicBtlockStatus->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicTemperatureStatus->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicHumidityStatus->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicTemperatureHumidityStatus->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettings1->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSpeedLimiter->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicEco->setCallbacks(new BLECharacteristicCallback());
@@ -764,6 +782,7 @@ void BluetoothHandler::init(Settings *data)
     pCharacteristicSettings3->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicAux->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSpeedPid->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicDistance->setCallbacks(new BLECharacteristicCallback());
 
     // Start the service
     pService->start();
@@ -955,16 +974,16 @@ void BluetoothHandler::notifyAccelOrder(uint8_t val)
     pCharacteristicAccel->notify();
 }
 
-void BluetoothHandler::notifyTemperatureStatus(uint32_t val)
+void BluetoothHandler::notifyTemperatureHumidityStatus(uint32_t temp, uint32_t hr)
 {
-    pCharacteristicTemperatureStatus->setValue((uint8_t *)&val, 4);
-    pCharacteristicTemperatureStatus->notify();
-}
 
-void BluetoothHandler::notifyHumidityStatus(uint32_t val)
-{
-    pCharacteristicHumidityStatus->setValue((uint8_t *)&val, 4);
-    pCharacteristicHumidityStatus->notify();
+    temp = shrd->currentTemperature * 1000.0;
+    hr = shrd->currentHumidity * 1000.0;
+    char txValue[8];
+    memcpy(&txValue[0], &temp, 4);
+    memcpy(&txValue[4], &hr, 4);
+    pCharacteristicTemperatureHumidityStatus->setValue((uint8_t *)&txValue[0], 8);
+    pCharacteristicTemperatureHumidityStatus->notify();
 }
 
 void BluetoothHandler::notifySpeedLimiterStatus(uint8_t val)
@@ -1038,9 +1057,15 @@ void BluetoothHandler::processBLE()
 
         if (millis() > shrd->timeLastNotifyBle + period)
         {
+
             uint8_t speedInt = shrd->speedCurrent;
             pCharacteristicSpeed->setValue((uint8_t *)&speedInt, 1);
             pCharacteristicSpeed->notify();
+
+            // notify bluetooth
+            uint32_t distance = shrd->distance;
+            pCharacteristicDistance->setValue((uint8_t *)&distance, 4);
+            pCharacteristicDistance->notify();
 
 #if DEBUG_DISPLAY_BLE_NOTIFY
             Serial.print("BLH - Notify speed : ");
