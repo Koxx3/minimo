@@ -135,6 +135,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Parameters custom settings
     - [✅] Data logging
     - [✅] History graphics
+    - [ ] UI configuration (hide items)
     
 
 - [ ] iPhone application 🍏
