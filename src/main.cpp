@@ -132,7 +132,7 @@ int isModified_CntrlToLcd = 0;
 
 MedianFilter voltageFilter(100, 30000);
 MedianFilter voltageRawFilter(100, 2000);
-MedianFilter currentFilter(100, 1830);
+MedianFilter currentFilter(200, 1830);
 MedianFilter currentFilterInit(NB_CURRENT_CALIB, 1830);
 MedianFilter brakeFilter(10 /* 20 */, 900);
 MedianFilter brakeFilterInit(NB_BRAKE_CALIB, 900);
@@ -1820,11 +1820,11 @@ void processVoltage()
 void processCurrent()
 {
   int curerntRead = analogRead(PIN_IN_CURRENT);
-  int currentInMillamps = (curerntRead - currentFilterInit.getMean()) * 1000 / ANALOG_TO_CURRENT;
+  int currentInMillamps = (curerntRead - currentFilterInit.getMean()) * (1000.0 / ANALOG_TO_CURRENT);
 
   // current rest value
   currentFilter.in(currentInMillamps);
-  shrd.currentFilterMean = currentFilter.getMean();
+  shrd.currentFilterMean = currentFilter.getMeanWithoutExtremes(10);
 
   if ((shrd.speedCurrent == 0) && (shrd.currentCalibOrder == 1))
   {
