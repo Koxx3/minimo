@@ -37,7 +37,7 @@ Current size : 6cm x 3cm x 2cm (will shrink a little at final stage)
 The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html)
 
 ### Schematics
-- [Better Controller PCB schematic](https://easyeda.com/Koxx3/bettercontroller)
+- [Better Controller PCB schematic](https://easyeda.com/Koxx3/smartlcd-v1-4)
 
 ![PCB from easyEDA](/img/pcb_typon.png)
 
