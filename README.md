@@ -37,9 +37,9 @@ Current size : 6cm x 3cm x 2cm (will shrink a little at final stage)
 The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html)
 
 ### Schematics
-- [Better Controller PCB schematic](https://easyeda.com/Koxx3/bettercontroller)
+- [Better Controller PCB schematic](https://easyeda.com/Koxx3/smartlcd-v1-4)
 
-![PCB from easyEDA](/img/pcb_typon.png)
+![PCB from easyEDA](/img/SmartContrl.png)
 
 ### Inspiration to understand controller electronic
 - [China BLDC motor controller 36v 250W](http://avdweb.nl/Article_files/Solarbike/Motor-controller/China-BLDC-motor-controller-36V-250W.pdf)
@@ -71,22 +71,21 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] SmartController connexion security (PIN code)
     - [✅] SmartController connexion with multi devices (BT device choice)
 
-- [ ] Other inputs/outputs ↔️
+- [✅] Other inputs/outputs ↔️
     - [✅] Read current with WCS1700
     - [✅] Read battery voltage
     - [✅] Read tempertature/humidity with DHT11/DHT22
     - [✅] Read break handle position on serial
-    - [ ] Read break handle position on standard brake handle
+    - [✅] Read break handle position on standard brake handle
     - [✅] Read break handle position on analog brake handle
     - [✅] Read buttons
     - [✅] Send break handle position to controller
     - [✅] Send LED status
-    - [ ] Send optocopler order
+    - [✅] Send optocopler order
 
 - [ ] Power 🔋
     - [✅] Convert 12V to 5V
     - [ ] Convert 80V to 5V
-    - [ ] Convert 100V to 5V
 
 - [ ] Features ⚙️
     - [✅] Save settings in non volatile memory
@@ -136,6 +135,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Parameters custom settings
     - [✅] Data logging
     - [✅] History graphics
+    - [ ] UI configuration (hide items)
     
 
 - [ ] iPhone application 🍏
