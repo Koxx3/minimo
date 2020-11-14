@@ -13,7 +13,7 @@ Second : the Android applcation
 
 ## Connect Smartphone
 - Enable bluetooth
-- Check bluetooth detect a "SmartContrl-xxxx" device
+- Check if bluetooth detect a "SmartContrl-xxxx" device
 - Install the APK
 - Launch the application
 - Accept the connection to the device
