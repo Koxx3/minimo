@@ -142,7 +142,13 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [ ] A kind developper to do this part ? 😇
 
 - [ ] Custom acceleration curve ==> not possible with current hardware
-    
+
+## Produce you own board
+- [Make it](http://github.com/Koxx3/minimo/edit/master/MAKE_IT.md)
+
+## Run it !
+- [Run it](http://github.com/Koxx3/minimo/edit/master/RUN.md)
+
 ## Resources 🔗
 - [Serial links data decoding - Excel XLSX](http://github.com/Koxx3/minimo/edit/master/MINIMO.xlsx)
 
