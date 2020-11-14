@@ -38,3 +38,4 @@ TBD
 • Once on the web page : login "SmartController" / password "SmartController$"
 • Select the firmware, then click 'upload'.
 • Wait the upload end, then it should reboot automatically
+
