@@ -34,8 +34,8 @@ Some examples :
 ### Main features
 ![Idea](/img/SmartController.png)
 
+**[Check all datailed features here](FEATURES.md)**
 
-- [Check all features here](FEATURES.md)
 
 ## Case and size
 Current size : 6cm x 3cm x 2cm (will shrink a little at final stage)
@@ -49,7 +49,7 @@ The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/proje
 ### Schematics
 - [PCB schematic](https://easyeda.com/Koxx3/smartlcd-v1-4)
 
-![PCB from easyEDA](/img/smartContrlPcb.png)
+![PCB from easyEDA](/img/smartControllerPcb.png)
 
 ### Inspiration to understand controller electronic
 - [China BLDC motor controller 36v 250W](http://avdweb.nl/Article_files/Solarbike/Motor-controller/China-BLDC-motor-controller-36V-250W.pdf)
