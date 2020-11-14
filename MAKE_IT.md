@@ -1,8 +1,8 @@
-### How to make the your own ?
+# How to make the your own ?
 
-All designs and software are open source. So, you can easily make your own board if you have some electronic skills.
+All electronic designs and software are open source. So, you can easily make your own board if you have some electronic skills.
 
-#### Produce the board with JLCPBC
+## Produce the board with JLCPBC
 
 The first step is : produce your board.
 JLCPCB has interesting capacities : PCB assembly.
@@ -20,7 +20,7 @@ The major non included components are :
 
 Check the project here : https://oshwlab.com/Koxx3/smartlcd-v1-3_copy
 
-#### After ordering the board PCB
+## After ordering the board PCB
 
 Order the missing components !
 
@@ -32,7 +32,7 @@ You can also add the external sensors :
 - WCS1700 : current sensor
 - DHT22 : temperature and humity sensor
 
-#### Once you receive the board and the components 
+## Once you receive the board and the components 
 
 Assemble it, and upload the application :D
 
