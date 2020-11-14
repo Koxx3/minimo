@@ -32,7 +32,7 @@ Some examples :
 - You feel the electric brake too strong at full power ? the progressive electric braking adjust the brake power in real time.
 
 ### Main features
-![Idea](/other/SmartController.png)
+![Idea](/img/SmartController.png)
 
 
 - [Check all features here](FEATURES.md)
@@ -40,7 +40,7 @@ Some examples :
 ## Case and size
 Current size : 6cm x 3cm x 2cm (will shrink a little at final stage)
 
-![Idea](/other/SmartController_3D_1.jpg)
+![Idea](/img/SmartController_3D_1.jpg)
 
 ## Electronic
 ### Software
