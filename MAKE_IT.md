@@ -17,6 +17,7 @@ You'll have to order the missing components on aliexpress or any electronic stor
 The major non included components are :
 - SMD relays
 - connectors
+- DC-DC module for 5V power
 
 Check the project here : https://oshwlab.com/Koxx3/smartlcd-v1-3_copy
 
