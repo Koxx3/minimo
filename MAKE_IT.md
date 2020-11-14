@@ -2,10 +2,10 @@
 
 All electronic designs and software are open source. So, you can easily make your own board if you have some electronic skills.
 
-## Produce the board with JLCPBC
+## Produce the board with JLCPBC(https://jlcpcb.com/)
 
 The first step is : produce your board.
-JLCPCB has interesting capacities : PCB assembly.
+JLCPCB has interesting capacities : PCB assembly(https://jlcpcb.com/smt-assembly).
 They print your PCB and solder components on it.
 
 It cost arround 40/50€ to produce the board.
