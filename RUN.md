@@ -27,7 +27,7 @@ Nota : you can modify the Android project from [this github](https://github.com/
 TBD
 
 ## Update throught Wifi
-- From the application, in the '...' menu, tap "Software update"
+- From the Android application, in the '...' menu, tap "Software update"
 => The SmartController will siwth from bluetooth to wifi server
 - On the smartphone, search for wifi called 'SmartCntr-xxx' and connect to it
 - Open a web brower, and tap : http://192.168.1.2
