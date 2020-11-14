@@ -9,7 +9,6 @@ The electronic board will interract with most of the e-scooter electronic when y
 You simply place the little box inside the deck and connect it to the controller (and other electric parts if you want more features)
 
 ### Requirements
-
 - A e-scooter with minimotors controllers (single or dual)
 - A constant 12V ouput from the regulator (not only powered when brakes are pressed like some Kaabo)... OR an external DC-DC providing 12V or 5V
 - If you want to use progressive brake feature, you must ensure no more than 60V pass in the brake handle (issue noted only for Kaabo)
@@ -153,6 +152,9 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 
 ## Produce you own board
 - [Here](MAKE_IT.md)
+
+## Wiring
+- [Here](WIRING.md)
 
 ## Run it !
 - [Here](RUN.md)
