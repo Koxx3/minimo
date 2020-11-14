@@ -1,7 +1,6 @@
 ### Requirements
 
 • A e-scooter with minimotors controllers (single or dual)
-
 • A constant 12V ouput from the regulator (not only powered when brakes are pressed like some Kaabo)... OR an external DC-DC providing 12V or 5V
 • If you want to use progressive brake feature, you must ensure no more than 60V pass in the brake handle (issue noted only for Kaabo)
 • The electronics (ESP32 Dev KitC V4 + SmartController shield + JST SM/PH connectors)
