@@ -34,6 +34,9 @@ Some examples :
 ### Main features
 ![Idea](/other/SmartController.png)
 
+
+- [Check all features here](FEATURES.md)
+
 ## Case and size
 Current size : 6cm x 3cm x 2cm (will shrink a little at final stage)
 
