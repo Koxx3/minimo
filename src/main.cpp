@@ -33,20 +33,21 @@
 #define ALLOW_LCD_TO_CNTRL_MODIFICATIONS true
 #define ALLOW_CNTRL_TO_LCD_MODIFICATIONS true
 
-#define PIN_SERIAL_ESP_TO_LCD 13
-#define PIN_SERIAL_ESP_TO_CNTRL 32
+#define PIN_SERIAL_ESP_TO_LCD 26
+#define PIN_SERIAL_ESP_TO_CNTRL 27
 #define PIN_SERIAL_LCD_TO_ESP 25
-#define PIN_SERIAL_CNTRL_TO_ESP 26
-#define PIN_OUT_RELAY 12
-#define PIN_IN_VOLTAGE 33
+#define PIN_SERIAL_CNTRL_TO_ESP 14
+//#define PIN_OUT_RELAY xx
+#define PIN_IN_VOLTAGE 32
 #define PIN_IN_CURRENT 35
-#define PIN_IN_BUTTON1 9
-#define PIN_IN_BUTTON2 10
-#define PIN_OUT_LED_BUTTON1 14
-#define PIN_OUT_LED_BUTTON2 5
-#define PIN_OUT_BRAKE 16
-#define PIN_IN_OUT_DHT 27
-#define PIN_IN_BRAKE 34
+#define PIN_IN_BUTTON1 22
+#define PIN_IN_BUTTON2 0 // PB
+#define PIN_OUT_LED_BUTTON1 3
+#define PIN_OUT_LED_BUTTON2 21
+#define PIN_OUT_BRAKE 13
+#define PIN_IN_OUT_DHT 12
+#define PIN_IN_ABRAKE 34
+#define PIN_IN_DBRAKE 4
 
 #define MODE_LCD_TO_CNTRL 0
 #define MODE_CNTRL_TO_LCD 1
@@ -56,7 +57,8 @@
 #define DATA_BUFFER_SIZE 30
 #define BAUD_RATE 1200
 
-#define ANALOG_TO_VOLTS 42.05 // 1985	= 47,5
+#define ANALOG_TO_VOLTS_A 0.0213
+#define ANALOG_TO_VOLTS_B 5.4225
 
 #define ANALOG_TO_CURRENT 35
 #define NB_CURRENT_CALIB 200
@@ -189,12 +191,43 @@ void setupPins()
   pinMode(PIN_IN_BUTTON2, INPUT_PULLUP);
   pinMode(PIN_IN_VOLTAGE, INPUT);
   pinMode(PIN_IN_CURRENT, INPUT);
-  pinMode(PIN_IN_BRAKE, INPUT);
-  pinMode(PIN_OUT_RELAY, OUTPUT);
+  pinMode(PIN_IN_DBRAKE, INPUT_PULLUP);
+//  pinMode(PIN_OUT_RELAY, OUTPUT);
   pinMode(PIN_OUT_BRAKE, OUTPUT);
   pinMode(PIN_OUT_LED_BUTTON1, OUTPUT);
   pinMode(PIN_OUT_LED_BUTTON2, OUTPUT);
 }
+
+
+/*
+#include "soc/efuse_reg.h"
+#include "esp_efuse.h" // for programming eFuse.
+
+void setupEFuse()
+{
+
+  // INITIAL SETUP...BURN THE EFUSE IF NECESSARY FOR PROPER OPERATION.
+  // Force the FLASH voltage regulator to 3.3v, disabling "MTDI" strapping check at startup
+  if ((REG_READ(EFUSE_BLK0_RDATA4_REG) & EFUSE_RD_SDIO_TIEH) == 0)
+  {
+    esp_efuse_reset();
+    REG_WRITE(EFUSE_BLK0_WDATA4_REG, EFUSE_RD_SDIO_TIEH);
+    esp_efuse_burn_new_values();
+  } //burning SDIO_TIEH -> sets SDIO voltage regulator to pass-thru 3.3v from VDD
+  if ((REG_READ(EFUSE_BLK0_RDATA4_REG) & EFUSE_RD_XPD_SDIO_REG) == 0)
+  {
+    esp_efuse_reset();
+    REG_WRITE(EFUSE_BLK0_WDATA4_REG, EFUSE_RD_XPD_SDIO_REG);
+    esp_efuse_burn_new_values();
+  } //burning SDIO_REG -> enables SDIO voltage regulator (otherwise user must hardwire power to SDIO)
+  if ((REG_READ(EFUSE_BLK0_RDATA4_REG) & EFUSE_RD_SDIO_FORCE) == 0)
+  {
+    esp_efuse_reset();
+    REG_WRITE(EFUSE_BLK0_WDATA4_REG, EFUSE_RD_SDIO_FORCE);
+    esp_efuse_burn_new_values();
+  } //burning SDIO_FORCE -> enables SDIO_REG and SDIO_TIEH
+}
+*/
 
 void setupSerial()
 {
@@ -269,7 +302,11 @@ void setup()
   restoreBleLockForced();
 
   Serial.println(PSTR("   settings ..."));
-  settings.restoreSettings();
+  bool settingsStatusOk = settings.restoreSettings();
+  if (!settingsStatusOk)
+  {
+    settings.initSettings();
+  }
   settings.displaySettings();
 
   Serial.println(PSTR("   BLE ..."));
@@ -517,10 +554,9 @@ uint8_t modifyModeOld(char var, char data_buffer[])
 
 void getBrakeFromAnalog()
 {
-
   if (settings.getS2F().Electric_brake_type == settings.LIST_Electric_brake_type_analog)
   {
-    brakeAnalogValue = analogRead(PIN_IN_BRAKE);
+    brakeAnalogValue = analogRead(PIN_IN_ABRAKE);
 
     int brakeFilterMean = brakeFilter.getMean();
     int brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
@@ -550,7 +586,6 @@ void getBrakeFromAnalog()
     {
 #if DEBUG_DISPLAY_ANALOG_BRAKE
       Serial.println("brake ANALOG_BRAKE_MAX_ERR_VALUE");
-#endif
       char print_buffer[500];
       sprintf(print_buffer, "brake ANALOG_BRAKE_MAX_ERR_VALUE / f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d",
               brakeFilterMean,
@@ -562,6 +597,7 @@ void getBrakeFromAnalog()
               brakeFilterInit.getMean());
       blh.notifyBleLogs(print_buffer);
       Serial.println(print_buffer);
+#endif
       return;
     }
 
@@ -589,7 +625,7 @@ void getBrakeFromAnalog()
       // alarm controler from braking
       if ((brakeFilterMeanErr > brakeFilterInit.getMean() + ANALOG_BRAKE_MIN_OFFSET) && (!isElectricBrakeForbiden()))
       {
-        digitalWrite(PIN_OUT_BRAKE, 1);
+        //digitalWrite(PIN_OUT_BRAKE, 1);
 
         if (shrd.brakeStatus == 0)
         {
@@ -605,7 +641,7 @@ void getBrakeFromAnalog()
       }
       else
       {
-        digitalWrite(PIN_OUT_BRAKE, 0);
+     //   digitalWrite(PIN_OUT_BRAKE, 0);
 
         if (shrd.brakeStatus == 1)
         {
@@ -995,9 +1031,9 @@ uint8_t modifyBrakeFromLCD(char var, char data_buffer[])
     char print_buffer[500];
     sprintf(print_buffer, "%s %02x %s %02x %s %02x %s %d %s %d %s %d",
             "Brake Status : ",
-            brakeStatus,
+            shrd.brakeStatus,
             " / brakeSentOrder  : ",
-            breakeSentOrder,
+            shrd.brakeSentOrder,
             " / Current LCD brake  : ",
             var,
             " / timeLastBrake  : ",
@@ -1091,10 +1127,12 @@ double getSpeed()
   shrd.distance = shrd.distance + ((speed * (distanceDiffTime)) / 360);
   distancePrevTime = millis();
 
+  /*
   Serial.print("distance = ");
   Serial.print(shrd.distance / 10);
   Serial.print(" / distanceDiffTime = ");
   Serial.println(distanceDiffTime);
+*/
 
   // eject error values
   if (speed > 150)
@@ -1461,8 +1499,8 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
       }
     }
 
-#ifdef DEBUG_DISPLAY_ANALOG_BRAKE
-/*
+#if DEBUG_DISPLAY_ANALOG_BRAKE
+
     char print_buffer[500];
     sprintf(print_buffer, "brakeFilter : %d / brakeAnalogValue : %d / brakeSentOrder : %d  / brakeSentOrderOld : %d / shrd.brakeStatus : %d / brakeFilterInit : %d ",
             brakeFilter.getMean(),
@@ -1473,8 +1511,8 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
             brakeFilterInit.getMean());
     blh.notifyBleLogs(print_buffer);
 
-    Serial.print(print_buffer);
-*/
+    Serial.println(print_buffer);
+
 #endif
   }
 
@@ -1702,7 +1740,7 @@ void processLockEvent(uint8_t buttonId, bool isLongPress)
 
 void processAux()
 {
-
+/*
   if (shrd.auxOrder == 1)
   {
     digitalWrite(PIN_OUT_RELAY, 1);
@@ -1711,6 +1749,7 @@ void processAux()
   {
     digitalWrite(PIN_OUT_RELAY, 0);
   }
+  */
 }
 
 void processDHT()
@@ -1781,7 +1820,7 @@ void processVoltage()
     return;
   }
 
-  voltageInMilliVolts = (voltageStatus * 1000.0) / ANALOG_TO_VOLTS;
+  voltageInMilliVolts = ((voltageStatus * ANALOG_TO_VOLTS_A) + ANALOG_TO_VOLTS_B) * 1000;
 
   //double correctedValue = -0.000000000000016 * pow(voltageStatus, 4) + 0.000000000118171 * pow(voltageStatus, 3) - 0.000000301211691 * pow(voltageStatus, 2) + 0.001109019271794 * voltageStatus + 0.034143524634089;
   //voltageInMilliVolts = correctedValue * 25.27 * 1000;
@@ -1883,7 +1922,7 @@ void loop()
     processVoltage();
   }
 
-  if ((i_loop % 10 == 3) /*|| (i_loop % 10 == 8)*/)
+  if ((i_loop % 10 == 3))
   {
     //modifyBrakeFromLCD();
     //displayBrake();
@@ -1912,12 +1951,12 @@ void loop()
   delay(1);
   i_loop++;
 
-  /*
-  Serial.print("time loop");
-  Serial.println(millis() - timeLoop);
-*/
+  //Serial.print("time loop");
+  //Serial.println(millis() - timeLoop);
 
   timeLoop = millis();
+
+  //digitalWrite(PIN_OUT_BRAKE, i_loop % 2000 > 1000);
 }
 
 /////////// End

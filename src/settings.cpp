@@ -133,7 +133,7 @@ void Settings::saveSettings()
   EEPROM.commit();
 }
 
-void Settings::restoreSettings()
+boolean Settings::restoreSettings()
 {
 
   Serial.print("restoreSettings : ");
@@ -147,4 +147,17 @@ void Settings::restoreSettings()
   EEPROM.get(EEPROM_ADDRESS_SETTINGS1, settings1.buffer);
   EEPROM.get(EEPROM_ADDRESS_SETTINGS2, settings2.buffer);
   EEPROM.get(EEPROM_ADDRESS_SETTINGS3, settings3.buffer);
+
+  if (settings1.buffer[0] == 0xff ||settings1.buffer[1] == 0xff)
+  return false;
+
+  return true;
+}
+
+
+void Settings::initSettings()
+{
+  Serial.print("initSettings : ");
+  settings3.fields.Bluetooth_pin_code = 147258;
+
 }
