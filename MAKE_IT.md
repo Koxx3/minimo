@@ -36,5 +36,5 @@ You can also add the external sensors :
 
 Assemble it, and upload the application :D
 
-To follow : RUN.md
+[Next steps ...](RUN.md)
 
