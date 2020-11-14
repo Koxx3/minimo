@@ -21,7 +21,7 @@ Second : the Android applcation
 
 => You can change the pin code in the application settings
 
-Nota : you can modify the Android project from [this github] (https://github.com/Koxx3/minimo_android) 
+Nota : you can modify the Android project from [this github](https://github.com/Koxx3/minimo_android) 
 
 ## Settings
 TBD
