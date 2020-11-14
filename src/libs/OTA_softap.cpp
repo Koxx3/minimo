@@ -139,10 +139,12 @@ void OTA_setup(void) {
   IPAddress IP = WiFi.softAPIP();
   Serial.print("url: http://");
   Serial.print(IP);
-  Serial.println("/ (user: admin, pswd: admin)");
+  Serial.print(" or http://");
+  Serial.print(host);
+  Serial.println(".local / (user: admin, pswd: admin)");
  
   /*use mdns for host name resolution*/
-  if (!MDNS.begin(host)) { //http://smartlcd.local
+  if (!MDNS.begin(host)) { //http://smartcontroller.local
     Serial.println("Error setting up MDNS responder!");
     while (1) {
       delay(1000);
