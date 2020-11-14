@@ -41,7 +41,7 @@
 #define PIN_IN_VOLTAGE 32
 #define PIN_IN_CURRENT 35
 #define PIN_IN_BUTTON1 22
-#define PIN_IN_BUTTON2 0 // PB
+#define PIN_IN_BUTTON2 15 // PB was TX
 #define PIN_OUT_LED_BUTTON1 3
 #define PIN_OUT_LED_BUTTON2 21
 #define PIN_OUT_BRAKE 13
