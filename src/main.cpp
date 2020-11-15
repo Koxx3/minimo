@@ -47,7 +47,7 @@
 #define PIN_OUT_BRAKE 13
 #define PIN_IN_OUT_DHT 12
 #define PIN_IN_ABRAKE 34
-#define PIN_IN_DBRAKE 4
+//#define PIN_IN_DBRAKE 4
 
 #define MODE_LCD_TO_CNTRL 0
 #define MODE_CNTRL_TO_LCD 1
@@ -64,11 +64,17 @@
 #define NB_CURRENT_CALIB 200
 #define NB_BRAKE_CALIB 100
 
+#define BRAKE_TYPE_ANALOG 0
+#if BRAKE_TYPE_ANALOG
 #define ANALOG_BRAKE_MIN_ERR_VALUE 500
+#define ANALOG_BRAKE_MAX_ERR_VALUE 3500
+#else
+#define ANALOG_BRAKE_MIN_ERR_VALUE 0
+#define ANALOG_BRAKE_MAX_ERR_VALUE 4095
+#endif
 #define ANALOG_BRAKE_MIN_VALUE 920
 #define ANALOG_BRAKE_MIN_OFFSET 100
 #define ANALOG_BRAKE_MAX_VALUE 2300
-#define ANALOG_BRAKE_MAX_ERR_VALUE 3500
 
 //////------------------------------------
 ////// Variables
@@ -191,13 +197,12 @@ void setupPins()
   pinMode(PIN_IN_BUTTON2, INPUT_PULLUP);
   pinMode(PIN_IN_VOLTAGE, INPUT);
   pinMode(PIN_IN_CURRENT, INPUT);
-  pinMode(PIN_IN_DBRAKE, INPUT_PULLUP);
-//  pinMode(PIN_OUT_RELAY, OUTPUT);
+  //pinMode(PIN_IN_DBRAKE, INPUT_PULLUP);
+  //  pinMode(PIN_OUT_RELAY, OUTPUT);
   pinMode(PIN_OUT_BRAKE, OUTPUT);
   pinMode(PIN_OUT_LED_BUTTON1, OUTPUT);
   pinMode(PIN_OUT_LED_BUTTON2, OUTPUT);
 }
-
 
 /*
 #include "soc/efuse_reg.h"
@@ -641,7 +646,7 @@ void getBrakeFromAnalog()
       }
       else
       {
-     //   digitalWrite(PIN_OUT_BRAKE, 0);
+        //   digitalWrite(PIN_OUT_BRAKE, 0);
 
         if (shrd.brakeStatus == 1)
         {
@@ -1740,7 +1745,7 @@ void processLockEvent(uint8_t buttonId, bool isLongPress)
 
 void processAux()
 {
-/*
+  /*
   if (shrd.auxOrder == 1)
   {
     digitalWrite(PIN_OUT_RELAY, 1);
@@ -1899,6 +1904,14 @@ void processCurrent()
 void loop()
 {
 
+  // handle Wifi OTA
+  if (shrd.inOtaMode)
+  {
+    BLEDevice::deinit(true);
+    OTA_loop();
+    return;
+  }
+
   processSerial();
 
   blh.processBLE();
@@ -1938,13 +1951,6 @@ void loop()
   if (i_loop % 5 == 1)
   {
     processDHT();
-  }
-
-  // handle OTA
-  if (shrd.inOtaMode)
-  {
-    BLEDevice::deinit(true);
-    OTA_loop();
   }
 
   // Give a time for ESP

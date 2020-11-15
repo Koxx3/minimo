@@ -209,7 +209,7 @@ void BluetoothHandler::init(Settings *data)
                 Serial.print("BLH - Write mode : ");
                 Serial.println(print_buffer);
             }
-            if (pCharacteristic->getUUID().toString() == BRAKE_STATUS_CHARACTERISTIC_UUID)
+            else if (pCharacteristic->getUUID().toString() == BRAKE_STATUS_CHARACTERISTIC_UUID)
             {
                 std::string rxValue = pCharacteristic->getValue();
                 shrd->brakeSentOrder = rxValue[0];

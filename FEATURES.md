@@ -5,7 +5,16 @@ This list is not complete and many features can be added very kickly by software
 ## Smartphone dashboard
 TBD
 
+## Custom mode
+TBD
+
 ## Progressive electric brake
+TBD
+
+## Controller safety
+TBD
+
+## Automatic battery saving
 TBD
 
 ## Anti-theft
@@ -22,3 +31,7 @@ TBD
 
 ## Performance graphics
 TBD
+
+## Error logs
+TBD
+
