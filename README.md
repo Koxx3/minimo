@@ -1,7 +1,7 @@
 # [ SmartController Minimotors ]
 ⚠️ **Warning : this is work in progress. I decline all responsability about using informations from this project** ⚠️
 
-![Temporary Logo](img/logo_tmp.png)
+![Temporary Logo](img/smart.png)
 
 ## What is SmartController ?
 It's a combo of electronic and smartphone application. It extend all features from original Minimotors EYE LCD and controller.
