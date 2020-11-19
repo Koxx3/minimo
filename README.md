@@ -51,6 +51,10 @@ The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/proje
 
 ![PCB from easyEDA](/img/smartControllerPcb.PNG)
 
+###Protype parts list
+
+- [Google sheet](https://docs.google.com/spreadsheets/d/11n0oXzwr5ERSipWXZO53-mBwc6KPEdF8Q-aYTcDPNbk/edit?usp=sharing)
+
 ### Inspiration to understand controller electronic
 - [China BLDC motor controller 36v 250W](http://avdweb.nl/Article_files/Solarbike/Motor-controller/China-BLDC-motor-controller-36V-250W.pdf)
 
