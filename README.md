@@ -130,8 +130,6 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 - [ ] Android application 📱
     - [ ] Display : 
         - [✅] Speed
-        - [ ] Average speed
-        - [IN TEST 🔄] Distance
         - [✅] Mode
         - [✅] Voltage
         - [✅] Current
@@ -144,6 +142,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Humidity
         - [✅] Time
         - [✅] Moving time
+        - [IN TEST 🔄] Distance
+        - [ ] Average speed
     - [✅] Auto-launch app with NFC tag
     - [✅] Parameters custom settings
     - [✅] Data logging
