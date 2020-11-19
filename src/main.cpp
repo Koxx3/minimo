@@ -4,6 +4,7 @@
 // TODO : mode Z button/settings
 // TODO : auto mode shift on low battery
 // TODO : original regulator perturbation
+// TODO : exponential throttle
 // BUG : mode Z / android
 // BUG : push button make brake analog read wrong
 //////////////////////////////////////////
