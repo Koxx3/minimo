@@ -602,15 +602,15 @@ void BluetoothHandler::init(Settings *data)
     settings = data;
 
     // Create the BLE Device
-    BLEDevice::init("SmartLCD");
-    String smartLcdNameComp1 = BLEDevice::getAddress().toString().substr(12, 2).c_str();
-    String smartLcdNameComp2 = BLEDevice::getAddress().toString().substr(15, 2).c_str();
-    String smartLcdFullName = "SmartLCD-" + smartLcdNameComp1 + smartLcdNameComp2;
+    BLEDevice::init("SmartCntrl");
+    String smartCntrlNameComp1 = BLEDevice::getAddress().toString().substr(12, 2).c_str();
+    String smartCntrlNameComp2 = BLEDevice::getAddress().toString().substr(15, 2).c_str();
+    String smartCntrlFullName = "SmartCntrl-" + smartCntrlNameComp1 + smartCntrlNameComp2;
     Serial.print("BLH - adress = ");
     Serial.println(BLEDevice::getAddress().toString().c_str());
     Serial.print("BLH - name = ");
-    Serial.println(smartLcdFullName);
-    esp_ble_gap_set_device_name(smartLcdFullName.c_str());
+    Serial.println(smartCntrlFullName);
+    esp_ble_gap_set_device_name(smartCntrlFullName.c_str());
     BLEDevice::setMTU(BLE_MTU);
 
     /////
