@@ -865,6 +865,10 @@ uint8_t BluetoothHandler::setMeasurements()
     memcpy(&txValue[i], &current, 2);
     i = i + 2;
 
+Serial.print(shrd->currentFilterMean);
+Serial.print(" / ");
+Serial.println(current);
+
     // power
     int16_t power = (current / 1000.0) * (voltage / 1000.0);
     memcpy(&txValue[i], &power, 2);
@@ -882,7 +886,8 @@ uint8_t BluetoothHandler::setMeasurements()
     uint16_t distance = shrd->distance;
     memcpy(&txValue[i], &distance, 2);
     i = i + 2;
-    
+
+ 
     txValue[i] = 0xff;
 
     char print_buffer[500];
@@ -904,6 +909,7 @@ uint8_t BluetoothHandler::setMeasurements()
             i);
 
     Serial.println(print_buffer);
+
 
     pCharacteristicMeasurements->setValue((uint8_t *)&txValue[0], i);
 
