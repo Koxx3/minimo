@@ -31,6 +31,8 @@ Some examples :
 
 - You feel the electric brake too strong at full power ? the progressive electric braking adjust the brake power in real time.
 
+- You find the throttle too sensitive ? change the acceleration curve to an exponential for a slow start but quick ramp-up.
+
 **[Check all datailed features here](FEATURES.md)**
 
 ![Idea](/img/SmartController.png)
@@ -53,7 +55,6 @@ The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/proje
 - [China BLDC motor controller 36v 250W](http://avdweb.nl/Article_files/Solarbike/Motor-controller/China-BLDC-motor-controller-36V-250W.pdf)
 
 ## Applications
-
 ### Android 
 - [Minimo App - Github repo](https://github.com/Koxx3/minimo_android)
 
