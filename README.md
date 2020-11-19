@@ -38,7 +38,7 @@ Some examples :
 **[Check all datailed features here](FEATURES.md)**
 
 ## Case and size
-Current size : 6cm x 3cm x 2cm (will shrink a little at final stage)
+Current size : 6cm x 3cm x 3cm (will shrink a little at final stage - 6cm x 3cm x 2.2cm)
 
 ![Idea](/img/SmartController_3D_1.jpg)
 
