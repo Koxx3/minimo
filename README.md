@@ -47,20 +47,19 @@ Current size : 6cm x 3cm x 3cm (will shrink a little at final stage - 6cm x 3cm 
 The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html) microcontroller.
 
 ### Schematics
-- [PCB schematic](https://easyeda.com/Koxx3/smartlcd-v1-3_copy)
+[PCB schematic](https://easyeda.com/Koxx3/smartlcd-v1-3_copy)
 
 ![PCB from easyEDA](/img/smartControllerPcb.PNG)
 
-###Protype parts list
-
-- [Google sheet](https://docs.google.com/spreadsheets/d/11n0oXzwr5ERSipWXZO53-mBwc6KPEdF8Q-aYTcDPNbk/edit?usp=sharing)
+### Protype parts list
+[Google sheet](https://docs.google.com/spreadsheets/d/11n0oXzwr5ERSipWXZO53-mBwc6KPEdF8Q-aYTcDPNbk/edit?usp=sharing)
 
 ### Inspiration to understand controller electronic
-- [China BLDC motor controller 36v 250W](http://avdweb.nl/Article_files/Solarbike/Motor-controller/China-BLDC-motor-controller-36V-250W.pdf)
+[China BLDC motor controller 36v 250W](http://avdweb.nl/Article_files/Solarbike/Motor-controller/China-BLDC-motor-controller-36V-250W.pdf)
 
 ## Applications
 ### Android 
-- [Minimo App - Github repo](https://github.com/Koxx3/minimo_android)
+[Minimo App - Github repo](https://github.com/Koxx3/minimo_android)
 
 ### iPhone
 I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
