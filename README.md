@@ -31,11 +31,9 @@ Some examples :
 
 - You feel the electric brake too strong at full power ? the progressive electric braking adjust the brake power in real time.
 
-### Main features
-![Idea](/img/SmartController.png)
-
-### Detailed features
 **[Check all datailed features here](FEATURES.md)**
+
+![Idea](/img/SmartController.png)
 
 ## Case and size
 Current size : 6cm x 3cm x 3cm (will shrink a little at final stage - 6cm x 3cm x 2.2cm)
@@ -47,7 +45,7 @@ Current size : 6cm x 3cm x 3cm (will shrink a little at final stage - 6cm x 3cm 
 The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html) microcontroller.
 
 ### Schematics
-- [PCB schematic](https://easyeda.com/Koxx3/smartlcd-v1-4)
+- [PCB schematic](https://easyeda.com/Koxx3/smartlcd-v1-3_copy)
 
 ![PCB from easyEDA](/img/smartControllerPcb.PNG)
 
