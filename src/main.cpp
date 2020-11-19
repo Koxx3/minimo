@@ -1783,9 +1783,6 @@ void processDHT()
       shrd.currentTemperature = temperature;
       shrd.currentHumidity = humidity;
 
-      uint32_t temp = temperature * 1000;
-      uint32_t hr = humidity * 1000;
-      blh.notifyTemperatureHumidityStatus(temp, hr);
     }
   }
 }
