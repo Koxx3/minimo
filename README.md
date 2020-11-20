@@ -33,7 +33,7 @@ Some examples :
 
 - You find the throttle too sensitive ? change the acceleration curve to an exponential for a slow start but quick ramp-up.
 
-**>>> [Check all datailed features here](FEATURES.md) <<<**
+**>>> [Check all detailed features here](FEATURES.md) <<<**
 
 ![Idea](/img/SmartController.png)
 
