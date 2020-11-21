@@ -631,7 +631,7 @@ void getBrakeFromAnalog()
       // alarm controler from braking
       if ((brakeFilterMeanErr > brakeFilterInit.getMean() + ANALOG_BRAKE_MIN_OFFSET) && (!isElectricBrakeForbiden()))
       {
-        //digitalWrite(PIN_OUT_BRAKE, 1);
+        digitalWrite(PIN_OUT_BRAKE, 1);
 
         if (shrd.brakeStatus == 0)
         {
@@ -647,7 +647,7 @@ void getBrakeFromAnalog()
       }
       else
       {
-        //   digitalWrite(PIN_OUT_BRAKE, 0);
+        digitalWrite(PIN_OUT_BRAKE, 0);
 
         if (shrd.brakeStatus == 1)
         {
