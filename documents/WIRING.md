@@ -13,7 +13,7 @@ TDB
 TDB
 
 ## Xiaomi brake handle
-[Modify xiaomi cable](/documents/WIRING_XIAOMI_HANDLE.md)
+[Modify xiaomi cable](/documents/WIRING_XIAOMI_BRAKE.md)
 
 ## Sensors
 TDB
