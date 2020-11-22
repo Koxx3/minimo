@@ -105,7 +105,6 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 - [ ] Features ⚙️
     - [✅] Save settings in non volatile memory
     - [✅] Progressive electric braking (software detection)
-    - [ ] Progressive electric braking (hardware on/off detection)
     - [✅] Progressive electric braking (hardware analog detection)
     - [✅] OTA update
     - [✅] Current measure auto calibration (at startup)

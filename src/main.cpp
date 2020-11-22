@@ -80,12 +80,18 @@
 
 #define BUTTON_LONG_PRESS_TICK 300
 
+#define WATCHDOG_TIMEOUT 10 //time in ms to trigger the watchdog
+
+
 //////------------------------------------
 ////// Variables
 
 // Time
 uint32_t timeLastBrake = 0;
 uint32_t timeLoop = 0;
+
+// Watchdog
+hw_timer_t *timer = NULL;
 
 // Settings
 
@@ -241,6 +247,15 @@ void setupEFuse()
 }
 */
 
+void setupDac()
+{
+  // call GENERAL CALL RESET
+  // https://www.sparkfun.com/datasheets/BreakoutBoards/MCP4725.pdf
+  // page 22
+
+}
+
+
 void setupSerial()
 {
 
@@ -296,6 +311,25 @@ void setupButtons()
   button2.setPressTicks(BUTTON_LONG_PRESS_TICK);
 }
 
+void IRAM_ATTR triggerWatchdog()
+{
+  ets_printf("watchdog => reboot\n");
+  esp_restart();
+}
+
+void setupWatchdog()
+{
+  timer = timerBegin(0, 80, true);                     //timer 0, div 80
+  timerAttachInterrupt(timer, &triggerWatchdog, true); //attach callback
+  timerAlarmWrite(timer, WATCHDOG_TIMEOUT * 1000, false);    //set time in us
+  timerAlarmEnable(timer);                             //enable interrupt
+}
+
+void resetWatchdog()
+{
+  timerWrite(timer, 0); //reset timer (feed watchdog)
+}
+
 ////// Setup
 void setup()
 {
@@ -308,6 +342,9 @@ void setup()
 
   Serial.println(PSTR("   serial ..."));
   setupSerial();
+
+  Serial.println(PSTR("   dac ..."));
+  setupDac();
 
   Serial.println(PSTR("   eeprom ..."));
   setupEPROMM();
@@ -340,6 +377,9 @@ void setup()
 
   Serial.println(PSTR("   init data with settings ..."));
   initDataWithSettings();
+
+  Serial.println(PSTR("   watchdog ..."));
+  setupWatchdog();
 
   // End off setup
   Serial.println("setup --- end");
@@ -1978,6 +2018,8 @@ void loop()
   //Serial.println(millis() - timeLoop);
 
   timeLoop = millis();
+
+  resetWatchdog();
 
   //digitalWrite(PIN_OUT_BRAKE, i_loop % 2000 > 1000);
 }
