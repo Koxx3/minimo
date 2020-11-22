@@ -35,7 +35,8 @@ Some examples :
 
 **>>> [Check all detailed features here](FEATURES.md) <<<**
 
-![Idea](/img/SmartController.png)
+## Board assembly (v1.3.0)
+![Board Assembly](/img/SmartController_board.jpg)
 
 ## Case and size
 Current size : 6cm x 3cm x 3cm (will shrink a little at final stage - 6cm x 3cm x 2.2cm)

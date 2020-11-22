@@ -1,4 +1,5 @@
 //////////////////////////////////////////
+// TODO : check button long press processing
 // TODO : current loop
 // TODO : LCD error indicators
 // TODO : mode Z button/settings
@@ -77,6 +78,8 @@
 #define ANALOG_BRAKE_MIN_OFFSET 100
 #define ANALOG_BRAKE_MAX_VALUE 2300
 
+#define BUTTON_LONG_PRESS_TICK 300
+
 //////------------------------------------
 ////// Variables
 
@@ -115,6 +118,9 @@ MyActions button1ClickStatus = ACTION_OFF;
 uint32_t button1LpDuration = 0;
 MyActions button2ClickStatus = ACTION_OFF;
 uint32_t button2LpDuration = 0;
+boolean button1LpProcessed = false;
+boolean button2LpProcessed = false;
+
 SharedData shrd;
 
 int i_loop = 0;
@@ -280,14 +286,14 @@ void setupButtons()
   button1.attachDuringLongPress(processButton1LpDuring);
   button1.attachLongPressStop(processButton1LpStop);
   button1.setDebounceTicks(50);
-  button1.setPressTicks(300);
+  button1.setPressTicks(BUTTON_LONG_PRESS_TICK);
 
   button2.attachClick(processButton2Click);
   button2.attachLongPressStart(processButton2LpStart);
   button2.attachDuringLongPress(processButton2LpDuring);
   button2.attachLongPressStop(processButton2LpStop);
   button2.setDebounceTicks(50);
-  button2.setPressTicks(300);
+  button2.setPressTicks(BUTTON_LONG_PRESS_TICK);
 }
 
 ////// Setup
@@ -1562,6 +1568,19 @@ void processButton1LpStart()
 void processButton1LpDuring()
 {
   button1LpDuration = button1.getPressedTicks();
+
+  if ((button1LpDuration > settings.getS3F().Button_long_press_duration * 1000) && (!button1LpProcessed))
+  {
+
+    char print_buffer[500];
+    sprintf(print_buffer, "processButton1LpDuring : %d =>> process", button1LpDuration);
+    blh.notifyBleLogs(print_buffer);
+
+    processAuxEvent(1, true);
+    processSpeedLimiterEvent(1, true);
+    processLockEvent(1, true);
+    button1LpProcessed = true;
+  }
 }
 
 void processButton1LpStop()
@@ -1573,13 +1592,7 @@ void processButton1LpStop()
   sprintf(print_buffer, "processButton1LpStop : %d", button1LpDuration);
   blh.notifyBleLogs(print_buffer);
 
-  if (button1LpDuration > settings.getS3F().Button_long_press_duration * 1000)
-  {
-    processAuxEvent(1, true);
-    processSpeedLimiterEvent(1, true);
-    processLockEvent(1, true);
-  }
-
+  button1LpProcessed = false;
   button1LpDuration = 0;
 }
 
@@ -1634,6 +1647,19 @@ void processButton2LpStart()
 void processButton2LpDuring()
 {
   button2LpDuration = button2.getPressedTicks();
+
+  if ((button2LpDuration > settings.getS3F().Button_long_press_duration * 1000) && (!button2LpProcessed))
+  {
+
+    char print_buffer[500];
+    sprintf(print_buffer, "processButton2LpDuring : %d ==> process", button2LpDuration);
+    blh.notifyBleLogs(print_buffer);
+
+    processAuxEvent(2, true);
+    processSpeedLimiterEvent(2, true);
+    processLockEvent(2, true);
+    button2LpProcessed = true;
+  }
 }
 
 void processButton2LpStop()
@@ -1645,13 +1671,7 @@ void processButton2LpStop()
   sprintf(print_buffer, "processButton2LpStop : %d", button2LpDuration);
   blh.notifyBleLogs(print_buffer);
 
-  if (button2LpDuration > settings.getS3F().Button_long_press_duration * 1000)
-  {
-    processAuxEvent(2, true);
-    processSpeedLimiterEvent(2, true);
-    processLockEvent(2, true);
-  }
-
+  button2LpProcessed = false;
   button2LpDuration = 0;
 }
 
@@ -1783,7 +1803,6 @@ void processDHT()
 
       shrd.currentTemperature = temperature;
       shrd.currentHumidity = humidity;
-
     }
   }
 }
