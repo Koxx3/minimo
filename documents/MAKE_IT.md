@@ -33,6 +33,10 @@ You can also add the external sensors :
 - WCS1700 : current sensor
 - DHT22 : temperature and humity sensor
 
+## Wrap it
+You need a wrap for 10.5cm / diameter 33mm
+[Link](https://fr.aliexpress.com/item/4000787511699.html)
+
 ## Once you receive the board and the components 
 
 Assemble it, and upload the application :D
