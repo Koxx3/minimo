@@ -80,8 +80,7 @@
 
 #define BUTTON_LONG_PRESS_TICK 300
 
-#define WATCHDOG_TIMEOUT 10 //time in ms to trigger the watchdog
-
+#define WATCHDOG_TIMEOUT 100 //time in ms to trigger the watchdog
 
 //////------------------------------------
 ////// Variables
@@ -151,14 +150,12 @@ int begin_CntrlToLcd = 1;
 int isModified_LcdToCntrl = 0;
 int isModified_CntrlToLcd = 0;
 
-MedianFilter voltageFilter(100, 30000);
+MedianFilter voltageFilter(100, 2000);
 MedianFilter voltageRawFilter(100, 2000);
 MedianFilter currentFilter(200, 1830);
 MedianFilter currentFilterInit(NB_CURRENT_CALIB, 1830);
 MedianFilter brakeFilter(10 /* 20 */, 900);
 MedianFilter brakeFilterInit(NB_BRAKE_CALIB, 900);
-
-MedianFilter tesFilter(10, 0);
 
 Settings settings;
 
@@ -252,9 +249,7 @@ void setupDac()
   // call GENERAL CALL RESET
   // https://www.sparkfun.com/datasheets/BreakoutBoards/MCP4725.pdf
   // page 22
-
 }
-
 
 void setupSerial()
 {
@@ -319,10 +314,10 @@ void IRAM_ATTR triggerWatchdog()
 
 void setupWatchdog()
 {
-  timer = timerBegin(0, 80, true);                     //timer 0, div 80
-  timerAttachInterrupt(timer, &triggerWatchdog, true); //attach callback
-  timerAlarmWrite(timer, WATCHDOG_TIMEOUT * 1000, false);    //set time in us
-  timerAlarmEnable(timer);                             //enable interrupt
+  timer = timerBegin(0, 80, true);                        //timer 0, div 80
+  timerAttachInterrupt(timer, &triggerWatchdog, true);    //attach callback
+  timerAlarmWrite(timer, WATCHDOG_TIMEOUT * 1000, false); //set time in us
+  timerAlarmEnable(timer);                                //enable interrupt
 }
 
 void resetWatchdog()
@@ -1011,8 +1006,22 @@ bool isElectricBrakeForbiden()
   float voltage = shrd.voltageFilterMean / 1000.0;
   float bat_min = settings.getS3F().Battery_min_voltage / 10.0;
   float bat_max = settings.getS3F().Battery_max_voltage / 10.0;
+  float maxVoltage = bat_min + (settings.getS1F().Electric_brake_disabled_percent_limit * (bat_max - bat_min) / 100.0);
 
-  return (voltage > bat_min + (settings.getS1F().Electric_brake_disabled_percent_limit * (bat_max - bat_min)));
+#if DEBUG_BRAKE_FORBIDEN
+  Serial.print("bat_min ");
+  Serial.print(bat_min);
+  Serial.print(" / bat_max ");
+  Serial.print(bat_max);
+  Serial.print(" / voltage ");
+  Serial.print(voltage);
+  Serial.print(" / maxVoltage ");
+  Serial.print(maxVoltage);
+  Serial.print(" / settings.getS1F().Electric_brake_disabled_percent_limit ");
+  Serial.println(settings.getS1F().Electric_brake_disabled_percent_limit);
+#endif
+
+  return (voltage > maxVoltage);
 }
 
 uint8_t modifyBrakeFromLCD(char var, char data_buffer[])
@@ -1987,7 +1996,7 @@ void loop()
 
   processAux();
 
-  if (i_loop % 100 == 0)
+  if (i_loop % 10 == 0)
   {
     processVoltage();
   }

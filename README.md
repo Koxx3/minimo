@@ -118,7 +118,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Nitro Boost ON/OFF
         - [✅] Aux ON/OFF       
         - [ ] Mode Z ON/OFF
-    - [IN TEST 🔄] Disable electric brake with full battery
+    - [✅] Disable electric brake with full battery
     - [IN PROGRESS 🔄] Automatic ECO mode on low battery 
     - [IN TEST 🔄] LCD Speed adjustment
     - [ ] Exponential acceleration curve
@@ -147,6 +147,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Moving time
         - [IN TEST 🔄] Distance
         - [ ] Average speed
+        - [ ] Brake forbiden
     - [✅] Auto-launch app with NFC tag
     - [✅] Parameters custom settings
     - [✅] Data logging
