@@ -6,7 +6,7 @@
 
 ![3](/img/xiaomi/20201121_163221.jpg)
 
-## Remove the glue
+## Remove the glue and extract the sensor
 ![4](/img/xiaomi/20201121_163332.jpg)
 
 ## Unsolder the hall sensor
