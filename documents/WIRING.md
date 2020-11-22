@@ -12,5 +12,8 @@ TDB
 ## Adaptation cables
 TDB
 
+## Xiaomi brake handle
+[Modify xiaomi cable](/documents/WIRING_XIAOMI_HANDLE.md)
+
 ## Sensors
 TDB

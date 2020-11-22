@@ -1,7 +1,7 @@
 # [ SmartController Minimotors ]
 ⚠️ **Warning : this is work in progress. I decline all responsability about using informations from this project** ⚠️
 
-![Temporary Logo](img/smart.png)
+![Logo](/img/smart.png)
 
 ## What is SmartController ?
 It's a combo of electronic and smartphone application. It extend all features from original Minimotors EYE LCD and controller.
@@ -160,16 +160,16 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 - [ ] Custom acceleration curve ==> not possible with current hardware
 
 ## Produce you own board
-- [Here](MAKE_IT.md)
+- [Here](/documents/MAKE_IT.md)
 
 ## Wiring
-- [Here](WIRING.md)
+- [Here](/documents/WIRING.md)
 
 ## Run it !
-- [Here](RUN.md)
+- [Here](/documents/RUN.md)
 
 ## Resources 🔗
-- [Serial links data decoding - Excel XLSX](http://github.com/Koxx3/minimo/edit/master/MINIMO.xlsx)
+- [Serial links data decoding - Excel XLSX](/documents/MINIMO.xlsx)
 
 ## Donate to support
-- [If you want to support me, click here !](https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=W3KHBZCNL9N2C&source=url)
+- [If you want to support me, click here !](https://www.paypal.com/pools/c/8ut4175ux4)
