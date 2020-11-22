@@ -126,7 +126,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [ ] Dynamic BLE debug infos
     - [ ] Configurable current loop regulation
     - [ ] Customize mode Z with different power / max speed
-    - [ ] Calibrate analog brake
+    - [ ] Manual calibration for analog brake
+    - [ ] Manual calibration for voltage
     - [ ] Wifi connexion for dashboard display and settings
     - [ ] Advanced diagnosis (serial errors, throtle errors ...)
 
