@@ -169,7 +169,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 ## Run it !
 - [Here](/documents/RUN.md)
 
-## Resources 🔗
+## Ressources 🔗
 - [Serial links data decoding - Excel XLSX](/documents/MINIMO.xlsx)
 
 ## Donate to support
