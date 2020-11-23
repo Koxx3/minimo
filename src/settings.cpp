@@ -19,6 +19,14 @@ Settings::field_s3 Settings::getS3F()
 {
   return settings3.fields;
 }
+Settings::field_s4 Settings::getS4F()
+{
+  return settings4.fields;
+}
+Settings::field_s5 Settings::getS5F()
+{
+  return settings5.fields;
+}
 
 unsigned char *Settings::getS1B()
 {
@@ -31,6 +39,14 @@ unsigned char *Settings::getS2B()
 unsigned char *Settings::getS3B()
 {
   return settings3.buffer;
+}
+unsigned char *Settings::getS4B()
+{
+  return settings4.buffer;
+}
+unsigned char *Settings::getS5B()
+{
+  return settings5.buffer;
 }
 
 void Settings::displaySettings1()
@@ -109,12 +125,25 @@ void Settings::displaySettings3()
   Serial.println(settings3.fields.Bluetooth_pin_code);
 }
 
+void Settings::displaySettings4()
+{
+  Serial.print("// Wifi_ssid : ");
+  Serial.println(settings4.fields.Wifi_ssid);
+}
+
+void Settings::displaySettings5()
+{
+  Serial.print("// Wifi_pwd : ");
+  Serial.println(settings5.fields.Wifi_pwd);
+}
+
 void Settings::displaySettings()
 {
   displaySettings1();
   displaySettings2();
   displaySettings3();
-
+  displaySettings4();
+  displaySettings5();
 }
 
 void Settings::saveSettings()
@@ -125,11 +154,17 @@ void Settings::saveSettings()
   Serial.print(sizeof(settings2));
   Serial.print(" / ");
   Serial.print(sizeof(settings3));
+  Serial.print(" / ");
+  Serial.print(sizeof(settings4));
+  Serial.print(" / ");
+  Serial.print(sizeof(settings5));
   Serial.println(" bytes");
 
   EEPROM.put(EEPROM_ADDRESS_SETTINGS1, settings1.buffer);
   EEPROM.put(EEPROM_ADDRESS_SETTINGS2, settings2.buffer);
   EEPROM.put(EEPROM_ADDRESS_SETTINGS3, settings3.buffer);
+  EEPROM.put(EEPROM_ADDRESS_SETTINGS4, settings4.buffer);
+  EEPROM.put(EEPROM_ADDRESS_SETTINGS5, settings5.buffer);
   EEPROM.commit();
 }
 
@@ -142,11 +177,17 @@ boolean Settings::restoreSettings()
   Serial.print(sizeof(settings2));
   Serial.print(" / ");
   Serial.print(sizeof(settings3));
+  Serial.print(" / ");
+  Serial.print(sizeof(settings4));
+  Serial.print(" / ");
+  Serial.print(sizeof(settings5));
   Serial.println(" bytes");
 
   EEPROM.get(EEPROM_ADDRESS_SETTINGS1, settings1.buffer);
   EEPROM.get(EEPROM_ADDRESS_SETTINGS2, settings2.buffer);
   EEPROM.get(EEPROM_ADDRESS_SETTINGS3, settings3.buffer);
+  EEPROM.get(EEPROM_ADDRESS_SETTINGS4, settings4.buffer);
+  EEPROM.get(EEPROM_ADDRESS_SETTINGS5, settings5.buffer);
 
   if (settings1.buffer[0] == 0xff ||settings1.buffer[1] == 0xff)
   return false;

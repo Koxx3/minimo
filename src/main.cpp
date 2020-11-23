@@ -17,7 +17,7 @@
 #include <EEPROM.h>
 
 #include "main.h"
-#include "OTA_softap.h"
+#include "OTA_wifi.h"
 #include "MedianFilter.h"
 #include "dht_nonblocking.h"
 #include "Settings.h"
@@ -27,10 +27,14 @@
 #include "OneButton.h"
 #include "EEPROM_storage.h"
 
+#include "app_version.h"
+
 #include <PID_v1.h>
 
 //////------------------------------------
 ////// Defines
+
+#define DEBUG_ESP_HTTP_UPDATE 1
 
 #define ALLOW_LCD_TO_CNTRL_MODIFICATIONS true
 #define ALLOW_CNTRL_TO_LCD_MODIFICATIONS true
@@ -325,6 +329,11 @@ void resetWatchdog()
   timerWrite(timer, 0); //reset timer (feed watchdog)
 }
 
+void disableWatchdog()
+{
+  timerAlarmDisable(timer);
+}
+
 ////// Setup
 void setup()
 {
@@ -332,6 +341,9 @@ void setup()
   // Initialize the Serial (use only in setup codes)
   Serial.begin(115200);
   Serial.println(PSTR("\n\nsetup --- begin"));
+
+  Serial.print("version : ");
+  Serial.println(Version);
 
   shrd.timeLastNotifyBle = millis();
 
@@ -1973,7 +1985,7 @@ void loop()
   // handle Wifi OTA
   if (shrd.inOtaMode)
   {
-    BLEDevice::deinit(true);
+    blh.deinit();
     OTA_loop();
     return;
   }
@@ -2014,7 +2026,7 @@ void loop()
   }
 
   // keep it fast (/100 not working)
-  if (i_loop % 5 == 1)
+  if (i_loop % 10 == 1)
   {
     processDHT();
   }

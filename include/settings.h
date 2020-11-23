@@ -15,6 +15,8 @@ public:
   void displaySettings1();
   void displaySettings2();
   void displaySettings3();
+  void displaySettings4();
+  void displaySettings5();
   void displaySettings();
   bool restoreSettings();
   void saveSettings();
@@ -93,6 +95,23 @@ typedef enum Electric_Brake_Type
   } __attribute__((packed));
 #pragma pack(pop)
 
+#pragma pack(push, 1)
+  struct field_s4
+  {
+    char Wifi_ssid[20];
+
+  } __attribute__((packed));
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+  struct field_s5
+  {
+    char Wifi_pwd[20];
+
+  } __attribute__((packed));
+#pragma pack(pop)
+
+
   union settings_bt1
   {
     struct field_s1 fields;
@@ -110,18 +129,37 @@ typedef enum Electric_Brake_Type
     struct field_s3 fields;
     unsigned char buffer[sizeof(struct field_s3)];
   };
+  
+  union settings_bt4
+  {
+    struct field_s4 fields;
+    unsigned char buffer[sizeof(struct field_s4)];
+  };
+  
+  union settings_bt5
+  {
+    struct field_s5 fields;
+    unsigned char buffer[sizeof(struct field_s5)];
+  };
+
 
   union settings_bt1 settings1;
   union settings_bt2 settings2;
   union settings_bt3 settings3;
+  union settings_bt4 settings4;
+  union settings_bt5 settings5;
 
   field_s1 getS1F();
   field_s2 getS2F();
   field_s3 getS3F();
+  field_s4 getS4F();
+  field_s5 getS5F();
 
   unsigned char* getS1B();
   unsigned char* getS2B();
   unsigned char* getS3B();
+  unsigned char* getS4B();
+  unsigned char* getS5B();
 };
 
 #endif

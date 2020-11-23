@@ -19,6 +19,7 @@ class BluetoothHandler
 public:
     BluetoothHandler();
     static void init(Settings *);
+    static void deinit();
     static void bleOnScanResults(BLEScanResults);
     static void notifyBleLock();
     static void notifyBleLogs(char *);
@@ -51,6 +52,8 @@ public:
     static BLECharacteristic *pCharacteristicFastUpdate;
     static BLECharacteristic *pCharacteristicSettings2;
     static BLECharacteristic *pCharacteristicSettings3;
+    static BLECharacteristic *pCharacteristicSettings4;
+    static BLECharacteristic *pCharacteristicSettings5;
     static BLECharacteristic *pCharacteristicAux;
     static BLECharacteristic *pCharacteristicSpeedPid;
     static BLECharacteristic *pCharacteristicDistanceRst;

@@ -22,8 +22,8 @@
 //#define "beb5483e-36e1-4688-b7f5-ea07361b26a4"
 //#define "beb5483e-36e1-4688-b7f5-ea07361b26a5"
 #define BTLOCK_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a6"
-//#define "beb5483e-36e1-4688-b7f5-ea07361b26a7"
-//#define "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+#define SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a7"
+#define SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
 #define SETTINGS1_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a9"
 #define SPEED_LIMITER_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26aa"
 #define ECO_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ab"
@@ -59,6 +59,8 @@ BLECharacteristic *BluetoothHandler::pCharacteristicLogs;
 BLECharacteristic *BluetoothHandler::pCharacteristicFastUpdate;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings2;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings3;
+BLECharacteristic *BluetoothHandler::pCharacteristicSettings4;
+BLECharacteristic *BluetoothHandler::pCharacteristicSettings5;
 BLECharacteristic *BluetoothHandler::pCharacteristicAux;
 BLECharacteristic *BluetoothHandler::pCharacteristicSpeedPid;
 BLECharacteristic *BluetoothHandler::pCharacteristicDistanceRst;
@@ -74,6 +76,8 @@ bool BluetoothHandler::oldDeviceConnected;
 
 Settings *BluetoothHandler::settings;
 SharedData *BluetoothHandler::shrd;
+
+bool isBtEnabled;
 
 BluetoothHandler::BluetoothHandler()
 {
@@ -298,6 +302,67 @@ void BluetoothHandler::init(Settings *data)
 
                 // update BLE PIN code
                 pSecurity->setStaticPIN(settings->getS3F().Bluetooth_pin_code);
+            }
+            else if (pCharacteristic->getUUID().toString() == SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID)
+            {
+                std::string rxValue = pCharacteristic->getValue();
+
+                memset(settings->getS4B(), 0, 20);
+                for (int i = 0; i < rxValue.length(); i++)
+                {
+                    settings->getS4B()[i] = rxValue[i];
+                }
+
+                //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
+
+                Serial.print("BLH - Settings4 len : ");
+                Serial.println(rxValue.length());
+                Serial.print("BLH - Settings4 size : ");
+                Serial.println(rxValue.size());
+
+                Serial.print("BLH - Settings4 : ");
+                for (int i = 0; i < rxValue.length(); i++)
+                {
+                    char print_buffer[5];
+                    sprintf(print_buffer, "%02x ", rxValue[i]);
+                    Serial.print(print_buffer);
+                }
+                Serial.println("");
+
+                settings->displaySettings4();
+            }
+
+            else if (pCharacteristic->getUUID().toString() == SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID)
+            {
+                std::string rxValue = pCharacteristic->getValue();
+
+                memset(settings->getS5B(), 0, 20);
+
+                for (int i = 0; i < rxValue.length(); i++)
+                {
+                    settings->getS5B()[i] = rxValue[i];
+                }
+
+                //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
+
+                Serial.print("BLH - Settings5 len : ");
+                Serial.println(rxValue.length());
+                Serial.print("BLH - Settings5 size : ");
+                Serial.println(rxValue.size());
+
+                Serial.print("BLH - Settings5 : ");
+                for (int i = 0; i < rxValue.length(); i++)
+                {
+                    char print_buffer[5];
+                    sprintf(print_buffer, "%02x ", rxValue[i]);
+                    Serial.print(print_buffer);
+                }
+                Serial.println("");
+
+                settings->displaySettings5();
+
+                // update BLE PIN code
+                pSecurity->setStaticPIN(settings->getS3F().Bluetooth_pin_code);
 
                 // reset speed PID
                 resetPid();
@@ -375,17 +440,24 @@ void BluetoothHandler::init(Settings *data)
             {
                 Serial.println("Write SWITCH_TO_OTA_CHARACTERISTIC_UUID");
 
+                disableWatchdog();
+
                 // disconnect BT
+                //                pServer->disconnect(0);
+                //                Serial.println("BT disconnect => done");
 
-                Serial.println("BT deinit => done");
+                //delay(100);
 
-                delay(1000);
+                //  BLEDevice::deinit();
+                //  Serial.println("BT deinit => done");
+
+                //  delay(100);
 
                 // init OTA
                 OTA_setup();
 
                 Serial.println("OTA init => done");
-                delay(1000);
+                delay(100);
 
                 // Enable wifi & OTA
                 shrd->inOtaMode = true;
@@ -628,6 +700,16 @@ void BluetoothHandler::init(Settings *data)
         BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
+    pCharacteristicSettings4 = pService->createCharacteristic(
+        SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_WRITE |
+            BLECharacteristic::PROPERTY_READ);
+
+    pCharacteristicSettings5 = pService->createCharacteristic(
+        SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_WRITE |
+            BLECharacteristic::PROPERTY_READ);
+
     pCharacteristicAux = pService->createCharacteristic(
         AUX_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
@@ -656,6 +738,8 @@ void BluetoothHandler::init(Settings *data)
     pCharacteristicFastUpdate->addDescriptor(new BLE2902());
     pCharacteristicSettings2->addDescriptor(new BLE2902());
     pCharacteristicSettings3->addDescriptor(new BLE2902());
+    pCharacteristicSettings4->addDescriptor(new BLE2902());
+    pCharacteristicSettings5->addDescriptor(new BLE2902());
     pCharacteristicAux->addDescriptor(new BLE2902());
     pCharacteristicSpeedPid->addDescriptor(new BLE2902());
     pCharacteristicDistanceRst->addDescriptor(new BLE2902());
@@ -674,6 +758,8 @@ void BluetoothHandler::init(Settings *data)
     pCharacteristicFastUpdate->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettings2->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettings3->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicSettings4->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicSettings5->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicAux->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSpeedPid->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicDistanceRst->setCallbacks(new BLECharacteristicCallback());
@@ -703,6 +789,8 @@ void BluetoothHandler::init(Settings *data)
     pBLEScan->setAdvertisedDeviceCallbacks(new BLEAdvertisedDeviceCallback());
     pBLEScan->setActiveScan(true);
     pBLEScan->start(10, &bleOnScanResults, false);
+
+    isBtEnabled = true;
 }
 
 void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
@@ -865,7 +953,7 @@ uint8_t BluetoothHandler::setMeasurements()
     memcpy(&txValue[i], &current, 2);
     i = i + 2;
 
-/*
+    /*
 Serial.print(shrd->currentFilterMean);
 Serial.print(" / ");
 Serial.println(current);
@@ -889,7 +977,7 @@ Serial.println(current);
     memcpy(&txValue[i], &distance, 2);
     i = i + 2;
 
- /*
+    /*
     txValue[i] = 0xff;
 
     char print_buffer[500];
@@ -1069,4 +1157,20 @@ void BluetoothHandler::processBLE()
 void BluetoothHandler::setSharedData(SharedData *data)
 {
     shrd = data;
+}
+
+void BluetoothHandler::deinit()
+{
+    if (isBtEnabled)
+    {
+        esp_bluedroid_disable();
+        Serial.println("BT esp_bluedroid_disable => done");
+        esp_bluedroid_deinit();
+        Serial.println("BT esp_bluedroid_deinit => done");
+        esp_bt_controller_disable();
+        Serial.println("BT esp_bt_controller_disable => done");
+        esp_bt_controller_deinit();
+        Serial.println("BT esp_bt_controller_deinit => done");
+        isBtEnabled = true;
+    }
 }
