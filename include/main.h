@@ -4,8 +4,6 @@ void restoreBleLockForced();
 
 uint8_t modifyBrakeFromAnalog(char, char *);
 
-void OTA_setup();
-
 void processButton1Click();
 void processButton1LpStart();
 void processButton1LpDuring();

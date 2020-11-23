@@ -12,6 +12,7 @@
 #include "esp_gatts_api.h"
 #include "esp_bt_defs.h"
 #include "esp_bt_main.h"
+#include "OTA_wifi.h"
 
 // See the following for generating UUIDs: https://www.uuidgenerator.net/
 #define SERVICE_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
@@ -454,7 +455,7 @@ void BluetoothHandler::init(Settings *data)
                 //  delay(100);
 
                 // init OTA
-                OTA_setup();
+                OTA_setup(settings->getS4F().Wifi_ssid, settings->getS5F().Wifi_pwd);
 
                 Serial.println("OTA init => done");
                 delay(100);
@@ -1164,13 +1165,9 @@ void BluetoothHandler::deinit()
     if (isBtEnabled)
     {
         esp_bluedroid_disable();
-        Serial.println("BT esp_bluedroid_disable => done");
         esp_bluedroid_deinit();
-        Serial.println("BT esp_bluedroid_deinit => done");
         esp_bt_controller_disable();
-        Serial.println("BT esp_bt_controller_disable => done");
         esp_bt_controller_deinit();
-        Serial.println("BT esp_bt_controller_deinit => done");
-        isBtEnabled = true;
+        isBtEnabled = false;
     }
 }

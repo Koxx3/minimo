@@ -10,10 +10,10 @@
 
 void doUpdate();
 
-void OTA_setup()
+void OTA_setup(char* wifi_ssid, char* wifi_pwd)
 {
   // put your setup code here, to run once:
-  WiFi.begin("KoxxWrls", "xoKxssxoKxss");
+  WiFi.begin(wifi_ssid, wifi_pwd);
   while (WiFi.status() != WL_CONNECTED)
   {
     Serial.print(".");
@@ -37,7 +37,8 @@ void OTA_loop()
   url += "&s=" + String(chipId);
   url += "&v=" + String(Version);
   
-  String test = MakeFirmwareInfo(ProductKey, Version);
+  // mark binary with version
+  String markVersion = MakeFirmwareInfo(ProductKey, Version);
 
   Serial.print("Update url :");
   Serial.println(url);
