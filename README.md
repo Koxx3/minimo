@@ -146,8 +146,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Time
         - [✅] Moving time
         - [IN TEST 🔄] Distance
+        - [IN TEST 🔄] Brake forbiden
         - [ ] Average speed
-        - [ ] Brake forbiden
     - [✅] Auto-launch app with NFC tag
     - [✅] Parameters custom settings
     - [✅] Data logging
