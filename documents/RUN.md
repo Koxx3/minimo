@@ -1,8 +1,8 @@
 # Run the softwares
 Once you have all the electronic, you'll need to flash/install the softwares.
 
-First : the ESP32 software
-Second : the Android applcation
+- First : the ESP32 software
+- Second : the Android applcation
 
 ## Preparation of ESP32 board
 - Install Visual Code + Platform.io [tuto](https://platformio.org/install/ide?install=vscode)
@@ -29,11 +29,8 @@ Nota : you can modify the Android project from [this github](https://github.com/
 TBD
 
 ## Update throught Wifi
-- From the Android application, in the '...' menu, tap "Software update"
-=> The SmartController will siwth from bluetooth to wifi server
-- On the smartphone, search for wifi called 'SmartCntr-xxx' and connect to it
-- Open a web brower, and tap : http://192.168.1.2
-- Once on the web page : login "SmartController" / password "SmartController$"
-- Select the firmware, then click 'upload'.
-- Wait the upload end, then it should reboot automatically
+- From the Android application, in the settings, enter your wifi network and password.
+- In the main interface, open the menu with the '...' , tap "Software update (OTA)"
+=> The SmartController will siwth from bluetooth to wifi server and you will loose Bluetooth connection.
+- Wait the upload and flash end, then it should reboot automatically
 
