@@ -46,7 +46,7 @@ public:
     static BLECharacteristic *pCharacteristicSpeedLimiter;
     static BLECharacteristic *pCharacteristicEco;
     static BLECharacteristic *pCharacteristicAccel;
-    static BLECharacteristic *pCharacteristicCurrentCalib;
+    static BLECharacteristic *pCharacteristicCalibOrder;
     static BLECharacteristic *pCharacteristicOtaSwitch;
     static BLECharacteristic *pCharacteristicLogs;
     static BLECharacteristic *pCharacteristicFastUpdate;

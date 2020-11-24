@@ -72,8 +72,10 @@ typedef enum Electric_Brake_Type
 #pragma pack(push, 1)
   struct field_s2
   {
-    char Beacon_Mac_Address[17];
     int8_t Electric_brake_type;
+    int8_t dummy1;
+    int8_t dummy2;
+    char Beacon_Mac_Address[17];
 
   } __attribute__((packed));
 #pragma pack(pop)

@@ -15,7 +15,6 @@
 
 #include <Arduino.h>
 #include <EEPROM.h>
-
 #include "main.h"
 #include "OTA_wifi.h"
 #include "MedianFilter.h"
@@ -200,6 +199,46 @@ const byte modeLcd2[256] = {0x8a, 0x0f, 0x10, 0x35, 0x3e, 0x33, 0x34, 0x39, 0x32
                             0x53, 0x54, 0x59, 0x52, 0x57, 0x58, 0x7d, 0x26, 0x7b, 0x7c, 0x81, 0x7a, 0x7f, 0x80, 0x25, 0x2e, 0x23, 0x24, 0x29, 0x22, 0x27, 0x28, 0x8d, 0x36, 0x8b, 0x8c, 0x11};
 
 //////------------------------------------
+////// EEPROM functions
+
+void saveBleLockForced()
+{
+  EEPROM.writeBytes(EEPROM_ADDRESS_BLE_LOCK_FORCED, &blh.bleLockForced, sizeof(blh.bleLockForced));
+  EEPROM.commit();
+
+  Serial.print("save bleLockForced value : ");
+  Serial.println(blh.bleLockForced);
+}
+
+void restoreBleLockForced()
+{
+  EEPROM.readBytes(EEPROM_ADDRESS_BLE_LOCK_FORCED, &blh.bleLockForced, sizeof(blh.bleLockForced));
+
+  Serial.print("restore bleLockForced value : ");
+  Serial.println(blh.bleLockForced);
+}
+
+void saveBrakeMaxPressure()
+{
+  EEPROM.writeBytes(EEPROM_ADDRESS_BRAKE_MAX_PRESSURE, &shrd.brakeMaxPressureRaw, sizeof(shrd.brakeMaxPressureRaw));
+  EEPROM.commit();
+
+  Serial.print("save saveBrakeMaxPressure value : ");
+  Serial.println(shrd.brakeMaxPressureRaw);
+}
+
+void restoreBrakeMaxPressure()
+{
+  EEPROM.readBytes(EEPROM_ADDRESS_BRAKE_MAX_PRESSURE, &shrd.brakeMaxPressureRaw, sizeof(shrd.brakeMaxPressureRaw));
+
+  Serial.print("restore restoreBrakeMaxPressure value : ");
+  Serial.println(shrd.brakeMaxPressureRaw);
+
+  if (shrd.brakeMaxPressureRaw == -1)
+    shrd.brakeMaxPressureRaw = ANALOG_BRAKE_MAX_VALUE;
+}
+
+//////------------------------------------
 //////------------------------------------
 ////// Setups
 
@@ -356,6 +395,7 @@ void setup()
   Serial.println(PSTR("   eeprom ..."));
   setupEPROMM();
   restoreBleLockForced();
+  restoreBrakeMaxPressure();
 
   Serial.println(PSTR("   settings ..."));
   bool settingsStatusOk = settings.restoreSettings();
@@ -390,35 +430,6 @@ void setup()
 
   // End off setup
   Serial.println("setup --- end");
-}
-
-//////------------------------------------
-//////------------------------------------
-////// EEPROM functions
-
-void saveBleLockForced()
-{
-  Serial.print("save bleLockForced : ");
-  Serial.print(sizeof(blh.bleLockForced));
-  Serial.println(" bytes");
-
-  EEPROM.writeBytes(EEPROM_ADDRESS_BLE_LOCK_FORCED, &blh.bleLockForced, sizeof(blh.bleLockForced));
-  EEPROM.commit();
-
-  Serial.print("save bleLockForced value : ");
-  Serial.println(blh.bleLockForced);
-}
-
-void restoreBleLockForced()
-{
-
-  Serial.print("restore BleLockForced");
-  Serial.println(sizeof(blh.bleLockForced));
-
-  EEPROM.readBytes(EEPROM_ADDRESS_BLE_LOCK_FORCED, &blh.bleLockForced, sizeof(blh.bleLockForced));
-
-  Serial.print("restore bleLockForced value : ");
-  Serial.println(blh.bleLockForced);
 }
 
 //////------------------------------------
@@ -613,9 +624,11 @@ uint8_t modifyModeOld(char var, char data_buffer[])
 
 void getBrakeFromAnalog()
 {
+  brakeAnalogValue = analogRead(PIN_IN_ABRAKE);
+  shrd.brakeAnalogValue = brakeAnalogValue;
+
   if (settings.getS2F().Electric_brake_type == settings.LIST_Electric_brake_type_analog)
   {
-    brakeAnalogValue = analogRead(PIN_IN_ABRAKE);
 
     int brakeFilterMean = brakeFilter.getMean();
     int brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
@@ -660,8 +673,8 @@ void getBrakeFromAnalog()
       return;
     }
 
-    if (brakeAnalogValue > ANALOG_BRAKE_MAX_VALUE)
-      brakeAnalogValue = ANALOG_BRAKE_MAX_VALUE;
+    if (brakeAnalogValue > shrd.brakeMaxPressureRaw)
+      brakeAnalogValue = shrd.brakeMaxPressureRaw;
 
     brakeFilter.in(brakeAnalogValue);
 
@@ -1560,7 +1573,7 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 
     if (settings.getS1F().Electric_brake_max_value - settings.getS1F().Electric_brake_min_value > 0)
     {
-      step = (ANALOG_BRAKE_MAX_VALUE - ANALOG_BRAKE_MIN_VALUE) / (settings.getS1F().Electric_brake_max_value - settings.getS1F().Electric_brake_min_value);
+      step = (shrd.brakeMaxPressureRaw - ANALOG_BRAKE_MIN_VALUE) / (settings.getS1F().Electric_brake_max_value - settings.getS1F().Electric_brake_min_value);
 
       int brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
       if (brakeFilterMeanErr > ANALOG_BRAKE_MIN_VALUE)

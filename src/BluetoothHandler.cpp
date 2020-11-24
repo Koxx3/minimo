@@ -19,7 +19,7 @@
 #define MEASUREMENTS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a0"
 #define MODE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a1"
 #define BRAKE_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a2"
-//#define "beb5483e-36e1-4688-b7f5-ea07361b26a3"
+//#define  "beb5483e-36e1-4688-b7f5-ea07361b26a3"
 //#define "beb5483e-36e1-4688-b7f5-ea07361b26a4"
 //#define "beb5483e-36e1-4688-b7f5-ea07361b26a5"
 #define BTLOCK_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a6"
@@ -29,7 +29,7 @@
 #define SPEED_LIMITER_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26aa"
 #define ECO_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ab"
 #define ACCEL_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ac"
-#define CURRENT_CALIB_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ad"
+#define CALIB_ORDER_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ad"
 #define SWITCH_TO_OTA_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ae"
 #define LOGS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26af"
 #define FAST_UPDATE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b0"
@@ -54,7 +54,7 @@ BLECharacteristic *BluetoothHandler::pCharacteristicSettings1;
 BLECharacteristic *BluetoothHandler::pCharacteristicSpeedLimiter;
 BLECharacteristic *BluetoothHandler::pCharacteristicEco;
 BLECharacteristic *BluetoothHandler::pCharacteristicAccel;
-BLECharacteristic *BluetoothHandler::pCharacteristicCurrentCalib;
+BLECharacteristic *BluetoothHandler::pCharacteristicCalibOrder;
 BLECharacteristic *BluetoothHandler::pCharacteristicOtaSwitch;
 BLECharacteristic *BluetoothHandler::pCharacteristicLogs;
 BLECharacteristic *BluetoothHandler::pCharacteristicFastUpdate;
@@ -412,14 +412,39 @@ void BluetoothHandler::init(Settings *data)
                 pCharacteristicAccel->setValue((uint8_t *)&shrd->accelOrder, 1);
                 pCharacteristicAccel->notify();
             }
-            else if (pCharacteristic->getUUID().toString() == CURRENT_CALIB_CHARACTERISTIC_UUID)
+            else if (pCharacteristic->getUUID().toString() == CALIB_ORDER_CHARACTERISTIC_UUID)
             {
                 std::string rxValue = pCharacteristic->getValue();
-                shrd->currentCalibOrder = rxValue[0];
+
+                int value;
+                memcpy(&value, &rxValue[1], 4);
+
+                //BrakeMaxPressure(0),
+                if (rxValue[0] == 0)
+                {
+                    shrd->brakeMaxPressureRaw = shrd->brakeAnalogValue;
+                    saveBrakeMaxPressure();
+
+                    Serial.print("BLH - brake current raw value :");
+                    Serial.println(shrd->brakeAnalogValue);
+                }
+                //BatMaxVoltage(1),
+                else if (rxValue[0] == 1)
+                {
+                }
+                //BatMinVoltage(2),
+                else if (rxValue[0] == 2)
+                {
+                }
+                //CurrentZero(3);
+                else if (rxValue[0] == 3)
+                {
+                    shrd->currentCalibOrder = rxValue[0];
+                }
 
                 char print_buffer[500];
-                sprintf(print_buffer, "%02x", shrd->currentCalibOrder);
-                Serial.print("BLH - Write currentCalibOrder : ");
+                sprintf(print_buffer, "type %d / value %d", rxValue[0], value);
+                Serial.print("BLH - Write calib order : ");
                 Serial.println(print_buffer);
             }
             else if (pCharacteristic->getUUID().toString() == BTLOCK_STATUS_CHARACTERISTIC_UUID)
@@ -486,6 +511,10 @@ void BluetoothHandler::init(Settings *data)
                 // notify of current value
                 pCharacteristicAux->setValue((uint8_t *)&shrd->auxOrder, 1);
                 pCharacteristicAux->notify();
+            }
+            else if (pCharacteristic->getUUID().toString() == DISTANCE_RST_CHARACTERISTIC_UUID)
+            {
+                shrd->distance = 0;
             }
             else if (pCharacteristic->getUUID().toString() == SPEED_PID_CHARACTERISTIC_UUID)
             {
@@ -673,11 +702,9 @@ void BluetoothHandler::init(Settings *data)
             BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
-    pCharacteristicCurrentCalib = pService->createCharacteristic(
-        CURRENT_CALIB_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
+    pCharacteristicCalibOrder = pService->createCharacteristic(
+        CALIB_ORDER_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_WRITE);
 
     pCharacteristicOtaSwitch = pService->createCharacteristic(
         SWITCH_TO_OTA_CHARACTERISTIC_UUID,
@@ -733,7 +760,7 @@ void BluetoothHandler::init(Settings *data)
     pCharacteristicSpeedLimiter->addDescriptor(new BLE2902());
     pCharacteristicEco->addDescriptor(new BLE2902());
     pCharacteristicAccel->addDescriptor(new BLE2902());
-    pCharacteristicCurrentCalib->addDescriptor(new BLE2902());
+    pCharacteristicCalibOrder->addDescriptor(new BLE2902());
     pCharacteristicOtaSwitch->addDescriptor(new BLE2902());
     pCharacteristicLogs->addDescriptor(new BLE2902());
     pCharacteristicFastUpdate->addDescriptor(new BLE2902());
@@ -753,7 +780,7 @@ void BluetoothHandler::init(Settings *data)
     pCharacteristicSpeedLimiter->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicEco->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicAccel->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicCurrentCalib->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicCalibOrder->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicOtaSwitch->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicLogs->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicFastUpdate->setCallbacks(new BLECharacteristicCallback());
@@ -811,27 +838,28 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
         std::string address = scanResults.getDevice(i).getAddress().toString();
         String addressStr = address.c_str();
 
+        String addressPicclySettings = settings->getS2F().Beacon_Mac_Address;
+        addressPicclySettings = addressPicclySettings.substring(0, 17);
+
 #if DEBUG_DISPLAY_BLE_SCAN
-        Serial.print("BLH - BLE device : ");
-        Serial.print(name);
-        Serial.print("BLH -  / adress : ");
+        Serial.print("BLH - BLE device : address : ");
         Serial.print(addressStr);
-        Serial.print("BLH -  / name : ");
+        Serial.print(" / name : ");
         Serial.print(name);
-        Serial.print("BLH -  / rssi ");
-        Serial.println(blePicclyRSSI);
+        Serial.print(" / rssi : ");
+        Serial.print(blePicclyRSSI);
+        Serial.print(" / search for : ");
+        Serial.println(addressPicclySettings);
 #endif
 
-        String addressPicclySettings = settings->getS2F().Beacon_Mac_Address;
-
-        if (addressPicclySettings.equalsIgnoreCase(addressStr))
+        if (addressPicclySettings.equals(addressStr))
         {
             if (blePicclyRSSI < settings->getS1F().Beacon_range)
             {
 #if DEBUG_DISPLAY_BLE_SCAN
                 Serial.print("BLH -  ==> PICC-LY found ... but too far away / RSSI = ");
                 Serial.print(blePicclyRSSI);
-                Serial.print("BLH -  / min RSSI required = ");
+                Serial.print(" / min RSSI required = ");
                 Serial.print(settings->getS1F().Beacon_range);
                 Serial.println(" ==> lock from scan");
 #endif
@@ -842,7 +870,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
 #if DEBUG_DISPLAY_BLE_SCAN
                 Serial.print("BLH -  ==> PICC-LY found  / RSSI = ");
                 Serial.print(blePicclyRSSI);
-                Serial.print("BLH -  / min RSSI required = ");
+                Serial.print(" / min RSSI required = ");
                 Serial.print(settings->getS1F().Beacon_range);
                 Serial.println(" ==> unlock from scan");
 #endif
@@ -1073,12 +1101,12 @@ void BluetoothHandler::notifyBleLock()
 #if DEBUG_DISPLAY_BLE_NOTIFY
     Serial.print("BLH - notifyBleLock : bleLockStatus = ");
     Serial.print(bleLockStatus);
-    Serial.print("BLH -  / blePicclyVisible = ");
+    Serial.print(" / blePicclyVisible = ");
     Serial.print(blePicclyVisible);
-    Serial.print("BLH -  / blePicclyRSSI = ");
+    Serial.print(" / blePicclyRSSI = ");
     Serial.print(blePicclyRSSI);
 
-    Serial.print("BLH -  / bleLockForced = ");
+    Serial.print(" / bleLockForced = ");
     Serial.print(bleLockForced);
     Serial.println("");
 #endif
@@ -1122,19 +1150,7 @@ void BluetoothHandler::processBLE()
 
             notifyMeasurements();
 
-#if DEBUG_DISPLAY_BLE_NOTIFY
-            Serial.print("BLH - Notify measurements : ");
-            Serial.println(power);
-#endif
-
             notifyBleLock();
-
-            /*
-#if DEBUG_DISPLAY_BLE_NOTIFY
-            Serial.print("BLH - Notify bleLock : ");
-            Serial.println(shrd->bleLock);
-#endif
-*/
 
             shrd->timeLastNotifyBle = millis();
         }

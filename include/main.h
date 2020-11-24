@@ -1,6 +1,7 @@
 
 void saveBleLockForced();
 void restoreBleLockForced();
+void saveBrakeMaxPressure();
 
 uint8_t modifyBrakeFromAnalog(char, char *);
 
