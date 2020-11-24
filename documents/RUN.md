@@ -1,8 +1,8 @@
 # Run the softwares
 Once you have all the electronic, you'll need to flash/install the softwares.
 
-First : the ESP32 software
-Second : the Android applcation
+- First : the ESP32 software
+- Second : the Android applcation
 
 ## Preparation of ESP32 board
 - Install Visual Code + Platform.io [tuto](https://platformio.org/install/ide?install=vscode)
