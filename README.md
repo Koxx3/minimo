@@ -119,13 +119,13 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Aux ON/OFF       
         - [ ] Mode Z ON/OFF
     - [✅] Disable electric brake with full battery
+    - [✅] Manual calibration for analog brake
     - [IN PROGRESS 🔄] Automatic ECO mode on low battery 
     - [IN TEST 🔄] LCD Speed adjustment
     - [ ] Exponential acceleration curve
     - [ ] Dynamic BLE debug infos
     - [ ] Configurable current loop regulation
     - [ ] Customize mode Z with different power / max speed
-    - [ ] Manual calibration for analog brake
     - [ ] Manual calibration for voltage
     - [ ] Wifi connexion for dashboard display and settings
     - [ ] Advanced diagnosis (serial errors, throtle errors ...)
