@@ -23,6 +23,7 @@ public:
     uint8_t speedLimiter = 1;
 
     double speedCurrent = 0.0;
+    double speedMax = 0.0;
     double speedOld = 0;
 
     uint32_t distance = 0;

@@ -72,5 +72,5 @@ void drawColorBar(Adafruit_ILI9341 *tft, int value, int spotx, int spoty, int pi
 void drawBatteryJauge(Adafruit_ILI9341 *tft, uint8_t batteryPercent)
 {
     int8_t bars = batteryPercent * 24.0 / 100;    
-    drawColorBar(tft, bars , 5, 300, 10);
+    drawColorBar(tft, bars , 222, 5, 4);
 }

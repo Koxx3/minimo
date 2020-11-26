@@ -87,7 +87,7 @@
 
 #define BUTTON_LONG_PRESS_TICK 300
 
-#define WATCHDOG_TIMEOUT 1000 //time in ms to trigger the watchdog
+#define WATCHDOG_TIMEOUT 1000000 //time in ms to trigger the watchdog
 
 //////------------------------------------
 ////// Variables
@@ -1423,6 +1423,9 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
 #endif
 
         shrd.speedOld = shrd.speedCurrent;
+        
+        if (shrd.speedCurrent > shrd.speedMax)
+          shrd.speedMax = shrd.speedCurrent;
 
         isModified_CntrlToLcd = 1;
       }
@@ -2057,10 +2060,10 @@ void loop()
   }
 
 #if TFT_ENABLED
-    if (i_loop % 100 == 1)
-    {
-      tftUpdateData();
-    }
+  if (i_loop % 100 == 1)
+  {
+    tftUpdateData();
+  }
 #endif
 
   // Give a time for ESP
