@@ -21,27 +21,26 @@ public:
   bool restoreSettings();
   void saveSettings();
   void initSettings();
-  
 
-// The actions I ca do...
-typedef enum ButtonAction
-{
-  LIST_Button_press_action_None = 0,
-  LIST_Button_press_action_Mode_Z_on_off,
-  LIST_Button_press_action_Anti_theft_manual_lock_on,
-  LIST_Button_press_action_Nitro_boost_cont,
-  LIST_Button_press_action_Startup_speed_limitation_on_off,
-  LIST_Button_press_action_Aux_on_off, 
-  LIST_Button_press_action_Nitro_boost_on_off,
-} ButtonActions;
+  // The actions I ca do...
+  typedef enum ButtonAction
+  {
+    LIST_Button_press_action_None = 0,
+    LIST_Button_press_action_Mode_Z_on_off,
+    LIST_Button_press_action_Anti_theft_manual_lock_on,
+    LIST_Button_press_action_Nitro_boost_cont,
+    LIST_Button_press_action_Startup_speed_limitation_on_off,
+    LIST_Button_press_action_Aux_on_off,
+    LIST_Button_press_action_Nitro_boost_on_off,
+  } ButtonActions;
 
-// The actions I ca do...
-typedef enum Electric_Brake_Type
-{
-  LIST_Electric_brake_type_none = 0,
-  LIST_Electric_brake_type_digital,
-  LIST_Electric_brake_type_analog
-} Electric_Brake_Type;
+  // The actions I ca do...
+  typedef enum Electric_Brake_Type
+  {
+    LIST_Electric_brake_type_none = 0,
+    LIST_Electric_brake_type_digital,
+    LIST_Electric_brake_type_analog
+  } Electric_Brake_Type;
 
 #pragma pack(push, 1)
   struct field_s1
@@ -93,6 +92,8 @@ typedef enum Electric_Brake_Type
     uint8_t Battery_saving_medium_voltage;
     uint8_t Battery_saving_strong_voltage;
     uint32_t Bluetooth_pin_code;
+    uint16_t Battery_capacity;
+    uint16_t Battery_discharge_rate;
 
   } __attribute__((packed));
 #pragma pack(pop)
@@ -113,7 +114,6 @@ typedef enum Electric_Brake_Type
   } __attribute__((packed));
 #pragma pack(pop)
 
-
   union settings_bt1
   {
     struct field_s1 fields;
@@ -131,19 +131,18 @@ typedef enum Electric_Brake_Type
     struct field_s3 fields;
     unsigned char buffer[sizeof(struct field_s3)];
   };
-  
+
   union settings_bt4
   {
     struct field_s4 fields;
     unsigned char buffer[sizeof(struct field_s4)];
   };
-  
+
   union settings_bt5
   {
     struct field_s5 fields;
     unsigned char buffer[sizeof(struct field_s5)];
   };
-
 
   union settings_bt1 settings1;
   union settings_bt2 settings2;
@@ -157,11 +156,11 @@ typedef enum Electric_Brake_Type
   field_s4 getS4F();
   field_s5 getS5F();
 
-  unsigned char* getS1B();
-  unsigned char* getS2B();
-  unsigned char* getS3B();
-  unsigned char* getS4B();
-  unsigned char* getS5B();
+  unsigned char *getS1B();
+  unsigned char *getS2B();
+  unsigned char *getS3B();
+  unsigned char *getS4B();
+  unsigned char *getS5B();
 };
 
 #endif
