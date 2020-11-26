@@ -26,7 +26,10 @@ public:
     double speedMax = 0.0;
     double speedOld = 0;
 
-    uint32_t distance = 0;
+    uint32_t distanceTrip = 0;
+    uint32_t distanceOdo = 0;
+    uint32_t distanceOdoBoot = 0;
+    uint32_t distanceOdoInFlash = 0;
 
     uint32_t speedPidKp = 4;
     uint32_t speedPidKi = 8;

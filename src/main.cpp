@@ -241,6 +241,29 @@ void restoreBrakeMaxPressure()
     shrd.brakeMaxPressureRaw = ANALOG_BRAKE_MAX_VALUE;
 }
 
+void saveOdo()
+{
+  EEPROM.writeBytes(EEPROM_ADDRESS_ODO, &shrd.distanceOdo, sizeof(shrd.distanceOdo));
+  EEPROM.commit();
+
+  Serial.print("save saveOdo value : ");
+  Serial.println(shrd.distanceOdo);
+}
+
+void restoreOdo()
+{
+  EEPROM.readBytes(EEPROM_ADDRESS_ODO, &shrd.distanceOdo, sizeof(shrd.distanceOdo));
+
+  shrd.distanceOdoInFlash = shrd.distanceOdo;
+  shrd.distanceOdoBoot = shrd.distanceOdo;
+
+  Serial.print("restore restoreOdo value : ");
+  Serial.println(shrd.distanceOdo);
+
+  if (shrd.distanceOdo == -1)
+    shrd.distanceOdo = 0;
+}
+
 //////------------------------------------
 //////------------------------------------
 ////// Setups
@@ -403,6 +426,7 @@ void setup()
   setupEPROMM();
   restoreBleLockForced();
   restoreBrakeMaxPressure();
+  restoreOdo();
 
   Serial.println(PSTR("   settings ..."));
   bool settingsStatusOk = settings.restoreSettings();
@@ -1225,8 +1249,22 @@ double getSpeed()
   // calculate distance
   uint32_t distanceCurTime = millis();
   uint32_t distanceDiffTime = distanceCurTime - distancePrevTime;
-  shrd.distance = shrd.distance + ((speed * (distanceDiffTime)) / 360);
+  shrd.distanceTrip = shrd.distanceTrip + ((speed * (distanceDiffTime)) / 360);
   distancePrevTime = millis();
+
+  shrd.distanceOdo = shrd.distanceOdoBoot + (shrd.distanceTrip / 10000);
+
+  if ((shrd.speedOld != 0) && (speed == 0) && (shrd.distanceOdoInFlash != shrd.distanceOdo))
+  {
+    shrd.distanceOdoInFlash = shrd.distanceOdo;
+
+    Serial.print("saveOdo : distanceOdoInFlash ");
+    Serial.print(shrd.distanceOdoInFlash);
+    Serial.print(" / distanceOdoBoot : ");
+    Serial.print(shrd.distanceOdoBoot);
+
+    saveOdo();
+  }
 
   /*
   Serial.print("distance = ");
@@ -1423,7 +1461,7 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
 #endif
 
         shrd.speedOld = shrd.speedCurrent;
-        
+
         if (shrd.speedCurrent > shrd.speedMax)
           shrd.speedMax = shrd.speedCurrent;
 

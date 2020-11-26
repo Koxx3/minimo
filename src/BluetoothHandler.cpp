@@ -514,7 +514,7 @@ void BluetoothHandler::init(Settings *data)
             }
             else if (pCharacteristic->getUUID().toString() == DISTANCE_RST_CHARACTERISTIC_UUID)
             {
-                shrd->distance = 0;
+                shrd->distanceTrip = 0;
             }
             else if (pCharacteristic->getUUID().toString() == SPEED_PID_CHARACTERISTIC_UUID)
             {
@@ -1002,7 +1002,7 @@ Serial.println(current);
     i = i + 2;
 
     // distance
-    uint16_t distance = shrd->distance;
+    uint16_t distance = shrd->distanceTrip;
     memcpy(&txValue[i], &distance, 2);
     i = i + 2;
 

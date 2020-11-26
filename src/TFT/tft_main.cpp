@@ -123,7 +123,6 @@ void tftUpdateData()
   double power = (_shrd->currentFilterMean / 1000.0 * _shrd->voltageFilterMean / 1000.0);
   if (power < 0)
     power = 0;
-  Serial.println(power);
   sprintf(fmt, "%05.0f", power);
   tft_util_draw_number(&tft, fmt, 5, LINE_5Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
 
@@ -134,11 +133,11 @@ void tftUpdateData()
   sprintf(fmt, "%s", Dfmt2_1(voltage));
   tft_util_draw_number(&tft, fmt, 233, LINE_2Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
 
-  float distance = _shrd->distance / 10000.0;
+  float distance = _shrd->distanceTrip / 10000.0;
   sprintf(fmt, "%s", Dfmt2_1(distance));
   tft_util_draw_number(&tft, fmt, 134, LINE_3Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
 
-  float odo = _shrd->distance / 10000.0;
+  float odo = _shrd->distanceOdo;
   sprintf(fmt, "%05.0f", (odo));
   tft_util_draw_number(&tft, fmt, 5, LINE_3Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
 
