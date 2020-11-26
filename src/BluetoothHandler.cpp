@@ -439,11 +439,11 @@ void BluetoothHandler::init(Settings *data)
                 //CurrentZero(3);
                 else if (rxValue[0] == 3)
                 {
-                    shrd->currentCalibOrder = rxValue[0];
+                    shrd->currentCalibOrder = value;
                 }
 
                 char print_buffer[500];
-                sprintf(print_buffer, "type %d / value %d", rxValue[0], value);
+                sprintf(print_buffer, "type %d / %02x / %02x / %02x / %02x / %02x / value %d", rxValue[0], rxValue[1], rxValue[2], rxValue[3], rxValue[4], rxValue[5], value);
                 Serial.print("BLH - Write calib order : ");
                 Serial.println(print_buffer);
             }

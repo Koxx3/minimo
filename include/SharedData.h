@@ -56,8 +56,8 @@ public:
     int32_t brakeMaxPressureRaw = -1;
     uint32_t brakeAnalogValue = 0;
 
-    uint8_t currentCalibOrder = 1;
-    uint8_t brakeCalibOrder = 1;
+    uint32_t currentCalibOrder = 0;
+    uint32_t brakeCalibOrder = 1;
 
     uint32_t voltageFilterMean = 0;
     int32_t currentFilterMean = 0;

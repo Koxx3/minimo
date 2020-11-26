@@ -30,8 +30,12 @@
 
 #include <PID_v1.h>
 
+#include "TFT/tft_main.h"
+
 //////------------------------------------
 ////// Defines
+
+#define TFT_ENABLED 1
 
 #define DEBUG_ESP_HTTP_UPDATE 1
 
@@ -83,7 +87,7 @@
 
 #define BUTTON_LONG_PRESS_TICK 300
 
-#define WATCHDOG_TIMEOUT 100 //time in ms to trigger the watchdog
+#define WATCHDOG_TIMEOUT 1000 //time in ms to trigger the watchdog
 
 //////------------------------------------
 ////// Variables
@@ -133,7 +137,6 @@ SharedData shrd;
 
 int i_loop = 0;
 
-uint32_t iCurrentCalibOrder = 0;
 uint32_t iBrakeCalibOrder = 0;
 
 uint16_t voltageStatus = 0;
@@ -287,6 +290,10 @@ void setupEFuse()
 }
 */
 
+void setupTft()
+{
+}
+
 void setupDac()
 {
   // call GENERAL CALL RESET
@@ -419,8 +426,16 @@ void setup()
   Serial.println(PSTR("   PID ..."));
   setupPID();
 
+#if TFT_ENABLED
+  Serial.println(PSTR("   TFT ..."));
+  tftSetup(&shrd, &settings);
+#endif
+
   // force BLE lock mode
   blh.setBleLock(false);
+
+  // setup shared datas
+  shrd.currentCalibOrder = NB_CURRENT_CALIB;
 
   Serial.println(PSTR("   init data with settings ..."));
   initDataWithSettings();
@@ -1961,23 +1976,19 @@ void processCurrent()
   currentFilter.in(currentInMillamps);
   shrd.currentFilterMean = currentFilter.getMeanWithoutExtremes(10);
 
-  if ((shrd.speedCurrent == 0) && (shrd.currentCalibOrder == 1))
+  if ((shrd.speedCurrent == 0) && (shrd.currentCalibOrder > 0))
   {
 
+    shrd.currentCalibOrder--;
     currentFilterInit.in(curerntRead);
 
-    iCurrentCalibOrder++;
-    if (iCurrentCalibOrder > NB_CURRENT_CALIB)
-    {
-      iCurrentCalibOrder = 0;
-      shrd.currentCalibOrder = 0;
-    }
-
 #if DEBUG_DISPLAY_CURRENT
-    Serial.print("Current calibration ... ");
+    if (shrd.currentCalibOrder == 1)
+      Serial.println("Current calibration end ... ");
 #endif
   }
 
+  /*
 #if DEBUG_DISPLAY_CURRENT
   Serial.print("Current read : ");
   Serial.print(curerntRead);
@@ -1986,6 +1997,7 @@ void processCurrent()
   Serial.print(" / in amperes : ");
   Serial.println(currentInMillamps / 1000.0);
 #endif
+*/
 }
 
 //////------------------------------------
@@ -2026,23 +2038,30 @@ void loop()
     processVoltage();
   }
 
-  if ((i_loop % 10 == 3))
+  if ((i_loop % 10 == 2))
   {
     //modifyBrakeFromLCD();
     //displayBrake();
     getBrakeFromAnalog();
   }
 
-  if (i_loop % 10 == 6)
+  if (i_loop % 10 == 4)
   {
     processCurrent();
   }
 
   // keep it fast (/100 not working)
-  if (i_loop % 10 == 1)
+  if (i_loop % 10 == 6)
   {
     processDHT();
   }
+
+#if TFT_ENABLED
+    if (i_loop % 100 == 1)
+    {
+      tftUpdateData();
+    }
+#endif
 
   // Give a time for ESP
   delay(1);
