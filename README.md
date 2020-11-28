@@ -1,4 +1,5 @@
 branche 1_2 modification VSC
+
 # [ SmartController Minimotors ]
 ⚠️ **Warning : this is work in progress. I decline all responsability about using informations from this project** ⚠️
 
