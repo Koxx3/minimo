@@ -30,7 +30,10 @@
 #define _mosi 23 // 5 goes to TFT MOSI
 #define _sclk 5  // 6 goes to TFT SCK/CLK
 #define _rst 17  // ESP RST to TFT RESET
-#define _miso -1 // Not connected
+
+#define _miso 19 // Not connected
+
+
 Adafruit_ILI9341 tft = Adafruit_ILI9341(_cs, _dc, _rst);
 
 SharedData *_shrd;
@@ -52,6 +55,15 @@ void tftSetup(SharedData *shrd, Settings *settings)
 
   _shrd = shrd;
   _settings = settings;
+
+/*
+  pinMode(_miso, OUTPUT);
+  digitalWrite(_miso,1);
+
+  ledcSetup(0, 1000, 8);
+  ledcAttachPin(_miso, 0);
+  ledcWrite(0, 10);
+*/
 
   tft.begin(40000000);
 

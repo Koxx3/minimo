@@ -29,6 +29,7 @@
 #include "app_version.h"
 
 #include <PID_v1.h>
+#include <VescUart.h>
 
 #include "TFT/tft_main.h"
 
@@ -36,6 +37,11 @@
 ////// Defines
 
 #define TFT_ENABLED 1
+
+#define CONTROLLER_MINIMOTORS 0
+#define CONTROLLER_VESC 1
+
+#define READ_THROTTLE 1
 
 #define DEBUG_ESP_HTTP_UPDATE 1
 
@@ -56,6 +62,7 @@
 #define PIN_OUT_BRAKE 13
 #define PIN_IN_OUT_DHT 12
 #define PIN_IN_ABRAKE 34
+#define PIN_IN_THROTTLE 33
 //#define PIN_IN_DBRAKE 4
 
 #define MODE_LCD_TO_CNTRL 0
@@ -111,8 +118,10 @@ char data_buffer_cntrl_ori[DATA_BUFFER_SIZE];
 
 char bleLog[50] = "";
 
-HardwareSerial hwSerCntrlToLcd(1);
-HardwareSerial hwSerLcdToCntrl(2);
+HardwareSerial hwSerCntrl(1);
+HardwareSerial hwSerLcd(2);
+
+VescUart vescCntrl;
 
 DHT_nonblocking dht_sensor(PIN_IN_OUT_DHT, DHT_TYPE_22);
 
@@ -143,13 +152,14 @@ uint16_t voltageStatus = 0;
 uint32_t voltageInMilliVolts = 0;
 
 uint16_t brakeAnalogValue = 0;
+uint16_t throttleAnalogValue = 0;
 
 int8_t modeOrderBeforeNitro = -1;
 
 uint32_t distancePrevTime = 0;
 
-int i_LcdToCntrl = 0;
-int i_CntrlToLcd = 0;
+int i_LcdRcv = 0;
+int i_CntrlRcv = 0;
 int begin_LcdToCntrl = 1;
 int begin_CntrlToLcd = 1;
 
@@ -327,9 +337,16 @@ void setupDac()
 void setupSerial()
 {
 
-  hwSerLcdToCntrl.begin(BAUD_RATE, SERIAL_8N1, PIN_SERIAL_LCD_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
+#if CONTROLLER_MINIMOTORS
+  hwSerCntrl.begin(BAUD_RATE, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
+#endif
+#if CONTROLLER_VESC
+  hwSerCntrl.begin(BAUD_RATE, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
+  vescCntrl.setSerialPort(&hwSerCntrl);
+#endif
 
-  hwSerCntrlToLcd.begin(BAUD_RATE, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_LCD);
+  // minimotor display
+  hwSerLcd.begin(BAUD_RATE, SERIAL_8N1, PIN_SERIAL_LCD_TO_ESP, PIN_SERIAL_ESP_TO_LCD);
 }
 
 void setupEPROMM()
@@ -1345,15 +1362,26 @@ uint8_t modifySpeed(char var, char data_buffer[], uint8_t byte)
   return var;
 }
 
-int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_ori[], char data_buffer_mod[])
+int readHardSerial(int mode, int i, HardwareSerial *hwSerCntrl, HardwareSerial *hwSerLcd, int serialMode, char data_buffer_ori[], char data_buffer_mod[])
 {
 
   byte var;
+  HardwareSerial *ss_in, *ss_out;
+  if (mode == MODE_LCD_TO_CNTRL)
+  {
+    ss_in = hwSerLcd;
+    ss_out = hwSerCntrl;
+  }
+  else
+  {
+    ss_in = hwSerCntrl;
+    ss_out = hwSerLcd;
+  }
 
-  if (ss->available() > 0)
+  if (ss_in->available() > 0)
   {
 
-    var = ss->read();
+    var = ss_in->read();
     data_buffer_ori[i] = var;
 
     // LCD -> CNTRL
@@ -1517,7 +1545,7 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
 
     data_buffer_mod[i] = var;
 
-    ss->write(var);
+    ss_out->write(var);
 
     // display
     if (i == 14)
@@ -1601,14 +1629,31 @@ int readHardSerial(int i, HardwareSerial *ss, int serialMode, char data_buffer_o
   return i;
 }
 
-void processSerial()
+void processVescSerial()
 {
-  // read/write LCD -> CNTRL
-  //  i_LcdToCntrl = readSoftSerial(i_LcdToCntrl, &swSerLcdToCntrl, MODE_LCD_TO_CNTRL, data_buffer_lcd_mod);
-  i_LcdToCntrl = readHardSerial(i_LcdToCntrl, &hwSerLcdToCntrl, MODE_LCD_TO_CNTRL, data_buffer_lcd_ori, data_buffer_lcd_mod);
 
-  //i_CntrlToLcd = readSoftSerial(i_CntrlToLcd, &swSerCntrlToLcd, MODE_CNTRL_TO_LCD, data_buffer_cntrl_mod);
-  i_CntrlToLcd = readHardSerial(i_CntrlToLcd, &hwSerCntrlToLcd, MODE_CNTRL_TO_LCD, data_buffer_cntrl_ori, data_buffer_cntrl_mod);
+  String command;
+
+  if (vescCntrl.getVescValues())
+  {
+    Serial.println(vescCntrl.data.rpm);
+    Serial.println(vescCntrl.data.inpVoltage);
+    Serial.println(vescCntrl.data.ampHours);
+    Serial.println(vescCntrl.data.tachometerAbs);
+    shrd.speedCurrent = vescCntrl.data.rpm;
+    shrd.voltageFilterMean = vescCntrl.data.inpVoltage;
+    shrd.currentFilterMean = vescCntrl.data.ampHours;
+  }
+
+  vescCntrl.setDuty(throttleAnalogValue / 16);
+
+}
+
+void processMinimotorsSerial()
+{
+  i_LcdRcv = readHardSerial(MODE_LCD_TO_CNTRL, i_LcdRcv, &hwSerCntrl, &hwSerLcd, MODE_LCD_TO_CNTRL, data_buffer_lcd_ori, data_buffer_lcd_mod);
+
+  i_CntrlRcv = readHardSerial(MODE_CNTRL_TO_LCD, i_CntrlRcv, &hwSerCntrl, &hwSerLcd, MODE_CNTRL_TO_LCD, data_buffer_cntrl_ori, data_buffer_cntrl_mod);
 }
 
 uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
@@ -2056,7 +2101,12 @@ void loop()
     return;
   }
 
-  processSerial();
+#if CONTROLLER_MINIMOTORS
+  processMinimotorsSerial();
+#endif
+#if CONTROLLER_VESC
+  processVescSerial();
+#endif
 
   blh.processBLE();
 
@@ -2096,6 +2146,15 @@ void loop()
   {
     processDHT();
   }
+
+#if READ_THROTTLE
+  if (i_loop % 10 == 8)
+  {
+    throttleAnalogValue = analogRead(PIN_IN_THROTTLE);
+    Serial.print("throttleAnalogValue : ");
+    Serial.println(throttleAnalogValue);
+  }
+#endif
 
 #if TFT_ENABLED
   if (i_loop % 100 == 1)
