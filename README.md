@@ -4,6 +4,7 @@ branche 1_2 2 modification VSC
 petit oiseau 
 Arduino
 2.34
+Update branch 1_2
 # [ SmartController Minimotors ]
 ⚠️ **Warning : this is work in progress. I decline all responsability about using informations from this project** ⚠️
 
