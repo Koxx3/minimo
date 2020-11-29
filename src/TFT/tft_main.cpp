@@ -27,11 +27,9 @@
 
 #define _cs -1   // 3 goes to TFT CS
 #define _dc 5    // 4 goes to TFT DC
-#define _mosi 23 // 5 goes to TFT MOSI
-#define _sclk 5  // 6 goes to TFT SCK/CLK
+//#define _mosi 23 // 5 goes to TFT MOSI
+//#define _sclk 5  // 6 goes to TFT SCK/CLK
 #define _rst 17  // ESP RST to TFT RESET
-
-#define _miso 19 // Not connected
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(_cs, _dc, _rst);
 
