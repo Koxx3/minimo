@@ -27,11 +27,11 @@
 
 #define LINE_TEXT_OFFSET 7
 
-#define _cs -1 // 3 goes to TFT CS
-#define _dc 2  // 4 goes to TFT DC
+#define _cs -1  // 3 goes to TFT CS
+#define _dc 2   // 4 goes to TFT DC
 #define _rst 17 // ESP RST to TFT RESET
 
-#define PIN_BACKLIGHT 5
+#define PIN_OUT_BACKLIGHT 5
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(_cs, _dc, _rst);
 
@@ -49,30 +49,43 @@ const char *txt_trip = "TRIP";
 const char *txt_hr = "HR";
 const char *txt_power = "POWER";
 
+void tftSetupBacklight()
+{
+
+  pinMode(PIN_OUT_BACKLIGHT, OUTPUT);
+  digitalWrite(PIN_OUT_BACKLIGHT, 1);
+  ledcSetup(0, 1000, 10);
+  ledcAttachPin(PIN_OUT_BACKLIGHT, 0);
+  ledcWrite(0, 0);
+}
+
+void tftBacklightFull()
+{
+
+  ledcWrite(0, 4095);
+}
+
 void tftSetup(SharedData *shrd, Settings *settings)
 {
 
   _shrd = shrd;
   _settings = settings;
 
-  pinMode(PIN_BACKLIGHT, OUTPUT);
-  digitalWrite(PIN_BACKLIGHT, 1);
-  ledcSetup(0, 1000, 10);
-  ledcAttachPin(PIN_BACKLIGHT, 0);
-  ledcWrite(0, 4095);
-
   // init TFT
   tft.begin(60000000);
+  tft.invertDisplay(1);
   tft.setRotation(1);
+  tft.fillScreen(ILI9341_BLACK);
 
   // draw splash scree
-  tft.drawRGBBitmap((320 - smart.width) / 2, (240 - smart.height) / 2, (uint16_t *)smart.pixel_data, smart.width, smart.height);
+  tft.drawRGBBitmap((320 - gimp_image.width) / 2, (240 - gimp_image.height) / 2, (uint16_t *)gimp_image.pixel_data, gimp_image.width, gimp_image.height);
   delay(3000);
   tft.fillScreen(ILI9341_BLACK);
 
+  tftBacklightFull();
+
   // init TFT settings
   tft.setTextSize(1);
-  tft.invertDisplay(1);
   tft.setFont(&FORCED_SQUARE6pt7b);
 
   // draw interface

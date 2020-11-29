@@ -63,6 +63,7 @@
 #define PIN_IN_OUT_DHT 12
 #define PIN_IN_ABRAKE 34
 #define PIN_IN_THROTTLE 33
+#define PIN_OUT_BACKLIGHT 5
 //#define PIN_IN_DBRAKE 4
 
 #define MODE_LCD_TO_CNTRL 0
@@ -422,6 +423,10 @@ void disableWatchdog()
 ////// Setup
 void setup()
 {
+
+#if TFT_ENABLED
+  tftBacklightFull();
+#endif
 
   // Initialize the Serial (use only in setup codes)
   Serial.begin(BAUD_RATE_CONSOLE);
@@ -2163,7 +2168,7 @@ void loop()
 #endif
 #if CONTROLLER_VESC
   {
-    
+
     if (i_loop % 10 == 1)
     {
       //Serial.println(">>>>>>>>>>> readVescValues");
@@ -2176,7 +2181,6 @@ void loop()
       //Serial.println(">>>>>>>>>>> processVescSerial");
       processVescSerial();
     }
-
   }
 #endif
   blh.processBLE();
