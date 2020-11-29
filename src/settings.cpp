@@ -67,8 +67,8 @@ void Settings::displaySettings1()
   Serial.println(settings1.fields.Electric_brake_max_value);
   Serial.print("// Electric_brake_time_between_mode_shift : ");
   Serial.println(settings1.fields.Electric_brake_time_between_mode_shift);
-  Serial.print("// Electric_brake_disabled_condition : ");
-  Serial.println(settings1.fields.Electric_brake_disabled_condition);
+  Serial.print("// Electric_brake_disabled_on_high_voltage : ");
+  Serial.println(settings1.fields.Electric_brake_disabled_on_high_voltage);
   Serial.print("// Electric_brake_disabled_percent_limit : ");
   Serial.println(settings1.fields.Electric_brake_disabled_percent_limit);
   Serial.print("// Current_loop_mode : ");

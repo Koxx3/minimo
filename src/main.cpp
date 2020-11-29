@@ -38,8 +38,8 @@
 
 #define TFT_ENABLED 1
 
-#define CONTROLLER_MINIMOTORS 0
-#define CONTROLLER_VESC 1
+#define CONTROLLER_MINIMOTORS 1
+#define CONTROLLER_VESC 0
 
 #define READ_THROTTLE 1
 
@@ -71,7 +71,8 @@
 #define MODE_CNTRL_TO_LCD_START_BYTE 0x36
 
 #define DATA_BUFFER_SIZE 30
-#define BAUD_RATE 1200
+#define BAUD_RATE_MINIMOTORS 1200
+#define BAUD_RATE_VESC 115200
 
 #define ANALOG_TO_VOLTS_A 0.0213
 #define ANALOG_TO_VOLTS_B 5.4225
@@ -323,10 +324,6 @@ void setupEFuse()
 }
 */
 
-void setupTft()
-{
-}
-
 void setupDac()
 {
   // call GENERAL CALL RESET
@@ -338,16 +335,16 @@ void setupSerial()
 {
 
 #if CONTROLLER_MINIMOTORS
-  hwSerCntrl.begin(BAUD_RATE, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
+  hwSerCntrl.begin(BAUD_RATE_MINIMOTORS, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
 #endif
 #if CONTROLLER_VESC
-  hwSerCntrl.begin(115200, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
+  hwSerCntrl.begin(BAUD_RATE_VESC, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
   vescCntrl.setSerialPort(&hwSerCntrl);
   //vescCntrl.setDebugPort(&Serial);
 #endif
 
   // minimotor display
-  hwSerLcd.begin(BAUD_RATE, SERIAL_8N1, PIN_SERIAL_LCD_TO_ESP, PIN_SERIAL_ESP_TO_LCD);
+  hwSerLcd.begin(BAUD_RATE_MINIMOTORS, SERIAL_8N1, PIN_SERIAL_LCD_TO_ESP, PIN_SERIAL_ESP_TO_LCD);
 }
 
 void setupEPROMM()
@@ -681,6 +678,9 @@ uint8_t modifyModeOld(char var, char data_buffer[])
 
 void getBrakeFromAnalog()
 {
+
+  boolean electricBrakeForbiden = false;
+
   brakeAnalogValue = analogRead(PIN_IN_ABRAKE);
   shrd.brakeAnalogValue = brakeAnalogValue;
 
@@ -751,8 +751,10 @@ void getBrakeFromAnalog()
       brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
       brakeFilterMean = brakeFilter.getMean();
 
+      electricBrakeForbiden = isElectricBrakeForbiden();
+
       // alarm controler from braking
-      if ((brakeFilterMeanErr > brakeFilterInit.getMean() + ANALOG_BRAKE_MIN_OFFSET) && (!isElectricBrakeForbiden()))
+      if ((brakeFilterMeanErr > brakeFilterInit.getMean() + ANALOG_BRAKE_MIN_OFFSET) && (!electricBrakeForbiden))
       {
         digitalWrite(PIN_OUT_BRAKE, 1);
 
@@ -796,14 +798,15 @@ void getBrakeFromAnalog()
 #endif
 
         char print_buffer[500];
-        sprintf(print_buffer, ">> brakeNotify = f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d",
+        sprintf(print_buffer, ">> brakeNotify = f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d / forbid : %d",
                 brakeFilterMean,
                 brakeFilterMeanErr,
                 brakeAnalogValue,
                 shrd.brakeSentOrder,
                 shrd.brakeSentOrderOld,
                 shrd.brakeStatus,
-                brakeFilterInit.getMean());
+                brakeFilterInit.getMean(),
+                electricBrakeForbiden);
         blh.notifyBleLogs(print_buffer);
       }
 
@@ -816,14 +819,15 @@ void getBrakeFromAnalog()
       {
 
         char print_buffer[500];
-        sprintf(print_buffer, "brake = f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d",
+        sprintf(print_buffer, "brake = f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d / forbid : %d",
                 brakeFilterMean,
                 brakeFilterMeanErr,
                 brakeAnalogValue,
                 shrd.brakeSentOrder,
                 shrd.brakeSentOrderOld,
                 shrd.brakeStatus,
-                brakeFilterInit.getMean());
+                brakeFilterInit.getMean(),
+                electricBrakeForbiden);
 
         Serial.println(print_buffer);
 
@@ -1084,6 +1088,13 @@ uint8_t getBrakeFromLCD(char var, char data_buffer[])
 
 bool isElectricBrakeForbiden()
 {
+  if (settings.getS1F().Electric_brake_disabled_on_high_voltage == 0)
+  {
+#if DEBUG_BRAKE_FORBIDEN
+    Serial.println("electric brake not disabled on battery high voltage");
+#endif
+    return false;
+  }
 
   float voltage = shrd.voltageFilterMean / 1000.0;
   float bat_min = settings.getS3F().Battery_min_voltage / 10.0;
@@ -1650,7 +1661,8 @@ void processVescSerial()
 
   float duty = throttleAnalogValue / 4096.0;
 
-  /*  Serial.print("duty : ");
+  /*  
+  Serial.print("duty : ");
   Serial.println(duty);
 */
 
@@ -2157,8 +2169,11 @@ void loop()
 
 #if READ_THROTTLE
   throttleAnalogValue = analogRead(PIN_IN_THROTTLE);
+  /*
   Serial.print("throttleAnalogValue : ");
   Serial.println(throttleAnalogValue);
+  */
+
 #endif
 
 #if TFT_ENABLED

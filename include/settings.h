@@ -53,7 +53,7 @@ public:
     uint8_t Electric_brake_min_value;
     uint8_t Electric_brake_max_value;
     uint16_t Electric_brake_time_between_mode_shift;
-    uint8_t Electric_brake_disabled_condition;
+    uint8_t Electric_brake_disabled_on_high_voltage;
     uint8_t Electric_brake_disabled_percent_limit;
     uint8_t Current_loop_mode;
     uint8_t Current_loop_max_current;
