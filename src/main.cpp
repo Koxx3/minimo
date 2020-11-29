@@ -38,8 +38,8 @@
 
 #define TFT_ENABLED 1
 
-#define CONTROLLER_MINIMOTORS 1
-#define CONTROLLER_VESC 0
+#define CONTROLLER_MINIMOTORS 0
+#define CONTROLLER_VESC 1
 
 #define READ_THROTTLE 1
 
@@ -73,6 +73,7 @@
 #define DATA_BUFFER_SIZE 30
 #define BAUD_RATE_MINIMOTORS 1200
 #define BAUD_RATE_VESC 115200
+#define BAUD_RATE_CONSOLE 921600
 
 #define ANALOG_TO_VOLTS_A 0.0213
 #define ANALOG_TO_VOLTS_B 5.4225
@@ -102,7 +103,7 @@
 
 // Time
 uint32_t timeLastBrake = 0;
-uint32_t timeLoop = 0;
+unsigned long timeLoop = 0;
 
 // Watchdog
 hw_timer_t *timer = NULL;
@@ -423,7 +424,7 @@ void setup()
 {
 
   // Initialize the Serial (use only in setup codes)
-  Serial.begin(115200);
+  Serial.begin(BAUD_RATE_CONSOLE);
   Serial.println(PSTR("\n\nsetup --- begin"));
 
   Serial.print("version : ");
@@ -694,6 +695,8 @@ void getBrakeFromAnalog()
 #if DEBUG_DISPLAY_ANALOG_BRAKE
       Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE");
 #endif
+
+      /*
       char print_buffer[500];
       sprintf(print_buffer, "brake ANALOG_BRAKE_MIN_ERR_VALUE / f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d",
               brakeFilterMean,
@@ -705,6 +708,7 @@ void getBrakeFromAnalog()
               brakeFilterInit.getMean());
       blh.notifyBleLogs(print_buffer);
       Serial.println(print_buffer);
+*/
       return;
     }
 
@@ -1644,26 +1648,61 @@ void processVescSerial()
 
   String command;
 
-  if (vescCntrl.getVescValues())
+  if (vescCntrl.readVescValues())
   {
     /*
-    Serial.println(vescCntrl.data.rpm);
+    Serial.print("rpm : ");
+    Serial.print(vescCntrl.data.rpm);
+    Serial.print(" / tachometerAbs : ");
+    Serial.print(vescCntrl.data.tachometerAbs);
+    Serial.print(" / tachometer : ");
+    Serial.print(vescCntrl.data.tachometer);
+    Serial.print(" / ampHours : ");
+    Serial.print(vescCntrl.data.ampHours);
+    Serial.print(" / avgInputCurrent : ");
+    Serial.print(vescCntrl.data.avgInputCurrent);
+    */
+
+    float speedCompute = vescCntrl.data.rpm * (settings.getS1F().Wheel_size / 10.0) / settings.getS1F().Motor_pole_number / 120.0;
+    if (speedCompute < 0)
+      speedCompute = 0;
+    if (speedCompute > 999)
+      speedCompute = 999;
+
+    if (speedCompute > shrd.speedMax)
+      shrd.speedMax = speedCompute;
+
+    shrd.speedCurrent = speedCompute;
+
+    /*
+    Serial.print(" / speedCompute : ");
+    Serial.println(speedCompute);
     Serial.println(vescCntrl.data.inpVoltage);
     Serial.println(vescCntrl.data.ampHours);
-    Serial.println(vescCntrl.data.tachometerAbs);
     */
-    shrd.speedCurrent = vescCntrl.data.rpm * 0.002943;
-    shrd.voltageFilterMean = vescCntrl.data.inpVoltage;
-    shrd.currentFilterMean = vescCntrl.data.ampHours;
+
+    shrd.voltageFilterMean = vescCntrl.data.inpVoltage * 1000;
+    shrd.currentFilterMean = vescCntrl.data.avgInputCurrent * 1000;
   }
 
-  float duty = throttleAnalogValue / 4096.0;
+  /*
+  Serial.print("throttleAnalogValue : ");
+  Serial.println(throttleAnalogValue);
+*/
 
-  /*  
+  if (throttleAnalogValue < 900)
+    throttleAnalogValue = 0;
+
+  float duty = (throttleAnalogValue - 900) / 2000.0;
+
+  if (duty > 1)
+    duty = 1.0;
+  if (duty < 0)
+    duty = 0.0;
+  /*
   Serial.print("duty : ");
   Serial.println(duty);
 */
-
   vescCntrl.setDuty(duty);
 }
 
@@ -2123,9 +2162,23 @@ void loop()
   processMinimotorsSerial();
 #endif
 #if CONTROLLER_VESC
-  processVescSerial();
-#endif
+  {
+    
+    if (i_loop % 10 == 1)
+    {
+      //Serial.println(">>>>>>>>>>> readVescValues");
 
+      vescCntrl.requestVescValues();
+    }
+
+    if (i_loop % 10 == 9)
+    {
+      //Serial.println(">>>>>>>>>>> processVescSerial");
+      processVescSerial();
+    }
+
+  }
+#endif
   blh.processBLE();
 
   button1.tick();
@@ -2154,10 +2207,12 @@ void loop()
     getBrakeFromAnalog();
   }
 
+#if CONTROLLER_MINIMOTORS
   if (i_loop % 10 == 4)
   {
     processCurrent();
   }
+#endif
 
   // keep it fast (/100 not working)
   if (i_loop % 10 == 6)
@@ -2167,28 +2222,25 @@ void loop()
 
 #if READ_THROTTLE
   throttleAnalogValue = analogRead(PIN_IN_THROTTLE);
-  /*
-  Serial.print("throttleAnalogValue : ");
-  Serial.println(throttleAnalogValue);
-  */
-
 #endif
 
 #if TFT_ENABLED
-  if (i_loop % 100 == 1)
-  {
-    tftUpdateData();
-  }
+  tftUpdateData(i_loop);
 #endif
 
   // Give a time for ESP
-  delay(1);
+  //delay(1);
+  delayMicroseconds(1000);
+
+#if DEBUG_TIMELOOP
+  Serial.print("> ");
+  Serial.print(micros() - timeLoop - 1000);
+  Serial.print(" / i_loop : ");
+  Serial.println(i_loop);
+  timeLoop = micros();
+#endif
+
   i_loop++;
-
-  //Serial.print("time loop");
-  //Serial.println(millis() - timeLoop);
-
-  timeLoop = millis();
 
   resetWatchdog();
 

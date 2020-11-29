@@ -3,4 +3,4 @@
 #include "Settings.h"
 
 void tftSetup(SharedData *shrd, Settings *settings);
-void tftUpdateData();
+void tftUpdateData(uint32_t);

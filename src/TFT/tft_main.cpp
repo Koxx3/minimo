@@ -33,7 +33,6 @@
 
 #define _miso 19 // Not connected
 
-
 Adafruit_ILI9341 tft = Adafruit_ILI9341(_cs, _dc, _rst);
 
 SharedData *_shrd;
@@ -56,7 +55,7 @@ void tftSetup(SharedData *shrd, Settings *settings)
   _shrd = shrd;
   _settings = settings;
 
-/*
+  /*
   pinMode(_miso, OUTPUT);
   digitalWrite(_miso,1);
 
@@ -65,7 +64,7 @@ void tftSetup(SharedData *shrd, Settings *settings)
   ledcWrite(0, 10);
 */
 
-  tft.begin(40000000);
+  tft.begin(60000000);
 
   tft.setRotation(1);
   tft.fillScreen(ILI9341_BLACK);
@@ -113,64 +112,119 @@ String timeToString()
   return String(str);
 }
 
-void tftUpdateData()
+void tftUpdateData(uint32_t i_loop)
 {
   char fmt[10];
 
-  sprintf(fmt, "%03.0f", _shrd->speedCurrent);
-  tft_util_draw_number(&tft, fmt, 5, LINE_1Y, ILI9341_WHITE, ILI9341_BLACK, 5, BIG_FONT_SIZE);
+  switch (i_loop % 100)
+  {
+  case 0:
+  {
+    sprintf(fmt, "%03.0f", _shrd->speedCurrent);
+    tft_util_draw_number(&tft, fmt, 5, LINE_1Y, ILI9341_WHITE, ILI9341_BLACK, 5, BIG_FONT_SIZE);
+    break;
+  }
 
-  sprintf(fmt, "%03.0f", _shrd->speedMax);
-  tft_util_draw_number(&tft, fmt, 155, LINE_1Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALLEST_FONT_SIZE);
+  case 1:
+  {
+    sprintf(fmt, "%03.0f", _shrd->speedMax);
+    tft_util_draw_number(&tft, fmt, 155, LINE_1Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALLEST_FONT_SIZE);
+    break;
+  }
 
-  sprintf(fmt, "%01.0f", (float)_shrd->modeOrder);
-  tft_util_draw_number(&tft, fmt, 185, LINE_2Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+  case 2:
+  {
+    sprintf(fmt, "%01.0f", (float)_shrd->modeOrder);
+    tft_util_draw_number(&tft, fmt, 185, LINE_2Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+    break;
+  }
 
-  sprintf(fmt, "%02.0f", _shrd->currentTemperature);
-  tft_util_draw_number(&tft, fmt, 262, LINE_4Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+  case 3:
+  {
+    sprintf(fmt, "%02.0f", _shrd->currentTemperature);
+    tft_util_draw_number(&tft, fmt, 262, LINE_4Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+    break;
+  }
 
-  sprintf(fmt, "%02.0f", _shrd->currentHumidity);
-  tft_util_draw_number(&tft, fmt, 262, LINE_5Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+  case 4:
+  {
+    sprintf(fmt, "%02.0f", _shrd->currentHumidity);
+    tft_util_draw_number(&tft, fmt, 262, LINE_5Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+    break;
+  }
 
-  double power = (_shrd->currentFilterMean / 1000.0 * _shrd->voltageFilterMean / 1000.0);
-  if (power < 0)
-    power = 0;
-  sprintf(fmt, "%05.0f", power);
-  tft_util_draw_number(&tft, fmt, 5, LINE_5Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+  case 5:
+  {
+    double power = (_shrd->currentFilterMean / 1000.0 * _shrd->voltageFilterMean / 1000.0);
+    if (power < 0)
+      power = 0;
+    sprintf(fmt, "%05.0f", power);
+    tft_util_draw_number(&tft, fmt, 5, LINE_5Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+    break;
+  }
 
-  timeToString().toCharArray(fmt, 9);
-  tft_util_draw_number(&tft, fmt, 37, LINE_4Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+  case 6:
+  {
+    timeToString().toCharArray(fmt, 9);
+    tft_util_draw_number(&tft, fmt, 37, LINE_4Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+    break;
+  }
 
-  float voltage = _shrd->voltageFilterMean / 1000.0;
-  sprintf(fmt, "%s", Dfmt2_1(voltage));
-  tft_util_draw_number(&tft, fmt, 233, LINE_2Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+  case 7:
+  {
+    float voltage = _shrd->voltageFilterMean / 1000.0;
+    sprintf(fmt, "%s", Dfmt2_1(voltage));
+    tft_util_draw_number(&tft, fmt, 233, LINE_2Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+    break;
+  }
 
-  float distance = _shrd->distanceTrip / 10000.0;
-  sprintf(fmt, "%s", Dfmt2_1(distance));
-  tft_util_draw_number(&tft, fmt, 134, LINE_3Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+  case 8:
+  {
+    float distance = _shrd->distanceTrip / 10000.0;
+    sprintf(fmt, "%s", Dfmt2_1(distance));
+    tft_util_draw_number(&tft, fmt, 134, LINE_3Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+    break;
+  }
 
-  float odo = _shrd->distanceOdo;
-  sprintf(fmt, "%05.0f", (odo));
-  tft_util_draw_number(&tft, fmt, 5, LINE_3Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+  case 9:
+  {
+    float odo = _shrd->distanceOdo;
+    sprintf(fmt, "%05.0f", (odo));
+    tft_util_draw_number(&tft, fmt, 5, LINE_3Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+    break;
+  }
 
-  float autonomy = 65.2;
-  if (autonomy > 999)
-    autonomy = 999;
-  if (autonomy < 0)
-    autonomy = 0;
-  sprintf(fmt, "%03.0f", autonomy);
-  tft_util_draw_number(&tft, fmt, 241, LINE_3Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+  case 10:
+  {
+    float autonomy = 65.2;
+    if (autonomy > 999)
+      autonomy = 999;
+    if (autonomy < 0)
+      autonomy = 0;
+    sprintf(fmt, "%03.0f", autonomy);
+    tft_util_draw_number(&tft, fmt, 241, LINE_3Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+    break;
+  }
 
-  float current = _shrd->currentFilterMean / 1000.0;
-  if (current > 99)
-    current = 99;
-  if (current < 0)
-    current = 0;
-  sprintf(fmt, "%s", Dfmt2_1(current));
-  tft_util_draw_number(&tft, fmt, 134, LINE_5Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+  case 11:
+  {
+    float current = _shrd->currentFilterMean / 1000.0;
+    if (current > 99)
+      current = 99;
+    if (current < 0)
+      current = 0;
+    sprintf(fmt, "%s", Dfmt2_1(current));
+    tft_util_draw_number(&tft, fmt, 134, LINE_5Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+    break;
+  }
 
-  float bat_min = _settings->getS3F().Battery_min_voltage / 10.0;
-  float bat_max = _settings->getS3F().Battery_max_voltage / 10.0;
-  float batteryPercent = (1 / ((bat_max - bat_min) / ((_shrd->voltageFilterMean / 1000.0) - bat_min)) * 100);
-  drawBatteryJauge(&tft, batteryPercent);
+  case 12:
+  {
+    float bat_min = _settings->getS3F().Battery_min_voltage / 10.0;
+    float bat_max = _settings->getS3F().Battery_max_voltage / 10.0;
+    float batteryPercent = (1 / ((bat_max - bat_min) / ((_shrd->voltageFilterMean / 1000.0) - bat_min)) * 100);
+    drawBatteryJauge(&tft, batteryPercent);
+    break;
+  }
+  }
 }

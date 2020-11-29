@@ -1057,7 +1057,7 @@ void BluetoothHandler::notifyModeOrder(uint8_t val)
 
 void BluetoothHandler::notifyBreakeSentOrder(uint8_t order, uint8_t isPressed, uint8_t brakeFordidenHighVoltage)
 {
-    byte value[2];
+    byte value[3];
     value[0] = order;
     value[1] = isPressed;
     value[2] = brakeFordidenHighVoltage;
