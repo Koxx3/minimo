@@ -341,8 +341,9 @@ void setupSerial()
   hwSerCntrl.begin(BAUD_RATE, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
 #endif
 #if CONTROLLER_VESC
-  hwSerCntrl.begin(BAUD_RATE, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
+  hwSerCntrl.begin(115200, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
   vescCntrl.setSerialPort(&hwSerCntrl);
+  //vescCntrl.setDebugPort(&Serial);
 #endif
 
   // minimotor display
@@ -1475,7 +1476,7 @@ int readHardSerial(int mode, int i, HardwareSerial *hwSerCntrl, HardwareSerial *
       if (i == 8)
       {
 #if ALLOW_CNTRL_TO_LCD_MODIFICATIONS
-        shrd.speedCurrent = getSpeed();
+        //        shrd.speedCurrent = getSpeed();
 
         pidInput = shrd.speedCurrent;
         pidSpeed.Compute();
@@ -1636,17 +1637,24 @@ void processVescSerial()
 
   if (vescCntrl.getVescValues())
   {
+    /*
     Serial.println(vescCntrl.data.rpm);
     Serial.println(vescCntrl.data.inpVoltage);
     Serial.println(vescCntrl.data.ampHours);
     Serial.println(vescCntrl.data.tachometerAbs);
-    shrd.speedCurrent = vescCntrl.data.rpm;
+    */
+    shrd.speedCurrent = vescCntrl.data.rpm * 0.002943;
     shrd.voltageFilterMean = vescCntrl.data.inpVoltage;
     shrd.currentFilterMean = vescCntrl.data.ampHours;
   }
 
-  vescCntrl.setDuty(throttleAnalogValue / 16);
+  float duty = throttleAnalogValue / 4096.0;
 
+  /*  Serial.print("duty : ");
+  Serial.println(duty);
+*/
+
+  vescCntrl.setDuty(duty);
 }
 
 void processMinimotorsSerial()
@@ -2148,12 +2156,9 @@ void loop()
   }
 
 #if READ_THROTTLE
-  if (i_loop % 10 == 8)
-  {
-    throttleAnalogValue = analogRead(PIN_IN_THROTTLE);
-    Serial.print("throttleAnalogValue : ");
-    Serial.println(throttleAnalogValue);
-  }
+  throttleAnalogValue = analogRead(PIN_IN_THROTTLE);
+  Serial.print("throttleAnalogValue : ");
+  Serial.println(throttleAnalogValue);
 #endif
 
 #if TFT_ENABLED
