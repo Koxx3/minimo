@@ -12,6 +12,8 @@
 #include "FORCED_SQUARE9pt7b.h"
 #include "FORCED_SQUARE6pt7b.h"
 
+#include "TFT/smart.c"
+
 #define SEP_LINE 2
 #define SMALLEST_FONT_SIZE 4
 #define SMALL_FONT_SIZE 5
@@ -25,11 +27,11 @@
 
 #define LINE_TEXT_OFFSET 7
 
-#define _cs -1   // 3 goes to TFT CS
-#define _dc 5    // 4 goes to TFT DC
-//#define _mosi 23 // 5 goes to TFT MOSI
-//#define _sclk 5  // 6 goes to TFT SCK/CLK
-#define _rst 17  // ESP RST to TFT RESET
+#define _cs -1 // 3 goes to TFT CS
+#define _dc 2  // 4 goes to TFT DC
+#define _rst 17 // ESP RST to TFT RESET
+
+#define PIN_BACKLIGHT 5
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(_cs, _dc, _rst);
 
@@ -53,23 +55,27 @@ void tftSetup(SharedData *shrd, Settings *settings)
   _shrd = shrd;
   _settings = settings;
 
-  /*
-  pinMode(_miso, OUTPUT);
-  digitalWrite(_miso,1);
+  pinMode(PIN_BACKLIGHT, OUTPUT);
+  digitalWrite(PIN_BACKLIGHT, 1);
+  ledcSetup(0, 1000, 10);
+  ledcAttachPin(PIN_BACKLIGHT, 0);
+  ledcWrite(0, 4095);
 
-  ledcSetup(0, 1000, 8);
-  ledcAttachPin(_miso, 0);
-  ledcWrite(0, 10);
-*/
-
+  // init TFT
   tft.begin(60000000);
-
   tft.setRotation(1);
+
+  // draw splash scree
+  tft.drawRGBBitmap((320 - smart.width) / 2, (240 - smart.height) / 2, (uint16_t *)smart.pixel_data, smart.width, smart.height);
+  delay(3000);
   tft.fillScreen(ILI9341_BLACK);
+
+  // init TFT settings
   tft.setTextSize(1);
   tft.invertDisplay(1);
   tft.setFont(&FORCED_SQUARE6pt7b);
 
+  // draw interface
   write_text_line(&tft, txt_mode, 174, LINE_2Y - LINE_TEXT_OFFSET, ILI9341_RED);
   write_text_line(&tft, txt_volts, 266, LINE_2Y - LINE_TEXT_OFFSET, ILI9341_RED);
   write_text_line(&tft, txt_odo, 80, LINE_3Y - LINE_TEXT_OFFSET, ILI9341_RED);
