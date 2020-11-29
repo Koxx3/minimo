@@ -425,7 +425,7 @@ void setup()
 {
 
 #if TFT_ENABLED
-  tftBacklightFull();
+  tftSetupBacklight();
 #endif
 
   // Initialize the Serial (use only in setup codes)
