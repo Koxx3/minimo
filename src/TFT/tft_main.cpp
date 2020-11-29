@@ -77,12 +77,13 @@ void tftSetup(SharedData *shrd, Settings *settings)
   tft.setRotation(1);
   tft.fillScreen(ILI9341_BLACK);
 
+  tftBacklightFull();
+  
   // draw splash scree
   tft.drawRGBBitmap((320 - gimp_image.width) / 2, (240 - gimp_image.height) / 2, (uint16_t *)gimp_image.pixel_data, gimp_image.width, gimp_image.height);
   delay(3000);
   tft.fillScreen(ILI9341_BLACK);
 
-  tftBacklightFull();
 
   // init TFT settings
   tft.setTextSize(1);
