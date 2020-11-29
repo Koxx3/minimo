@@ -1055,12 +1055,13 @@ void BluetoothHandler::notifyModeOrder(uint8_t val)
     pCharacteristicMode->notify();
 }
 
-void BluetoothHandler::notifyBreakeSentOrder(uint8_t order, uint8_t isPressed)
+void BluetoothHandler::notifyBreakeSentOrder(uint8_t order, uint8_t isPressed, uint8_t brakeFordidenHighVoltage)
 {
     byte value[2];
     value[0] = order;
     value[1] = isPressed;
-    pCharacteristicBrakeSentOrder->setValue((uint8_t *)&value, 2);
+    value[2] = brakeFordidenHighVoltage;
+    pCharacteristicBrakeSentOrder->setValue((uint8_t *)&value, 3);
     pCharacteristicBrakeSentOrder->notify();
 }
 

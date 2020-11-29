@@ -679,8 +679,6 @@ uint8_t modifyModeOld(char var, char data_buffer[])
 void getBrakeFromAnalog()
 {
 
-  boolean electricBrakeForbiden = false;
-
   brakeAnalogValue = analogRead(PIN_IN_ABRAKE);
   shrd.brakeAnalogValue = brakeAnalogValue;
 
@@ -751,10 +749,10 @@ void getBrakeFromAnalog()
       brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
       brakeFilterMean = brakeFilter.getMean();
 
-      electricBrakeForbiden = isElectricBrakeForbiden();
+      shrd.brakeFordidenHighVoltage = isElectricBrakeForbiden();
 
       // alarm controler from braking
-      if ((brakeFilterMeanErr > brakeFilterInit.getMean() + ANALOG_BRAKE_MIN_OFFSET) && (!electricBrakeForbiden))
+      if ((brakeFilterMeanErr > brakeFilterInit.getMean() + ANALOG_BRAKE_MIN_OFFSET) && (!shrd.brakeFordidenHighVoltage))
       {
         digitalWrite(PIN_OUT_BRAKE, 1);
 
@@ -790,7 +788,7 @@ void getBrakeFromAnalog()
       // notify brake LCD value
       if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
       {
-        blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus);
+        blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus, shrd.brakeFordidenHighVoltage);
 
 #if DEBUG_DISPLAY_ANALOG_BRAKE
         Serial.print("brake notify : ");
@@ -806,7 +804,7 @@ void getBrakeFromAnalog()
                 shrd.brakeSentOrderOld,
                 shrd.brakeStatus,
                 brakeFilterInit.getMean(),
-                electricBrakeForbiden);
+                shrd.brakeFordidenHighVoltage);
         blh.notifyBleLogs(print_buffer);
       }
 
@@ -827,7 +825,7 @@ void getBrakeFromAnalog()
                 shrd.brakeSentOrderOld,
                 shrd.brakeStatus,
                 brakeFilterInit.getMean(),
-                electricBrakeForbiden);
+                shrd.brakeFordidenHighVoltage);
 
         Serial.println(print_buffer);
 
@@ -1047,7 +1045,7 @@ uint8_t getBrakeFromLCD(char var, char data_buffer[])
 #endif
 
     // notify bluetooth
-    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus);
+    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus, shrd.brakeFordidenHighVoltage);
   }
   else if ((brakeStatusFromLcdNew == 0) && (shrd.brakeStatusOld == 1))
   {
@@ -1062,7 +1060,7 @@ uint8_t getBrakeFromLCD(char var, char data_buffer[])
 #endif
 
     // notify bluetooth
-    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus);
+    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus, shrd.brakeFordidenHighVoltage);
   }
 
   shrd.brakeStatusOld = brakeStatusFromLcdNew;
@@ -1159,7 +1157,7 @@ uint8_t modifyBrakeFromLCD(char var, char data_buffer[])
         }
 
         // notify bluetooth
-        blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus);
+        blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus, shrd.brakeFordidenHighVoltage);
       }
       else
       // progressive brake enabled but brake released
@@ -1175,7 +1173,7 @@ uint8_t modifyBrakeFromLCD(char var, char data_buffer[])
       if (shrd.brakeSentOrder != shrd.brakeSentOrderOld)
       {
         // notify bluetooth
-        blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus);
+        blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus, shrd.brakeFordidenHighVoltage);
       }
 
       shrd.brakeSentOrderOld = shrd.brakeSentOrder;

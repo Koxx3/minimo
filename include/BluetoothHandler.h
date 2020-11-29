@@ -29,7 +29,7 @@ public:
     static uint8_t setMeasurements();
     static void notifyModeOrder(uint8_t);
     static void notifySpeedLimiterStatus(uint8_t);
-    static void notifyBreakeSentOrder(uint8_t, uint8_t);
+    static void notifyBreakeSentOrder(uint8_t, uint8_t, uint8_t);
     static void notifyEcoOrder(uint8_t);
     static void notifyAccelOrder(uint8_t);
     static void notifyAuxOrder(uint8_t);

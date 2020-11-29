@@ -59,6 +59,7 @@ public:
     int8_t brakeSentOrderOld = -1;
     int32_t brakeMaxPressureRaw = -1;
     uint32_t brakeAnalogValue = 0;
+    uint8_t brakeFordidenHighVoltage = 0;
 
     uint32_t currentCalibOrder = 0;
     uint32_t brakeCalibOrder = 1;
