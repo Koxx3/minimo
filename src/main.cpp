@@ -25,6 +25,8 @@
 #include "debug.h"
 #include "OneButton.h"
 #include "EEPROM_storage.h"
+#include <Wire.h>
+#include <Adafruit_MCP4725.h>
 
 #include "app_version.h"
 
@@ -36,18 +38,18 @@
 //////------------------------------------
 ////// Defines
 
+// SMART CONFIGURATION
 #define TFT_ENABLED 1
-
 #define CONTROLLER_MINIMOTORS 0
-#define CONTROLLER_VESC 1
-
-#define READ_THROTTLE 1
-
+#define CONTROLLER_VESC 0
+#define READ_THROTTLE 0
 #define DEBUG_ESP_HTTP_UPDATE 1
 
+// MINIMO CONFIG
 #define ALLOW_LCD_TO_CNTRL_MODIFICATIONS true
 #define ALLOW_CNTRL_TO_LCD_MODIFICATIONS true
 
+// PINOUT
 #define PIN_SERIAL_ESP_TO_LCD 26
 #define PIN_SERIAL_ESP_TO_CNTRL 27
 #define PIN_SERIAL_LCD_TO_ESP 25
@@ -64,22 +66,29 @@
 #define PIN_IN_ABRAKE 34
 #define PIN_IN_THROTTLE 33
 #define PIN_OUT_BACKLIGHT 5
-//#define PIN_IN_DBRAKE 4
+#define PIN_I2C_SDA 32
+#define PIN_I2C_SCL 33
+
+// I2C
+//#define I2C_FREQ 400000
+#define I2C_FREQ 1000000
+
+// UART
+#define DATA_BUFFER_SIZE 30
+#define BAUD_RATE_MINIMOTORS 1200
+#define BAUD_RATE_VESC 115200
+#define BAUD_RATE_CONSOLE 921600
 
 #define MODE_LCD_TO_CNTRL 0
 #define MODE_CNTRL_TO_LCD 1
 #define MODE_LCD_TO_CNTRL_START_BYTE 0xAA
 #define MODE_CNTRL_TO_LCD_START_BYTE 0x36
 
-#define DATA_BUFFER_SIZE 30
-#define BAUD_RATE_MINIMOTORS 1200
-#define BAUD_RATE_VESC 115200
-#define BAUD_RATE_CONSOLE 921600
-
+// ADC
 #define ANALOG_TO_VOLTS_A 0.0213
 #define ANALOG_TO_VOLTS_B 5.4225
-
 #define ANALOG_TO_CURRENT 35
+
 #define NB_CURRENT_CALIB 200
 #define NB_BRAKE_CALIB 100
 
@@ -95,6 +104,7 @@
 #define ANALOG_BRAKE_MIN_OFFSET 100
 #define ANALOG_BRAKE_MAX_VALUE 2300
 
+// BUTTONS
 #define BUTTON_LONG_PRESS_TICK 300
 
 #define WATCHDOG_TIMEOUT 1000000 //time in ms to trigger the watchdog
@@ -130,6 +140,9 @@ DHT_nonblocking dht_sensor(PIN_IN_OUT_DHT, DHT_TYPE_22);
 
 OneButton button1(PIN_IN_BUTTON1, true, true);
 OneButton button2(PIN_IN_BUTTON2, true, true);
+
+TwoWire I2Cone = TwoWire(0);
+Adafruit_MCP4725 dac;
 
 // The actions I ca do...
 typedef enum
@@ -326,11 +339,19 @@ void setupEFuse()
 }
 */
 
+void setupI2C()
+{
+
+  I2Cone.begin(PIN_I2C_SDA, PIN_I2C_SCL, I2C_FREQ);
+}
+
 void setupDac()
 {
   // call GENERAL CALL RESET
   // https://www.sparkfun.com/datasheets/BreakoutBoards/MCP4725.pdf
   // page 22
+
+  dac.begin(0x60, &I2Cone);
 }
 
 void setupSerial()
@@ -420,6 +441,24 @@ void disableWatchdog()
   timerAlarmDisable(timer);
 }
 
+void taskUpdateTFT(void *parameter)
+{
+  int i = 0;
+  for (;;)
+  { // infinite loop
+
+    Serial.println(">>>>> upadte TFT");
+
+    tftUpdateData(i);
+    // Pause the task again for 50ms
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+    i++;
+
+    if (i >= 20)
+      i = 0;
+  }
+}
+
 ////// Setup
 void setup()
 {
@@ -439,6 +478,9 @@ void setup()
 
   Serial.println(PSTR("   serial ..."));
   setupSerial();
+
+  Serial.println(PSTR("   i2c ..."));
+  setupI2C();
 
   Serial.println(PSTR("   dac ..."));
   setupDac();
@@ -487,6 +529,18 @@ void setup()
 
   Serial.println(PSTR("   watchdog ..."));
   setupWatchdog();
+
+
+  xTaskCreatePinnedToCore(
+      taskUpdateTFT, // Function that should be called
+      "Toggle LED",  // Name of the task (for debugging)
+      10000,         // Stack size (bytes)
+      NULL,          // Parameter to pass
+      1,             // Task priority
+      NULL,           // Task handle,
+      1
+  );
+
 
   // End off setup
   Serial.println("setup --- end");
@@ -2204,7 +2258,7 @@ void loop()
     processVoltage();
   }
 
-  if ((i_loop % 10 == 2))
+  if ((i_loop % 10 == 2) ||(i_loop % 10 == 7))
   {
     //modifyBrakeFromLCD();
     //displayBrake();
@@ -2224,12 +2278,31 @@ void loop()
     processDHT();
   }
 
+#if TEST_ADC_DAC_REFRESH
+
+  if ((i_loop % 10 == 3)  || (i_loop % 10 == 9))
+  {
+    uint32_t dacOutput = shrd.brakeAnalogValue * 1.2;
+    if (dacOutput > 4095)
+      dacOutput = 4095;
+
+    //dacOutput = (i_loop / 10) % 4096;
+    dac.setVoltage(dacOutput /*i_loop % 4096*/, false);
+
+    char print_buffer[500];
+    sprintf(print_buffer, "brake raw : %d / dacOutput : %d",
+            brakeAnalogValue,
+            dacOutput);
+    Serial.println(print_buffer);
+  }
+#endif
+
 #if READ_THROTTLE
   throttleAnalogValue = analogRead(PIN_IN_THROTTLE);
 #endif
 
 #if TFT_ENABLED
-  tftUpdateData(i_loop);
+  //tftUpdateData(i_loop);
 #endif
 
   // Give a time for ESP
@@ -2247,8 +2320,6 @@ void loop()
   i_loop++;
 
   resetWatchdog();
-
-  //digitalWrite(PIN_OUT_BRAKE, i_loop % 2000 > 1000);
 }
 
 /////////// End

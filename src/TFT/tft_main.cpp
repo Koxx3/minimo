@@ -27,13 +27,13 @@
 
 #define LINE_TEXT_OFFSET 7
 
-#define _cs -1  // 3 goes to TFT CS
-#define _dc 2   // 4 goes to TFT DC
-#define _rst 17 // ESP RST to TFT RESET
+#define PIN_SPI_CS -1  // goes to TFT CS -- not used
+#define PIN_SPI_DC 2   // goes to TFT DC
+#define PIN_SPI_RST 17 // goes to TFT RESET
 
 #define PIN_OUT_BACKLIGHT 5
 
-Adafruit_ILI9341 tft = Adafruit_ILI9341(_cs, _dc, _rst);
+Adafruit_ILI9341 tft = Adafruit_ILI9341(PIN_SPI_CS, PIN_SPI_DC, PIN_SPI_RST);
 
 SharedData *_shrd;
 Settings *_settings;
@@ -81,7 +81,7 @@ void tftSetup(SharedData *shrd, Settings *settings)
   
   // draw splash scree
   tft.drawRGBBitmap((320 - gimp_image.width) / 2, (240 - gimp_image.height) / 2, (uint16_t *)gimp_image.pixel_data, gimp_image.width, gimp_image.height);
-  delay(3000);
+ // delay(3000);
   tft.fillScreen(ILI9341_BLACK);
 
 
