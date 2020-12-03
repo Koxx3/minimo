@@ -44,6 +44,7 @@
 #define CONTROLLER_VESC 0
 #define READ_THROTTLE 0
 #define DEBUG_ESP_HTTP_UPDATE 1
+#define TEST_ADC_DAC_REFRESH 1 
 
 // MINIMO CONFIG
 #define ALLOW_LCD_TO_CNTRL_MODIFICATIONS true
@@ -532,12 +533,12 @@ void setup()
 
 
   xTaskCreatePinnedToCore(
-      taskUpdateTFT, // Function that should be called
-      "Toggle LED",  // Name of the task (for debugging)
-      10000,         // Stack size (bytes)
-      NULL,          // Parameter to pass
-      1,             // Task priority
-      NULL,           // Task handle,
+      taskUpdateTFT,    // Function that should be called
+      "taskUpdateTFT",  // Name of the task (for debugging)
+      10000,            // Stack size (bytes)
+      NULL,             // Parameter to pass
+      1,                // Task priority
+      NULL,             // Task handle,
       1
   );
 
