@@ -18,8 +18,63 @@ void KellyUart::setDebugPort(Stream *port)
 int KellyUart::receiveUartMessage(uint8_t *payloadReceived)
 {
 
-	// Messages <= 255 starts with "2", 2nd byte is length
-	// Messages > 255 starts with "3" 2nd and 3rd byte is length combined with 1st >>8 and then &0xFF
+	bool messageRead = false;
+	unsigned char len = 0; //Number of bytes
+
+	uint32_t timeout = millis() + 100; // Defining the timestamp for timeout (100ms before timeout)
+
+	while (millis() < timeout && messageRead == false)
+	{
+
+		while (serialPort->available())
+		{
+			Rx_buff.buffer[len] = serialPort->read();
+			len++;
+		}
+
+		if (len > sizeof(struct T_Sync_Comm_Buff))
+		{
+
+			bool unpacked = false;
+
+			if (messageRead)
+			{
+				unpacked = unpackPayload(Rx_buff.buffer, len, payloadReceived);
+			}
+
+			if (unpacked)
+			{
+				// Message was read
+				return len;
+			}
+			else
+			{
+				// No Message Read
+				return 0;
+			}
+		}
+	}
+
+	/*
+	unsigned char check_sum, k = 0, i = 0, len = 0;
+				for (i = 0; i < len; i++)
+			{
+				check_sum += Rx_buff.fields.data[i];
+			}
+			check_sum += Rx_buff.fields.no_bytes;
+			check_sum += Rx_buff.fields.command;
+			if (check_sum != Rx_buff.fields.data[Rx_buff.fields.no_bytes]) //checksum error
+				return 0;
+			else
+				return 1; //OK
+*/
+
+	return false; //don't receive data
+}
+
+/*
+int KellyUart::receiveUartMessage(uint8_t *payloadReceived)
+{
 
 	// Makes no sense to run this function if no serialPort is defined.
 	if (serialPort == NULL)
@@ -31,7 +86,7 @@ int KellyUart::receiveUartMessage(uint8_t *payloadReceived)
 	uint8_t messageReceived[256];
 	uint16_t lenPayload = 0;
 
-	uint32_t timeout = millis() + 20; // Defining the timestamp for timeout (100ms before timeout)
+	uint32_t timeout = millis() + 100; // Defining the timestamp for timeout (100ms before timeout)
 
 	while (millis() < timeout && messageRead == false)
 	{
@@ -41,12 +96,8 @@ int KellyUart::receiveUartMessage(uint8_t *payloadReceived)
 
 			messageReceived[counter++] = serialPort->read();
 
-			/*
-			Serial.print("messageReceived : ");
-			Serial.println(messageReceived[counter]);
-*/
-
-			if (counter == 2)
+			
+			if (counter == 15)
 			{
 
 				switch (messageReceived[0])
@@ -113,14 +164,15 @@ int KellyUart::receiveUartMessage(uint8_t *payloadReceived)
 		return 0;
 	}
 }
+*/
 
 bool KellyUart::unpackPayload(uint8_t *message, int lenMes, uint8_t *payload)
 {
 
+	/*
 	uint16_t crcMessage = 0;
 	uint16_t crcPayload = 0;
 
-	/*
 	// Rebuild crc:
 	crcMessage = message[lenMes - 3] << 8;
 	crcMessage &= 0xFF00;
