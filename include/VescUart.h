@@ -6,6 +6,8 @@
 #include "buffer.h"
 #include "crc.h"
 
+#define BAUD_RATE_VESC 115200
+
 class VescUart
 {
 	/** Struct to store the telemetry data returned by the VESC */

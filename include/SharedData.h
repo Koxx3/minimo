@@ -8,6 +8,13 @@
 
 #define _SharedData_h
 
+// The actions I ca do...
+typedef enum
+{
+    ACTION_OFF, // set LED "OFF".
+    ACTION_ON   // set LED "ON"
+} MyActions;
+
 class SharedData
 {
 public:
@@ -30,16 +37,19 @@ public:
     uint32_t distanceOdo = 0;
     uint32_t distanceOdoBoot = 0;
     uint32_t distanceOdoInFlash = 0;
+    uint32_t distancePrevTime = 0;
 
     uint32_t speedPidKp = 4;
     uint32_t speedPidKi = 8;
     uint32_t speedPidKd = 1;
+    double pidSetpoint, pidInput, pidOutput;
 
     uint8_t powerReduction = 0;
 
     uint8_t modeOrder = 3;
     uint8_t modeLcd = 0;
     uint8_t modeLcdOld = 0;
+    int8_t modeOrderBeforeNitro = -1;
 
     uint8_t accelOrder = 0;
     uint8_t accelLcd = 0;
@@ -66,6 +76,13 @@ public:
 
     uint32_t voltageFilterMean = 0;
     int32_t currentFilterMean = 0;
+
+    MyActions button1ClickStatus = ACTION_OFF;
+    uint32_t button1LpDuration = 0;
+    MyActions button2ClickStatus = ACTION_OFF;
+    uint32_t button2LpDuration = 0;
+    boolean button1LpProcessed = false;
+    boolean button2LpProcessed = false;
 };
 
 #endif

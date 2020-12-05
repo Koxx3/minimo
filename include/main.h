@@ -24,3 +24,5 @@ void resetPid();
 bool isElectricBrakeForbiden();
 
 void disableWatchdog();
+
+void saveOdo();

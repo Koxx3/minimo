@@ -1,0 +1,3 @@
+
+#define MODE_LCD_TO_CNTRL 0
+#define MODE_CNTRL_TO_LCD 1
