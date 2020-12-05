@@ -2,35 +2,61 @@
 #define _KellyUART_h
 
 #include <Arduino.h>
-#include "datatypes.h"
 #include "buffer.h"
 #include "crc.h"
 
 #define BAUD_RATE_Kelly 19200.
+
+// Communication commands
+typedef enum
+{
+	ETS_FLASH_OPEN = 0xF1,
+	ETS_FLASH_READ = 0xF2,
+	ETS_A2D_BATCH_READ = 0x1b,
+	ETS_USER_MONITOR1 = 0x3A,
+	ETS_USER_MONITOR2 = 0x3B
+} COMM_PACKET_ID;
+
+#define ETS_MAX_DATA_LEN 16 //max length,can not be changed
+
+#pragma pack(push, 1)
+struct T_Sync_Comm_Buff
+{
+	unsigned char command;
+	unsigned char no_bytes;
+	unsigned char data[ETS_MAX_DATA_LEN + 1];
+} __attribute__((packed));
+#pragma pack(pop)
+
+union KellyBuffer
+{
+	struct T_Sync_Comm_Buff fields;
+	unsigned char buffer[sizeof(struct T_Sync_Comm_Buff)];
+};
 
 class KellyUart
 {
 	/** Struct to store the telemetry data returned by the Kelly */
 	struct dataPackage
 	{
-		float avgMotorCurrent;
-		float avgInputCurrent;
-		float dutyCycleNow;
-		float rpm;
-		float inpVoltage;
-		float ampHours;
-		float ampHoursCharged;
-		float wattHours;
-		float wattHoursCharged;
-		long tachometer;
-		long tachometerAbs;
-		float tempMosfet;
-		float tempMotor;
-		uint8_t error;
-		float pidPos;
-		uint8_t id;
+		uint8_t TPS_AD;
+		uint8_t Brake_AD;
+		uint8_t BRK_SW;
+		uint8_t FOOT_SW;
+		uint8_t FWD_SW;
+		uint8_t REV_SW;
+		uint8_t HALL_SA;
+		uint8_t HALL_SB;
+		uint8_t HALL_SC;
+		uint8_t B_Voltage;
+		uint8_t Motor_Temp;
+		uint8_t Controller_temperature;
+		uint8_t Setting_direction;
+		uint8_t Actual_direction;
+		uint8_t Break_SW2;
 	};
 
+	KellyBuffer Rx_buff, Tx_buff; //define send and receive data buffer field
 
 public:
 	/**
@@ -54,6 +80,13 @@ public:
 	void setDebugPort(Stream *port);
 
 	/**
+		 * @brief      Sends a command to KELLY and stores the returned data
+		 *
+		 * @return     True if successfull otherwise false
+		 */
+	bool getKellyValues(void);
+
+	/**
 		 * @brief      Help Function to print struct dataPackage over Serial for Debug
 		 */
 	void printKellyValues(void);
@@ -71,7 +104,6 @@ public:
 		 * @return     True if successfull otherwise false
 		 */
 	bool readKellyValues(void);
-
 
 private:
 	/** Variable to hold the reference to the Serial object to use for UART */

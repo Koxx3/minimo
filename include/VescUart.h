@@ -2,7 +2,7 @@
 #define _VESCUART_h
 
 #include <Arduino.h>
-#include "datatypes.h"
+#include "VescDatatypes.h"
 #include "buffer.h"
 #include "crc.h"
 
