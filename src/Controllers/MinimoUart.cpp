@@ -1,6 +1,7 @@
 #include "MinimoUart.h"
 #include "SerialMode.h"
 #include "main.h"
+#include "debug.h"
 
 MinimoUart::MinimoUart()
 {
@@ -320,10 +321,7 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
 
 #if DEBUG_DISPLAY_SPEED_PID
     Serial.print(" / output = ");
-    Serial.print(pidOutput);
-#endif
-
-#if DEBUG_DISPLAY_SPEED_PID
+    Serial.print(shrd->pidOutput);
     Serial.print(" / new_power = ");
     Serial.print(newPower);
     Serial.println("%");
@@ -800,15 +798,15 @@ int MinimoUart::readHardSerial(int mode, int i, Stream *hwSerCntrl, Stream *hwSe
       // modify speed
       if (i == 8)
       {
-#if ALLOW_CNTRL_TO_LCD_MODIFICATIONS
         shrd->speedCurrent = getSpeed();
 
+#if ALLOW_CNTRL_TO_LCD_MODIFICATIONS
         shrd->pidInput = shrd->speedCurrent;
         pidSpeed->Compute();
 
 #if DEBUG_DISPLAY_SPEED_PID
         Serial.print("Input = ");
-        Serial.print(pidInput);
+        Serial.print(shrd->pidInput);
 #endif
 
         var = modifySpeed(var, data_buffer_mod, 1);

@@ -31,18 +31,28 @@ int KellyUart::receiveUartMessage(uint8_t *payloadReceived)
 			Rx_buff.buffer[len] = serialPort->read();
 			len++;
 
+			/*
 			if (debugPort != NULL)
 			{
 				debugPort->print("receiveUartMessage : Received : ");
 				serialPrint(Rx_buff.buffer, len);
+
+				debugPort->print("len : ");
+				debugPort->print(len);
 				debugPort->println();
 			}
+			
+				*/
 		}
 
-		if (len > sizeof(struct T_Sync_Comm_Buff))
+		if (len >= sizeof(struct T_Sync_Comm_Buff))
 		{
 
+			debugPort->print(">> decode");
+			debugPort->println();
+
 			bool unpacked = false;
+			messageRead = true;
 
 			if (messageRead)
 			{
@@ -85,18 +95,16 @@ bool KellyUart::unpackPayload(uint8_t *message, int lenMes, uint8_t *payload)
 */
 
 	// Extract payload:
-	memcpy(payload, &message[2], message[1]);
+	memcpy(payload, message, lenMes);
 
+	/*
 	if (debugPort != NULL)
 	{
 		debugPort->print("unpackPayload : Received : ");
 		serialPrint(message, lenMes);
 		debugPort->println();
-
-		debugPort->print("unpackPayload : Payload :      ");
-		serialPrint(payload, message[1] - 1);
-		debugPort->println();
 	}
+	*/
 
 	return true;
 }
@@ -147,34 +155,35 @@ bool KellyUart::processReadPacket(uint8_t *message)
 	int32_t ind = 0;
 
 	packetId = (KELLY_COMM_PACKET_ID)message[0];
-	message++; // Removes the packetId from the actual message (payload)
+	message++; // Removes the packetId 
+	message++; // Removes the message size 
 
 	switch (packetId)
 	{
 	case ETS_USER_MONITOR1:
 	{
-		data1.TPS_AD = buffer_get_int8(message, &ind);
-		data1.Brake_AD = buffer_get_int8(message, &ind);
-		data1.BRK_SW = buffer_get_int8(message, &ind);
-		data1.FOOT_SW = buffer_get_int8(message, &ind);
-		data1.FWD_SW = buffer_get_int8(message, &ind);
-		data1.REV_SW = buffer_get_int8(message, &ind);
-		data1.HALL_SA = buffer_get_int8(message, &ind);
-		data1.HALL_SB = buffer_get_int8(message, &ind);
-		data1.HALL_SC = buffer_get_int8(message, &ind);
-		data1.B_Voltage = buffer_get_int8(message, &ind);
-		data1.Motor_Temp = buffer_get_int8(message, &ind);
-		data1.Controller_temperature = buffer_get_int8(message, &ind);
-		data1.Setting_direction = buffer_get_int8(message, &ind);
-		data1.Actual_direction = buffer_get_int8(message, &ind);
-		data1.Break_SW2 = buffer_get_int8(message, &ind);
+		data1.TPS_AD = buffer_get_uint8(message, &ind);
+		data1.Brake_AD = buffer_get_uint8(message, &ind);
+		data1.BRK_SW = buffer_get_uint8(message, &ind);
+		data1.FOOT_SW = buffer_get_uint8(message, &ind);
+		data1.FWD_SW = buffer_get_uint8(message, &ind);
+		data1.REV_SW = buffer_get_uint8(message, &ind);
+		data1.HALL_SA = buffer_get_uint8(message, &ind);
+		data1.HALL_SB = buffer_get_uint8(message, &ind);
+		data1.HALL_SC = buffer_get_uint8(message, &ind);
+		data1.B_Voltage = buffer_get_uint8(message, &ind);
+		data1.Motor_Temp = buffer_get_uint8(message, &ind);
+		data1.Controller_temperature = buffer_get_uint8(message, &ind);
+		data1.Setting_direction = buffer_get_uint8(message, &ind);
+		data1.Actual_direction = buffer_get_uint8(message, &ind);
+		data1.Break_SW2 = buffer_get_uint8(message, &ind);
 
 		return true;
 	}
 	case ETS_USER_MONITOR2:
 	{
-		data2.Controller_error_state = buffer_get_int16(message, &ind);
-		data2.Mechanical_speed_in_RPM = buffer_get_int16(message, &ind);
+		data2.Controller_error_state = buffer_get_uint16(message, &ind);
+		data2.Mechanical_speed_in_RPM = buffer_get_uint16(message, &ind);
 
 		return true;
 	}
@@ -202,6 +211,8 @@ bool KellyUart::getKellyValues1(void)
 
 	bool read = processReadPacket(payload); //returns true if sucessful
 
+	printKellyValues1();
+
 	return read;
 }
 
@@ -223,6 +234,8 @@ bool KellyUart::getKellyValues2(void)
 	delay(1); //needed, otherwise data is not read
 
 	bool read = processReadPacket(payload); //returns true if sucessful
+
+	printKellyValues2();
 
 	return read;
 }

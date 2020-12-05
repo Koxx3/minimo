@@ -43,11 +43,14 @@
 ////// Defines
 
 // SMART CONFIGURATION
-#define CONTROLLER_TYPE CONTROLLER_MINIMO
+#define CONTROLLER_TYPE CONTROLLER_KELLY
 #define TFT_ENABLED 0
 #define READ_THROTTLE 0
 #define DEBUG_ESP_HTTP_UPDATE 1
 #define TEST_ADC_DAC_REFRESH 0
+#define TEMPERATURE_EXT_READ 0
+#define VOLTAGE_EXT_READ 0
+#define BRAKE_ANALOG_EXT_READ 0
 
 // PINOUT
 #define PIN_SERIAL_ESP_TO_LCD 26
@@ -309,7 +312,7 @@ void setupSerial()
 
 #elif CONTROLLER_TYPE == CONTROLLER_KELLY
 
-  hwSerCntrl.begin(BAUD_RATE_VESC, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
+  hwSerCntrl.begin(BAUD_RATE_KELLY, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
   kellyCntrl.setSerialPort(&hwSerCntrl);
   kellyCntrl.setDebugPort(&Serial);
 
@@ -805,12 +808,30 @@ void processVescSerial()
   vescCntrl.setDuty(duty);
 }
 
-void processKellySerial()
+void processKellySerial1()
 {
 
-  String command;
+  shrd.voltageFilterMean = kellyCntrl.data1.B_Voltage * 1000;
+  shrd.currentTemperature = kellyCntrl.data1.Controller_temperature;
+  
+  shrd.brakeStatus = kellyCntrl.data1.BRK_SW;
 
-  float speedCompute = kellyCntrl.data2.Mechanical_speed_in_RPM * (settings.getS1F().Wheel_size / 10.0) / settings.getS1F().Motor_pole_number / 120.0;
+  // notify brake LCD value
+  if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
+  {
+    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus, shrd.brakeFordidenHighVoltage);
+  }
+
+  shrd.brakeStatusOld = shrd.brakeStatus;
+}
+
+void processKellySerial2()
+{
+
+  // 532 RPM = 25 km/h
+  // 1814 =
+  // TODO : check calculation - if motor poles numbers
+  float speedCompute = kellyCntrl.data2.Mechanical_speed_in_RPM * (settings.getS1F().Wheel_size / 10.0) / settings.getS1F().Motor_pole_number / 14.0;
   if (speedCompute < 0)
     speedCompute = 0;
   if (speedCompute > 999)
@@ -1105,7 +1126,7 @@ void processLockEvent(uint8_t buttonId, bool isLongPress)
   }
 }
 
-void processAux()
+void processRelay()
 {
   /*
   if (shrd.auxOrder == 1)
@@ -1283,18 +1304,32 @@ void loop()
     processVescSerial();
   }
 #elif CONTROLLER_TYPE == CONTROLLER_KELLY
-  if (i_loop % 10 == 1)
+  if (i_loop % 100 == 1)
   {
     //Serial.println(">>>>>>>>>>> readVescValues");
 
     kellyCntrl.getKellyValues2();
   }
 
-  if (i_loop % 10 == 9)
+  if (i_loop % 100 == 12)
   {
-    //Serial.println(">>>>>>>>>>> processKellySerial");
-    processKellySerial();
+    //Serial.println(">>>>>>>>>>> processKellySerial2");
+    processKellySerial2();
   }
+
+  if (i_loop % 100 == 20)
+  {
+    //Serial.println(">>>>>>>>>>> readVescValues");
+
+    kellyCntrl.getKellyValues1();
+  }
+
+  if (i_loop % 100 == 22)
+  {
+    //Serial.println(">>>>>>>>>>> processKellySerial1");
+    processKellySerial1();
+  }
+
 #endif
 
   blh.processBLE();
@@ -1311,19 +1346,23 @@ void loop()
   displayButton2();
 #endif
 
-  processAux();
+  processRelay();
 
+#if VOLTAGE_EXT_READ
   if (i_loop % 10 == 0)
   {
     processVoltage();
   }
+#endif
 
+#if BRAKE_ANALOG_EXT_READ
   if ((i_loop % 10 == 2) || (i_loop % 10 == 7))
   {
     //modifyBrakeFromLCD();
     //displayBrake();
     getBrakeFromAnalog();
   }
+#endif
 
 #if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
   if (i_loop % 10 == 4)
@@ -1333,10 +1372,12 @@ void loop()
 #endif
 
   // keep it fast (/100 not working)
+#if TEMPERATURE_EXT_READ
   if (i_loop % 10 == 6)
   {
     processDHT();
   }
+#endif
 
 #if TEST_ADC_DAC_REFRESH
 

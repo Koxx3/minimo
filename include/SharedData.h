@@ -39,9 +39,9 @@ public:
     uint32_t distanceOdoInFlash = 0;
     uint32_t distancePrevTime = 0;
 
-    uint32_t speedPidKp = 4;
-    uint32_t speedPidKi = 8;
-    uint32_t speedPidKd = 1;
+    float speedPidKp = 4.0;
+    float speedPidKi = 8.0;
+    float speedPidKd = 1.0;
     double pidSetpoint, pidInput, pidOutput;
 
     uint8_t powerReduction = 0;

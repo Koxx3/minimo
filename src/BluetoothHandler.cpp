@@ -520,17 +520,16 @@ void BluetoothHandler::init(Settings *data)
             {
                 std::string rxValue = pCharacteristic->getValue();
 
-                memcpy(&shrd->speedPidKp, &rxValue[0], 4);
-                memcpy(&shrd->speedPidKi, &rxValue[4], 4);
-                memcpy(&shrd->speedPidKd, &rxValue[8], 4);
-                /*
-                shrd->speedPidKp = rxValue[0];
-                shrd->speedPidKi = rxValue[1];
-                shrd->speedPidKd = rxValue[2];
-                */
+                uint32_t temp;
+                memcpy(&temp, &rxValue[0], 4);
+                shrd->speedPidKp = temp / 1000.0;
+                memcpy(&temp, &rxValue[4], 4);
+                shrd->speedPidKi = temp / 1000.0;
+                memcpy(&temp, &rxValue[8], 4);
+                shrd->speedPidKd = temp / 1000.0;
 
                 char print_buffer[500];
-                sprintf(print_buffer, "BLH - Write : speedPidKp = %d / speedPidKi = %d / speedPidKd = %d", shrd->speedPidKp, shrd->speedPidKi, shrd->speedPidKd);
+                sprintf(print_buffer, "BLH - Write : speedPidKp = %02.2f / speedPidKi = %02.2f / speedPidKd =  %02.2f", shrd->speedPidKp, shrd->speedPidKi, shrd->speedPidKd);
                 Serial.println(print_buffer);
 
                 resetPid();

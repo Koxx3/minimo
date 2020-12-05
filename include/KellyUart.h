@@ -5,7 +5,7 @@
 #include "buffer.h"
 #include "crc.h"
 
-#define BAUD_RATE_Kelly 19200.
+#define BAUD_RATE_KELLY 19200
 
 // Communication commands
 typedef enum
