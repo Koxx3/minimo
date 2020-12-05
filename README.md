@@ -82,6 +82,12 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Send duty
     - [ ] Error codes processing
 
+- [ ] Kelly
+    - [IN PROGRESS 🔄] Read serial link
+    - [ ] Decode datas : speed, voltage, current
+    - [ ] Send duty
+    - [ ] Error codes processing
+ 
 - [ ] Serial Kaabo / Zero / Appolo
 
 - [✅] Bluetooth 
