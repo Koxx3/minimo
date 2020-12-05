@@ -103,8 +103,11 @@ bool KellyUart::unpackPayload(uint8_t *message, int lenMes, uint8_t *payload)
 
 int KellyUart::packSendPayload(uint8_t *payload, int lenPay) //calculate checksum and transmitter data
 {
-	char i, check_sum;
+	uint8_t i, check_sum;
 	size_t size = 3;
+
+	Tx_buff.fields.command = payload[0];
+	Tx_buff.fields.no_bytes = lenPay;
 
 	check_sum = 0;
 	for (i = 0; i < Tx_buff.fields.no_bytes; i++)
@@ -112,6 +115,22 @@ int KellyUart::packSendPayload(uint8_t *payload, int lenPay) //calculate checksu
 	check_sum += Tx_buff.fields.no_bytes;
 	check_sum += Tx_buff.fields.command;
 	Tx_buff.fields.data[Tx_buff.fields.no_bytes] = check_sum; //load checksum
+
+	if (debugPort != NULL)
+	{
+		/*
+		debugPort->print("packSendPayload : check_sum : ");
+		char print_buffer[3];
+		sprintf(print_buffer, "%02x ",
+				check_sum);
+		debugPort->print(print_buffer);
+		debugPort->println("");
+*/
+
+		debugPort->print("packSendPayload : Sending : ");
+		serialPrint(Tx_buff.buffer, size);
+		debugPort->println();
+	}
 
 	// Sending package
 	if (serialPort != NULL)
@@ -175,7 +194,7 @@ bool KellyUart::getKellyValues1(void)
 		debugPort->println("Command: ETS_USER_MONITOR1");
 	}
 
-	packSendPayload(command, 1);
+	packSendPayload(command, 0);
 
 	receiveUartMessage(payload);
 
@@ -197,7 +216,7 @@ bool KellyUart::getKellyValues2(void)
 		debugPort->println("Command: ETS_USER_MONITOR1");
 	}
 
-	packSendPayload(command, 1);
+	packSendPayload(command, 0);
 
 	receiveUartMessage(payload);
 
@@ -237,12 +256,12 @@ void KellyUart::serialPrint(uint8_t *data, int len)
 {
 	if (debugPort != NULL)
 	{
-		for (int i = 0; i <= len; i++)
+		for (int i = 0; i < len; i++)
 		{
-			char print_buffer[2];
+			char print_buffer[3];
 			sprintf(print_buffer, "%02x ",
 					data[i]);
-			debugPort->print(data[i]);
+			debugPort->print(print_buffer);
 		}
 
 		debugPort->println("");

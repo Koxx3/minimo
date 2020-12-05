@@ -396,7 +396,7 @@ void taskUpdateTFT(void *parameter)
   for (;;)
   { // infinite loop
 
-    Serial.println(">>>>> update TFT");
+    //Serial.println(">>>>> update TFT");
 
     tftUpdateData(i);
     // Pause the task again for 50ms
@@ -1350,11 +1350,13 @@ void loop()
     //dacOutput = (i_loop / 10) % 4096;
     dac.setVoltage(dacOutput /*i_loop % 4096*/, false);
 
+/*
     char print_buffer[500];
     sprintf(print_buffer, "brake raw : %d / dacOutput : %d",
             brakeAnalogValue,
             dacOutput);
     Serial.println(print_buffer);
+    */
   }
 #endif
 
