@@ -108,12 +108,12 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Send break handle position to controller
     - [✅] Send LED status
     - [✅] Send optocopler order
-    - [ ] Internal temperature sensor
-    - [ ] Throttle signal regeneration
+    - [IN PROGRESS 🔄] Internal temperature sensor
+    - [IN PROGRESS 🔄] Throttle signal regeneration
 
 - [ ] Power 🔋
     - [✅] Convert 12V to 5V
-    - [ ] Convert 80V to 5V
+    - [IN PROGRESS 🔄] Convert 80V to 5V
 
 - [ ] Features ⚙️
     - [✅] Save settings in non volatile memory
