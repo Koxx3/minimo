@@ -94,8 +94,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Anti-theth with smartphone
     - [✅] Anti-theth with beacon (scan & rssi detection)
     - [✅] Lock beacon or device settings
-    - [✅] SmartController connexion security (PIN code)
-    - [✅] SmartController connexion with multi devices (BT device choice)
+    - [✅] SmartController connection security (PIN code)
+    - [✅] SmartController connection with multi devices (BT device choice)
 
 - [✅] Other inputs/outputs ↔️
     - [✅] Read current with WCS1700
