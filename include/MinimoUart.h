@@ -5,6 +5,7 @@
 #include "Settings.h"
 #include "SharedData.h"
 #include "BluetoothHandler.h"
+#include <PID_v1.h>
 
 #define BAUD_RATE_MINIMOTORS 1200
 
@@ -12,6 +13,10 @@
 
 #define MODE_LCD_TO_CNTRL_START_BYTE 0xAA
 #define MODE_CNTRL_TO_LCD_START_BYTE 0x36
+
+// MINIMO CONFIG
+#define ALLOW_LCD_TO_CNTRL_MODIFICATIONS true
+#define ALLOW_CNTRL_TO_LCD_MODIFICATIONS true
 
 class MinimoUart
 {
@@ -72,6 +77,7 @@ public:
     uint8_t modifyPower(char var, char data_buffer[]);
     uint8_t modifyBrakeFromLCD(char var, char data_buffer[]);
     uint8_t modifyEco(char var, char data_buffer[]);
+    void setPID(PID *pidSpeed_p);
 
     int readHardSerial(int mode, int i, Stream *hwSerCntrl, Stream *hwSerLcd, int serialMode, char *data_buffer_ori, char *data_buffer_mod);
     void processMinimotorsSerial();
@@ -83,6 +89,7 @@ private:
 
     SharedData *shrd;
     Settings *settings;
+    PID *pidSpeed;
 
     uint32_t timeLastBrake = 0;
 

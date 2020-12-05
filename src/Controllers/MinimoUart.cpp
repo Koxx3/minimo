@@ -35,6 +35,11 @@ void MinimoUart::setLcdSerialPort(Stream *port)
   hwSerLcd = port;
 }
 
+void MinimoUart::setPID(PID *pidSpeed_p)
+{
+  pidSpeed = pidSpeed_p;
+}
+
 void setSharedData(SharedData *);
 
 //////------------------------------------
@@ -796,10 +801,10 @@ int MinimoUart::readHardSerial(int mode, int i, Stream *hwSerCntrl, Stream *hwSe
       if (i == 8)
       {
 #if ALLOW_CNTRL_TO_LCD_MODIFICATIONS
-        //        shrd->speedCurrent = getSpeed();
+        shrd->speedCurrent = getSpeed();
 
-        pidInput = shrd->speedCurrent;
-        pidSpeed.Compute();
+        shrd->pidInput = shrd->speedCurrent;
+        pidSpeed->Compute();
 
 #if DEBUG_DISPLAY_SPEED_PID
         Serial.print("Input = ");

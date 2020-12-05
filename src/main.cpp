@@ -43,15 +43,11 @@
 ////// Defines
 
 // SMART CONFIGURATION
-#define CONTROLLER_TYPE CONTROLLER_KELLY
-#define TFT_ENABLED 1
+#define CONTROLLER_TYPE CONTROLLER_MINIMO
+#define TFT_ENABLED 0
 #define READ_THROTTLE 0
 #define DEBUG_ESP_HTTP_UPDATE 1
-#define TEST_ADC_DAC_REFRESH 1
-
-// MINIMO CONFIG
-#define ALLOW_LCD_TO_CNTRL_MODIFICATIONS true
-#define ALLOW_CNTRL_TO_LCD_MODIFICATIONS true
+#define TEST_ADC_DAC_REFRESH 0
 
 // PINOUT
 #define PIN_SERIAL_ESP_TO_LCD 26
@@ -296,6 +292,7 @@ void setupSerial()
   minomoCntrl.setSettings(&settings);
   minomoCntrl.setSharedData(&shrd);
   minomoCntrl.setBluetoothHandler(&blh);
+  minomoCntrl.setPID(&pidSpeed);
 
   // minimotor controller
   hwSerCntrl.begin(BAUD_RATE_MINIMOTORS, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
@@ -479,6 +476,7 @@ void setup()
   Serial.println(PSTR("   watchdog ..."));
   setupWatchdog();
 
+#if TFT_ENABLED
   xTaskCreatePinnedToCore(
       taskUpdateTFT,   // Function that should be called
       "taskUpdateTFT", // Name of the task (for debugging)
@@ -487,6 +485,7 @@ void setup()
       0,               // Task priority
       NULL,            // Task handle,
       1);
+#endif
 
   // End off setup
   Serial.println("setup --- end");
@@ -1350,7 +1349,7 @@ void loop()
     //dacOutput = (i_loop / 10) % 4096;
     dac.setVoltage(dacOutput /*i_loop % 4096*/, false);
 
-/*
+    /*
     char print_buffer[500];
     sprintf(print_buffer, "brake raw : %d / dacOutput : %d",
             brakeAnalogValue,
