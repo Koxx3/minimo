@@ -25,24 +25,26 @@
 #include "debug.h"
 #include "OneButton.h"
 #include "EEPROM_storage.h"
+#include "EEPROM_storage.h"
 #include <Wire.h>
 #include <Adafruit_MCP4725.h>
-
-#include "app_version.h"
-
 #include <PID_v1.h>
+#include "TFT/tft_main.h"
+
 #include "VescUart.h"
+#include "KellyUart.h"
 #include "MinimoUart.h"
 
-#include "TFT/tft_main.h"
+#include "ControllerType.h"
+
+#include "app_version.h"
 
 //////------------------------------------
 ////// Defines
 
 // SMART CONFIGURATION
+#define CONTROLLER_TYPE CONTROLLER_KELLY
 #define TFT_ENABLED 1
-#define CONTROLLER_MINIMOTORS 1
-#define CONTROLLER_VESC 0
 #define READ_THROTTLE 0
 #define DEBUG_ESP_HTTP_UPDATE 1
 #define TEST_ADC_DAC_REFRESH 1
@@ -124,6 +126,7 @@ HardwareSerial hwSerLcd(2);
 
 VescUart vescCntrl;
 MinimoUart minomoCntrl;
+KellyUart kellyCntrl;
 
 DHT_nonblocking dht_sensor(PIN_IN_OUT_DHT, DHT_TYPE_22);
 
@@ -288,7 +291,7 @@ void setupDac()
 void setupSerial()
 {
 
-#if CONTROLLER_MINIMOTORS
+#if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
 
   minomoCntrl.setSettings(&settings);
   minomoCntrl.setSharedData(&shrd);
@@ -302,11 +305,17 @@ void setupSerial()
   hwSerLcd.begin(BAUD_RATE_MINIMOTORS, SERIAL_8N1, PIN_SERIAL_LCD_TO_ESP, PIN_SERIAL_ESP_TO_LCD);
   minomoCntrl.setLcdSerialPort(&hwSerLcd);
 
-#endif
-#if CONTROLLER_VESC
+#elif CONTROLLER_TYPE == CONTROLLER_VESC
   hwSerCntrl.begin(BAUD_RATE_VESC, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
   vescCntrl.setSerialPort(&hwSerCntrl);
   //vescCntrl.setDebugPort(&Serial);
+
+#elif CONTROLLER_TYPE == CONTROLLER_KELLY
+
+  hwSerCntrl.begin(BAUD_RATE_VESC, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
+  kellyCntrl.setSerialPort(&hwSerCntrl);
+  kellyCntrl.setDebugPort(&Serial);
+
 #endif
 }
 
@@ -797,6 +806,23 @@ void processVescSerial()
   vescCntrl.setDuty(duty);
 }
 
+void processKellySerial()
+{
+
+  String command;
+
+  float speedCompute = kellyCntrl.data2.Mechanical_speed_in_RPM * (settings.getS1F().Wheel_size / 10.0) / settings.getS1F().Motor_pole_number / 120.0;
+  if (speedCompute < 0)
+    speedCompute = 0;
+  if (speedCompute > 999)
+    speedCompute = 999;
+
+  if (speedCompute > shrd.speedMax)
+    shrd.speedMax = speedCompute;
+
+  shrd.speedCurrent = speedCompute;
+}
+
 uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 {
 
@@ -1242,26 +1268,36 @@ void loop()
     return;
   }
 
-#if CONTROLLER_MINIMOTORS
+#if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
   minomoCntrl.processMinimotorsSerial();
-#endif
-#if CONTROLLER_VESC
+#elif CONTROLLER_TYPE == CONTROLLER_VESC
+  if (i_loop % 10 == 1)
   {
+    //Serial.println(">>>>>>>>>>> readVescValues");
 
-    if (i_loop % 10 == 1)
-    {
-      //Serial.println(">>>>>>>>>>> readVescValues");
+    vescCntrl.requestVescValues();
+  }
 
-      vescCntrl.requestVescValues();
-    }
+  if (i_loop % 10 == 9)
+  {
+    //Serial.println(">>>>>>>>>>> processVescSerial");
+    processVescSerial();
+  }
+#elif CONTROLLER_TYPE == CONTROLLER_KELLY
+  if (i_loop % 10 == 1)
+  {
+    //Serial.println(">>>>>>>>>>> readVescValues");
 
-    if (i_loop % 10 == 9)
-    {
-      //Serial.println(">>>>>>>>>>> processVescSerial");
-      processVescSerial();
-    }
+    kellyCntrl.getKellyValues2();
+  }
+
+  if (i_loop % 10 == 9)
+  {
+    //Serial.println(">>>>>>>>>>> processKellySerial");
+    processKellySerial();
   }
 #endif
+
   blh.processBLE();
 
   button1.tick();
@@ -1290,7 +1326,7 @@ void loop()
     getBrakeFromAnalog();
   }
 
-#if CONTROLLER_MINIMOTORS
+#if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
   if (i_loop % 10 == 4)
   {
     processCurrent();

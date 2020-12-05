@@ -15,7 +15,7 @@ typedef enum
 	ETS_A2D_BATCH_READ = 0x1b,
 	ETS_USER_MONITOR1 = 0x3A,
 	ETS_USER_MONITOR2 = 0x3B
-} COMM_PACKET_ID;
+} KELLY_COMM_PACKET_ID;
 
 #define ETS_MAX_DATA_LEN 16 //max length,can not be changed
 
@@ -37,7 +37,7 @@ union KellyBuffer
 class KellyUart
 {
 	/** Struct to store the telemetry data returned by the Kelly */
-	struct dataPackage
+	struct dataPackage1
 	{
 		uint8_t TPS_AD;
 		uint8_t Brake_AD;
@@ -56,6 +56,14 @@ class KellyUart
 		uint8_t Break_SW2;
 	};
 
+	/** Struct to store the telemetry data returned by the Kelly */
+	struct dataPackage2
+	{
+		uint16_t Controller_error_state;
+		uint16_t Mechanical_speed_in_RPM;
+	};
+
+
 	KellyBuffer Rx_buff, Tx_buff; //define send and receive data buffer field
 
 public:
@@ -65,7 +73,8 @@ public:
 	KellyUart(void);
 
 	/** Variable to hold measurements returned from Kelly */
-	dataPackage data;
+	dataPackage1 data1;
+	dataPackage2 data2;
 
 	/**
 		 * @brief      Set the serial port for uart communication
@@ -84,12 +93,14 @@ public:
 		 *
 		 * @return     True if successfull otherwise false
 		 */
-	bool getKellyValues(void);
+	bool getKellyValues1(void);
+	bool getKellyValues2(void);
 
 	/**
 		 * @brief      Help Function to print struct dataPackage over Serial for Debug
 		 */
-	void printKellyValues(void);
+	void printKellyValues1(void);
+	void printKellyValues2(void);
 
 	/**
 		 * @brief      Sends a command to Kelly 
