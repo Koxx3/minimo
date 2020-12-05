@@ -187,7 +187,6 @@ int KellyUart::packSendPayload(uint8_t *payload, int lenPay) //calculate checksu
 	return 1;
 }
 
-
 bool KellyUart::processReadPacket(uint8_t *message)
 {
 
@@ -199,7 +198,7 @@ bool KellyUart::processReadPacket(uint8_t *message)
 
 	switch (packetId)
 	{
-	case ETS_USER_MONITOR1: 
+	case ETS_USER_MONITOR1:
 	{
 
 		data.TPS_AD = buffer_get_int8(message, &ind);
@@ -244,16 +243,11 @@ bool KellyUart::getKellyValues(void)
 
 	int lenPayload = receiveUartMessage(payload);
 
-	if (lenPayload > 55)
-	{
-		bool read = processReadPacket(payload); //returns true if sucessful
+	delay(1); //needed, otherwise data is not read
 
-		return read;
-	}
-	else
-	{
-		return false;
-	}
+	bool read = processReadPacket(payload); //returns true if sucessful
+
+	return read;
 }
 
 bool KellyUart::requestKellyValues(void)
@@ -267,7 +261,6 @@ bool KellyUart::requestKellyValues(void)
 	}
 
 	packSendPayload(command, 1);
-	// delay(1); //needed, otherwise data is not read
 
 	return true;
 }
@@ -277,16 +270,9 @@ bool KellyUart::readKellyValues(void)
 	uint8_t payload[256];
 	int lenPayload = receiveUartMessage(payload);
 
-	if (lenPayload > 55)
-	{
-		bool read = processReadPacket(payload); //returns true if sucessful
+	bool read = processReadPacket(payload); //returns true if sucessful
 
-		return read;
-	}
-	else
-	{
-		return false;
-	}
+	return read;
 }
 
 void KellyUart::serialPrint(uint8_t *data, int len)
