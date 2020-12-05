@@ -161,8 +161,9 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Humidity
         - [✅] Time
         - [✅] Moving time
-        - [IN TEST 🔄] Distance
+        - [IN TEST 🔄] Odometer / distance
         - [IN TEST 🔄] Brake forbiden
+        - [ ] Trip distance
         - [ ] Average speed
     - [✅] Auto-launch app with NFC tag
     - [✅] Parameters custom settings
