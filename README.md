@@ -134,6 +134,9 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [IN PROGRESS 🔄] Automatic ECO mode on low battery 
     - [IN TEST 🔄] LCD Speed adjustment
     - [ ] Exponential acceleration curve
+    - [ ] PAS switch
+    - [ ] Use brake switch as startup for limiter
+    - [ ] Use relay as speedlimiter output for controller
     - [ ] Dynamic BLE debug infos
     - [ ] Configurable current loop regulation
     - [ ] Customize mode Z with different power / max speed
