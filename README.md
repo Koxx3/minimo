@@ -52,6 +52,8 @@ The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/proje
 ### Schematics
 [PCB schematic](https://easyeda.com/Koxx3/smartlcd-v1-3_copy)
 
+![PCB from easyEDA](/img/pcb_typon.png)
+
 ![PCB from easyEDA](/img/smartControllerPcb.PNG)
 
 ### Protype parts list
