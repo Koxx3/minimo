@@ -26,3 +26,5 @@ bool isElectricBrakeForbiden();
 void disableWatchdog();
 
 void saveOdo();
+
+void computeDistance(float);

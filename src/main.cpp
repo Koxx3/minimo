@@ -550,6 +550,37 @@ void displayButton2()
   Serial.println(shrd.button1ClickStatus);
 }
 
+void computeDistance(float speed)
+{
+
+  // calculate distance
+  uint32_t distanceCurTime = millis();
+  uint32_t distanceDiffTime = distanceCurTime - shrd.distancePrevTime;
+  shrd.distanceTrip = shrd.distanceTrip + ((speed * (distanceDiffTime)) / 360);
+  shrd.distancePrevTime = millis();
+
+  shrd.distanceOdo = shrd.distanceOdoBoot + (shrd.distanceTrip / 10000);
+
+  if ((shrd.speedOld != 0) && (speed == 0) && (shrd.distanceOdoInFlash != shrd.distanceOdo))
+  {
+    shrd.distanceOdoInFlash = shrd.distanceOdo;
+
+    Serial.print("saveOdo : distanceOdoInFlash ");
+    Serial.print(shrd.distanceOdoInFlash);
+    Serial.print(" / distanceOdoBoot : ");
+    Serial.print(shrd.distanceOdoBoot);
+
+    saveOdo();
+  }
+
+  /*
+  Serial.print("distance = ");
+  Serial.print(shrd.distance / 10);
+  Serial.print(" / distanceDiffTime = ");
+  Serial.println(distanceDiffTime);
+*/
+}
+
 void getBrakeFromAnalog()
 {
 
@@ -813,7 +844,7 @@ void processKellySerial1()
 
   shrd.voltageFilterMean = kellyCntrl.data1.B_Voltage * 1000;
   shrd.currentTemperature = kellyCntrl.data1.Controller_temperature;
-  
+
   shrd.brakeStatus = kellyCntrl.data1.BRK_SW;
 
   // notify brake LCD value

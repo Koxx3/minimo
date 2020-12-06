@@ -583,32 +583,7 @@ double MinimoUart::getSpeed()
   double speed = (((int)high2 * 256) + (low));
   speed = speed * (settings->getS1F().Wheel_size / 10.0) / settings->getS1F().Motor_pole_number / 10.5;
 
-  // calculate distance
-  uint32_t distanceCurTime = millis();
-  uint32_t distanceDiffTime = distanceCurTime - shrd->distancePrevTime;
-  shrd->distanceTrip = shrd->distanceTrip + ((speed * (distanceDiffTime)) / 360);
-  shrd->distancePrevTime = millis();
-
-  shrd->distanceOdo = shrd->distanceOdoBoot + (shrd->distanceTrip / 10000);
-
-  if ((shrd->speedOld != 0) && (speed == 0) && (shrd->distanceOdoInFlash != shrd->distanceOdo))
-  {
-    shrd->distanceOdoInFlash = shrd->distanceOdo;
-
-    Serial.print("saveOdo : distanceOdoInFlash ");
-    Serial.print(shrd->distanceOdoInFlash);
-    Serial.print(" / distanceOdoBoot : ");
-    Serial.print(shrd->distanceOdoBoot);
-
-    saveOdo();
-  }
-
-  /*
-  Serial.print("distance = ");
-  Serial.print(shrd->distance / 10);
-  Serial.print(" / distanceDiffTime = ");
-  Serial.println(distanceDiffTime);
-*/
+  computeDistance(speed);
 
   // eject error values
   if (speed > 150)

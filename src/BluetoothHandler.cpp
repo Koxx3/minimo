@@ -1000,9 +1000,14 @@ Serial.println(current);
     memcpy(&txValue[i], &hr, 2);
     i = i + 2;
 
-    // distance
+    // distance trip
     uint16_t distance = shrd->distanceTrip;
     memcpy(&txValue[i], &distance, 2);
+    i = i + 2;
+
+    // distance odo
+    uint16_t distanceOdo = shrd->distanceOdo;
+    memcpy(&txValue[i], &distanceOdo, 2);
     i = i + 2;
 
     /*
