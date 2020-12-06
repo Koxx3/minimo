@@ -52,6 +52,8 @@ The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/proje
 ### Schematics
 [PCB schematic](https://easyeda.com/Koxx3/smartlcd-v1-3_copy)
 
+![PCB from easyEDA](/img/pcb_typon.png)
+
 ![PCB from easyEDA](/img/smartControllerPcb.PNG)
 
 ### Protype parts list
@@ -163,7 +165,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Moving time
         - [IN TEST 🔄] Odometer / distance
         - [IN TEST 🔄] Brake forbiden
-        - [ ] Trip distance
+        - [IN TEST 🔄] Trip distance
         - [ ] Average speed
     - [✅] Auto-launch app with NFC tag
     - [✅] Parameters custom settings
