@@ -568,7 +568,7 @@ void computeDistance(float speed)
     Serial.print("saveOdo : distanceOdoInFlash ");
     Serial.print(shrd.distanceOdoInFlash);
     Serial.print(" / distanceOdoBoot : ");
-    Serial.print(shrd.distanceOdoBoot);
+    Serial.print(shrd.distanceOdo);
 
     saveOdo();
   }
