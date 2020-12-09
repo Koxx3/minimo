@@ -43,14 +43,14 @@
 ////// Defines
 
 // SMART CONFIGURATION
-#define CONTROLLER_TYPE CONTROLLER_KELLY
+#define CONTROLLER_TYPE CONTROLLER_MINIMOTORS
 #define TFT_ENABLED 0
 #define READ_THROTTLE 0
 #define DEBUG_ESP_HTTP_UPDATE 1
 #define TEST_ADC_DAC_REFRESH 0
-#define TEMPERATURE_EXT_READ 0
-#define VOLTAGE_EXT_READ 0
-#define BRAKE_ANALOG_EXT_READ 0
+#define TEMPERATURE_EXT_READ 1
+#define VOLTAGE_EXT_READ 1
+#define BRAKE_ANALOG_EXT_READ 1
 
 // PINOUT
 #define PIN_SERIAL_ESP_TO_LCD 26
@@ -219,8 +219,14 @@ void restoreOdo()
   Serial.print("restore restoreOdo value : ");
   Serial.println(shrd.distanceOdo);
 
-  if (shrd.distanceOdo == -1)
+  if (shrd.distanceOdo == 0xffffffff)
+  {
     shrd.distanceOdo = 0;
+    shrd.distanceOdoBoot = 0;
+    shrd.distanceOdoInFlash = 0;
+    saveOdo();
+    Serial.print("==> ODO init at 0");
+  }
 }
 
 //////------------------------------------
