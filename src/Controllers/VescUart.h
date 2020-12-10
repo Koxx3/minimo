@@ -1,80 +1,56 @@
-#ifndef _KellyUART_h
-#define _KellyUART_h
+#ifndef _VESCUART_h
+#define _VESCUART_h
 
 #include <Arduino.h>
-#include "buffer.h"
-#include "crc.h"
+#include "VescDatatypes.h"
+#include "tools/buffer.h"
+#include "tools/crc.h"
 
-#define BAUD_RATE_KELLY 19200
+#define BAUD_RATE_VESC 115200
 
-// Communication commands
-typedef enum
+class VescUart
 {
-	ETS_FLASH_OPEN = 0xF1,
-	ETS_FLASH_READ = 0xF2,
-	ETS_A2D_BATCH_READ = 0x1b,
-	ETS_USER_MONITOR1 = 0x3A,
-	ETS_USER_MONITOR2 = 0x3B
-} KELLY_COMM_PACKET_ID;
-
-#define ETS_MAX_DATA_LEN 16 //max length,can not be changed
-
-#pragma pack(push, 1)
-struct T_Sync_Comm_Buff
-{
-	unsigned char command;
-	unsigned char no_bytes;
-	unsigned char data[ETS_MAX_DATA_LEN + 1];
-} __attribute__((packed));
-#pragma pack(pop)
-
-union KellyBuffer
-{
-	struct T_Sync_Comm_Buff fields;
-	unsigned char buffer[sizeof(struct T_Sync_Comm_Buff)];
-};
-
-class KellyUart
-{
-	/** Struct to store the telemetry data returned by the Kelly */
-	struct dataPackage1
+	/** Struct to store the telemetry data returned by the VESC */
+	struct dataPackage
 	{
-		uint8_t TPS_AD;
-		uint8_t Brake_AD;
-		uint8_t BRK_SW;
-		uint8_t FOOT_SW;
-		uint8_t FWD_SW;
-		uint8_t REV_SW;
-		uint8_t HALL_SA;
-		uint8_t HALL_SB;
-		uint8_t HALL_SC;
-		uint8_t B_Voltage;
-		uint8_t Motor_Temp;
-		uint8_t Controller_temperature;
-		uint8_t Setting_direction;
-		uint8_t Actual_direction;
-		uint8_t Break_SW2;
+		float avgMotorCurrent;
+		float avgInputCurrent;
+		float dutyCycleNow;
+		float rpm;
+		float inpVoltage;
+		float ampHours;
+		float ampHoursCharged;
+		float wattHours;
+		float wattHoursCharged;
+		long tachometer;
+		long tachometerAbs;
+		float tempMosfet;
+		float tempMotor;
+		uint8_t error;
+		float pidPos;
+		uint8_t id;
 	};
 
-	/** Struct to store the telemetry data returned by the Kelly */
-	struct dataPackage2
+	/** Struct to hold the nunchuck values to send over UART */
+	struct nunchuckPackage
 	{
-		uint16_t Controller_error_state;
-		uint16_t Mechanical_speed_in_RPM;
+		int valueX;
+		int valueY;
+		bool upperButton; // valUpperButton
+		bool lowerButton; // valLowerButton
 	};
-
-
-	KellyBuffer Rx_buff, Tx_buff; //define send and receive data buffer field
 
 public:
 	/**
 		 * @brief      Class constructor
 		 */
-	KellyUart(void);
+	VescUart(void);
 
-	/** Variable to hold measurements returned from Kelly */
-	dataPackage1 data1;
-	dataPackage2 data2;
+	/** Variable to hold measurements returned from VESC */
+	dataPackage data;
+
+	/** Variable to hold nunchuck values */
+	nunchuckPackage nunchuck;
 
 	/**
 		 * @brief      Set the serial port for uart communication
@@ -89,32 +65,66 @@ public:
 	void setDebugPort(Stream *port);
 
 	/**
-		 * @brief      Sends a command to KELLY and stores the returned data
+		 * @brief      Sends a command to VESC and stores the returned data
 		 *
 		 * @return     True if successfull otherwise false
 		 */
-	bool getKellyValues1(void);
-	bool getKellyValues2(void);
+	bool getVescValues(void);
+
+	/**
+		 * @brief      Sends values for joystick and buttons to the nunchuck app
+		 */
+	void setNunchuckValues(void);
+
+	/**
+		 * @brief      Set the current to drive the motor
+		 * @param      current  - The current to apply
+		 */
+	void setCurrent(float current);
+
+	/**
+		 * @brief      Set the current to brake the motor
+		 * @param      brakeCurrent  - The current to apply
+		 */
+	void setBrakeCurrent(float brakeCurrent);
+
+	/**
+		 * @brief      Set the rpm of the motor
+		 * @param      rpm  - The desired RPM (actually eRPM = RPM * poles)
+		 */
+	void setRPM(float rpm);
+
+	/**
+		 * @brief      Set the duty of the motor
+		 * @param      duty  - The desired duty (0.0-1.0)
+		 */
+	void setDuty(float duty);
 
 	/**
 		 * @brief      Help Function to print struct dataPackage over Serial for Debug
 		 */
-	void printKellyValues1(void);
-	void printKellyValues2(void);
+	void printVescValues(void);
 
 	/**
-		 * @brief      Sends a command to Kelly 
+		 * @brief      Set the hand brake current to brake the motor
+		 * @param      brakeCurrent  - The current to apply
+		 */
+	void setHandBrakeCurrent(float brakeCurrent);
+
+	/**
+		 * @brief      Sends a command to VESC 
 		 *
 		 * @return     True if successfull otherwise false
 		 */
-	bool requestKellyValues(void);
+	bool requestVescValues(void);
 
 	/**
-		 * @brief      Read returned values from Kelly
+		 * @brief      Read returned values from VESC
 		 *
 		 * @return     True if successfull otherwise false
 		 */
-	bool readKellyValues(void);
+	bool readVescValues(void);
+
 
 private:
 	/** Variable to hold the reference to the Serial object to use for UART */

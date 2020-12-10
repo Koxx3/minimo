@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include "Settings.h"
 #include "SharedData.h"
-#include "BluetoothHandler.h"
+#include "BLE/BluetoothHandler.h"
 #include <PID_v1.h>
 
 #define BAUD_RATE_MINIMOTORS 1200

@@ -2,7 +2,7 @@
 ////// Manage settings exchanged in BLE and stored in EEPOM
 
 #include "Arduino.h"
-#include "MedianFilter.h"
+#include "Filters/MedianFilter.h"
 
 #ifndef _SharedData_h
 

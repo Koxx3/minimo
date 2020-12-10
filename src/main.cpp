@@ -16,11 +16,11 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include "main.h"
-#include "OTA_wifi.h"
-#include "MedianFilter.h"
-#include "dht_nonblocking.h"
+#include "OTA/OTA_wifi.h"
+#include "filters/MedianFilter.h"
+#include "DHT/dht_nonblocking.h"
 #include "Settings.h"
-#include "BluetoothHandler.h"
+#include "BLE/BluetoothHandler.h"
 #include "SharedData.h"
 #include "debug.h"
 #include "OneButton.h"
@@ -31,11 +31,10 @@
 #include <PID_v1.h>
 #include "TFT/tft_main.h"
 
-#include "VescUart.h"
-#include "KellyUart.h"
-#include "MinimoUart.h"
-
-#include "ControllerType.h"
+#include "Controllers/VescUart.h"
+#include "Controllers/KellyUart.h"
+#include "Controllers/MinimoUart.h"
+#include "Controllers/ControllerType.h"
 
 #include "app_version.h"
 
