@@ -16,11 +16,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include "main.h"
-#include "OTA/OTA_wifi.h"
-#include "filters/MedianFilter.h"
-#include "DHT/dht_nonblocking.h"
 #include "Settings.h"
-#include "BLE/BluetoothHandler.h"
 #include "SharedData.h"
 #include "debug.h"
 #include "OneButton.h"
@@ -29,6 +25,11 @@
 #include <Wire.h>
 #include <Adafruit_MCP4725.h>
 #include <PID_v1.h>
+
+#include "BLE/BluetoothHandler.h"
+#include "OTA/OTA_wifi.h"
+#include "filters/MedianFilter.h"
+#include "DHT/dht_nonblocking.h"
 #include "TFT/tft_main.h"
 
 #include "Controllers/VescUart.h"
