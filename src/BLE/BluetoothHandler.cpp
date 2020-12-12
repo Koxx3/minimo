@@ -301,6 +301,9 @@ void BluetoothHandler::init(Settings *data)
 
                 settings->displaySettings3();
 
+                // reset battery min/max datas
+                setupBattery();
+
                 // update BLE PIN code
                 pSecurity->setStaticPIN(settings->getS3F().Bluetooth_pin_code);
             }
@@ -1025,6 +1028,16 @@ Serial.println(current);
     uint16_t distanceOdo = shrd->distanceOdo;
     memcpy(&txValue[i], &distanceOdo, 2);
     i = i + 2;
+
+    // battery level
+    uint8_t batLevel = shrd->batteryLevel;
+    memcpy(&txValue[i], &batLevel, 1);
+    i = i + 1;
+
+    // battery autonomy
+    uint8_t autonomy = shrd->autonomyFilterMean;
+    memcpy(&txValue[i], &autonomy, 1);
+    i = i + 1;
 
     /*
     txValue[i] = 0xff;

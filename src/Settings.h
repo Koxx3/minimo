@@ -92,8 +92,7 @@ public:
     uint8_t Battery_saving_medium_voltage;
     uint8_t Battery_saving_strong_voltage;
     uint32_t Bluetooth_pin_code;
-    uint16_t Battery_capacity;
-    uint16_t Battery_discharge_rate;
+    uint16_t Battery_max_distance;
 
   } __attribute__((packed));
 #pragma pack(pop)

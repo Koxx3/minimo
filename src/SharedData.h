@@ -74,12 +74,17 @@ public:
     uint32_t currentCalibOrder = 0;
     uint32_t brakeCalibOrder = 1;
 
+    uint32_t voltageActual = 0;
     uint32_t voltageFilterMean = 0;
     uint32_t voltageRawFilterMean = 0;
     float batteryMinVoltageCalibUser;
     uint32_t batteryMinVoltageCalibRaw;
     float batteryMaxVoltageCalibUser;
     uint32_t batteryMaxVoltageCalibRaw;
+
+    uint32_t batteryLevel;
+    uint8_t autonomyFilterMean;
+    uint32_t autonomyLeft;
 
     int32_t currentFilterMean = 0;
 

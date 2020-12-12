@@ -32,6 +32,7 @@
 #include "filters/MedianFilter.h"
 #include "DHT/dht_nonblocking.h"
 #include "TFT/tft_main.h"
+#include "Battery/Battery.h"
 
 #include "Controllers/VescUart.h"
 #include "Controllers/KellyUart.h"
@@ -87,6 +88,8 @@
 
 #define NB_CURRENT_CALIB 200
 #define NB_BRAKE_CALIB 100
+
+#define NB_AUTONOMY_FILTER_DATA 300
 
 #define BRAKE_TYPE_ANALOG 1
 #if BRAKE_TYPE_ANALOG
@@ -144,6 +147,8 @@ uint32_t iBrakeCalibOrder = 0;
 
 uint16_t voltageStatus = 0;
 uint32_t voltageInMilliVolts = 0;
+Battery batt = Battery(36000, 54000);
+;
 
 uint16_t brakeAnalogValue = 0;
 uint16_t throttleAnalogValue = 0;
@@ -154,6 +159,7 @@ MedianFilter currentFilter(200, 1830);
 MedianFilter currentFilterInit(NB_CURRENT_CALIB, 1830);
 MedianFilter brakeFilter(10 /* 20 */, 900);
 MedianFilter brakeFilterInit(NB_BRAKE_CALIB, 900);
+MedianFilter autonomyFilter(NB_AUTONOMY_FILTER_DATA, 0);
 
 Settings settings;
 
@@ -384,6 +390,14 @@ void setupPID()
   //myPID.SetOutputLimits(0,100);
 }
 
+void setupBattery()
+{
+  batt = Battery(settings.getS3F().Battery_min_voltage * 100, settings.getS3F().Battery_max_voltage * 100);
+  batt.begin(&sigmoidal);
+
+  Serial.println("Battery : min = " + (String)settings.getS3F().Battery_min_voltage + " / max = " + settings.getS3F().Battery_max_voltage);
+}
+
 void resetPid()
 {
 
@@ -528,6 +542,12 @@ void setup()
 
   Serial.println(PSTR("   watchdog ..."));
   setupWatchdog();
+
+  processVoltage();
+  setupBattery();
+  setupAutonomy();
+
+  batt.begin(&sigmoidal);
 
 #if TFT_ENABLED
   xTaskCreatePinnedToCore(
@@ -1255,6 +1275,7 @@ void processVoltage()
 
   voltageStatus = analogRead(PIN_IN_VOLTAGE);
 
+
   // eject false reading
   if (voltageStatus == 4095)
   {
@@ -1311,6 +1332,8 @@ void processVoltage()
     //    Serial.println("algo C / voltageStatus = " + (String)voltageStatus + " / voltageInMilliVolts = " + (String)voltageInMilliVolts);
   }
 
+
+  shrd.voltageActual = voltageInMilliVolts;
   voltageFilter.in(voltageInMilliVolts);
   voltageRawFilter.in(voltageStatus);
   shrd.voltageFilterMean = voltageFilter.getMean();
@@ -1340,6 +1363,38 @@ void processVoltage()
   char print_buffer[500];
   sprintf(print_buffer, "Voltage / read : %d / mean : %d / mean volts : %0.1f ", voltageStatus, voltageRawFilter.getMean(), voltageFilter.getMean() / 1000.0);
   blh.notifyBleLogs(print_buffer);
+#endif
+}
+
+void setupAutonomy()
+{
+
+  shrd.batteryLevel = batt.level(shrd.voltageActual);
+
+  uint8_t autonomyLeft = (settings.getS3F().Battery_max_distance / 10) * (shrd.batteryLevel) / 100.0;
+
+  // filter reinit
+  for (int i = 0; i < NB_AUTONOMY_FILTER_DATA; i++)
+    autonomyFilter.in(autonomyLeft);
+}
+
+void processAutonomy()
+{
+
+  shrd.batteryLevel = batt.level(shrd.voltageFilterMean);
+
+  uint8_t autonomyLeft = (settings.getS3F().Battery_max_distance / 10) * (shrd.batteryLevel) / 100.0;
+
+  autonomyFilter.in(autonomyLeft);
+
+  shrd.autonomyFilterMean = autonomyFilter.getMean();
+
+#if DEBUG_AUTONOMY
+  Serial.println("bat level : " + (String)shrd.batteryLevel +
+                 " / voltageInMilliVolts = " + voltageInMilliVolts +
+                 " / autonomy = " + (String)autonomyLeft +
+                 " / autonomyFilterMean = " + (String)shrd.autonomyFilterMean +
+                 " / bat dst = " + (String)(settings.getS3F().Battery_max_distance / 10));
 #endif
 }
 
@@ -1457,6 +1512,11 @@ void loop()
     processVoltage();
   }
 #endif
+
+  if (i_loop % 1000 == 0)
+  {
+    processAutonomy();
+  }
 
 #if BRAKE_ANALOG_EXT_READ
   if ((i_loop % 10 == 2) || (i_loop % 10 == 7))

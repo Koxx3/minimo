@@ -123,10 +123,8 @@ void Settings::displaySettings3()
   Serial.println(settings3.fields.Battery_saving_strong_voltage);
   Serial.print("// Bluetooth_pin_code : ");
   Serial.println(settings3.fields.Bluetooth_pin_code);
-  Serial.print("// Battery_capacity : ");
-  Serial.println(settings3.fields.Battery_capacity);
-  Serial.print("// Battery_discharge_rate : ");
-  Serial.println(settings3.fields.Battery_discharge_rate);
+  Serial.print("// Battery_max_distance : ");
+  Serial.println(settings3.fields.Battery_max_distance);
 
 }
 

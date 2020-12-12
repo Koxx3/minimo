@@ -15,6 +15,7 @@ void processButton2LpStart();
 void processButton2LpDuring();
 void processButton2LpStop();
 
+void processVoltage();
 void processSpeedLimiterEvent(uint8_t, bool);
 void processLockEvent(uint8_t, bool);
 void processAuxEvent(uint8_t, bool);
@@ -27,5 +28,8 @@ void disableWatchdog();
 
 void saveOdo();
 void saveBatteryCalib();
+
+void setupAutonomy();
+void setupBattery();
 
 void computeDistance(float);
