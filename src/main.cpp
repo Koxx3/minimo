@@ -265,7 +265,7 @@ void restoreBatteryCalib()
   EEPROM.get(EEAddr, shrd.batteryMinVoltageCalibRaw);
   EEAddr += sizeof(shrd.batteryMinVoltageCalibRaw);
 
-  Serial.print("restore BatteryCalib value : ");
+  Serial.println("restore BatteryCalib value : ");
   Serial.println(shrd.batteryMaxVoltageCalibUser);
   Serial.println(shrd.batteryMaxVoltageCalibRaw);
   Serial.println(shrd.batteryMinVoltageCalibUser);
@@ -488,6 +488,7 @@ void setup()
   restoreBleLockForced();
   restoreBrakeMaxPressure();
   restoreOdo();
+  restoreBatteryCalib();
 
   Serial.println(PSTR("   settings ..."));
   bool settingsStatusOk = settings.restoreSettings();
@@ -1284,10 +1285,31 @@ void processVoltage()
     return;
   }
 
-  voltageInMilliVolts = ((voltageStatus * ANALOG_TO_VOLTS_A) + ANALOG_TO_VOLTS_B) * 1000;
-
   //double correctedValue = -0.000000000000016 * pow(voltageStatus, 4) + 0.000000000118171 * pow(voltageStatus, 3) - 0.000000301211691 * pow(voltageStatus, 2) + 0.001109019271794 * voltageStatus + 0.034143524634089;
-  //voltageInMilliVolts = correctedValue * 25.27 * 1000;
+
+  if ((shrd.batteryMaxVoltageCalibRaw != 0xffffffff) && ((shrd.batteryMinVoltageCalibRaw == 0xffffffff)))
+  {
+    // single point calibration
+    voltageInMilliVolts = voltageStatus * shrd.batteryMaxVoltageCalibUser / shrd.batteryMaxVoltageCalibRaw * 1000.0;
+
+    //    Serial.println("algo A / voltageStatus = " + (String)voltageStatus + " / voltageInMilliVolts = " + (String)voltageInMilliVolts);
+  }
+  else if ((shrd.batteryMaxVoltageCalibRaw != 0xffffffff) && ((shrd.batteryMinVoltageCalibRaw != 0xffffffff)))
+  {
+    // dual point calibration
+    double a = (shrd.batteryMaxVoltageCalibUser - shrd.batteryMinVoltageCalibUser) / (shrd.batteryMaxVoltageCalibRaw - shrd.batteryMinVoltageCalibRaw);
+    double b = shrd.batteryMaxVoltageCalibUser - (a * shrd.batteryMaxVoltageCalibRaw);
+
+    voltageInMilliVolts = ((voltageStatus * a) + b) * 1000;
+
+    //    Serial.println("algo B / voltageStatus = " + (String)voltageStatus + " / a = " + (String)a + " / b = " + (String)b + " / voltageInMilliVolts = " + (String)voltageInMilliVolts);
+  }
+  else
+  {
+    // standard internal calibration
+    voltageInMilliVolts = ((voltageStatus * ANALOG_TO_VOLTS_A) + ANALOG_TO_VOLTS_B) * 1000;
+    //    Serial.println("algo C / voltageStatus = " + (String)voltageStatus + " / voltageInMilliVolts = " + (String)voltageInMilliVolts);
+  }
 
   voltageFilter.in(voltageInMilliVolts);
   voltageRawFilter.in(voltageStatus);
