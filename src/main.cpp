@@ -1473,7 +1473,7 @@ void processCurrent()
   {
     int currentRead = analogRead(PIN_IN_CURRENT);
     int currentInMillamps = (currentRead - currentFilterInit.getMean()) * (1000.0 / ANALOG_TO_CURRENT);
-    shrd.currentActual = 2500; //currentInMillamps;
+    shrd.currentActual = currentInMillamps;
 
     if ((shrd.speedCurrent == 0) && (shrd.currentCalibOrder > 0))
     {
