@@ -416,8 +416,8 @@ void BluetoothHandler::init(Settings *data)
             {
                 std::string rxValue = pCharacteristic->getValue();
 
-                int value;
-                memcpy(&value, &rxValue[1], 4);
+                int valueInt;
+                memcpy(&valueInt, &rxValue[1], 4);
 
                 //BrakeMaxPressure(0),
                 if (rxValue[0] == 0)
@@ -431,19 +431,35 @@ void BluetoothHandler::init(Settings *data)
                 //BatMaxVoltage(1),
                 else if (rxValue[0] == 1)
                 {
+                    shrd->batteryMaxVoltageCalibUser = valueInt / 10.0;
+                    shrd->batteryMaxVoltageCalibRaw = shrd->voltageRawFilterMean;
+                    saveBatteryCalib();
+
+                    Serial.print("BLH - batteryMaxVoltageCalibUser : ");
+                    Serial.print(shrd->batteryMaxVoltageCalibUser);
+                    Serial.print(" / batteryMaxVoltageCalibRaw : ");
+                    Serial.println(shrd->batteryMaxVoltageCalibRaw);
                 }
                 //BatMinVoltage(2),
                 else if (rxValue[0] == 2)
                 {
+                    shrd->batteryMinVoltageCalibUser = valueInt / 10.0;
+                    shrd->batteryMinVoltageCalibRaw = shrd->voltageRawFilterMean;
+                    saveBatteryCalib();
+
+                    Serial.print("BLH - batteryMinVoltageCalibUser : ");
+                    Serial.print(shrd->batteryMinVoltageCalibUser);
+                    Serial.print(" / batteryMinVoltageCalibRaw : ");
+                    Serial.println(shrd->batteryMinVoltageCalibRaw);
                 }
                 //CurrentZero(3);
                 else if (rxValue[0] == 3)
                 {
-                    shrd->currentCalibOrder = value;
+                    shrd->currentCalibOrder = valueInt;
                 }
 
                 char print_buffer[500];
-                sprintf(print_buffer, "type %d / %02x / %02x / %02x / %02x / %02x / value %d", rxValue[0], rxValue[1], rxValue[2], rxValue[3], rxValue[4], rxValue[5], value);
+                sprintf(print_buffer, "type %d / %02x / %02x / %02x / %02x / %02x / value %d", rxValue[0], rxValue[1], rxValue[2], rxValue[3], rxValue[4], rxValue[5], valueInt);
                 Serial.print("BLH - Write calib order : ");
                 Serial.println(print_buffer);
             }

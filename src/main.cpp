@@ -6,6 +6,7 @@
 // TODO : auto mode shift on low battery
 // TODO : original regulator perturbation
 // TODO : exponential throttle
+// TODO : change OTA to AWS
 // BUG : mode Z / android
 // BUG : push button make brake analog read wrong
 //////////////////////////////////////////
@@ -227,6 +228,48 @@ void restoreOdo()
     saveOdo();
     Serial.print("==> ODO init at 0");
   }
+}
+
+void saveBatteryCalib()
+{
+  // Read EEPROM
+  int EEAddr = EEPROM_ADDRESS_BATTERY_CALIB;
+  EEPROM.put(EEAddr, shrd.batteryMaxVoltageCalibUser);
+  EEAddr += sizeof(shrd.batteryMaxVoltageCalibUser);
+  EEPROM.put(EEAddr, shrd.batteryMaxVoltageCalibRaw);
+  EEAddr += sizeof(shrd.batteryMaxVoltageCalibRaw);
+  EEPROM.put(EEAddr, shrd.batteryMinVoltageCalibUser);
+  EEAddr += sizeof(shrd.batteryMinVoltageCalibUser);
+  EEPROM.put(EEAddr, shrd.batteryMinVoltageCalibRaw);
+  EEAddr += sizeof(shrd.batteryMinVoltageCalibRaw);
+
+  EEPROM.commit();
+
+  Serial.print("save BatteryCalib value : ");
+  Serial.println(shrd.batteryMaxVoltageCalibUser);
+  Serial.println(shrd.batteryMaxVoltageCalibRaw);
+  Serial.println(shrd.batteryMinVoltageCalibUser);
+  Serial.println(shrd.batteryMinVoltageCalibRaw);
+}
+
+void restoreBatteryCalib()
+{
+  // Read EEPROM
+  int EEAddr = EEPROM_ADDRESS_BATTERY_CALIB;
+  EEPROM.get(EEAddr, shrd.batteryMaxVoltageCalibUser);
+  EEAddr += sizeof(shrd.batteryMaxVoltageCalibUser);
+  EEPROM.get(EEAddr, shrd.batteryMaxVoltageCalibRaw);
+  EEAddr += sizeof(shrd.batteryMaxVoltageCalibRaw);
+  EEPROM.get(EEAddr, shrd.batteryMinVoltageCalibUser);
+  EEAddr += sizeof(shrd.batteryMinVoltageCalibUser);
+  EEPROM.get(EEAddr, shrd.batteryMinVoltageCalibRaw);
+  EEAddr += sizeof(shrd.batteryMinVoltageCalibRaw);
+
+  Serial.print("restore BatteryCalib value : ");
+  Serial.println(shrd.batteryMaxVoltageCalibUser);
+  Serial.println(shrd.batteryMaxVoltageCalibRaw);
+  Serial.println(shrd.batteryMinVoltageCalibUser);
+  Serial.println(shrd.batteryMinVoltageCalibRaw);
 }
 
 //////------------------------------------
@@ -1249,6 +1292,7 @@ void processVoltage()
   voltageFilter.in(voltageInMilliVolts);
   voltageRawFilter.in(voltageStatus);
   shrd.voltageFilterMean = voltageFilter.getMean();
+  shrd.voltageRawFilterMean = voltageRawFilter.getMean();
 
 #if DEBUG_DISPLAY_VOLTAGE
   Serial.print("Voltage read : ");

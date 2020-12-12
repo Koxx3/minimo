@@ -75,6 +75,12 @@ public:
     uint32_t brakeCalibOrder = 1;
 
     uint32_t voltageFilterMean = 0;
+    uint32_t voltageRawFilterMean = 0;
+    float batteryMinVoltageCalibUser;
+    uint32_t batteryMinVoltageCalibRaw;
+    float batteryMaxVoltageCalibUser;
+    uint32_t batteryMaxVoltageCalibRaw;
+
     int32_t currentFilterMean = 0;
 
     MyActions button1ClickStatus = ACTION_OFF;
