@@ -76,6 +76,7 @@ public:
 
     uint32_t voltageActual = 0;
     uint32_t voltageFilterMean = 0;
+    uint32_t voltageFilterLongMean = 0;
     uint32_t voltageRawFilterMean = 0;
     float batteryMinVoltageCalibUser;
     uint32_t batteryMinVoltageCalibRaw;
@@ -87,6 +88,8 @@ public:
     uint32_t autonomyLeft;
 
     int32_t currentFilterMean = 0;
+    int32_t currentActual = 0;
+    uint8_t currentSensorPresent = 1;
 
     MyActions button1ClickStatus = ACTION_OFF;
     uint32_t button1LpDuration = 0;

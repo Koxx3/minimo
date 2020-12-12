@@ -86,10 +86,14 @@
 #define ANALOG_TO_VOLTS_B 5.4225
 #define ANALOG_TO_CURRENT 35
 
-#define NB_CURRENT_CALIB 200
-#define NB_BRAKE_CALIB 100
+#define ANALOG_CURRENT_MIN_RAW_READING 100
 
-#define NB_AUTONOMY_FILTER_DATA 300
+#define NB_CURRENT_FILTER_DATA 200
+#define NB_CURRENT_FILTER_CALIB_DATA 200
+#define NB_BRAKE_CALIB_DATA 100
+
+#define NB_AUTONOMY_FILTER_DATA 120
+#define NB_VOLTAGE_FILTER_DATA 100
 
 #define BRAKE_TYPE_ANALOG 1
 #if BRAKE_TYPE_ANALOG
@@ -117,8 +121,10 @@ unsigned long timeLoop = 0;
 // Watchdog
 hw_timer_t *timer = NULL;
 
-// Settings
+// Serial
+float serialRcvValue = 0;
 
+// Settings
 int begin_soft = 0;
 int begin_hard = 0;
 
@@ -145,7 +151,7 @@ int i_loop = 0;
 
 uint32_t iBrakeCalibOrder = 0;
 
-uint16_t voltageStatus = 0;
+uint16_t voltageRaw = 0;
 uint32_t voltageInMilliVolts = 0;
 Battery batt = Battery(36000, 54000);
 ;
@@ -153,13 +159,14 @@ Battery batt = Battery(36000, 54000);
 uint16_t brakeAnalogValue = 0;
 uint16_t throttleAnalogValue = 0;
 
-MedianFilter voltageFilter(100, 2000);
-MedianFilter voltageRawFilter(100, 2000);
-MedianFilter currentFilter(200, 1830);
-MedianFilter currentFilterInit(NB_CURRENT_CALIB, 1830);
+MedianFilter voltageFilter(NB_VOLTAGE_FILTER_DATA, 2000);
+MedianFilter voltageLongFilter(NB_VOLTAGE_FILTER_DATA, 50000);
+MedianFilter voltageRawFilter(NB_VOLTAGE_FILTER_DATA, 2000);
+MedianFilter currentFilter(NB_CURRENT_FILTER_DATA, 1830);
+MedianFilter currentFilterInit(NB_CURRENT_FILTER_CALIB_DATA, 1830);
 MedianFilter brakeFilter(10 /* 20 */, 900);
-MedianFilter brakeFilterInit(NB_BRAKE_CALIB, 900);
-MedianFilter autonomyFilter(NB_AUTONOMY_FILTER_DATA, 0);
+MedianFilter brakeFilterInit(NB_BRAKE_CALIB_DATA, 900);
+MedianFilter autonomyLeftFilter(NB_AUTONOMY_FILTER_DATA, 0);
 
 Settings settings;
 
@@ -251,10 +258,14 @@ void saveBatteryCalib()
 
   EEPROM.commit();
 
-  Serial.print("save BatteryCalib value : ");
+  Serial.println("save BatteryCalib value : ");
+  Serial.print("  batteryMaxVoltageCalibUser : ");
   Serial.println(shrd.batteryMaxVoltageCalibUser);
+  Serial.print("  batteryMaxVoltageCalibRaw : ");
   Serial.println(shrd.batteryMaxVoltageCalibRaw);
+  Serial.print("  batteryMinVoltageCalibUser : ");
   Serial.println(shrd.batteryMinVoltageCalibUser);
+  Serial.print("  batteryMinVoltageCalibRaw : ");
   Serial.println(shrd.batteryMinVoltageCalibRaw);
 }
 
@@ -272,9 +283,13 @@ void restoreBatteryCalib()
   EEAddr += sizeof(shrd.batteryMinVoltageCalibRaw);
 
   Serial.println("restore BatteryCalib value : ");
+  Serial.print("  batteryMaxVoltageCalibUser : ");
   Serial.println(shrd.batteryMaxVoltageCalibUser);
+  Serial.print("  batteryMaxVoltageCalibRaw : ");
   Serial.println(shrd.batteryMaxVoltageCalibRaw);
+  Serial.print("  batteryMinVoltageCalibUser : ");
   Serial.println(shrd.batteryMinVoltageCalibUser);
+  Serial.print("  batteryMinVoltageCalibRaw : ");
   Serial.println(shrd.batteryMinVoltageCalibRaw);
 }
 
@@ -396,6 +411,34 @@ void setupBattery()
   batt.begin(&sigmoidal);
 
   Serial.println("Battery : min = " + (String)settings.getS3F().Battery_min_voltage + " / max = " + settings.getS3F().Battery_max_voltage);
+}
+
+void setupVoltage()
+{
+
+  voltageRaw = analogRead(PIN_IN_VOLTAGE);
+  voltageInMilliVolts = ((voltageRaw * ANALOG_TO_VOLTS_A) + ANALOG_TO_VOLTS_B) * 1000;
+  shrd.voltageActual = voltageInMilliVolts;
+
+  // filter reinit
+  for (int i = 0; i < NB_VOLTAGE_FILTER_DATA; i++)
+  {
+    voltageFilter.in(voltageInMilliVolts);
+    voltageLongFilter.in(voltageInMilliVolts);
+    voltageRawFilter.in(voltageRaw);
+  }
+}
+
+void setupAutonomy()
+{
+
+  shrd.batteryLevel = batt.level(shrd.voltageActual);
+
+  uint8_t autonomyLeft = (settings.getS3F().Battery_max_distance / 10) * (shrd.batteryLevel) / 100.0;
+
+  // filter reinit
+  for (int i = 0; i < NB_AUTONOMY_FILTER_DATA; i++)
+    autonomyLeftFilter.in(autonomyLeft);
 }
 
 void resetPid()
@@ -535,7 +578,7 @@ void setup()
   blh.setBleLock(false);
 
   // setup shared datas
-  shrd.currentCalibOrder = NB_CURRENT_CALIB;
+  shrd.currentCalibOrder = NB_CURRENT_FILTER_CALIB_DATA;
 
   Serial.println(PSTR("   init data with settings ..."));
   initDataWithSettings();
@@ -543,7 +586,7 @@ void setup()
   Serial.println(PSTR("   watchdog ..."));
   setupWatchdog();
 
-  processVoltage();
+  setupVoltage();
   setupBattery();
   setupAutonomy();
 
@@ -716,7 +759,7 @@ void getBrakeFromAnalog()
       brakeFilterInit.in(brakeAnalogValue);
 
     iBrakeCalibOrder++;
-    if (iBrakeCalibOrder > NB_BRAKE_CALIB)
+    if (iBrakeCalibOrder > NB_BRAKE_CALIB_DATA)
     {
       iBrakeCalibOrder = 0;
       shrd.brakeCalibOrder = 0;
@@ -1273,15 +1316,14 @@ void processDHT()
 void processVoltage()
 {
 
-  voltageStatus = analogRead(PIN_IN_VOLTAGE);
-
+  voltageRaw = analogRead(PIN_IN_VOLTAGE);
 
   // eject false reading
-  if (voltageStatus == 4095)
+  if (voltageRaw == 4095)
   {
     /*
     Serial.print("Voltage read : ");
-    Serial.print(voltageStatus);
+    Serial.print(voltageRaw);
     Serial.println(" => eject ");
 */
 
@@ -1291,11 +1333,11 @@ void processVoltage()
 
     return;
   }
-  if (voltageStatus < 900)
+  if (voltageRaw < 900)
   {
     /*
     Serial.print("Voltage read : ");
-    Serial.print(voltageStatus);
+    Serial.print(voltageRaw);
     Serial.println(" => eject ");
     */
 
@@ -1306,14 +1348,14 @@ void processVoltage()
     return;
   }
 
-  //double correctedValue = -0.000000000000016 * pow(voltageStatus, 4) + 0.000000000118171 * pow(voltageStatus, 3) - 0.000000301211691 * pow(voltageStatus, 2) + 0.001109019271794 * voltageStatus + 0.034143524634089;
+  //double correctedValue = -0.000000000000016 * pow(voltageRaw, 4) + 0.000000000118171 * pow(voltageRaw, 3) - 0.000000301211691 * pow(voltageRaw, 2) + 0.001109019271794 * voltageRaw + 0.034143524634089;
 
   if ((shrd.batteryMaxVoltageCalibRaw != 0xffffffff) && ((shrd.batteryMinVoltageCalibRaw == 0xffffffff)))
   {
     // single point calibration
-    voltageInMilliVolts = voltageStatus * shrd.batteryMaxVoltageCalibUser / shrd.batteryMaxVoltageCalibRaw * 1000.0;
+    voltageInMilliVolts = voltageRaw * shrd.batteryMaxVoltageCalibUser / shrd.batteryMaxVoltageCalibRaw * 1000.0;
 
-    //    Serial.println("algo A / voltageStatus = " + (String)voltageStatus + " / voltageInMilliVolts = " + (String)voltageInMilliVolts);
+    //    Serial.println("algo A / voltageRaw = " + (String)voltageRaw + " / voltageInMilliVolts = " + (String)voltageInMilliVolts);
   }
   else if ((shrd.batteryMaxVoltageCalibRaw != 0xffffffff) && ((shrd.batteryMinVoltageCalibRaw != 0xffffffff)))
   {
@@ -1321,27 +1363,26 @@ void processVoltage()
     double a = (shrd.batteryMaxVoltageCalibUser - shrd.batteryMinVoltageCalibUser) / (shrd.batteryMaxVoltageCalibRaw - shrd.batteryMinVoltageCalibRaw);
     double b = shrd.batteryMaxVoltageCalibUser - (a * shrd.batteryMaxVoltageCalibRaw);
 
-    voltageInMilliVolts = ((voltageStatus * a) + b) * 1000;
+    voltageInMilliVolts = ((voltageRaw * a) + b) * 1000;
 
-    //    Serial.println("algo B / voltageStatus = " + (String)voltageStatus + " / a = " + (String)a + " / b = " + (String)b + " / voltageInMilliVolts = " + (String)voltageInMilliVolts);
+    //    Serial.println("algo B / voltageRaw = " + (String)voltageRaw + " / a = " + (String)a + " / b = " + (String)b + " / voltageInMilliVolts = " + (String)voltageInMilliVolts);
   }
   else
   {
     // standard internal calibration
-    voltageInMilliVolts = ((voltageStatus * ANALOG_TO_VOLTS_A) + ANALOG_TO_VOLTS_B) * 1000;
-    //    Serial.println("algo C / voltageStatus = " + (String)voltageStatus + " / voltageInMilliVolts = " + (String)voltageInMilliVolts);
+    voltageInMilliVolts = ((voltageRaw * ANALOG_TO_VOLTS_A) + ANALOG_TO_VOLTS_B) * 1000;
+    //    Serial.println("algo C / voltageRaw = " + (String)voltageRaw + " / voltageInMilliVolts = " + (String)voltageInMilliVolts);
   }
-
 
   shrd.voltageActual = voltageInMilliVolts;
   voltageFilter.in(voltageInMilliVolts);
-  voltageRawFilter.in(voltageStatus);
+  voltageRawFilter.in(voltageRaw);
   shrd.voltageFilterMean = voltageFilter.getMean();
   shrd.voltageRawFilterMean = voltageRawFilter.getMean();
 
 #if DEBUG_DISPLAY_VOLTAGE
   Serial.print("Voltage read : ");
-  Serial.print(voltageStatus);
+  Serial.print(voltageRaw);
   Serial.print(" / in voltage mean : ");
   Serial.print(voltageRawFilter.getMean());
   Serial.print(" / in volts : ");
@@ -1361,74 +1402,120 @@ void processVoltage()
 
 #if DEBUG_BLE_DISPLAY_VOLTAGE
   char print_buffer[500];
-  sprintf(print_buffer, "Voltage / read : %d / mean : %d / mean volts : %0.1f ", voltageStatus, voltageRawFilter.getMean(), voltageFilter.getMean() / 1000.0);
+  sprintf(print_buffer, "Voltage / read : %d / mean : %d / mean volts : %0.1f ", voltageRaw, voltageRawFilter.getMean(), voltageFilter.getMean() / 1000.0);
   blh.notifyBleLogs(print_buffer);
 #endif
 }
 
-void setupAutonomy()
+void processVoltageLongFilter()
 {
-
-  shrd.batteryLevel = batt.level(shrd.voltageActual);
-
-  uint8_t autonomyLeft = (settings.getS3F().Battery_max_distance / 10) * (shrd.batteryLevel) / 100.0;
-
-  // filter reinit
-  for (int i = 0; i < NB_AUTONOMY_FILTER_DATA; i++)
-    autonomyFilter.in(autonomyLeft);
+  voltageLongFilter.in(shrd.voltageFilterMean);
+  shrd.voltageFilterLongMean = voltageLongFilter.getMean();
 }
 
 void processAutonomy()
 {
 
-  shrd.batteryLevel = batt.level(shrd.voltageFilterMean);
+  uint8_t autonomyLeft;
+  uint32_t correctedVoltage = 0;
+  float correction = 0.0;
+  int32_t voltageDiff = 0;
+  float currentFactor = 0.0;
 
-  uint8_t autonomyLeft = (settings.getS3F().Battery_max_distance / 10) * (shrd.batteryLevel) / 100.0;
+  // Compute battery level with or without current sensor
+  if (!shrd.currentSensorPresent)
+  {
+    // without current sensing ... directly compute from voltage reading
+    shrd.batteryLevel = batt.level(shrd.voltageFilterMean);
+  }
+  else
+  {
+    // compute with fake battery voltage based on mean voltage value corrected with realtime current
+    if (shrd.currentActual > 1000) // 1A
+    {
+      voltageDiff = (shrd.voltageFilterLongMean - shrd.voltageActual);
+      currentFactor = (1.0 + (shrd.currentActual / 1000.0));
+      correction = voltageDiff / currentFactor;
+      correctedVoltage = shrd.voltageFilterLongMean - correction;
+      shrd.batteryLevel = batt.level(correctedVoltage);
+    }
+    else
+    {
+      shrd.batteryLevel = batt.level(shrd.voltageActual);
+    }
+  }
 
-  autonomyFilter.in(autonomyLeft);
+  autonomyLeft = (settings.getS3F().Battery_max_distance / 10) * (shrd.batteryLevel) / 100.0;
 
-  shrd.autonomyFilterMean = autonomyFilter.getMean();
+  autonomyLeftFilter.in(autonomyLeft);
+  shrd.autonomyFilterMean = autonomyLeftFilter.getMean();
 
 #if DEBUG_AUTONOMY
   Serial.println("bat level : " + (String)shrd.batteryLevel +
                  " / voltageInMilliVolts = " + voltageInMilliVolts +
                  " / autonomy = " + (String)autonomyLeft +
                  " / autonomyFilterMean = " + (String)shrd.autonomyFilterMean +
-                 " / bat dst = " + (String)(settings.getS3F().Battery_max_distance / 10));
+                 " / bat dst = " + (String)(settings.getS3F().Battery_max_distance / 10) +
+                 " / voltageFilterLongMean = " + (String)shrd.voltageFilterLongMean +
+                 " / voltageActual = " + (String)shrd.voltageActual +
+                 " / currentActual = " + (String)shrd.currentActual +
+                 " / voltageDiff = " + (String)voltageDiff +
+                 " / currentFactor = " + (String)currentFactor +
+                 " / correction = " + (String)correction +
+                 " / correctedVoltage = " + (String)correctedVoltage);
 #endif
 }
 
 void processCurrent()
 {
-  int curerntRead = analogRead(PIN_IN_CURRENT);
-  int currentInMillamps = (curerntRead - currentFilterInit.getMean()) * (1000.0 / ANALOG_TO_CURRENT);
 
-  // current rest value
-  currentFilter.in(currentInMillamps);
-  shrd.currentFilterMean = currentFilter.getMeanWithoutExtremes(10);
-
-  if ((shrd.speedCurrent == 0) && (shrd.currentCalibOrder > 0))
+  if (shrd.currentSensorPresent == 1)
   {
+    int currentRead = analogRead(PIN_IN_CURRENT);
+    int currentInMillamps = (currentRead - currentFilterInit.getMean()) * (1000.0 / ANALOG_TO_CURRENT);
+    shrd.currentActual = 2500; //currentInMillamps;
 
-    shrd.currentCalibOrder--;
-    currentFilterInit.in(curerntRead);
+    if ((shrd.speedCurrent == 0) && (shrd.currentCalibOrder > 0))
+    {
+
+      if (currentRead < ANALOG_CURRENT_MIN_RAW_READING)
+      {
+        shrd.currentSensorPresent = false;
+        Serial.println("Current sensor is not detected -> disable reading");
+
+        // saturate filter with 0 values
+        for (int i = 0; i < NB_CURRENT_FILTER_DATA; i++)
+          currentFilter.in(0);
+      }
+      else
+      {
+
+        shrd.currentCalibOrder--;
+        currentFilterInit.in(currentRead);
 
 #if DEBUG_DISPLAY_CURRENT
-    if (shrd.currentCalibOrder == 1)
-      Serial.println("Current calibration end ... ");
+        if (shrd.currentCalibOrder == 1)
+          Serial.println("Current calibration end ... ");
+#endif
+      }
+    }
+
+    if (shrd.currentSensorPresent)
+    {
+      // current rest value
+      currentFilter.in(currentInMillamps);
+      shrd.currentFilterMean = currentFilter.getMeanWithoutExtremes(10);
+    }
+
+#if DEBUG_DISPLAY_CURRENT
+    Serial.print("Current read : ");
+    Serial.print(currentRead);
+    Serial.print(" / currentFilterInit mean : ");
+    Serial.print(currentFilterInit.getMean());
+    Serial.print(" / in amperes : ");
+    Serial.println(currentInMillamps / 1000.0);
 #endif
   }
-
-  /*
-#if DEBUG_DISPLAY_CURRENT
-  Serial.print("Current read : ");
-  Serial.print(curerntRead);
-  Serial.print(" / currentFilterInit mean : ");
-  Serial.print(currentFilterInit.getMean());
-  Serial.print(" / in amperes : ");
-  Serial.println(currentInMillamps / 1000.0);
-#endif
-*/
 }
 
 //////------------------------------------
@@ -1510,6 +1597,10 @@ void loop()
   if (i_loop % 10 == 0)
   {
     processVoltage();
+  }
+  if (i_loop % 1000 == 0)
+  {
+    processVoltageLongFilter();
   }
 #endif
 
