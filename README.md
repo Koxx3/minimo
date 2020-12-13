@@ -148,8 +148,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [ ] Wifi connexion for dashboard display and settings
     - [ ] Advanced diagnosis (serial errors, throtle errors ...)
 
-- [ ] Android application 📱
-    - [ ] Display : 
+- [✅] Android application 📱
+    - [✅] Display : 
         - [✅] Speed
         - [✅] Mode
         - [✅] Voltage
@@ -167,7 +167,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [IN TEST 🔄] Brake forbiden
         - [IN TEST 🔄] Trip distance
         - [IN TEST 🔄] Autonomy
-        - [ ] Average speed
+        - [IN TEST 🔄] Average speed
     - [✅] Auto-launch app with NFC tag
     - [✅] Parameters custom settings
     - [✅] Data logging
