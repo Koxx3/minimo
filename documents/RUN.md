@@ -8,8 +8,8 @@ Once you have all the electronic, you'll need to flash/install the softwares.
 - Install Visual Code + Platform.io [tuto](https://platformio.org/install/ide?install=vscode)
 - Clone this Github project
 - Patch Espressif Framework with patch folder in :
-  - C:\Users\<username>\.platformio\packages\framework-arduinoespressif32\cores\esp32
-  - C:\Users\<username>\.platformio\packages\framework-arduinoespressif32\libraries\BLE\src
+  - C:\Users\ <username> \.platformio\packages\framework-arduinoespressif32\cores\esp32
+  - C:\Users\ <username> \.platformio\packages\framework-arduinoespressif32\libraries\BLE\src
 - Burn efuse for GPIO12 (use the script called 'burn_efuse_gpio12.bat' and don't forget to change you COM port)
 - Flash the ESP32
 
