@@ -762,6 +762,11 @@ int MinimoUart::readHardSerial(int mode, int i, Stream *hwSerCntrl, Stream *hwSe
         //getBrakeFromLCD(var, data_buffer_ori);
       }
 
+      if (i == 6)
+      {
+        //getError(var);
+      }
+
       // modify speed
       if (i == 7)
       {

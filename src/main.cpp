@@ -37,6 +37,7 @@
 #include "Controllers/VescUart.h"
 #include "Controllers/KellyUart.h"
 #include "Controllers/MinimoUart.h"
+#include "Controllers/SmartEsc.h"
 #include "Controllers/ControllerType.h"
 
 #include "app_version.h"
@@ -45,7 +46,7 @@
 ////// Defines
 
 // SMART CONFIGURATION
-#define CONTROLLER_TYPE CONTROLLER_MINIMOTORS
+#define CONTROLLER_TYPE CONTROLLER_SMART_ESC
 #define TFT_ENABLED 0
 #define READ_THROTTLE 0
 #define DEBUG_ESP_HTTP_UPDATE 1
@@ -136,6 +137,7 @@ HardwareSerial hwSerLcd(2);
 VescUart vescCntrl;
 MinimoUart minomoCntrl;
 KellyUart kellyCntrl;
+SmartEsc smartEscCntrl;
 
 DHT_nonblocking dht_sensor(PIN_IN_OUT_DHT, DHT_TYPE_22);
 
@@ -385,6 +387,14 @@ void setupSerial()
   hwSerCntrl.begin(BAUD_RATE_KELLY, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
   kellyCntrl.setSerialPort(&hwSerCntrl);
   kellyCntrl.setDebugPort(&Serial);
+
+#elif CONTROLLER_TYPE == CONTROLLER_SMART_ESC
+
+  hwSerCntrl.begin(BAUD_RATE_SMARTESC, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
+  smartEscCntrl.setSerialPort(&hwSerCntrl);
+  //smartEscCntrl.setDebugPort(&Serial);
+  smartEscCntrl.setSettings(&settings);
+  smartEscCntrl.setSharedData(&shrd);
 
 #endif
 }
@@ -678,20 +688,21 @@ void computeDistance(float speed)
   {
     shrd.distanceOdoInFlash = shrd.distanceOdo;
 
+    /*
     Serial.print("saveOdo : distanceOdoInFlash ");
     Serial.print(shrd.distanceOdoInFlash);
     Serial.print(" / distanceOdoBoot : ");
     Serial.print(shrd.distanceOdo);
+*/
 
     saveOdo();
   }
 
-  /*
-  Serial.print("distance = ");
-  Serial.print(shrd.distance / 10);
-  Serial.print(" / distanceDiffTime = ");
-  Serial.println(distanceDiffTime);
-*/
+#if DEBUG_DISPLAY_DISTANCE
+  Serial.println("distanceTrip = " + (String)(shrd.distanceTrip / 10) +
+                 " / distanceDiffTime = " + (String)distanceDiffTime +
+                 " / speed = " + (String)speed);
+#endif
 }
 
 void getBrakeFromAnalog()
@@ -754,9 +765,10 @@ void getBrakeFromAnalog()
 
     brakeFilter.in(brakeAnalogValue);
 
-    if ((brakeAnalogValue < 1000) && (shrd.currentCalibOrder == 1))
-
+    if ((brakeAnalogValue < 1000) && (shrd.brakeCalibOrder >= 1)) {
       brakeFilterInit.in(brakeAnalogValue);
+      shrd.brakeFilterInitMean = brakeFilterInit.getMean();
+    }
 
     iBrakeCalibOrder++;
     if (iBrakeCalibOrder > NB_BRAKE_CALIB_DATA)
@@ -862,7 +874,7 @@ bool isElectricBrakeForbiden()
 {
   if (settings.getS1F().Electric_brake_disabled_on_high_voltage == 0)
   {
-#if DEBUG_BRAKE_FORBIDEN
+#if DEBUG_DISPLAY_BRAKE_FORBIDEN
     Serial.println("electric brake not disabled on battery high voltage");
 #endif
     return false;
@@ -873,7 +885,7 @@ bool isElectricBrakeForbiden()
   float bat_max = settings.getS3F().Battery_max_voltage / 10.0;
   float maxVoltage = bat_min + (settings.getS1F().Electric_brake_disabled_percent_limit * (bat_max - bat_min) / 100.0);
 
-#if DEBUG_BRAKE_FORBIDEN
+#if DEBUG_DISPLAY_BRAKE_FORBIDEN
   Serial.print("bat_min ");
   Serial.print(bat_min);
   Serial.print(" / bat_max ");
@@ -987,6 +999,24 @@ void processKellySerial2()
   shrd.speedCurrent = speedCompute;
 }
 
+void processSmartEscSerial()
+{
+
+  /*
+  shrd.voltageFilterMean = kellyCntrl.data1.B_Voltage * 1000;
+  shrd.currentTemperature = kellyCntrl.data1.Controller_temperature;
+
+  shrd.brakeStatus = kellyCntrl.data1.BRK_SW;
+
+  // notify brake LCD value
+  if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
+  {
+    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus, shrd.brakeFordidenHighVoltage);
+  }
+
+  shrd.brakeStatusOld = shrd.brakeStatus;
+  */
+}
 uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 {
 
@@ -1450,7 +1480,7 @@ void processAutonomy()
   autonomyLeftFilter.in(autonomyLeft);
   shrd.autonomyFilterMean = autonomyLeftFilter.getMean();
 
-#if DEBUG_AUTONOMY
+#if DEBUG_DISPLAY_AUTONOMY
   Serial.println("bat level : " + (String)shrd.batteryLevel +
                  " / voltageInMilliVolts = " + voltageInMilliVolts +
                  " / autonomy = " + (String)autonomyLeft +
@@ -1573,6 +1603,26 @@ void loop()
   {
     //Serial.println(">>>>>>>>>>> processKellySerial1");
     processKellySerial1();
+  }
+
+#elif CONTROLLER_TYPE == CONTROLLER_SMART_ESC
+
+  if (i_loop % 2 == 0)
+  {
+    //Serial.println(">>>>>>>>>>> readSmartEscValues");
+
+    smartEscCntrl.readSmartEscValues();
+    
+    //Serial.println(">>>>>>>>>>> processSmartEscSerial");
+    processSmartEscSerial();
+  }
+
+  if (i_loop % 10 == 2)
+  {
+    //Serial.println(">>>>>>>>>>> sendPayload");
+
+    smartEscCntrl.sendPayload();
+    
   }
 
 #endif
