@@ -785,7 +785,7 @@ void getBrakeFromAnalog()
       shrd.brakeFordidenHighVoltage = isElectricBrakeForbiden();
 
       // alarm controler from braking
-      if ((brakeFilterMeanErr > brakeFilterInit.getMean() + ANALOG_BRAKE_MIN_OFFSET) && (!shrd.brakeFordidenHighVoltage))
+      if ((brakeFilterMeanErr > shrd.brakeFilterInitMean + ANALOG_BRAKE_MIN_OFFSET) && (!shrd.brakeFordidenHighVoltage))
       {
         digitalWrite(PIN_OUT_BRAKE, 1);
 
@@ -829,9 +829,10 @@ void getBrakeFromAnalog()
 #endif
 
         char print_buffer[500];
-        sprintf(print_buffer, ">> brakeNotify = f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d / forbid : %d",
+        sprintf(print_buffer, ">> brakeNotify = f1 : %d / f2 : %d / brakeFilterInitMean : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d / forbid : %d",
                 brakeFilterMean,
                 brakeFilterMeanErr,
+                shrd.brakeFilterInitMean,
                 brakeAnalogValue,
                 shrd.brakeSentOrder,
                 shrd.brakeSentOrderOld,
@@ -846,13 +847,14 @@ void getBrakeFromAnalog()
 
 #if DEBUG_BLE_DISPLAY_ANALOG_BRAKE
 
-      if ((brakeFilterMeanErr > brakeFilterInit.getMean() + ANALOG_BRAKE_MIN_OFFSET))
+      if ((brakeFilterMeanErr > shrd.brakeFilterInitMean + ANALOG_BRAKE_MIN_OFFSET))
       {
 
         char print_buffer[500];
-        sprintf(print_buffer, "brake = f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d / forbid : %d",
+        sprintf(print_buffer, "brake = f1 : %d / f2 : %d / brakeFilterInitMean : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d / forbid : %d",
                 brakeFilterMean,
                 brakeFilterMeanErr,
+                shrd.brakeFilterInitMean,
                 brakeAnalogValue,
                 shrd.brakeSentOrder,
                 shrd.brakeSentOrderOld,
@@ -1035,13 +1037,13 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 
     if (settings.getS1F().Electric_brake_max_value - settings.getS1F().Electric_brake_min_value > 0)
     {
-      step = (shrd.brakeMaxPressureRaw - ANALOG_BRAKE_MIN_VALUE) / (settings.getS1F().Electric_brake_max_value - settings.getS1F().Electric_brake_min_value);
+      step = (shrd.brakeMaxPressureRaw - shrd.brakeFilterInitMean) / (settings.getS1F().Electric_brake_max_value - settings.getS1F().Electric_brake_min_value);
 
       int brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
-      if (brakeFilterMeanErr > ANALOG_BRAKE_MIN_VALUE)
+      if (brakeFilterMeanErr > shrd.brakeFilterInitMean)
       {
 
-        diff = brakeFilterMeanErr - ANALOG_BRAKE_MIN_VALUE;
+        diff = brakeFilterMeanErr - shrd.brakeFilterInitMean;
         diffStep = diff / step;
         shrd.brakeSentOrder = diffStep + settings.getS1F().Electric_brake_min_value;
       }
@@ -1050,13 +1052,14 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 #if DEBUG_DISPLAY_ANALOG_BRAKE
 
     char print_buffer[500];
-    sprintf(print_buffer, "brakeFilter : %d / brakeAnalogValue : %d / brakeSentOrder : %d  / brakeSentOrderOld : %d / shrd.brakeStatus : %d / brakeFilterInit : %d ",
+    sprintf(print_buffer, "brakeFilter : %d / brakeAnalogValue : %d / brakeSentOrder : %d  / brakeSentOrderOld : %d / shrd.brakeStatus : %d / brakeFilterInit : %d / step : %d ",
             brakeFilter.getMean(),
             brakeAnalogValue,
             shrd.brakeSentOrder,
             shrd.brakeSentOrderOld,
             shrd.brakeStatus,
-            brakeFilterInit.getMean());
+            brakeFilterInit.getMean(), 
+            step);
     blh.notifyBleLogs(print_buffer);
 
     Serial.println(print_buffer);
