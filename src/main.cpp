@@ -1010,7 +1010,7 @@ void processSmartEscSerial()
     smartEscCntrl.data.ERPM = 0;
   shrd.speedCurrent = smartEscCntrl.data.ERPM * (settings.getS1F().Wheel_size / 10.0) / settings.getS1F().Motor_pole_number / 10.5;
 
-  Serial.println("voltageFilterMean " + (String)shrd.voltageFilterMean + +" / shrd.currentFilterMean = " + String(shrd.currentFilterMean) + " / currentTemperature = " + (String)shrd.currentTemperature + " / ERPM = " + (String)smartEscCntrl.data.ERPM + " / speedCurrent = " + (String)shrd.speedCurrent);
+  Serial.println("voltageFilterMean " + (String)shrd.voltageFilterMean + " / shrd.currentFilterMean = " + (String)shrd.currentFilterMean + " / currentTemperature = " + (String)shrd.currentTemperature + " / ERPM = " + (String)smartEscCntrl.data.ERPM + " / speedCurrent = " + (String)shrd.speedCurrent + " / Throttle = " + (String)smartEscCntrl.data.Throttle);
 
   // notify brake LCD value
   if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))

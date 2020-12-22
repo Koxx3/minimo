@@ -144,11 +144,11 @@ int SmartEsc::sendPayload() //calculate checksum and transmitter data
 	Tx_buff.fields.Throttle = 250;
 
 	// compute brake // TODO : move this elsewhere
-	int16_t brakeRange = shrd->brakeMaxPressureRaw - shrd->brakeFilterInitMean;
+	int16_t brakeRange = shrd->brakeMaxPressureRaw - shrd->brakeFilterInitMean - 50;
 	int16_t brakeAnalogValue = shrd->brakeAnalogValue;
 	if (brakeAnalogValue > shrd->brakeMaxPressureRaw)
 		brakeAnalogValue = shrd->brakeMaxPressureRaw;
-	int32_t brakeValueWithCabib = (brakeAnalogValue - shrd->brakeFilterInitMean);
+	int32_t brakeValueWithCabib = (brakeAnalogValue - shrd->brakeFilterInitMean - 50);
 	if (brakeValueWithCabib < 0)
 		brakeValueWithCabib = 0;
 	Tx_buff.fields.Brake = 0; //brakeValueWithCabib * 255 / brakeRange;
