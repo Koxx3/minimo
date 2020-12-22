@@ -10,10 +10,8 @@ Once you have all the electronic, you'll need to flash/install the softwares.
 - Patch Espressif Framework with patch folder in :
   - copy patch-esp\esp32-hal-uart.c in C:\Users\ \<username>\ \.platformio\packages\framework-arduinoespressif32\cores\esp32
   - copy patch-esp\BLESecurity.* in C:\Users\ \<username>\ \.platformio\packages\framework-arduinoespressif32\libraries\BLE\src
-- Install ESPTools :
-  - go in c:\temp\
-  - git clone https://github.com/espressif/esptool.git
-- Burn efuse for GPIO12 (use the script called 'burn_efuse_gpio12.bat' and don't forget to change you COM port)
+- Burn efuse for GPIO12 with the script called 'burn_efuse_gpio12.bat'
+  - burn_efuse_gpio12.bat <COM_PORT>
 - Flash the ESP32
 
 ## Connect Smartphone
