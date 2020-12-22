@@ -141,8 +141,6 @@ int SmartEsc::sendPayload() //calculate checksum and transmitter data
 	Tx_buff.fields.Frame_start = SERIAL_START_FRAME_DISPLAY_TO_ESC;
 	Tx_buff.fields.Type = 0x01;
 
-	Tx_buff.fields.Throttle = 250;
-
 	// compute brake // TODO : move this elsewhere
 	int16_t brakeRange = shrd->brakeMaxPressureRaw - shrd->brakeFilterInitMean - 50;
 	int16_t brakeAnalogValue = shrd->brakeAnalogValue;

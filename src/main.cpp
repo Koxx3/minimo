@@ -1005,7 +1005,7 @@ void processSmartEscSerial()
 
   shrd.voltageFilterMean = (uint32_t)(smartEscCntrl.data.Controller_Voltage) * 10;
   shrd.currentFilterMean = (uint32_t)(smartEscCntrl.data.Controller_Current) * 10 / 3.5;
-  shrd.currentTemperature = smartEscCntrl.data.MOSFET_temperature / 8;
+  shrd.currentTemperature = smartEscCntrl.data.MOSFET_temperature;
   if (smartEscCntrl.data.ERPM < 0)
     smartEscCntrl.data.ERPM = 0;
   shrd.speedCurrent = smartEscCntrl.data.ERPM * (settings.getS1F().Wheel_size / 10.0) / settings.getS1F().Motor_pole_number / 10.5;
