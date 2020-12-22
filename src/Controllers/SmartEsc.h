@@ -34,7 +34,7 @@ typedef struct
 	uint8_t Ligth_power;
 	uint8_t Max_temperature_reduce;
 	uint8_t Max_temperature_shutdown;
-	uint8_t Speed_limit_;
+	uint8_t Speed_limit;
 	uint8_t Motor_start_speed;
 	uint8_t CRC8;
 } SerialCommand;

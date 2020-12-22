@@ -38,7 +38,6 @@ int SmartEsc::receiveUartMessage(uint8_t *payloadReceived)
 	bool messageRead = false;
 	bool frameStartDetected = false;
 	unsigned char len = 0; //Number of bytes
-	bool receivedFrame = false;
 
 	uint32_t timeout = millis() + 20; // Defining the timestamp for timeout (10ms before timeout)
 
@@ -154,6 +153,15 @@ int SmartEsc::sendPayload() //calculate checksum and transmitter data
 	// compute throttle // TODO : move this elsewhere
 	Tx_buff.fields.Throttle = brakeValueWithCabib * 255 / brakeRange;
 
+	if (shrd->modeOrder == 3)
+		Tx_buff.fields.Speed_limit = 204;
+	if (shrd->modeOrder == 2)
+		Tx_buff.fields.Speed_limit = 60;
+	if (shrd->modeOrder == 1)
+		Tx_buff.fields.Speed_limit = 30;
+
+	Serial.printf("modeOrder = %d / Tx_buff.fields.Speed_limit = %d", shrd->modeOrder, Tx_buff.fields.Speed_limit);
+
 	//Serial.printf("brakeAnalogValue = %04x / brakeAnalogValue = %d / shrd->brakeFilterInitMean = %d / Tx_buff.fields.Brake = %02x / Tx_buff.fields.Brake = %d\n", brakeAnalogValue, brakeAnalogValue, shrd->brakeFilterInitMean, Tx_buff.fields.Brake, Tx_buff.fields.Brake);
 
 	Tx_buff.fields.CRC8 = (uint8_t)(
@@ -177,7 +185,7 @@ int SmartEsc::sendPayload() //calculate checksum and transmitter data
 		^ Tx_buff.fields.Ligth_power			  //
 		^ Tx_buff.fields.Max_temperature_reduce	  //
 		^ Tx_buff.fields.Max_temperature_shutdown //
-		^ Tx_buff.fields.Speed_limit_			  //
+		^ Tx_buff.fields.Speed_limit			  //
 		^ Tx_buff.fields.Motor_start_speed		  //
 	);
 
