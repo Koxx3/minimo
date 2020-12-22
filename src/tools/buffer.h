@@ -47,4 +47,7 @@ float buffer_get_float16(const uint8_t *buffer, float scale, int32_t *index);
 float buffer_get_float32(const uint8_t *buffer, float scale, int32_t *index);
 bool buffer_get_bool(const uint8_t *buffer, int32_t *index);
 
+int16_t buffer_get_int16_inv(const uint8_t *buffer, int32_t *index);
+uint16_t buffer_get_uint16_inv(const uint8_t *buffer, int32_t *index);
+	
 #endif /* BUFFER_H_ */

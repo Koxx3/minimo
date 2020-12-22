@@ -1007,7 +1007,7 @@ Serial.println(current);
 */
 
     // power
-    int16_t power = (current / 1000.0) * (voltage / 1000.0);
+    int16_t power = (current) * (voltage) / 100;
     memcpy(&txValue[i], &power, 2);
     i = i + 2;
 

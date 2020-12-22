@@ -83,9 +83,23 @@ int16_t buffer_get_int16(const uint8_t *buffer, int32_t *index) {
 	return res;
 }
 
+int16_t buffer_get_int16_inv(const uint8_t *buffer, int32_t *index) {
+	int16_t res =	((uint16_t) buffer[*index]) |
+					((uint16_t) buffer[*index + 1] << 8);
+	*index += 2;
+	return res;
+}
+
 uint16_t buffer_get_uint16(const uint8_t *buffer, int32_t *index) {
 	uint16_t res = 	((uint16_t) buffer[*index]) << 8 |
 					((uint16_t) buffer[*index + 1]);
+	*index += 2;
+	return res;
+}
+
+uint16_t buffer_get_uint16_inv(const uint8_t *buffer, int32_t *index) {
+	uint16_t res = 	((uint16_t) buffer[*index]) |
+					((uint16_t) buffer[*index + 1] << 8);
 	*index += 2;
 	return res;
 }

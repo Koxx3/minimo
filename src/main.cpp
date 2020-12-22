@@ -52,7 +52,7 @@
 #define DEBUG_ESP_HTTP_UPDATE 1
 #define TEST_ADC_DAC_REFRESH 0
 #define TEMPERATURE_EXT_READ 1
-#define VOLTAGE_EXT_READ 1
+#define VOLTAGE_EXT_READ 0
 #define BRAKE_ANALOG_EXT_READ 1
 
 // PINOUT
@@ -156,7 +156,6 @@ uint32_t iBrakeCalibOrder = 0;
 uint16_t voltageRaw = 0;
 uint32_t voltageInMilliVolts = 0;
 Battery batt = Battery(36000, 54000);
-;
 
 uint16_t brakeAnalogValue = 0;
 uint16_t throttleAnalogValue = 0;
@@ -527,7 +526,6 @@ void taskUpdateTFT(void *parameter)
 ////// Setup
 void setup()
 {
-
 #if TFT_ENABLED
   tftSetupBacklight();
 #endif
@@ -765,7 +763,8 @@ void getBrakeFromAnalog()
 
     brakeFilter.in(brakeAnalogValue);
 
-    if ((brakeAnalogValue < 1000) && (shrd.brakeCalibOrder >= 1)) {
+    if ((brakeAnalogValue < 1000) && (shrd.brakeCalibOrder >= 1))
+    {
       brakeFilterInit.in(brakeAnalogValue);
       shrd.brakeFilterInitMean = brakeFilterInit.getMean();
     }
@@ -1004,11 +1003,14 @@ void processKellySerial2()
 void processSmartEscSerial()
 {
 
-  /*
-  shrd.voltageFilterMean = kellyCntrl.data1.B_Voltage * 1000;
-  shrd.currentTemperature = kellyCntrl.data1.Controller_temperature;
+  shrd.voltageFilterMean = (uint32_t)(smartEscCntrl.data.Controller_Voltage) * 10;
+  shrd.currentFilterMean = (uint32_t)(smartEscCntrl.data.Controller_Current) * 10 / 3.5;
+  shrd.currentTemperature = smartEscCntrl.data.MOSFET_temperature / 8;
+  if (smartEscCntrl.data.ERPM < 0)
+    smartEscCntrl.data.ERPM = 0;
+  shrd.speedCurrent = smartEscCntrl.data.ERPM * (settings.getS1F().Wheel_size / 10.0) / settings.getS1F().Motor_pole_number / 10.5;
 
-  shrd.brakeStatus = kellyCntrl.data1.BRK_SW;
+  Serial.println("voltageFilterMean " + (String)shrd.voltageFilterMean + +" / shrd.currentFilterMean = " + String(shrd.currentFilterMean) + " / currentTemperature = " + (String)shrd.currentTemperature + " / ERPM = " + (String)smartEscCntrl.data.ERPM + " / speedCurrent = " + (String)shrd.speedCurrent);
 
   // notify brake LCD value
   if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
@@ -1017,8 +1019,8 @@ void processSmartEscSerial()
   }
 
   shrd.brakeStatusOld = shrd.brakeStatus;
-  */
 }
+
 uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 {
 
@@ -1058,7 +1060,7 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
             shrd.brakeSentOrder,
             shrd.brakeSentOrderOld,
             shrd.brakeStatus,
-            brakeFilterInit.getMean(), 
+            brakeFilterInit.getMean(),
             step);
     blh.notifyBleLogs(print_buffer);
 
@@ -1615,7 +1617,7 @@ void loop()
     //Serial.println(">>>>>>>>>>> readSmartEscValues");
 
     smartEscCntrl.readSmartEscValues();
-    
+
     //Serial.println(">>>>>>>>>>> processSmartEscSerial");
     processSmartEscSerial();
   }
@@ -1625,7 +1627,6 @@ void loop()
     //Serial.println(">>>>>>>>>>> sendPayload");
 
     smartEscCntrl.sendPayload();
-    
   }
 
 #endif
@@ -1695,15 +1696,13 @@ void loop()
       dacOutput = 4095;
 
     //dacOutput = (i_loop / 10) % 4096;
-    dac.setVoltage(dacOutput /*i_loop % 4096*/, false);
+    dac.setVoltage(dacOutput, false);
 
-    /*
     char print_buffer[500];
     sprintf(print_buffer, "brake raw : %d / dacOutput : %d",
             brakeAnalogValue,
             dacOutput);
     Serial.println(print_buffer);
-    */
   }
 #endif
 

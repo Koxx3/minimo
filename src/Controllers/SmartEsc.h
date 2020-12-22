@@ -128,7 +128,7 @@ class SmartEsc
 		uint16_t Controller_Voltage;
 		uint16_t Controller_Current;
 		uint8_t MOSFET_temperature;
-		uint16_t ERPM;
+		int16_t ERPM;
 		uint8_t Lock_status;
 		uint8_t Ligth_status;
 		uint8_t Regulator_status;

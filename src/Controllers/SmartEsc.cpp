@@ -33,10 +33,14 @@ void SmartEsc::setSharedData(SharedData *shrd_p)
 int SmartEsc::receiveUartMessage(uint8_t *payloadReceived)
 {
 
-	bool messageRead = false;
-	unsigned char len = 0; //Number of bytes
+	//Serial.println("receiveUartMessage");
 
-	uint32_t timeout = millis() + 10; // Defining the timestamp for timeout (10ms before timeout)
+	bool messageRead = false;
+	bool frameStartDetected = false;
+	unsigned char len = 0; //Number of bytes
+	bool receivedFrame = false;
+
+	uint32_t timeout = millis() + 20; // Defining the timestamp for timeout (10ms before timeout)
 
 	while (millis() < timeout && messageRead == false)
 	{
@@ -44,7 +48,11 @@ int SmartEsc::receiveUartMessage(uint8_t *payloadReceived)
 		while (serialPort->available())
 		{
 			Rx_buff.buffer[len] = serialPort->read();
-			len++;
+			if ((Rx_buff.buffer[len] == SERIAL_START_FRAME_ESC_TO_DISPLAY) && (frameStartDetected == false))
+				frameStartDetected = true;
+
+			if (frameStartDetected)
+				len++;
 
 			if (len >= sizeof(SerialFeedback))
 				break;
@@ -87,11 +95,13 @@ int SmartEsc::receiveUartMessage(uint8_t *payloadReceived)
 		}
 	}
 
-	return false; //don't receive data
+	return 0; //don't receive data
 }
 
 bool SmartEsc::unpackPayload(uint8_t *message, int lenMes, uint8_t *payload)
 {
+
+	//Serial.println("unpackPayload");
 
 	// TODO : check CRC
 
@@ -141,7 +151,10 @@ int SmartEsc::sendPayload() //calculate checksum and transmitter data
 	int32_t brakeValueWithCabib = (brakeAnalogValue - shrd->brakeFilterInitMean);
 	if (brakeValueWithCabib < 0)
 		brakeValueWithCabib = 0;
-	Tx_buff.fields.Brake = brakeValueWithCabib * 255 / brakeRange;
+	Tx_buff.fields.Brake = 0; //brakeValueWithCabib * 255 / brakeRange;
+
+	// compute throttle // TODO : move this elsewhere
+	Tx_buff.fields.Throttle = brakeValueWithCabib * 255 / brakeRange;
 
 	//Serial.printf("brakeAnalogValue = %04x / brakeAnalogValue = %d / shrd->brakeFilterInitMean = %d / Tx_buff.fields.Brake = %02x / Tx_buff.fields.Brake = %d\n", brakeAnalogValue, brakeAnalogValue, shrd->brakeFilterInitMean, Tx_buff.fields.Brake, Tx_buff.fields.Brake);
 
@@ -197,6 +210,8 @@ int SmartEsc::sendPayload() //calculate checksum and transmitter data
 bool SmartEsc::processReadPacket(uint8_t *message)
 {
 
+	//Serial.println("processReadPacket");
+
 	int32_t ind = 0;
 
 	message++; // Removes the frame start
@@ -206,19 +221,19 @@ bool SmartEsc::processReadPacket(uint8_t *message)
 	data.ESC_Version_Min = buffer_get_uint8(message, &ind);
 	data.Throttle = buffer_get_uint8(message, &ind);
 	data.Brake = buffer_get_uint8(message, &ind);
-	data.Controller_Voltage = buffer_get_uint16(message, &ind);
-	data.Controller_Current = buffer_get_uint16(message, &ind);
+	data.Controller_Voltage = buffer_get_uint16_inv(message, &ind);
+	data.Controller_Current = buffer_get_uint16_inv(message, &ind);
 	data.MOSFET_temperature = buffer_get_uint8(message, &ind);
-	data.ERPM = buffer_get_uint16(message, &ind);
+	data.ERPM = buffer_get_int16_inv(message, &ind);
 	data.Lock_status = buffer_get_uint8(message, &ind);
 	data.Ligth_status = buffer_get_uint8(message, &ind);
 	data.Regulator_status = buffer_get_uint8(message, &ind);
-	data.Phase_1_current_max = buffer_get_uint16(message, &ind);
-	data.Phase_1_voltage_max = buffer_get_uint16(message, &ind);
+	data.Phase_1_current_max = buffer_get_uint16_inv(message, &ind);
+	data.Phase_1_voltage_max = buffer_get_uint16_inv(message, &ind);
 	data.BMS_Version_Maj = buffer_get_uint8(message, &ind);
 	data.BMS_Version_Min = buffer_get_uint8(message, &ind);
-	data.BMS_voltage = buffer_get_uint16(message, &ind);
-	data.BMS_Current = buffer_get_uint16(message, &ind);
+	data.BMS_voltage = buffer_get_uint16_inv(message, &ind);
+	data.BMS_Current = buffer_get_uint16_inv(message, &ind);
 	data.BMS_Cells_status_group_1 = buffer_get_uint8(message, &ind);
 	data.BMS_Cells_status_group_2 = buffer_get_uint8(message, &ind);
 	data.BMS_Cells_status_group_3 = buffer_get_uint8(message, &ind);
@@ -245,19 +260,24 @@ bool SmartEsc::processReadPacket(uint8_t *message)
 	data.BMS_Cells_status_group_24 = buffer_get_uint8(message, &ind);
 	data.BMS_Battery_tempature_1 = buffer_get_uint8(message, &ind);
 	data.BMS_Battery_tempature_2 = buffer_get_uint8(message, &ind);
-	data.BMS_Charge_cycles_full = buffer_get_uint16(message, &ind);
-	data.BMS_Charge_cycles_partial = buffer_get_uint16(message, &ind);
-	data.Error = buffer_get_uint16(message, &ind);
+	data.BMS_Charge_cycles_full = buffer_get_uint16_inv(message, &ind);
+	data.BMS_Charge_cycles_partial = buffer_get_uint16_inv(message, &ind);
+	data.Error = buffer_get_uint16_inv(message, &ind);
 
 	return true;
 }
 
 bool SmartEsc::readSmartEscValues(void)
 {
-	uint8_t payload[256];
-	receiveUartMessage(payload);
 
-	bool read = processReadPacket(payload); //returns true if sucessful
+	//Serial.println("readSmartEscValues");
+
+	bool read = false;
+	uint8_t payload[256];
+	uint8_t nbByteReceived = receiveUartMessage(payload);
+
+	if (nbByteReceived)
+		read = processReadPacket(payload); //returns true if sucessful
 
 	return read;
 }
