@@ -33,64 +33,65 @@ void SmartEsc::setSharedData(SharedData *shrd_p)
 int SmartEsc::receiveUartMessage(uint8_t *payloadReceived)
 {
 
-	//Serial.println("receiveUartMessage");
+	if (debugPort != NULL)
+	{
+		debugPort->println("receiveUartMessage");
+	}
 
 	bool messageRead = false;
 	bool frameStartDetected = false;
 	unsigned char len = 0; //Number of bytes
 
-	uint32_t timeout = millis() + 20; // Defining the timestamp for timeout (10ms before timeout)
-
-	while (millis() < timeout && messageRead == false)
+	while (serialPort->available() && (messageRead == false))
 	{
+		Rx_buff.buffer[len] = serialPort->read();
+		if ((Rx_buff.buffer[len] == SERIAL_START_FRAME_ESC_TO_DISPLAY) && (frameStartDetected == false))
+			frameStartDetected = true;
 
-		while (serialPort->available())
-		{
-			Rx_buff.buffer[len] = serialPort->read();
-			if ((Rx_buff.buffer[len] == SERIAL_START_FRAME_ESC_TO_DISPLAY) && (frameStartDetected == false))
-				frameStartDetected = true;
-
-			if (frameStartDetected)
-				len++;
-
-			if (len >= sizeof(SerialFeedback))
-				break;
-		}
+		if (frameStartDetected)
+			len++;
 
 		if (len >= sizeof(SerialFeedback))
 		{
-
-			//			debugPort->print(">> decode");
-			//			debugPort->println();
-
-			if (debugPort != NULL)
-			{
-				debugPort->print("receiveUartMessage : Received : ");
-				serialPrint(Rx_buff.buffer, len);
-
-				debugPort->print("len : ");
-				debugPort->print(len);
-				debugPort->println();
-			}
-
-			bool unpacked = false;
 			messageRead = true;
+			break;
+		}
+	}
 
-			if (messageRead)
-			{
-				unpacked = unpackPayload(Rx_buff.buffer, len, payloadReceived);
-			}
+	if (len > 0)
+	{
+		if (debugPort != NULL)
+		{
+			debugPort->println("receiveUartMessage : Received bytes : " + (String)len);
+		}
+	}
 
-			if (unpacked)
-			{
-				// Message was read
-				return len;
-			}
-			else
-			{
-				// No Message Read
-				return 0;
-			}
+	if (len >= sizeof(SerialFeedback))
+	{
+
+		if (debugPort != NULL)
+		{
+			debugPort->print("receiveUartMessage : ");
+			serialPrint(Rx_buff.buffer, len);
+		}
+
+		bool unpacked = false;
+		messageRead = true;
+
+		if (messageRead)
+		{
+			unpacked = unpackPayload(Rx_buff.buffer, len, payloadReceived);
+		}
+
+		if (unpacked)
+		{
+			// Message was read
+			return len;
+		}
+		else
+		{
+			// No Message Read
+			return 0;
 		}
 	}
 
@@ -162,7 +163,7 @@ int SmartEsc::sendPayload() //calculate checksum and transmitter data
 
 	Tx_buff.fields.Ligth_power = shrd->ecoOrder;
 
-	Serial.printf("modeOrder = %d / Tx_buff.fields.Speed_limit = %d", shrd->modeOrder, Tx_buff.fields.Speed_limit);
+	//Serial.printf("modeOrder = %d / Tx_buff.fields.Speed_limit = %d", shrd->modeOrder, Tx_buff.fields.Speed_limit);
 
 	//Serial.printf("brakeAnalogValue = %04x / brakeAnalogValue = %d / shrd->brakeFilterInitMean = %d / Tx_buff.fields.Brake = %02x / Tx_buff.fields.Brake = %d\n", brakeAnalogValue, brakeAnalogValue, shrd->brakeFilterInitMean, Tx_buff.fields.Brake, Tx_buff.fields.Brake);
 

@@ -27,6 +27,8 @@
 #include <Adafruit_MCP4725.h>
 #include <PID_v1.h>
 
+#include "esp32-hal-uart.h"
+
 #include "BLE/BluetoothHandler.h"
 #include "OTA/OTA_wifi.h"
 #include "filters/MedianFilter.h"
@@ -376,16 +378,23 @@ void setupSerial()
   hwSerLcd.begin(BAUD_RATE_MINIMOTORS, SERIAL_8N1, PIN_SERIAL_LCD_TO_ESP, PIN_SERIAL_ESP_TO_LCD);
   minomoCntrl.setLcdSerialPort(&hwSerLcd);
 
+  hwSerCntrl.setUartIrqIdleTrigger(0);
+  hwSerLcd.setUartIrqIdleTrigger(0);
+
 #elif CONTROLLER_TYPE == CONTROLLER_VESC
   hwSerCntrl.begin(BAUD_RATE_VESC, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
   vescCntrl.setSerialPort(&hwSerCntrl);
   //vescCntrl.setDebugPort(&Serial);
+
+  hwSerCntrl.setUartIrqIdleTrigger(1);
 
 #elif CONTROLLER_TYPE == CONTROLLER_KELLY
 
   hwSerCntrl.begin(BAUD_RATE_KELLY, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
   kellyCntrl.setSerialPort(&hwSerCntrl);
   kellyCntrl.setDebugPort(&Serial);
+
+  hwSerCntrl.setUartIrqIdleTrigger(1);
 
 #elif CONTROLLER_TYPE == CONTROLLER_SMART_ESC
 
@@ -394,6 +403,8 @@ void setupSerial()
   //smartEscCntrl.setDebugPort(&Serial);
   smartEscCntrl.setSettings(&settings);
   smartEscCntrl.setSharedData(&shrd);
+
+  hwSerCntrl.setUartIrqIdleTrigger(1);
 
 #endif
 }
@@ -1010,7 +1021,7 @@ void processSmartEscSerial()
     smartEscCntrl.data.ERPM = 0;
   shrd.speedCurrent = smartEscCntrl.data.ERPM * (settings.getS1F().Wheel_size / 10.0) / settings.getS1F().Motor_pole_number / 10.5;
 
-  Serial.println("voltageFilterMean " + (String)shrd.voltageFilterMean + " / shrd.currentFilterMean = " + (String)shrd.currentFilterMean + " / currentTemperature = " + (String)shrd.currentTemperature + " / ERPM = " + (String)smartEscCntrl.data.ERPM + " / speedCurrent = " + (String)shrd.speedCurrent + " / Throttle = " + (String)smartEscCntrl.data.Throttle);
+  //Serial.println("voltageFilterMean " + (String)shrd.voltageFilterMean + " / shrd.currentFilterMean = " + (String)shrd.currentFilterMean + " / currentTemperature = " + (String)shrd.currentTemperature + " / ERPM = " + (String)smartEscCntrl.data.ERPM + " / speedCurrent = " + (String)shrd.speedCurrent + " / Throttle = " + (String)smartEscCntrl.data.Throttle);
 
   // notify brake LCD value
   if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
@@ -1612,7 +1623,7 @@ void loop()
 
 #elif CONTROLLER_TYPE == CONTROLLER_SMART_ESC
 
-  if (i_loop % 2 == 0)
+  if (i_loop % 10 == 0)
   {
     //Serial.println(">>>>>>>>>>> readSmartEscValues");
 
@@ -1622,7 +1633,7 @@ void loop()
     processSmartEscSerial();
   }
 
-  if (i_loop % 10 == 2)
+  if (i_loop % 10 == 1)
   {
     //Serial.println(">>>>>>>>>>> sendPayload");
 

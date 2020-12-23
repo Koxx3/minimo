@@ -208,6 +208,11 @@ uart_t* uartBegin(uint8_t uart_nr, uint32_t baudrate, uint32_t config, int8_t rx
         uart->dev->conf0.stop_bit_num = ONE_STOP_BITS_CONF;
         uart->dev->rs485_conf.dl1_en = 1;
     }
+    
+    // tx_idle_num : idle interval after tx FIFO is empty(unit: the time it takes to send one bit under current baudrate)
+    // Setting it to 0 prevents line idle time/delays when sending messages with small intervals
+    uart->dev->idle_conf.tx_idle_num = 0;  //
+
     UART_MUTEX_UNLOCK();
 
     if(rxPin != -1) {
@@ -218,24 +223,37 @@ uart_t* uartBegin(uint8_t uart_nr, uint32_t baudrate, uint32_t config, int8_t rx
         uartAttachTx(uart, txPin, inverted);
     }
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//uart->dev->idle_conf.rx_idle_thrhd = 1;
-//uart->dev->idle_conf.tx_idle_num = 1;
-
-uart->dev->idle_conf.rx_idle_thrhd = 0;
-uart->dev->idle_conf.tx_idle_num = 0;
-uart->dev->idle_conf.tx_brk_num = 0;
-uart->dev->conf1.rxfifo_full_thrhd = 1;
-uart->dev->conf1.rx_tout_thrhd = 1;
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
     addApbChangeCallback(uart, uart_on_apb_change);
     return uart;
 }
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+void uartSetIrqIdleTrigger(uart_t * uart, uint8_t nbByte)
+{
+    
+    if(uart == NULL) {
+        return;
+    }
+    if (nbByte == 0)
+    {
+        uart->dev->idle_conf.rx_idle_thrhd = 0;
+        uart->dev->idle_conf.tx_idle_num = 0;
+        uart->dev->idle_conf.tx_brk_num = 0;
+        uart->dev->conf1.rxfifo_full_thrhd = 1;
+        uart->dev->conf1.rx_tout_thrhd = 1;
+    } else
+    {
+        uart->dev->idle_conf.rx_idle_thrhd = 1;
+        uart->dev->idle_conf.tx_idle_num = 1;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 void uartEnd(uart_t* uart)
 {
