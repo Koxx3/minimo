@@ -154,11 +154,13 @@ int SmartEsc::sendPayload() //calculate checksum and transmitter data
 	Tx_buff.fields.Throttle = brakeValueWithCabib * 255 / brakeRange;
 
 	if (shrd->modeOrder == 3)
-		Tx_buff.fields.Speed_limit = 204;
+		Tx_buff.fields.Speed_limit = 204; // MAX RPM
 	if (shrd->modeOrder == 2)
-		Tx_buff.fields.Speed_limit = 60;
+		Tx_buff.fields.Speed_limit = 60; // 600 RPM
 	if (shrd->modeOrder == 1)
-		Tx_buff.fields.Speed_limit = 30;
+		Tx_buff.fields.Speed_limit = 30; // 300 RPM
+
+	Tx_buff.fields.Ligth_power = shrd->ecoOrder;
 
 	Serial.printf("modeOrder = %d / Tx_buff.fields.Speed_limit = %d", shrd->modeOrder, Tx_buff.fields.Speed_limit);
 
