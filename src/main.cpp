@@ -56,6 +56,7 @@
 #define TEMPERATURE_EXT_READ 1
 #define VOLTAGE_EXT_READ 0
 #define BRAKE_ANALOG_EXT_READ 1
+#define THROTTLE_ANALOG_EXT_READ 1
 
 // PINOUT
 #define PIN_SERIAL_ESP_TO_LCD 26
@@ -72,10 +73,10 @@
 #define PIN_OUT_BRAKE 13
 #define PIN_IN_OUT_DHT 12
 #define PIN_IN_ABRAKE 34
-#define PIN_IN_THROTTLE 33
+#define PIN_IN_ATHROTTLE 39
 #define PIN_OUT_BACKLIGHT 5
-#define PIN_I2C_SDA 32
-#define PIN_I2C_SCL 33
+//#define PIN_I2C_SDA 32
+//#define PIN_I2C_SCL 33
 
 // I2C
 //#define I2C_FREQ 400000
@@ -313,6 +314,8 @@ void setupPins()
   pinMode(PIN_OUT_BRAKE, OUTPUT);
   pinMode(PIN_OUT_LED_BUTTON1, OUTPUT);
   pinMode(PIN_OUT_LED_BUTTON2, OUTPUT);
+  pinMode(PIN_IN_ABRAKE, INPUT);
+  pinMode(PIN_IN_ATHROTTLE, INPUT);
 }
 
 /*
@@ -345,6 +348,7 @@ void setupEFuse()
 }
 */
 
+/*
 void setupI2C()
 {
 
@@ -359,6 +363,7 @@ void setupDac()
 
   dac.begin(0x60, &I2Cone);
 }
+*/
 
 void setupSerial()
 {
@@ -553,11 +558,13 @@ void setup()
   Serial.println(PSTR("   serial ..."));
   setupSerial();
 
+  /*
   Serial.println(PSTR("   i2c ..."));
   setupI2C();
 
   Serial.println(PSTR("   dac ..."));
   setupDac();
+*/
 
   Serial.println(PSTR("   eeprom ..."));
   setupEPROMM();
@@ -880,6 +887,178 @@ void getBrakeFromAnalog()
 #endif
     }
   }
+}
+
+void getThrottleFromAnalog()
+{
+
+  throttleAnalogValue = analogRead(PIN_IN_ATHROTTLE);
+  shrd.throttleAnalogValue = throttleAnalogValue;
+
+//  Serial.printf("throttle : %d\n", throttleAnalogValue);
+
+  /*
+  if (settings.getS2F().Electric_brake_type == settings.LIST_Electric_brake_type_analog)
+  {
+
+    int brakeFilterMean = brakeFilter.getMean();
+    int brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
+
+    // ignore out of range datas ... and notify
+    if (brakeAnalogValue < ANALOG_BRAKE_MIN_ERR_VALUE)
+    {
+#if DEBUG_DISPLAY_ANALOG_BRAKE
+      Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE");
+#endif
+
+      char print_buffer[500];
+      sprintf(print_buffer, "brake ANALOG_BRAKE_MIN_ERR_VALUE / f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d",
+              brakeFilterMean,
+              brakeFilterMeanErr,
+              brakeAnalogValue,
+              shrd.brakeSentOrder,
+              shrd.brakeSentOrderOld,
+              shrd.brakeStatus,
+              brakeFilterInit.getMean());
+      blh.notifyBleLogs(print_buffer);
+      Serial.println(print_buffer);
+
+      return;
+    }
+
+    // ignore out of range datas ... and notify
+    if (brakeAnalogValue > ANALOG_BRAKE_MAX_ERR_VALUE)
+    {
+#if DEBUG_DISPLAY_ANALOG_BRAKE
+      Serial.println("brake ANALOG_BRAKE_MAX_ERR_VALUE");
+      char print_buffer[500];
+      sprintf(print_buffer, "brake ANALOG_BRAKE_MAX_ERR_VALUE / f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d",
+              brakeFilterMean,
+              brakeFilterMeanErr,
+              brakeAnalogValue,
+              shrd.brakeSentOrder,
+              shrd.brakeSentOrderOld,
+              shrd.brakeStatus,
+              brakeFilterInit.getMean());
+      blh.notifyBleLogs(print_buffer);
+      Serial.println(print_buffer);
+#endif
+      return;
+    }
+
+    if (brakeAnalogValue > shrd.brakeMaxPressureRaw)
+      brakeAnalogValue = shrd.brakeMaxPressureRaw;
+
+    brakeFilter.in(brakeAnalogValue);
+
+    if ((brakeAnalogValue < 1000) && (shrd.brakeCalibOrder >= 1))
+    {
+      brakeFilterInit.in(brakeAnalogValue);
+      shrd.brakeFilterInitMean = brakeFilterInit.getMean();
+    }
+
+    iBrakeCalibOrder++;
+    if (iBrakeCalibOrder > NB_BRAKE_CALIB_DATA)
+    {
+      iBrakeCalibOrder = 0;
+      shrd.brakeCalibOrder = 0;
+    }
+
+    if (settings.getS1F().Electric_brake_progressive_mode == 1)
+    {
+      brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
+      brakeFilterMean = brakeFilter.getMean();
+
+      shrd.brakeFordidenHighVoltage = isElectricBrakeForbiden();
+
+      // alarm controler from braking
+      if ((brakeFilterMeanErr > shrd.brakeFilterInitMean + ANALOG_BRAKE_MIN_OFFSET) && (!shrd.brakeFordidenHighVoltage))
+      {
+        digitalWrite(PIN_OUT_BRAKE, 1);
+
+        if (shrd.brakeStatus == 0)
+        {
+          char print_buffer[500];
+          sprintf(print_buffer, ">>>> brake IO ON");
+
+          Serial.println(print_buffer);
+
+          blh.notifyBleLogs(print_buffer);
+        }
+
+        shrd.brakeStatus = 1;
+      }
+      else
+      {
+        digitalWrite(PIN_OUT_BRAKE, 0);
+
+        if (shrd.brakeStatus == 1)
+        {
+          char print_buffer[500];
+          sprintf(print_buffer, ">>>> brake IO OFF");
+
+          Serial.println(print_buffer);
+
+          blh.notifyBleLogs(print_buffer);
+        }
+
+        shrd.brakeStatus = 0;
+      }
+
+      // notify brake LCD value
+      if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
+      {
+        blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus, shrd.brakeFordidenHighVoltage);
+
+#if DEBUG_DISPLAY_ANALOG_BRAKE
+        Serial.print("brake notify : ");
+        Serial.println(shrd.brakeSentOrder);
+#endif
+
+        char print_buffer[500];
+        sprintf(print_buffer, ">> brakeNotify = f1 : %d / f2 : %d / brakeFilterInitMean : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d / forbid : %d",
+                brakeFilterMean,
+                brakeFilterMeanErr,
+                shrd.brakeFilterInitMean,
+                brakeAnalogValue,
+                shrd.brakeSentOrder,
+                shrd.brakeSentOrderOld,
+                shrd.brakeStatus,
+                brakeFilterInit.getMean(),
+                shrd.brakeFordidenHighVoltage);
+        blh.notifyBleLogs(print_buffer);
+      }
+
+      shrd.brakeStatusOld = shrd.brakeStatus;
+      shrd.brakeSentOrderOld = shrd.brakeSentOrder;
+
+#if DEBUG_BLE_DISPLAY_ANALOG_BRAKE
+
+      if ((brakeFilterMeanErr > shrd.brakeFilterInitMean + ANALOG_BRAKE_MIN_OFFSET))
+      {
+
+        char print_buffer[500];
+        sprintf(print_buffer, "brake = f1 : %d / f2 : %d / brakeFilterInitMean : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d / forbid : %d",
+                brakeFilterMean,
+                brakeFilterMeanErr,
+                shrd.brakeFilterInitMean,
+                brakeAnalogValue,
+                shrd.brakeSentOrder,
+                shrd.brakeSentOrderOld,
+                shrd.brakeStatus,
+                brakeFilterInit.getMean(),
+                shrd.brakeFordidenHighVoltage);
+
+        Serial.println(print_buffer);
+
+        blh.notifyBleLogs(print_buffer);
+      }
+
+#endif
+
+    }
+  }
+  */
 }
 
 bool isElectricBrakeForbiden()
@@ -1675,11 +1854,20 @@ void loop()
   }
 
 #if BRAKE_ANALOG_EXT_READ
-  if ((i_loop % 10 == 2) || (i_loop % 10 == 7))
+  if (i_loop % 10 == 2)
   {
     //modifyBrakeFromLCD();
     //displayBrake();
     getBrakeFromAnalog();
+  }
+#endif
+
+#if THROTTLE_ANALOG_EXT_READ
+  if (i_loop % 10 == 3)
+  {
+    //modifyBrakeFromLCD();
+    //displayBrake();
+    getThrottleFromAnalog();
   }
 #endif
 
@@ -1715,10 +1903,6 @@ void loop()
             dacOutput);
     Serial.println(print_buffer);
   }
-#endif
-
-#if READ_THROTTLE
-  throttleAnalogValue = analogRead(PIN_IN_THROTTLE);
 #endif
 
 #if TFT_ENABLED

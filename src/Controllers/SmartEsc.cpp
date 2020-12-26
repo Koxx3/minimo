@@ -149,10 +149,22 @@ int SmartEsc::sendPayload() //calculate checksum and transmitter data
 	int32_t brakeValueWithCabib = (brakeAnalogValue - shrd->brakeFilterInitMean - 50);
 	if (brakeValueWithCabib < 0)
 		brakeValueWithCabib = 0;
-	Tx_buff.fields.Brake = 0; //brakeValueWithCabib * 255 / brakeRange;
+	Tx_buff.fields.Brake = ((uint32_t) brakeValueWithCabib) * 255 / brakeRange;
 
 	// compute throttle // TODO : move this elsewhere
-	Tx_buff.fields.Throttle = brakeValueWithCabib * 255 / brakeRange;
+#define THROTTLE_MAX 2700
+#define THROTTLE_MIN 520
+#define THROTTLE_SECURITY 50
+	int16_t throttleRange = THROTTLE_MAX - THROTTLE_MIN - THROTTLE_SECURITY;
+	int16_t throttleAnalogValue = shrd->throttleAnalogValue;
+	if (throttleAnalogValue > THROTTLE_MAX)
+		throttleAnalogValue = THROTTLE_MAX;
+	int32_t throttleValueWithCabib = (throttleAnalogValue - THROTTLE_MIN - THROTTLE_SECURITY);
+	if (throttleValueWithCabib < 0)
+		throttleValueWithCabib = 0;
+	Tx_buff.fields.Throttle = ((uint32_t) throttleValueWithCabib) * 255 / throttleRange;
+
+	//Serial.printf("Tx_buff.fields.Throttle = %d\n", Tx_buff.fields.Throttle);
 
 	if (shrd->modeOrder == 3)
 		Tx_buff.fields.Speed_limit = 204; // MAX RPM
@@ -163,9 +175,11 @@ int SmartEsc::sendPayload() //calculate checksum and transmitter data
 
 	Tx_buff.fields.Ligth_power = shrd->ecoOrder;
 
-	//Serial.printf("modeOrder = %d / Tx_buff.fields.Speed_limit = %d", shrd->modeOrder, Tx_buff.fields.Speed_limit);
+	Tx_buff.fields.Lock = shrd->accelOrder;
 
-	//Serial.printf("brakeAnalogValue = %04x / brakeAnalogValue = %d / shrd->brakeFilterInitMean = %d / Tx_buff.fields.Brake = %02x / Tx_buff.fields.Brake = %d\n", brakeAnalogValue, brakeAnalogValue, shrd->brakeFilterInitMean, Tx_buff.fields.Brake, Tx_buff.fields.Brake);
+	//Serial.printf("modeOrder = %d / Tx_buff.fields.Speed_limit = %d", shrd->modeOrder, Tx_buff.fields.Speed_limit);
+	//Serial.printf("throttleAnalogValue = %d / throttleRange = %d / Tx_buff.fields.Throttle = %d / Tx_buff.fields.Brake = %d\n", throttleAnalogValue, throttleRange, Tx_buff.fields.Throttle, Tx_buff.fields.Brake);
+	Serial.printf("brakeAnalogValue = %d / brakeValueWithCabib = %d / shrd->brakeFilterInitMean = %d / Tx_buff.fields.Brake = %02x / Tx_buff.fields.Brake = %d\n", brakeAnalogValue, brakeValueWithCabib, shrd->brakeFilterInitMean, Tx_buff.fields.Brake, Tx_buff.fields.Brake);
 
 	Tx_buff.fields.CRC8 = (uint8_t)(
 		Tx_buff.fields.Frame_start				  ///

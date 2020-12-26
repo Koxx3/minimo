@@ -72,6 +72,8 @@ public:
     uint8_t brakeFordidenHighVoltage = 0;
     uint32_t brakeFilterInitMean = 0;
 
+    uint32_t throttleAnalogValue = 0;
+
     uint32_t currentCalibOrder = 0;
     uint32_t brakeCalibOrder = 1;
 
