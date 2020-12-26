@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "SmartEsc.h"
 #include "SharedData.h"
+#include "tools/utils.h"
 
 SmartEsc::SmartEsc(void)
 {
@@ -167,19 +168,19 @@ int SmartEsc::sendPayload() //calculate checksum and transmitter data
 	//Serial.printf("Tx_buff.fields.Throttle = %d\n", Tx_buff.fields.Throttle);
 
 	if (shrd->modeOrder == 3)
-		Tx_buff.fields.Speed_limit = 204; // MAX RPM
+		Tx_buff.fields.Speed_limit = KmhToRpm(settings, 100) / 10; // MAX RPM
 	if (shrd->modeOrder == 2)
-		Tx_buff.fields.Speed_limit = 60; // 600 RPM
+		Tx_buff.fields.Speed_limit = KmhToRpm(settings, 40) / 10; // 800 RPM
 	if (shrd->modeOrder == 1)
-		Tx_buff.fields.Speed_limit = 30; // 300 RPM
+		Tx_buff.fields.Speed_limit = KmhToRpm(settings, 25) / 10; // 450 RPM
 
 	Tx_buff.fields.Ligth_power = shrd->ecoOrder;
 
 	Tx_buff.fields.Lock = shrd->accelOrder;
 
 	//Serial.printf("modeOrder = %d / Tx_buff.fields.Speed_limit = %d", shrd->modeOrder, Tx_buff.fields.Speed_limit);
-	//Serial.printf("throttleAnalogValue = %d / throttleRange = %d / Tx_buff.fields.Throttle = %d / Tx_buff.fields.Brake = %d\n", throttleAnalogValue, throttleRange, Tx_buff.fields.Throttle, Tx_buff.fields.Brake);
-	Serial.printf("brakeAnalogValue = %d / brakeValueWithCabib = %d / shrd->brakeFilterInitMean = %d / Tx_buff.fields.Brake = %02x / Tx_buff.fields.Brake = %d\n", brakeAnalogValue, brakeValueWithCabib, shrd->brakeFilterInitMean, Tx_buff.fields.Brake, Tx_buff.fields.Brake);
+//	Serial.printf("throttleAnalogValue = %d / throttleRange = %d / Tx_buff.fields.Throttle = %d / Tx_buff.fields.Brake = %d\n", throttleAnalogValue, throttleRange, Tx_buff.fields.Throttle, Tx_buff.fields.Brake);
+//	Serial.printf("brakeAnalogValue = %d / brakeValueWithCabib = %d / shrd->brakeFilterInitMean = %d / Tx_buff.fields.Brake = %02x / Tx_buff.fields.Brake = %d\n", brakeAnalogValue, brakeValueWithCabib, shrd->brakeFilterInitMean, Tx_buff.fields.Brake, Tx_buff.fields.Brake);
 
 	Tx_buff.fields.CRC8 = (uint8_t)(
 		Tx_buff.fields.Frame_start				  ///

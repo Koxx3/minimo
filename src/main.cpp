@@ -35,6 +35,7 @@
 #include "DHT/dht_nonblocking.h"
 #include "TFT/tft_main.h"
 #include "Battery/Battery.h"
+#include "tools/utils.h"
 
 #include "Controllers/VescUart.h"
 #include "Controllers/KellyUart.h"
@@ -49,7 +50,7 @@
 
 // SMART CONFIGURATION
 #define CONTROLLER_TYPE CONTROLLER_SMART_ESC
-#define TFT_ENABLED 0
+#define TFT_ENABLED 1
 #define READ_THROTTLE 0
 #define DEBUG_ESP_HTTP_UPDATE 1
 #define TEST_ADC_DAC_REFRESH 0
@@ -535,7 +536,10 @@ void taskUpdateTFT(void *parameter)
     i++;
 
     if (i >= 20)
+    {
       i = 0;
+      vTaskDelay(200);
+    }
   }
 }
 
@@ -1178,7 +1182,7 @@ void processKellySerial2()
   // 532 RPM = 25 km/h
   // 1814 =
   // TODO : check calculation - if motor poles numbers
-  float speedCompute = kellyCntrl.data2.Mechanical_speed_in_RPM * (settings.getS1F().Wheel_size / 10.0) / settings.getS1F().Motor_pole_number / 14.0;
+  float speedCompute = RpmToKmh(&settings, smartEscCntrl.data.ERPM);
   if (speedCompute < 0)
     speedCompute = 0;
   if (speedCompute > 999)
@@ -1198,7 +1202,7 @@ void processSmartEscSerial()
   shrd.currentTemperature = smartEscCntrl.data.MOSFET_temperature;
   if (smartEscCntrl.data.ERPM < 0)
     smartEscCntrl.data.ERPM = 0;
-  shrd.speedCurrent = smartEscCntrl.data.ERPM * (settings.getS1F().Wheel_size / 10.0) / settings.getS1F().Motor_pole_number / 10.5;
+  shrd.speedCurrent = RpmToKmh(&settings, smartEscCntrl.data.ERPM);
 
   //Serial.println("voltageFilterMean " + (String)shrd.voltageFilterMean + " / shrd.currentFilterMean = " + (String)shrd.currentFilterMean + " / currentTemperature = " + (String)shrd.currentTemperature + " / ERPM = " + (String)smartEscCntrl.data.ERPM + " / speedCurrent = " + (String)shrd.speedCurrent + " / Throttle = " + (String)smartEscCntrl.data.Throttle);
 

@@ -81,7 +81,7 @@ void tftSetup(SharedData *shrd, Settings *settings)
   
   // draw splash scree
   tft.drawRGBBitmap((320 - gimp_image.width) / 2, (240 - gimp_image.height) / 2, (uint16_t *)gimp_image.pixel_data, gimp_image.width, gimp_image.height);
- // delay(3000);
+  delay(2000);
   tft.fillScreen(ILI9341_BLACK);
 
 

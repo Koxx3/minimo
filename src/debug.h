@@ -1,6 +1,6 @@
 // Bluetooth debugs
 #define DEBUG_BLE_DISPLAY_VOLTAGE                   0
-#define DEBUG_BLE_DISPLAY_ANALOG_BRAKE              1
+#define DEBUG_BLE_DISPLAY_ANALOG_BRAKE              0
 #define DEBUG_BLE_DISPLAY_FRAME                     0
 
 // Serial general debugs

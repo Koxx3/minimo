@@ -2,6 +2,7 @@
 #include "SerialMode.h"
 #include "main.h"
 #include "debug.h"
+#include "tools/utils.h"
 
 MinimoUart::MinimoUart()
 {
@@ -581,7 +582,7 @@ double MinimoUart::getSpeed()
   uint8_t low = (data_buffer_cntrl_ori[8] - data_buffer_cntrl_ori[3]);
 
   double speed = (((int)high2 * 256) + (low));
-  speed = speed * (settings->getS1F().Wheel_size / 10.0) / settings->getS1F().Motor_pole_number / 10.5;
+  speed = RpmToKmh(settings, speed);
 
   computeDistance(speed);
 
@@ -595,11 +596,14 @@ double MinimoUart::getSpeed()
 uint16_t MinimoUart::generateSpeedRawValue(double speed)
 {
   uint16_t rawValue;
+
+/*
   double wheelFactor = (settings->getS1F().Wheel_size / 10.0);
   double polesFactor = settings->getS1F().Motor_pole_number * 10.5;
   rawValue = (uint16_t)(speed / wheelFactor * polesFactor);
+*/
 
-  rawValue = rawValue;
+  rawValue = KmhToRpm(settings, speed);
 
   return rawValue;
 }
