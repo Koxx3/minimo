@@ -7,6 +7,8 @@
 // TODO : original regulator perturbation
 // TODO : exponential throttle
 // TODO : change OTA to AWS
+// TODO : PWM braking signal test
+// BUG : beacon signal variation lock escooter
 // BUG : mode Z / android
 // BUG : push button make brake analog read wrong
 //////////////////////////////////////////
