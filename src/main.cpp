@@ -901,7 +901,7 @@ void getThrottleFromAnalog()
   throttleAnalogValue = analogRead(PIN_IN_ATHROTTLE);
   shrd.throttleAnalogValue = throttleAnalogValue;
 
-//  Serial.printf("throttle : %d\n", throttleAnalogValue);
+  //Serial.printf("throttle : %d\n", throttleAnalogValue);
 
   /*
   if (settings.getS2F().Electric_brake_type == settings.LIST_Electric_brake_type_analog)
