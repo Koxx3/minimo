@@ -8,6 +8,7 @@
 // TODO : exponential throttle
 // TODO : change OTA to AWS
 // TODO : PWM braking signal test
+// TODO : reduce SHTC3 read time - brake read function in 2 parts
 // BUG : beacon signal variation lock escooter
 // BUG : mode Z / android
 // BUG : push button make brake analog read wrong
@@ -28,6 +29,7 @@
 #include <Wire.h>
 #include <Adafruit_MCP4725.h>
 #include <PID_v1.h>
+#include "SHTC3/SparkFun_SHTC3.h"
 
 #include "esp32-hal-uart.h"
 
@@ -51,35 +53,71 @@
 ////// Defines
 
 // SMART CONFIGURATION
-#define CONTROLLER_TYPE CONTROLLER_SMART_ESC
-#define TFT_ENABLED 1
-#define READ_THROTTLE 0
-#define DEBUG_ESP_HTTP_UPDATE 1
-#define TEST_ADC_DAC_REFRESH 0
-#define TEMPERATURE_EXT_READ 1
-#define VOLTAGE_EXT_READ 0
-#define BRAKE_ANALOG_EXT_READ 1
-#define THROTTLE_ANALOG_EXT_READ 1
+#define CONTROLLER_TYPE           CONTROLLER_MINIMOTORS
+#define TFT_ENABLED               1
+#define DEBUG_ESP_HTTP_UPDATE     1
+#define TEST_ADC_DAC_REFRESH      1
+#define TEMPERATURE_EXT_READ      1
+#define VOLTAGE_EXT_READ          1
+#define BRAKE_ANALOG_EXT_READ     1
+#define THROTTLE_ANALOG_EXT_READ  1
 
 // PINOUT
-#define PIN_SERIAL_ESP_TO_LCD 26
-#define PIN_SERIAL_ESP_TO_CNTRL 27
-#define PIN_SERIAL_LCD_TO_ESP 25
-#define PIN_SERIAL_CNTRL_TO_ESP 14
-//#define PIN_OUT_RELAY xx
-#define PIN_IN_VOLTAGE 32
-#define PIN_IN_CURRENT 35
-#define PIN_IN_BUTTON1 22
-#define PIN_IN_BUTTON2 15 // PB was TX
-#define PIN_OUT_LED_BUTTON1 3
-#define PIN_OUT_LED_BUTTON2 21
-#define PIN_OUT_BRAKE 13
-#define PIN_IN_OUT_DHT 12
-#define PIN_IN_ABRAKE 34
-#define PIN_IN_ATHROTTLE 39
-#define PIN_OUT_BACKLIGHT 5
-//#define PIN_I2C_SDA 32
-//#define PIN_I2C_SCL 33
+#define PCB_V132
+
+#ifdef PCB_V130
+#define PIN_SERIAL_ESP_TO_LCD     26
+#define PIN_SERIAL_ESP_TO_CNTRL   27
+#define PIN_SERIAL_LCD_TO_ESP     25
+#define PIN_SERIAL_CNTRL_TO_ESP   14
+//#define PIN_OUT_RELAY           xx
+#define PIN_IN_VOLTAGE            32
+#define PIN_IN_CURRENT            35
+#define PIN_IN_BUTTON1            22
+#define PIN_IN_BUTTON2            15 // PB was TX
+#define PIN_OUT_LED_BUTTON1       3
+#define PIN_OUT_LED_BUTTON2       21
+#define PIN_OUT_BRAKE             13
+#define PIN_IN_OUT_DHT            12
+#define PIN_IN_ABRAKE             34
+#define PIN_IN_ATHROTTLE          39
+#define PIN_OUT_BACKLIGHT         5
+//#define PIN_I2C_SDA             32
+//#define PIN_I2C_SCL             33
+
+#define HAS_I2C 0
+
+#endif
+#ifdef PCB_V132
+// LEFT
+#define PIN_IN_CURRENT            36
+#define PIN_IN_ATHROTTLE          39 // ~ok >>> missing voltage divider & filter capa
+#define PIN_IN_ABRAKE             34
+#define PIN_IN_VOLTAGE            35 // ok
+#define PIN_I2C_SDA               32 // ok
+#define PIN_I2C_SCL               33 // ok
+#define PIN_SERIAL_LCD_TO_ESP     25 // ok
+#define PIN_SERIAL_ESP_TO_LCD     26 // ok
+#define PIN_SERIAL_ESP_TO_CNTRL   27 // ok
+#define PIN_SERIAL_CNTRL_TO_ESP   14 // ok
+#define PIN_IN_OUT_DHT            12
+#define PIN_OUT_BRAKE             13
+// RIGHT
+#define PIN_SPI_MOSI              23 // use in LCD  // ok
+#define PIN_IN_BUTTON1            22 // ok
+#define PIN_OUT_LED_BUTTON2       21 // ok
+#define PIN_FREE                  19 // ok
+#define PIN_SPI_CLK               18 // use in LCD  // ok
+#define PIN_SPI_BKL               5  // use in LCD  // ok
+#define PIN_SPI_RST               17 // use in LCD  // ok
+#define PIN_OUT_RELAY             16
+#define PIN_OUT_LED_BUTTON1       4 // ok
+#define PIN_SPI_DC                2 // use in LCD // ok
+#define PIN_IN_BUTTON2            15 // ok
+
+#define HAS_I2C 1
+
+#endif
 
 // I2C
 //#define I2C_FREQ 400000
@@ -152,6 +190,7 @@ OneButton button2(PIN_IN_BUTTON2, true, true);
 
 TwoWire I2Cone = TwoWire(0);
 Adafruit_MCP4725 dac;
+SHTC3 mySHTC3;
 
 SharedData shrd;
 
@@ -312,8 +351,7 @@ void setupPins()
   pinMode(PIN_IN_BUTTON2, INPUT_PULLUP);
   pinMode(PIN_IN_VOLTAGE, INPUT);
   pinMode(PIN_IN_CURRENT, INPUT);
-  //pinMode(PIN_IN_DBRAKE, INPUT_PULLUP);
-  //  pinMode(PIN_OUT_RELAY, OUTPUT);
+  pinMode(PIN_OUT_RELAY, OUTPUT);
   pinMode(PIN_OUT_BRAKE, OUTPUT);
   pinMode(PIN_OUT_LED_BUTTON1, OUTPUT);
   pinMode(PIN_OUT_LED_BUTTON2, OUTPUT);
@@ -351,7 +389,7 @@ void setupEFuse()
 }
 */
 
-/*
+#ifdef HAS_I2C
 void setupI2C()
 {
 
@@ -366,7 +404,19 @@ void setupDac()
 
   dac.begin(0x60, &I2Cone);
 }
-*/
+
+void setupShtc3()
+{
+  SHTC3_Status_TypeDef err = mySHTC3.begin(I2Cone);
+  if (err != SHTC3_Status_Nominal)
+  {
+    Serial.print("SHTC3 error");
+  }
+  mySHTC3.setMode(SHTC3_CMD_CSE_TF_LPM);
+  mySHTC3.wake(true);
+}
+
+#endif
 
 void setupSerial()
 {
@@ -564,13 +614,14 @@ void setup()
   Serial.println(PSTR("   serial ..."));
   setupSerial();
 
-  /*
   Serial.println(PSTR("   i2c ..."));
   setupI2C();
 
   Serial.println(PSTR("   dac ..."));
   setupDac();
-*/
+
+  Serial.println(PSTR("   shtc3 ..."));
+  setupShtc3();
 
   Serial.println(PSTR("   eeprom ..."));
   setupEPROMM();
@@ -901,7 +952,7 @@ void getThrottleFromAnalog()
   throttleAnalogValue = analogRead(PIN_IN_ATHROTTLE);
   shrd.throttleAnalogValue = throttleAnalogValue;
 
-  //Serial.printf("throttle : %d\n", throttleAnalogValue);
+  //  Serial.printf("throttle : %d\n", throttleAnalogValue);
 
   /*
   if (settings.getS2F().Electric_brake_type == settings.LIST_Electric_brake_type_analog)
@@ -1869,7 +1920,7 @@ void loop()
 #endif
 
 #if THROTTLE_ANALOG_EXT_READ
-  if (i_loop % 10 == 3)
+  if (i_loop % 10 == 4)
   {
     //modifyBrakeFromLCD();
     //displayBrake();
@@ -1878,7 +1929,7 @@ void loop()
 #endif
 
 #if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
-  if (i_loop % 10 == 4)
+  if (i_loop % 10 == 5)
   {
     processCurrent();
   }
@@ -1894,9 +1945,9 @@ void loop()
 
 #if TEST_ADC_DAC_REFRESH
 
-  if ((i_loop % 10 == 3) || (i_loop % 10 == 9))
+  if ((i_loop % 10 == 7))
   {
-    uint32_t dacOutput = shrd.brakeAnalogValue * 1.2;
+    uint32_t dacOutput = shrd.throttleAnalogValue * 0.66;
     if (dacOutput > 4095)
       dacOutput = 4095;
 
@@ -1904,10 +1955,27 @@ void loop()
     dac.setVoltage(dacOutput, false);
 
     char print_buffer[500];
-    sprintf(print_buffer, "brake raw : %d / dacOutput : %d",
-            brakeAnalogValue,
-            dacOutput);
+    sprintf(print_buffer, "throttleAnalogValue raw : %d / dacOutput : %d / i_loop : %d",
+            throttleAnalogValue,
+            dacOutput,
+            i_loop);
     Serial.println(print_buffer);
+  }
+#endif
+
+#if HAS_I2C
+  if (i_loop % 100 == 8)
+  {
+    mySHTC3.update(); // Call "update()" to command a measurement, wait for measurement to complete, and update the RH and T members of the object
+    #if DEBUG_DISPLAY_SHTC3
+    Serial.print(mySHTC3.toPercent());              // "toPercent" returns the percent humidity as a floating point number
+    Serial.print("% / ");
+    Serial.print("T = ");
+    Serial.print(mySHTC3.toDegC()); // "toDegF" and "toDegC" return the temperature as a flaoting point number in deg F and deg C respectively
+    Serial.print(" deg C\n");
+    #endif
+    shrd.currentTemperature = mySHTC3.toDegC();
+    shrd.currentHumidity = mySHTC3.toPercent();
   }
 #endif
 
@@ -1922,7 +1990,7 @@ void loop()
 
 #if DEBUG_TIMELOOP_NS
   Serial.print("> ");
-  Serial.print(micros() - timeLoop - 1000);
+  Serial.print(micros() - timeLoop);
   Serial.print(" / i_loop : ");
   Serial.println(i_loop);
   timeLoop = micros();

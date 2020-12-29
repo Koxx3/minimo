@@ -24,6 +24,7 @@
 #define DEBUG_DISPLAY_BRAKE_FORBIDEN                0
 #define DEBUG_DISPLAY_DISTANCE                      0
 #define DEBUG_DISPLAY_AUTONOMY                      0
+#define DEBUG_DISPLAY_SHTC3                         0
 
 // Serial frame deconding debugs
 #define DEBUG_DISPLAY_FRAME_LCD_TO_CNTRL            0
