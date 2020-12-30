@@ -27,8 +27,8 @@
 #define DEBUG_DISPLAY_SHTC3                         0
 
 // Serial frame deconding debugs
-#define DEBUG_DISPLAY_FRAME_LCD_TO_CNTRL            1
-#define DEBUG_DISPLAY_FRAME_CNTRL_TO_LCD            1
+#define DEBUG_DISPLAY_FRAME_LCD_TO_CNTRL            0
+#define DEBUG_DISPLAY_FRAME_CNTRL_TO_LCD            0
 #define DEBUG_DISPLAY_DECODED_FRAME_CNTRL_TO_LCD    0
 #define DEBUG_SERIAL_CHECKSUM_LCD_TO_CNTRL          0
 #define DEBUG_SERIAL_CHECKSUM_CNTRL_TO_LCD          0

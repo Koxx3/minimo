@@ -54,7 +54,7 @@
 
 // SMART CONFIGURATION
 #define CONTROLLER_TYPE           CONTROLLER_MINIMOTORS
-#define TFT_ENABLED               0
+#define TFT_ENABLED               1
 #define DEBUG_ESP_HTTP_UPDATE     1
 #define TEST_ADC_DAC_REFRESH      0
 #define TEMPERATURE_EXT_READ      1

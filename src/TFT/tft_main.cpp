@@ -79,11 +79,6 @@ void tftSetup(SharedData *shrd, Settings *settings)
 
   // dim screen for init
   tftBacklightLow();
-
-  // init TFT
-  tft.begin(60000000);
-  tft.invertDisplay(1);
-  tft.setRotation(1);
 }
 
 static char *Dfmt2_1(double v)
@@ -116,6 +111,12 @@ void tftUpdateData(uint32_t i_loop)
   // -1 / show splash screen and init fix datas after
   if (i_loop == -1)
   {
+
+    // init TFT
+    tft.begin(60000000);
+    tft.invertDisplay(1);
+    tft.setRotation(1);
+
     tft.fillScreen(ILI9341_BLACK);
 
     tftBacklightFull();
