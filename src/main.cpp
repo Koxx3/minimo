@@ -53,71 +53,67 @@
 ////// Defines
 
 // SMART CONFIGURATION
-#define CONTROLLER_TYPE           CONTROLLER_MINIMOTORS
-#define TFT_ENABLED               1
-#define DEBUG_ESP_HTTP_UPDATE     1
-#define TEST_ADC_DAC_REFRESH      0
-#define TEMPERATURE_EXT_READ      1
-#define TEMPERATURE_INT_READ      0
-#define VOLTAGE_EXT_READ          1
-#define BRAKE_ANALOG_EXT_READ     1
-#define THROTTLE_ANALOG_EXT_READ  1
+#define CONTROLLER_TYPE CONTROLLER_MINIMOTORS
+#define MINIMO_PWM_BRAKE 1
+#define TFT_ENABLED 1
+#define DEBUG_ESP_HTTP_UPDATE 1
+#define TEST_ADC_DAC_REFRESH 0
+#define TEMPERATURE_EXT_READ 1
+#define TEMPERATURE_INT_READ 0
+#define VOLTAGE_EXT_READ 1
+#define BRAKE_ANALOG_EXT_READ 1
+#define THROTTLE_ANALOG_EXT_READ 1
 
 // PINOUT
 #define PCB_V132
 
 #ifdef PCB_V130
-#define PIN_SERIAL_ESP_TO_LCD     26
-#define PIN_SERIAL_ESP_TO_CNTRL   27
-#define PIN_SERIAL_LCD_TO_ESP     25
-#define PIN_SERIAL_CNTRL_TO_ESP   14
-//#define PIN_OUT_RELAY           xx
-#define PIN_IN_VOLTAGE            32
-#define PIN_IN_CURRENT            35
-#define PIN_IN_BUTTON1            22
-#define PIN_IN_BUTTON2            15 // PB was TX
-#define PIN_OUT_LED_BUTTON1       3
-#define PIN_OUT_LED_BUTTON2       21
-#define PIN_OUT_BRAKE             13
-#define PIN_IN_OUT_DHT            12
-#define PIN_IN_ABRAKE             34
-#define PIN_IN_ATHROTTLE          39
-#define PIN_OUT_BACKLIGHT         5
-//#define PIN_I2C_SDA             32
-//#define PIN_I2C_SCL             33
-
 #define HAS_I2C 0
-
+#define PIN_SERIAL_ESP_TO_LCD 26
+#define PIN_SERIAL_ESP_TO_CNTRL 27
+#define PIN_SERIAL_LCD_TO_ESP 25
+#define PIN_SERIAL_CNTRL_TO_ESP 14
+#define PIN_OUT_RELAY           16
+#define PIN_IN_VOLTAGE 32
+#define PIN_IN_CURRENT 35
+#define PIN_IN_BUTTON1 22
+#define PIN_IN_BUTTON2 15 // PB was TX
+#define PIN_OUT_LED_BUTTON1 3
+#define PIN_OUT_LED_BUTTON2 21
+#define PIN_OUT_BRAKE 13
+#define PIN_IN_OUT_DHT 12
+#define PIN_IN_ABRAKE 34
+#define PIN_IN_ATHROTTLE 39
+#define PIN_OUT_BACKLIGHT 5
 #endif
+
 #ifdef PCB_V132
-// LEFT
-#define PIN_IN_CURRENT            36 // ok >> need calibration
-#define PIN_IN_ATHROTTLE          39 // ~ok >>> missing voltage divider & filter capa
-#define PIN_IN_ABRAKE             34 // ok
-#define PIN_IN_VOLTAGE            35 // ok
-#define PIN_I2C_SDA               32 // ok
-#define PIN_I2C_SCL               33 // ok
-#define PIN_SERIAL_LCD_TO_ESP     25 // ok
-#define PIN_SERIAL_ESP_TO_LCD     26 // ok
-#define PIN_SERIAL_ESP_TO_CNTRL   27 // ok
-#define PIN_SERIAL_CNTRL_TO_ESP   14 // ok
-#define PIN_IN_OUT_DHT            12 // ok
-#define PIN_OUT_BRAKE             13 // ok
-// RIGHT
-#define PIN_SPI_MOSI              23 // use in LCD  // ok
-#define PIN_IN_BUTTON1            22 // ok
-#define PIN_OUT_LED_BUTTON2       21 // ok
-#define PIN_FREE                  19 // ok
-#define PIN_SPI_CLK               18 // use in LCD  // ok
-#define PIN_SPI_BKL               5  // use in LCD  // ok
-#define PIN_SPI_RST               17 // use in LCD  // ok
-#define PIN_OUT_RELAY             16 // ok with voltages >> to test with SSR
-#define PIN_OUT_LED_BUTTON1       4 // ok
-#define PIN_SPI_DC                2 // use in LCD // ok
-#define PIN_IN_BUTTON2            15 // ok
-
 #define HAS_I2C 1
-
+// LEFT
+#define PIN_IN_CURRENT 36          // ok >> need calibration
+#define PIN_IN_ATHROTTLE 39        // ~ok >>> missing voltage divider & filter capa
+#define PIN_IN_ABRAKE 34           // ok
+#define PIN_IN_VOLTAGE 35          // ok
+#define PIN_I2C_SDA 32             // ok
+#define PIN_I2C_SCL 33             // ok
+#define PIN_SERIAL_LCD_TO_ESP 25   // ok
+#define PIN_SERIAL_ESP_TO_LCD 26   // ok
+#define PIN_SERIAL_ESP_TO_CNTRL 27 // ok
+#define PIN_SERIAL_CNTRL_TO_ESP 14 // ok
+#define PIN_IN_OUT_DHT 12          // ok
+#define PIN_OUT_BRAKE 13           // ok
+// RIGHT
+#define PIN_SPI_MOSI 23        // use in LCD  // ok
+#define PIN_IN_BUTTON1 22      // ok
+#define PIN_OUT_LED_BUTTON2 21 // ok
+#define PIN_FREE 19            // ok
+#define PIN_SPI_CLK 18         // use in LCD  // ok
+#define PIN_SPI_BKL 5          // use in LCD  // ok
+#define PIN_SPI_RST 17         // use in LCD  // ok
+#define PIN_OUT_RELAY 16       // ok with voltages >> to test with SSR
+#define PIN_OUT_LED_BUTTON1 4  // ok
+#define PIN_SPI_DC 2           // use in LCD // ok
+#define PIN_IN_BUTTON2 15      // ok
 #endif
 
 // I2C
@@ -357,6 +353,12 @@ void setupPins()
   pinMode(PIN_OUT_LED_BUTTON2, OUTPUT);
   pinMode(PIN_IN_ABRAKE, INPUT);
   pinMode(PIN_IN_ATHROTTLE, INPUT);
+
+#if MINIMO_PWM_BRAKE
+  ledcAttachPin(PIN_OUT_BRAKE, 1);
+  ledcSetup(1, 9, 8);
+  ledcWrite(1, 0);
+#endif
 }
 
 /*
@@ -389,7 +391,7 @@ void setupEFuse()
 }
 */
 
-#ifdef HAS_I2C
+#if HAS_I2C
 void setupI2C()
 {
 
@@ -614,6 +616,7 @@ void setup()
   Serial.println(PSTR("   serial ..."));
   setupSerial();
 
+#if HAS_I2C
   Serial.println(PSTR("   i2c ..."));
   setupI2C();
 
@@ -622,6 +625,7 @@ void setup()
 
   Serial.println(PSTR("   shtc3 ..."));
   setupShtc3();
+#endif
 
   Serial.println(PSTR("   eeprom ..."));
   setupEPROMM();
@@ -861,7 +865,19 @@ void getBrakeFromAnalog()
       // alarm controler from braking
       if ((brakeFilterMeanErr > shrd.brakeFilterInitMean + ANALOG_BRAKE_MIN_OFFSET) && (!shrd.brakeFordidenHighVoltage))
       {
+
+#if MINIMO_PWM_BRAKE
+        int32_t brakePwm = brakeAnalogValue - shrd.brakeFilterInitMean;
+        if (brakePwm < 0)
+          brakePwm = 0;
+        brakePwm = brakePwm / (((float)shrd.brakeMaxPressureRaw - shrd.brakeFilterInitMean) / 200) ;
+        if (brakePwm > 200)
+          brakePwm = 200;
+        ledcWrite(1, brakePwm+55);
+        Serial.printf("pwm = %d\n", brakePwm);
+#else
         digitalWrite(PIN_OUT_BRAKE, 1);
+#endif
 
         if (shrd.brakeStatus == 0)
         {
@@ -877,7 +893,11 @@ void getBrakeFromAnalog()
       }
       else
       {
+#if MINIMO_PWM_BRAKE
+        ledcWrite(1, 0);
+#else
         digitalWrite(PIN_OUT_BRAKE, 0);
+#endif
 
         if (shrd.brakeStatus == 1)
         {
@@ -1965,13 +1985,13 @@ void loop()
   if (i_loop % 100 == 8)
   {
     mySHTC3.update(); // Call "update()" to command a measurement, wait for measurement to complete, and update the RH and T members of the object
-    #if DEBUG_DISPLAY_SHTC3
-    Serial.print(mySHTC3.toPercent());              // "toPercent" returns the percent humidity as a floating point number
+#if DEBUG_DISPLAY_SHTC3
+    Serial.print(mySHTC3.toPercent()); // "toPercent" returns the percent humidity as a floating point number
     Serial.print("% / ");
     Serial.print("T = ");
     Serial.print(mySHTC3.toDegC()); // "toDegF" and "toDegC" return the temperature as a flaoting point number in deg F and deg C respectively
     Serial.print(" deg C\n");
-    #endif
+#endif
     shrd.currentTemperature = mySHTC3.toDegC();
     shrd.currentHumidity = mySHTC3.toPercent();
   }
