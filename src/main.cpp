@@ -56,8 +56,9 @@
 #define CONTROLLER_TYPE           CONTROLLER_MINIMOTORS
 #define TFT_ENABLED               1
 #define DEBUG_ESP_HTTP_UPDATE     1
-#define TEST_ADC_DAC_REFRESH      1
+#define TEST_ADC_DAC_REFRESH      0
 #define TEMPERATURE_EXT_READ      1
+#define TEMPERATURE_INT_READ      0
 #define VOLTAGE_EXT_READ          1
 #define BRAKE_ANALOG_EXT_READ     1
 #define THROTTLE_ANALOG_EXT_READ  1
@@ -90,9 +91,9 @@
 #endif
 #ifdef PCB_V132
 // LEFT
-#define PIN_IN_CURRENT            36
+#define PIN_IN_CURRENT            36 // ok >> need calibration
 #define PIN_IN_ATHROTTLE          39 // ~ok >>> missing voltage divider & filter capa
-#define PIN_IN_ABRAKE             34
+#define PIN_IN_ABRAKE             34 // ok
 #define PIN_IN_VOLTAGE            35 // ok
 #define PIN_I2C_SDA               32 // ok
 #define PIN_I2C_SCL               33 // ok
@@ -100,8 +101,8 @@
 #define PIN_SERIAL_ESP_TO_LCD     26 // ok
 #define PIN_SERIAL_ESP_TO_CNTRL   27 // ok
 #define PIN_SERIAL_CNTRL_TO_ESP   14 // ok
-#define PIN_IN_OUT_DHT            12
-#define PIN_OUT_BRAKE             13
+#define PIN_IN_OUT_DHT            12 // ok
+#define PIN_OUT_BRAKE             13 // ok
 // RIGHT
 #define PIN_SPI_MOSI              23 // use in LCD  // ok
 #define PIN_IN_BUTTON1            22 // ok
@@ -110,7 +111,7 @@
 #define PIN_SPI_CLK               18 // use in LCD  // ok
 #define PIN_SPI_BKL               5  // use in LCD  // ok
 #define PIN_SPI_RST               17 // use in LCD  // ok
-#define PIN_OUT_RELAY             16
+#define PIN_OUT_RELAY             16 // ok with voltages >> to test with SSR
 #define PIN_OUT_LED_BUTTON1       4 // ok
 #define PIN_SPI_DC                2 // use in LCD // ok
 #define PIN_IN_BUTTON2            15 // ok
@@ -142,7 +143,7 @@
 
 #define BRAKE_TYPE_ANALOG 1
 #if BRAKE_TYPE_ANALOG
-#define ANALOG_BRAKE_MIN_ERR_VALUE 500
+#define ANALOG_BRAKE_MIN_ERR_VALUE 400
 #define ANALOG_BRAKE_MAX_ERR_VALUE 3500
 #else
 #define ANALOG_BRAKE_MIN_ERR_VALUE 0
@@ -1554,7 +1555,6 @@ void processLockEvent(uint8_t buttonId, bool isLongPress)
 
 void processRelay()
 {
-  /*
   if (shrd.auxOrder == 1)
   {
     digitalWrite(PIN_OUT_RELAY, 1);
@@ -1563,7 +1563,6 @@ void processRelay()
   {
     digitalWrite(PIN_OUT_RELAY, 0);
   }
-  */
 }
 
 void processDHT()
@@ -1963,7 +1962,7 @@ void loop()
   }
 #endif
 
-#if HAS_I2C
+#if HAS_I2C && TEMPERATURE_INT_READ
   if (i_loop % 100 == 8)
   {
     mySHTC3.update(); // Call "update()" to command a measurement, wait for measurement to complete, and update the RH and T members of the object
