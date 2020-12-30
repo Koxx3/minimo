@@ -54,7 +54,7 @@
 
 // SMART CONFIGURATION
 #define CONTROLLER_TYPE           CONTROLLER_MINIMOTORS
-#define TFT_ENABLED               1
+#define TFT_ENABLED               0
 #define DEBUG_ESP_HTTP_UPDATE     1
 #define TEST_ADC_DAC_REFRESH      0
 #define TEMPERATURE_EXT_READ      1
@@ -121,7 +121,6 @@
 #endif
 
 // I2C
-//#define I2C_FREQ 400000
 #define I2C_FREQ 1000000
 
 // UART
@@ -577,7 +576,7 @@ void disableWatchdog()
 
 void taskUpdateTFT(void *parameter)
 {
-  int i = 0;
+  int i = -1;
   for (;;)
   { // infinite loop
 

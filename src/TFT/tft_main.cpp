@@ -65,46 +65,25 @@ void tftBacklightFull()
   ledcWrite(0, 4095);
 }
 
+void tftBacklightLow()
+{
+
+  ledcWrite(0, 0);
+}
+
 void tftSetup(SharedData *shrd, Settings *settings)
 {
 
   _shrd = shrd;
   _settings = settings;
 
+  // dim screen for init
+  tftBacklightLow();
+
   // init TFT
   tft.begin(60000000);
   tft.invertDisplay(1);
   tft.setRotation(1);
-  tft.fillScreen(ILI9341_BLACK);
-
-  tftBacklightFull();
-  
-  // draw splash scree
-  tft.drawRGBBitmap((320 - gimp_image.width) / 2, (240 - gimp_image.height) / 2, (uint16_t *)gimp_image.pixel_data, gimp_image.width, gimp_image.height);
-  delay(2000);
-  tft.fillScreen(ILI9341_BLACK);
-
-
-  // init TFT settings
-  tft.setTextSize(1);
-  tft.setFont(&FORCED_SQUARE6pt7b);
-
-  // draw interface
-  write_text_line(&tft, txt_mode, 174, LINE_2Y - LINE_TEXT_OFFSET, ILI9341_RED);
-  write_text_line(&tft, txt_volts, 266, LINE_2Y - LINE_TEXT_OFFSET, ILI9341_RED);
-  write_text_line(&tft, txt_odo, 80, LINE_3Y - LINE_TEXT_OFFSET, ILI9341_RED);
-  write_text_line(&tft, txt_trip, 175, LINE_3Y - LINE_TEXT_OFFSET, ILI9341_RED);
-  write_text_line(&tft, txt_auton, 263, LINE_3Y - LINE_TEXT_OFFSET, ILI9341_RED);
-  write_text_line(&tft, txt_time, 129, LINE_4Y - LINE_TEXT_OFFSET, ILI9341_RED);
-  write_text_line(&tft, txt_temp, 269, LINE_4Y - LINE_TEXT_OFFSET, ILI9341_RED);
-  write_text_line(&tft, txt_power, 66, LINE_5Y - LINE_TEXT_OFFSET, ILI9341_RED);
-  write_text_line(&tft, txt_current, 148, LINE_5Y - LINE_TEXT_OFFSET, ILI9341_RED);
-  write_text_line(&tft, txt_hr, 285, LINE_5Y - LINE_TEXT_OFFSET, ILI9341_RED);
-
-  tft.fillRect(210, 0, SEP_LINE, 253, ILI_DIGIT_DARK);
-  tft.fillRect(0, 79, 210, SEP_LINE, ILI_DIGIT_DARK);
-  tft.fillRect(0, 189, 210, SEP_LINE, ILI_DIGIT_DARK);
-  tft.fillRect(210, 134, 129, SEP_LINE, ILI_DIGIT_DARK);
 }
 
 static char *Dfmt2_1(double v)
@@ -134,115 +113,151 @@ void tftUpdateData(uint32_t i_loop)
 {
   char fmt[10];
 
-  switch (i_loop % 100)
+  // -1 / show splash screen and init fix datas after
+  if (i_loop == -1)
   {
-  case 0:
-  {
-    sprintf(fmt, "%03.0f", _shrd->speedCurrent);
-    tft_util_draw_number(&tft, fmt, 5, LINE_1Y, ILI9341_WHITE, ILI9341_BLACK, 5, BIG_FONT_SIZE);
-    break;
-  }
+    tft.fillScreen(ILI9341_BLACK);
 
-  case 1:
-  {
-    sprintf(fmt, "%03.0f", _shrd->speedMax);
-    tft_util_draw_number(&tft, fmt, 155, LINE_1Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALLEST_FONT_SIZE);
-    break;
-  }
+    tftBacklightFull();
 
-  case 2:
-  {
-    sprintf(fmt, "%01.0f", (float)_shrd->modeOrder);
-    tft_util_draw_number(&tft, fmt, 185, LINE_2Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
-    break;
-  }
+    // draw splash scree
+    tft.drawRGBBitmap((320 - gimp_image.width) / 2, (240 - gimp_image.height) / 2, (uint16_t *)gimp_image.pixel_data, gimp_image.width, gimp_image.height);
+    delay(2000);
+    tft.fillScreen(ILI9341_BLACK);
 
-  case 3:
-  {
-    sprintf(fmt, "%02.0f", _shrd->currentTemperature);
-    tft_util_draw_number(&tft, fmt, 262, LINE_4Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
-    break;
-  }
+    // init TFT settings
+    tft.setTextSize(1);
+    tft.setFont(&FORCED_SQUARE6pt7b);
 
-  case 4:
-  {
-    sprintf(fmt, "%02.0f", _shrd->currentHumidity);
-    tft_util_draw_number(&tft, fmt, 262, LINE_5Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
-    break;
-  }
+    // draw interface
+    write_text_line(&tft, txt_mode, 174, LINE_2Y - LINE_TEXT_OFFSET, ILI9341_RED);
+    write_text_line(&tft, txt_volts, 266, LINE_2Y - LINE_TEXT_OFFSET, ILI9341_RED);
+    write_text_line(&tft, txt_odo, 80, LINE_3Y - LINE_TEXT_OFFSET, ILI9341_RED);
+    write_text_line(&tft, txt_trip, 175, LINE_3Y - LINE_TEXT_OFFSET, ILI9341_RED);
+    write_text_line(&tft, txt_auton, 263, LINE_3Y - LINE_TEXT_OFFSET, ILI9341_RED);
+    write_text_line(&tft, txt_time, 129, LINE_4Y - LINE_TEXT_OFFSET, ILI9341_RED);
+    write_text_line(&tft, txt_temp, 269, LINE_4Y - LINE_TEXT_OFFSET, ILI9341_RED);
+    write_text_line(&tft, txt_power, 66, LINE_5Y - LINE_TEXT_OFFSET, ILI9341_RED);
+    write_text_line(&tft, txt_current, 148, LINE_5Y - LINE_TEXT_OFFSET, ILI9341_RED);
+    write_text_line(&tft, txt_hr, 285, LINE_5Y - LINE_TEXT_OFFSET, ILI9341_RED);
 
-  case 5:
-  {
-    double power = (_shrd->currentFilterMean / 1000.0 * _shrd->voltageFilterMean / 1000.0);
-    if (power < 0)
-      power = 0;
-    sprintf(fmt, "%05.0f", power);
-    tft_util_draw_number(&tft, fmt, 5, LINE_5Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
-    break;
+    tft.fillRect(210, 0, SEP_LINE, 253, ILI_DIGIT_DARK);
+    tft.fillRect(0, 79, 210, SEP_LINE, ILI_DIGIT_DARK);
+    tft.fillRect(0, 189, 210, SEP_LINE, ILI_DIGIT_DARK);
+    tft.fillRect(210, 134, 129, SEP_LINE, ILI_DIGIT_DARK);
   }
+  else
+  {
+    switch (i_loop % 100)
+    {
+    case 0:
+    {
+      sprintf(fmt, "%03.0f", _shrd->speedCurrent);
+      tft_util_draw_number(&tft, fmt, 5, LINE_1Y, ILI9341_WHITE, ILI9341_BLACK, 5, BIG_FONT_SIZE);
+      break;
+    }
 
-  case 6:
-  {
-    timeToString().toCharArray(fmt, 9);
-    tft_util_draw_number(&tft, fmt, 37, LINE_4Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
-    break;
-  }
+    case 1:
+    {
+      sprintf(fmt, "%03.0f", _shrd->speedMax);
+      tft_util_draw_number(&tft, fmt, 155, LINE_1Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALLEST_FONT_SIZE);
+      break;
+    }
 
-  case 7:
-  {
-    float voltage = _shrd->voltageFilterMean / 1000.0;
-    sprintf(fmt, "%s", Dfmt2_1(voltage));
-    tft_util_draw_number(&tft, fmt, 233, LINE_2Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
-    break;
-  }
+    case 2:
+    {
+      sprintf(fmt, "%01.0f", (float)_shrd->modeOrder);
+      tft_util_draw_number(&tft, fmt, 185, LINE_2Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+      break;
+    }
 
-  case 8:
-  {
-    float distance = _shrd->distanceTrip / 10000.0;
-    sprintf(fmt, "%s", Dfmt2_1(distance));
-    tft_util_draw_number(&tft, fmt, 134, LINE_3Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
-    break;
-  }
+    case 3:
+    {
+      sprintf(fmt, "%02.0f", _shrd->currentTemperature);
+      tft_util_draw_number(&tft, fmt, 262, LINE_4Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+      break;
+    }
 
-  case 9:
-  {
-    float odo = _shrd->distanceOdo;
-    sprintf(fmt, "%05.0f", (odo));
-    tft_util_draw_number(&tft, fmt, 5, LINE_3Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
-    break;
-  }
+    case 4:
+    {
+      sprintf(fmt, "%02.0f", _shrd->currentHumidity);
+      tft_util_draw_number(&tft, fmt, 262, LINE_5Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+      break;
+    }
 
-  case 10:
-  {
-    float autonomy = 65.2;
-    if (autonomy > 999)
-      autonomy = 999;
-    if (autonomy < 0)
-      autonomy = 0;
-    sprintf(fmt, "%03.0f", autonomy);
-    tft_util_draw_number(&tft, fmt, 241, LINE_3Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
-    break;
-  }
+    case 5:
+    {
+      double power = (_shrd->currentFilterMean / 1000.0 * _shrd->voltageFilterMean / 1000.0);
+      if (power < 0)
+        power = 0;
+      sprintf(fmt, "%05.0f", power);
+      tft_util_draw_number(&tft, fmt, 5, LINE_5Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+      break;
+    }
 
-  case 11:
-  {
-    float current = _shrd->currentFilterMean / 1000.0;
-    if (current > 99)
-      current = 99;
-    if (current < 0)
-      current = 0;
-    sprintf(fmt, "%s", Dfmt2_1(current));
-    tft_util_draw_number(&tft, fmt, 134, LINE_5Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
-    break;
-  }
+    case 6:
+    {
+      timeToString().toCharArray(fmt, 9);
+      tft_util_draw_number(&tft, fmt, 37, LINE_4Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+      break;
+    }
 
-  case 12:
-  {
-    float bat_min = _settings->getS3F().Battery_min_voltage / 10.0;
-    float bat_max = _settings->getS3F().Battery_max_voltage / 10.0;
-    float batteryPercent = (1 / ((bat_max - bat_min) / ((_shrd->voltageFilterMean / 1000.0) - bat_min)) * 100);
-    drawBatteryJauge(&tft, batteryPercent);
-    break;
-  }
+    case 7:
+    {
+      float voltage = _shrd->voltageFilterMean / 1000.0;
+      sprintf(fmt, "%s", Dfmt2_1(voltage));
+      tft_util_draw_number(&tft, fmt, 233, LINE_2Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+      break;
+    }
+
+    case 8:
+    {
+      float distance = _shrd->distanceTrip / 10000.0;
+      sprintf(fmt, "%s", Dfmt2_1(distance));
+      tft_util_draw_number(&tft, fmt, 134, LINE_3Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+      break;
+    }
+
+    case 9:
+    {
+      float odo = _shrd->distanceOdo;
+      sprintf(fmt, "%05.0f", (odo));
+      tft_util_draw_number(&tft, fmt, 5, LINE_3Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+      break;
+    }
+
+    case 10:
+    {
+      float autonomy = 65.2;
+      if (autonomy > 999)
+        autonomy = 999;
+      if (autonomy < 0)
+        autonomy = 0;
+      sprintf(fmt, "%03.0f", autonomy);
+      tft_util_draw_number(&tft, fmt, 241, LINE_3Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+      break;
+    }
+
+    case 11:
+    {
+      float current = _shrd->currentFilterMean / 1000.0;
+      if (current > 99)
+        current = 99;
+      if (current < 0)
+        current = 0;
+      sprintf(fmt, "%s", Dfmt2_1(current));
+      tft_util_draw_number(&tft, fmt, 134, LINE_5Y, ILI9341_WHITE, ILI9341_BLACK, 5, SMALL_FONT_SIZE);
+      break;
+    }
+
+    case 12:
+    {
+      float bat_min = _settings->getS3F().Battery_min_voltage / 10.0;
+      float bat_max = _settings->getS3F().Battery_max_voltage / 10.0;
+      float batteryPercent = (1 / ((bat_max - bat_min) / ((_shrd->voltageFilterMean / 1000.0) - bat_min)) * 100);
+      drawBatteryJauge(&tft, batteryPercent);
+      break;
+    }
+    }
   }
 }
