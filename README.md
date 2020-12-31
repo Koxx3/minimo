@@ -4,7 +4,7 @@
 ![Logo](/img/smart.png)
 
 ## What is SmartController ?
-It's a combo of electronic and smartphone application. It extend all features from original Minimotors EYE LCD and Minimotors controller, but it can also interface VESC adnd Kelly controllers.
+It's a combo of electronic and smartphone application. It extend all features from original Minimotors EYE LCD and Minimotors controller, but it can also interface VESC, SmartESC adnd Kelly controllers.
 The electronic board will interract with most of the e-scooter electronic when you plug it.
 You simply place the little box inside the deck and connect it to the controller (and other electric parts if you want more features)
 
