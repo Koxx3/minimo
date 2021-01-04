@@ -10,7 +10,7 @@ You simply place the little box inside the deck and connect it to the controller
 
 ### Requirements
 - An e-scooter with minimotors controllers (single or dual)
-- A constant 12V ouput from the regulator (not only powered when brakes are pressed like some Kaabo)... OR an external DC-DC providing 12V or 5V
+- An power supply between 12V and 80V... (possible with external DC-DC providing 12V or 5V if you have 20S or more)
 - If you want to use progressive brake feature, you must ensure no more than 60V pass in the brake handle (issue noted only for Kaabo)
 - The electronics (ESP32 Dev KitC V4 + SmartController shield + JST SM/PH connectors)
 - Some electronic skills
