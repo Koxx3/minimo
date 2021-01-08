@@ -43,6 +43,8 @@
 
 #define BLE_PIN_CODE 147258
 
+#define MAX_BEACON_INVISIBLE_COUNT 3
+
 BLEScan *BluetoothHandler::pBLEScan;
 BLEServer *BluetoothHandler::pServer;
 BLESecurity *BluetoothHandler::pSecurity;
@@ -67,8 +69,8 @@ BLECharacteristic *BluetoothHandler::pCharacteristicSpeedPid;
 BLECharacteristic *BluetoothHandler::pCharacteristicDistanceRst;
 
 int8_t BluetoothHandler::bleLockStatus;
-int8_t BluetoothHandler::blePicclyVisible;
-int8_t BluetoothHandler::blePicclyRSSI;
+int8_t BluetoothHandler::bleBeaconVisible;
+int8_t BluetoothHandler::bleBeaconRSSI;
 int8_t BluetoothHandler::bleLockForced;
 int8_t BluetoothHandler::fastUpdate;
 
@@ -77,6 +79,8 @@ bool BluetoothHandler::oldDeviceConnected;
 
 Settings *BluetoothHandler::settings;
 SharedData *BluetoothHandler::shrd;
+
+uint32_t bleBeaconInvisibleCount = 0;
 
 bool isBtEnabled;
 
@@ -132,10 +136,10 @@ void BluetoothHandler::init(Settings *data)
                 }
                 if (settings->getS1F().Bluetooth_lock_mode == 2)
                 {
-                    if (!blePicclyVisible)
+                    if (!bleBeaconVisible)
                     {
                         bleLockStatus = true;
-                        Serial.println(" ==> device disconnected / PICLLY not visible ==> LOCK decision");
+                        Serial.println(" ==> device disconnected / Beacon not visible ==> LOCK decision");
                         Serial.println("-------------------------------------");
                     }
                 }
@@ -593,8 +597,8 @@ void BluetoothHandler::init(Settings *data)
 
                 // byte value[4];
                 // value[0] = bleLockStatus;
-                // value[1] = blePicclyVisible;
-                // value[2] = blePicclyRSSI;
+                // value[1] = bleBeaconVisible;
+                // value[2] = bleBeaconRSSI;
                 // value[3] = bleLockForced;
                 // pCharacteristicBtlockStatus->setValue((uint8_t *)&value, 4);
 
@@ -847,17 +851,17 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
     Serial.println(scanResults.getCount());
 #endif
 
-    bool newBlePicclyVisible = false;
+    bool newBleBeaconVisible = false;
 
     for (int i = 0; i < scanResults.getCount(); i++)
     {
         String name = scanResults.getDevice(i).getName().c_str();
-        blePicclyRSSI = scanResults.getDevice(i).getRSSI();
+        bleBeaconRSSI = scanResults.getDevice(i).getRSSI();
         std::string address = scanResults.getDevice(i).getAddress().toString();
         String addressStr = address.c_str();
 
-        String addressPicclySettings = settings->getS2F().Beacon_Mac_Address;
-        addressPicclySettings = addressPicclySettings.substring(0, 17);
+        String addressBeaconSettings = settings->getS2F().Beacon_Mac_Address;
+        addressBeaconSettings = addressBeaconSettings.substring(0, 17);
 
 #if DEBUG_DISPLAY_BLE_SCAN
         Serial.print("BLH - BLE device : address : ");
@@ -865,61 +869,88 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
         Serial.print(" / name : ");
         Serial.print(name);
         Serial.print(" / rssi : ");
-        Serial.print(blePicclyRSSI);
+        Serial.print(bleBeaconRSSI);
         Serial.print(" / search for : ");
-        Serial.println(addressPicclySettings);
+        Serial.println(addressBeaconSettings);
 #endif
 
-        if (addressPicclySettings.equals(addressStr))
+        if (addressBeaconSettings.equals(addressStr))
         {
-            if (blePicclyRSSI < settings->getS1F().Beacon_range)
+            if (bleBeaconRSSI < settings->getS1F().Beacon_range)
             {
+
 #if DEBUG_DISPLAY_BLE_SCAN
-                Serial.print("BLH -  ==> PICC-LY found ... but too far away / RSSI = ");
-                Serial.print(blePicclyRSSI);
+                Serial.print("BLH -  ==> Beacon found ... but too far away / RSSI = ");
+                Serial.print(bleBeaconRSSI);
                 Serial.print(" / min RSSI required = ");
                 Serial.print(settings->getS1F().Beacon_range);
                 Serial.println(" ==> lock from scan");
+                Serial.println();
 #endif
-                newBlePicclyVisible = false;
             }
             else
             {
+
+                bleBeaconInvisibleCount = 0;
+                newBleBeaconVisible = true;
+
 #if DEBUG_DISPLAY_BLE_SCAN
-                Serial.print("BLH -  ==> PICC-LY found  / RSSI = ");
-                Serial.print(blePicclyRSSI);
+                Serial.print("BLH -  ==> Beacon found  / RSSI = ");
+                Serial.print(bleBeaconRSSI);
                 Serial.print(" / min RSSI required = ");
                 Serial.print(settings->getS1F().Beacon_range);
                 Serial.println(" ==> unlock from scan");
+                Serial.println();
 #endif
-                newBlePicclyVisible = true;
             }
         }
     }
 
-    // store piclyy status
-    blePicclyVisible = newBlePicclyVisible;
+    // count beacon invible times
+    if (!newBleBeaconVisible)
+    {
+        bleBeaconInvisibleCount++;
+        if (bleBeaconInvisibleCount >= MAX_BEACON_INVISIBLE_COUNT)
+        {
+            newBleBeaconVisible = false;
+#if DEBUG_DISPLAY_BLE_SCAN
+            Serial.printf("BLH -  ==> Beacon not found  / bleBeaconInvisibleCount = %d\n", bleBeaconInvisibleCount);
+#endif
+        }
+        else
+        {
+            newBleBeaconVisible = true;
+#if DEBUG_DISPLAY_BLE_SCAN
+            Serial.printf("BLH -  ==> Beacon not found  / bleBeaconInvisibleCount = %d\n", bleBeaconInvisibleCount);
+#endif
+        }
+    }
+
+    // store beacon status
+    bleBeaconVisible = newBleBeaconVisible;
 
     if (bleLockForced == 0)
     {
         if (settings->getS1F().Bluetooth_lock_mode == 2)
         {
-            if ((!blePicclyVisible) && (!deviceConnected))
+            if ((!bleBeaconVisible) && (!deviceConnected))
             {
                 bleLockStatus = 1;
 
 #if DEBUG_DISPLAY_BLE_SCAN
-                Serial.println(" ==> PICLLY not visible // smartphone not connected ==> LOCK decision");
+                Serial.println(" ==> Beacon not visible // smartphone not connected ==> LOCK decision");
                 Serial.println("-------------------------------------");
+                Serial.println();
 #endif
             }
-            else if ((!blePicclyVisible) && (deviceConnected))
+            else if ((!bleBeaconVisible) && (deviceConnected))
             {
                 bleLockStatus = 0;
 
 #if DEBUG_DISPLAY_BLE_SCAN
-                Serial.println(" ==> PICLLY visible // smartphone connected ==> UNLOCK decision");
+                Serial.println(" ==> Beacon visible // smartphone connected ==> UNLOCK decision");
                 Serial.println("-------------------------------------");
+                Serial.println();
 #endif
             }
             else
@@ -928,21 +959,21 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
         }
         if (settings->getS1F().Bluetooth_lock_mode == 3)
         {
-            if (!blePicclyVisible)
+            if (!bleBeaconVisible)
             {
                 bleLockStatus = 1;
 
 #if DEBUG_DISPLAY_BLE_SCAN
-                Serial.println(" ==> PICLLY not visible ==> LOCK decision");
+                Serial.println(" ==> Beacon not visible ==> LOCK decision");
                 Serial.println("-------------------------------------");
 #endif
             }
-            else if (blePicclyVisible)
+            else if (bleBeaconVisible)
             {
                 bleLockStatus = 0;
 
 #if DEBUG_DISPLAY_BLE_SCAN
-                Serial.println(" ==> PICLLY visible ==> UNLOCK decision");
+                Serial.println(" ==> Beacon visible ==> UNLOCK decision");
                 Serial.println("-------------------------------------");
 #endif
             }
@@ -952,20 +983,20 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
     notifyBleLock();
 
     // launch new scan
-    pBLEScan->start(5, &bleOnScanResults, false);
+    pBLEScan->start(10, &bleOnScanResults, false);
 
     // set BT lock
     // if ((!deviceConnected))
     // {
-    //   if (!blePicclyVisible)
+    //   if (!bleBeaconVisible)
     //   {
     //     bleLockStatus = true;
-    //     Serial.println(" ==> no device connected and PICC-LY no found ==> LOCK decision");
+    //     Serial.println(" ==> no device connected and Beacon no found ==> LOCK decision");
     //   }
     //   else
     //   {
     //     bleLockStatus = false;
-    //     Serial.println(" ==> no device connected and PICC-LY found ==> UNLOCK decision");
+    //     Serial.println(" ==> no device connected and Beacon found ==> UNLOCK decision");
     //   }
     // }
 }
@@ -1126,8 +1157,8 @@ void BluetoothHandler::notifyBleLock()
 {
     byte value[4];
     value[0] = bleLockStatus;
-    value[1] = blePicclyVisible;
-    value[2] = blePicclyRSSI;
+    value[1] = bleBeaconVisible;
+    value[2] = bleBeaconRSSI;
     value[3] = bleLockForced;
     pCharacteristicBtlockStatus->setValue((uint8_t *)&value, 4);
     pCharacteristicBtlockStatus->notify();
@@ -1135,10 +1166,10 @@ void BluetoothHandler::notifyBleLock()
 #if DEBUG_DISPLAY_BLE_NOTIFY
     Serial.print("BLH - notifyBleLock : bleLockStatus = ");
     Serial.print(bleLockStatus);
-    Serial.print(" / blePicclyVisible = ");
-    Serial.print(blePicclyVisible);
-    Serial.print(" / blePicclyRSSI = ");
-    Serial.print(blePicclyRSSI);
+    Serial.print(" / bleBeaconVisible = ");
+    Serial.print(bleBeaconVisible);
+    Serial.print(" / bleBeaconRSSI = ");
+    Serial.print(bleBeaconRSSI);
 
     Serial.print(" / bleLockForced = ");
     Serial.print(bleLockForced);

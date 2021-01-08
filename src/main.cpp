@@ -4,12 +4,11 @@
 // TODO : LCD error indicators
 // TODO : mode Z button/settings
 // TODO : auto mode shift on low battery
-// TODO : original regulator perturbation
 // TODO : exponential throttle
 // TODO : change OTA to AWS
-// TODO : PWM braking signal test
 // TODO : reduce SHTC3 read time - brake read function in 2 parts
-// BUG : beacon signal variation lock escooter
+// BUG : original regulator perturbation
+// BUGFIX IN TEST : beacon signal variation lock escooter
 // BUG : mode Z / android
 // BUG : push button make brake analog read wrong
 //////////////////////////////////////////
@@ -874,7 +873,7 @@ void getBrakeFromAnalog()
         if (brakePwm > 200)
           brakePwm = 200;
         ledcWrite(1, brakePwm+55);
-        Serial.printf("pwm = %d\n", brakePwm);
+        Serial.printf("brake pwm = %d\n", brakePwm);
 #else
         digitalWrite(PIN_OUT_BRAKE, 1);
 #endif

@@ -59,8 +59,8 @@ public:
     static BLECharacteristic *pCharacteristicDistanceRst;
 
     static int8_t bleLockStatus;
-    static int8_t blePicclyVisible;
-    static int8_t blePicclyRSSI;
+    static int8_t bleBeaconVisible;
+    static int8_t bleBeaconRSSI;
     static int8_t bleLockForced;
     static int8_t fastUpdate;
 
