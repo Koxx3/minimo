@@ -149,9 +149,9 @@ Wiring (left to right):
 You need a wrap for 10.5cm / diameter 33mm
 [Link](https://fr.aliexpress.com/item/4000787511699.html)
 
-## Once you receive the board and the components 
+## Once you assembled the board and the components 
 
-Assemble it, and upload the application :D
+Upload the applications :D
 
 [Next steps ...](RUN.md)
 
