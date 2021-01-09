@@ -35,35 +35,36 @@ You can also add the external sensors :
 
 ## Minimal soldering
 
+### Jumper for direct throlle
 ![Jumper for direct throlle](/img/pcb_typon_mini1.png)
 
+### Power supply capacitor
 ![Capacitor](/img/pcb_typon_mini2.png)
 
+### JST-SM cables - display 
 ![JST-SM cables - display](/img/pcb_typon_mini4.png)
 
 Wiring (left to right) :
-1 - black - 
-2 - red - 
-3 - orange or blue - throttle signal
-4 - white - GND
-5 - yellow - battery feedback
-6 - green - battery power
+- 1 - black - 
+- 2 - red - 
+- 3 - orange or blue - throttle signal
+- 4 - white - GND
+- 5 - yellow - battery feedback
+- 6 - green - battery power
 
+### JST-SM cables - controller
 ![JST-SM cables - controller](/img/pcb_typon_mini5.png)
 
-
 Wiring (left to right) :
-1 - black - 
-2 - red - 
-3 - orange or blue - throttle signal
-4 - white - GND
-5 - yellow - battery feedback
-6 - green - battery power
+- 1 - black - 
+- 2 - red - 
+- 3 - orange or blue - throttle signal
+- 4 - white - GND
+- 5 - yellow - battery feedback
+- 6 - green - battery power
 
-... and finish with ESP32
-
+### ... and finish with ESP32
 ![ESP32](/img/pcb_typon_mini3.png)
-
 
 ## Wrap it
 You need a wrap for 10.5cm / diameter 33mm
