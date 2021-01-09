@@ -45,8 +45,8 @@ You can also add the external sensors :
 ![JST-SM cables - display](/img/pcb_typon_mini4.png)
 
 Wiring (left to right) :
-- 1 - black - 
-- 2 - red - 
+- 1 - black - serial / ESP to LCD
+- 2 - red - serial / LCD to ESP
 - 3 - orange or blue - throttle signal
 - 4 - white - GND
 - 5 - yellow - battery feedback
@@ -56,8 +56,8 @@ Wiring (left to right) :
 ![JST-SM cables - controller](/img/pcb_typon_mini5.png)
 
 Wiring (left to right) :
-- 1 - black - 
-- 2 - red - 
+- 1 - black - serial / controller to ESP
+- 2 - red - serial / ESP to controller
 - 3 - orange or blue - throttle signal
 - 4 - white - GND
 - 5 - yellow - battery feedback
@@ -65,6 +65,8 @@ Wiring (left to right) :
 
 ### ... and finish with ESP32
 ![ESP32](/img/pcb_typon_mini3.png)
+
+- USB port on the left side
 
 ## Wrap it
 You need a wrap for 10.5cm / diameter 33mm
