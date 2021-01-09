@@ -64,12 +64,6 @@ Wiring (left to right) :
 - 5 - yellow - battery feedback
 - 6 - green - battery power
 
-### ... and finish with ESP32
-![ESP32](/img/pcb_typon_mini3.png)
-
-- leave right pin on the right unconnected (unused)
-- USB port on the left side
-
 ## Other connector
 
 ### Brake output
@@ -144,6 +138,22 @@ Wiring (left to right):
 - 4 - button 1 LED
 - 5 - button 2 LED
 - 6 - GND
+
+### Solid State relays
+![ESP32](/img/pcb_typon_max10.png)
+
+Wiring :
+- usually pin 1/2 are at the bottom. Check the SSR datasheet.
+- 1 (bottom left) - IO 3.3V
+- 2 (bottom right) - GND
+- 3 (upper right) - IO out
+- 4 (upper left) - IO out
+
+## Finish with ESP32
+![ESP32](/img/pcb_typon_mini3.png)
+
+- leave right pin on the right unconnected (unused)
+- USB port on the left side
 
 ## Wrap it
 You need a wrap for 10.5cm / diameter 33mm
