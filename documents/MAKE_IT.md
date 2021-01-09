@@ -17,7 +17,8 @@ You'll have to order the missing components on aliexpress or any electronic stor
 The major non included components are :
 - SMD relays
 - connectors
-- DC-DC module for 5V power
+- Power supply capacitor
+- Solid State Relay (DIP4 package)
 
 Check the project here : https://oshwlab.com/Koxx3/smartlcd-v1-3_copy
 
@@ -35,35 +36,87 @@ You can also add the external sensors :
 
 ## Minimal soldering
 
+### Jumper for direct throlle
 ![Jumper for direct throlle](/img/pcb_typon_mini1.png)
 
+### Power supply capacitor
 ![Capacitor](/img/pcb_typon_mini2.png)
 
+### JST-SM cables - display 
 ![JST-SM cables - display](/img/pcb_typon_mini4.png)
 
 Wiring (left to right) :
-1 - black - 
-2 - red - 
-3 - orange or blue - throttle signal
-4 - white - GND
-5 - yellow - battery feedback
-6 - green - battery power
+- 1 - black - serial / ESP to LCD
+- 2 - red - serial / LCD to ESP
+- 3 - orange or blue - throttle signal
+- 4 - white - GND
+- 5 - yellow - battery feedback
+- 6 - green - battery power
 
+### JST-SM cables - controller
 ![JST-SM cables - controller](/img/pcb_typon_mini5.png)
 
-
 Wiring (left to right) :
-1 - black - 
-2 - red - 
-3 - orange or blue - throttle signal
-4 - white - GND
-5 - yellow - battery feedback
-6 - green - battery power
+- 1 - black - serial / controller to ESP
+- 2 - red - serial / ESP to controller
+- 3 - orange or blue - throttle signal
+- 4 - white - GND
+- 5 - yellow - battery feedback
+- 6 - green - battery power
 
-... and finish with ESP32
-
+### ... and finish with ESP32
 ![ESP32](/img/pcb_typon_mini3.png)
 
+- leave right pin on the right unconnected (unused)
+- USB port on the left side
+
+## Other connector
+
+### Brake output
+![ESP32](/img/pcb_typon_max1.png)
+
+Wiring :
+- no pin order (relay)
+- max voltage/current : depends of Solid state relay you placed
+
+### Relay output
+![ESP32](/img/pcb_typon_max2.png)
+
+Wiring :
+- no pin order (relay)
+- max voltage/current : depends of Solid state relay you placed
+
+### Brake input
+![ESP32](/img/pcb_typon_max3.png)
+
+Wiring (right to left):
+- 1 - 5V
+- 2 - GND
+- 3 - signal
+
+### DHT22 external temperature/humidity sensor
+![ESP32](/img/pcb_typon_max4.png)
+
+Wiring (right to left):
+- 1 - 5V
+- 2 - GND
+- 3 - signal
+
+
+### WCS1700 current sensor
+![ESP32](/img/pcb_typon_max5.png)
+
+Wiring (right to left):
+- 1 - 5V
+- 2 - GND
+- 3 - signal
+
+
+### LCD display
+![ESP32](/img/pcb_typon_max5.png)
+
+Wiring (down to up):
+- TBD
 
 ## Wrap it
 You need a wrap for 10.5cm / diameter 33mm
