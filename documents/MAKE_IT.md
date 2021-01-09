@@ -66,6 +66,7 @@ Wiring (left to right) :
 ### ... and finish with ESP32
 ![ESP32](/img/pcb_typon_mini3.png)
 
+- leave right pin on the right unconnected (unused)
 - USB port on the left side
 
 ## Wrap it
