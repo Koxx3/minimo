@@ -113,10 +113,37 @@ Wiring (right to left):
 
 
 ### LCD display
-![ESP32](/img/pcb_typon_max5.png)
+![ESP32](/img/pcb_typon_max6.png)
 
 Wiring (down to up):
 - TBD
+
+### Throttle power
+![ESP32](/img/pcb_typon_max7.png)
+
+Wiring (left to right):
+- 1 - 5V
+- 2 - GND
+
+### Throttle signals
+![ESP32](/img/pcb_typon_max8.png)
+
+Wiring (left to right):
+- 1 - ESP to controller
+- 2 - output to controller
+- 3 - input from display
+- 4 - display to ESP
+
+### Buttons & LEDs
+![ESP32](/img/pcb_typon_max9.png)
+
+Wiring (left to right):
+- 1 - GND
+- 2 - button 2
+- 3 - button 1
+- 4 - button 1 LED
+- 5 - button 2 LED
+- 6 - GND
 
 ## Wrap it
 You need a wrap for 10.5cm / diameter 33mm
