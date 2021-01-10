@@ -35,10 +35,12 @@ Some examples :
 
 **>>> [Check all detailed features here](/documents/FEATURES.md) <<<**
 
-## Board assembly (v1.3.0)
-![Ass1](/img/SmartController_board_ass_v130_1.jpg)
+## Board assembly (v1.3.2)
+![Ass1](/img/20210109_134700.jpg)
 
-![Ass2](/img/SmartController_board_ass_v130_2.jpg)
+![Ass2](/img/20210109_134706.jpg)
+
+![Ass3](/img/20210109_134713.jpg)
 
 ## Wrapping & Size
 Current PCB size : 6cm x 3cm x 2cm
