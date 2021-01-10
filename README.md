@@ -40,10 +40,10 @@ Some examples :
 
 ![Ass2](/img/SmartController_board_ass_v130_2.jpg)
 
-## Case and size
-Current size : 6cm x 3cm x 3cm (will shrink a little at final stage - 6cm x 3cm x 2.2cm)
+## Wrapping & Size
+Current PCB size : 6cm x 3cm x 2cm
 
-![Idea](/img/SmartController_3D_1.jpg)
+![Idea](/img/20210109_160006.jpg)
 
 ## Electronic
 ### Compatibility
