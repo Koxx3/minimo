@@ -64,7 +64,7 @@ Wiring (left to right) :
 - 5 - yellow - battery feedback
 - 6 - green - battery power
 
-## Other connector
+## Other components/connectors
 
 ### Brake output
 ![ESP32](/img/pcb_typon_max1.png)

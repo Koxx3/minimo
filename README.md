@@ -40,17 +40,17 @@ Some examples :
 
 ![Ass2](/img/SmartController_board_ass_v130_2.jpg)
 
-## Case and size
-Current size : 6cm x 3cm x 3cm (will shrink a little at final stage - 6cm x 3cm x 2.2cm)
+## Wrapping & Size
+Current PCB size : 6cm x 3cm x 2cm
 
-![Idea](/img/SmartController_3D_1.jpg)
+![Idea](/img/20210109_160006.jpg)
 
 ## Electronic
 ### Compatibility
 The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html) microcontroller.
 
 ### Schematics
-[PCB schematic](https://easyeda.com/Koxx3/smartlcd-v1-3_copy)
+[PCB schematic v1.3.3](https://oshwlab.com/Koxx3/smartlcd-v1-3_copy_copy_copy)
 
 ![PCB from easyEDA](/img/pcb_typon.png)
 
@@ -89,6 +89,11 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Decode datas : speed, voltage, controller temperature
     - [ ] Error codes processing
  
+- [✅] [SmartESC v1](https://github.com/Koxx3/SmartESC_STM32)
+    - [✅] Read serial link
+    - [✅] Decode datas : speed, voltage, controller temperature
+    - [ ] Error codes processing
+ 
 - [ ] Serial Kaabo / Zero / Appolo
 
 - [✅] Bluetooth 
@@ -110,12 +115,12 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Send break handle position to controller
     - [✅] Send LED status
     - [✅] Send optocopler order
-    - [IN PROGRESS 🔄] Internal temperature sensor
+    - [✅] Internal temperature sensor
     - [IN PROGRESS 🔄] Throttle signal regeneration
 
 - [ ] Power 🔋
     - [✅] Convert 12V to 5V
-    - [IN PROGRESS 🔄] Convert 80V to 5V
+    - [✅] Convert 80V to 5V
 
 - [ ] Features ⚙️
     - [✅] Save settings in non volatile memory
