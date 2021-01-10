@@ -685,6 +685,17 @@ void getBrakeFromAnalog()
     int brakeFilterMean = brakeFilter.getMean();
     int brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
 
+    // if brake is pressed at startup, disable speed limiter
+    if ((brakeFilterMeanErr > shrd.brakeMaxPressureRaw - ANALOG_BRAKE_MIN_OFFSET) && (i_loop < 100))
+    {
+      shrd.speedLimiter = 0;
+
+      blh.notifySpeedLimiterStatus(shrd.speedLimiter);
+
+      Serial.print("notifySpeedLimiterStatus => disabled by brake / ");
+      Serial.println(shrd.speedLimiter);
+    }
+
     // ignore out of range datas ... and notify
     if (brakeAnalogValue < ANALOG_BRAKE_MIN_ERR_VALUE)
     {
@@ -767,7 +778,7 @@ void getBrakeFromAnalog()
         if (brakePwm > 200)
           brakePwm = 200;
         ledcWrite(1, brakePwm + 55);
-        Serial.printf("brake pwm = %d\n", brakePwm);
+        //Serial.printf("brake pwm = %d\n", brakePwm);
 #else
         digitalWrite(PIN_OUT_BRAKE, 1);
 #endif

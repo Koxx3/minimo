@@ -5,12 +5,6 @@
 #include "EEPROM_storage.h"
 #include "main.h"
 
-/*
-Settings *EEPROMM_storage::settings;
-SharedData *EEPROMM_storage::shrd;
-BluetoothHandler *EEPROMM_storage::blh;
-*/
-
 EEPROMM_storage::EEPROMM_storage()
 {
 }
@@ -58,25 +52,6 @@ void EEPROMM_storage::restoreBleLockForced(int8_t *bleLockForced)
   Serial.print("restore bleLockForced value : ");
   Serial.println(*bleLockForced);
 }
-
-/*
-void EEPROMM_storage::saveBleLockForced()
-{
-  EEPROM.writeBytes(EEPROM_ADDRESS_BLE_LOCK_FORCED, &blh.bleLockForced, sizeof(blh.bleLockForced));
-  EEPROM.commit();
-
-  Serial.print("save bleLockForced value : ");
-  Serial.println(blh.bleLockForced);
-}
-
-void EEPROMM_storage::restoreBleLockForced()
-{
-  EEPROM.readBytes(EEPROM_ADDRESS_BLE_LOCK_FORCED, &blh.bleLockForced, sizeof(blh.bleLockForced));
-
-  Serial.print("restore bleLockForced value : ");
-  Serial.println(blh.bleLockForced);
-}
-*/
 
 void EEPROMM_storage::saveBrakeMinPressure()
 {
