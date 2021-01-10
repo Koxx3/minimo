@@ -89,7 +89,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Decode datas : speed, voltage, controller temperature
     - [ ] Error codes processing
  
-- [✅] SmartESC v1
+- [✅] [SmartESC v1](https://github.com/Koxx3/SmartESC_STM32)
     - [✅] Read serial link
     - [✅] Decode datas : speed, voltage, controller temperature
     - [ ] Error codes processing
