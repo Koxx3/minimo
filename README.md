@@ -91,7 +91,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Decode datas : speed, voltage, controller temperature
     - [ ] Error codes processing
  
-- [✅] [SmartESC v1](https://github.com/Koxx3/SmartESC_STM32)
+- [IN PROGRESS 🔄] [SmartESC v1](https://github.com/Koxx3/SmartESC_STM32)
     - [✅] Read serial link
     - [✅] Decode datas : speed, voltage, controller temperature
     - [ ] Error codes processing
@@ -120,7 +120,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Internal temperature sensor
     - [IN PROGRESS 🔄] Throttle signal regeneration
 
-- [ ] Power 🔋
+- [✅] Power 🔋
     - [✅] Convert 12V to 5V
     - [✅] Convert 80V to 5V
 
