@@ -18,9 +18,7 @@ public:
   void displaySettings4();
   void displaySettings5();
   void displaySettings();
-  bool restoreSettings();
-  void saveSettings();
-  void initSettings();
+  void init();
 
   // The actions I ca do...
   typedef enum ButtonAction

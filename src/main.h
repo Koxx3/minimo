@@ -1,7 +1,18 @@
 
-void saveBleLockForced();
-void restoreBleLockForced();
-void saveBrakeMaxPressure();
+
+#define BRAKE_TYPE_ANALOG 1
+#if BRAKE_TYPE_ANALOG
+#define ANALOG_BRAKE_MIN_ERR_VALUE 400
+#define ANALOG_BRAKE_MAX_ERR_VALUE 3500
+#else
+#define ANALOG_BRAKE_MIN_ERR_VALUE 0
+#define ANALOG_BRAKE_MAX_ERR_VALUE 4095
+#endif
+#define ANALOG_BRAKE_MIN_VALUE 920
+#define ANALOG_BRAKE_MIN_OFFSET 100
+#define ANALOG_BRAKE_MAX_VALUE 2300
+
+
 
 uint8_t modifyBrakeFromAnalog(char, char *);
 
@@ -26,8 +37,14 @@ bool isElectricBrakeForbiden();
 
 void disableWatchdog();
 
+void saveBleLockForced();
+void restoreBleLockForced();
+void saveBrakeMinPressure();
+void saveBrakeMaxPressure();
 void saveOdo();
 void saveBatteryCalib();
+void saveSettings();
+boolean restoreSettings();
 
 void setupAutonomy();
 void setupBattery();

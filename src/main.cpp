@@ -17,13 +17,11 @@
 ////// Inludes
 
 #include <Arduino.h>
-#include <EEPROM.h>
 #include "main.h"
 #include "Settings.h"
 #include "SharedData.h"
 #include "debug.h"
 #include "OneButton.h"
-#include "EEPROM_storage.h"
 #include "EEPROM_storage.h"
 #include <Wire.h>
 #include <Adafruit_MCP4725.h>
@@ -72,7 +70,7 @@
 #define PIN_SERIAL_ESP_TO_CNTRL 27
 #define PIN_SERIAL_LCD_TO_ESP 25
 #define PIN_SERIAL_CNTRL_TO_ESP 14
-#define PIN_OUT_RELAY           16
+#define PIN_OUT_RELAY 16
 #define PIN_IN_VOLTAGE 32
 #define PIN_IN_CURRENT 35
 #define PIN_IN_BUTTON1 22
@@ -130,22 +128,9 @@
 
 #define NB_CURRENT_FILTER_DATA 200
 #define NB_CURRENT_FILTER_CALIB_DATA 200
-#define NB_BRAKE_CALIB_DATA 100
 
 #define NB_AUTONOMY_FILTER_DATA 120
 #define NB_VOLTAGE_FILTER_DATA 100
-
-#define BRAKE_TYPE_ANALOG 1
-#if BRAKE_TYPE_ANALOG
-#define ANALOG_BRAKE_MIN_ERR_VALUE 400
-#define ANALOG_BRAKE_MAX_ERR_VALUE 3500
-#else
-#define ANALOG_BRAKE_MIN_ERR_VALUE 0
-#define ANALOG_BRAKE_MAX_ERR_VALUE 4095
-#endif
-#define ANALOG_BRAKE_MIN_VALUE 920
-#define ANALOG_BRAKE_MIN_OFFSET 100
-#define ANALOG_BRAKE_MAX_VALUE 2300
 
 // BUTTONS
 #define BUTTON_LONG_PRESS_TICK 300
@@ -191,7 +176,7 @@ SharedData shrd;
 
 int i_loop = 0;
 
-uint32_t iBrakeCalibOrder = 0;
+uint32_t iBrakeMinCalibOrder = 0;
 
 uint16_t voltageRaw = 0;
 uint32_t voltageInMilliVolts = 0;
@@ -206,133 +191,14 @@ MedianFilter voltageRawFilter(NB_VOLTAGE_FILTER_DATA, 2000);
 MedianFilter currentFilter(NB_CURRENT_FILTER_DATA, 1830);
 MedianFilter currentFilterInit(NB_CURRENT_FILTER_CALIB_DATA, 1830);
 MedianFilter brakeFilter(10 /* 20 */, 900);
-MedianFilter brakeFilterInit(NB_BRAKE_CALIB_DATA, 900);
+//MedianFilter brakeMaxFilterInit(NB_BRAKE_CALIB_DATA, 900);
 MedianFilter autonomyLeftFilter(NB_AUTONOMY_FILTER_DATA, 0);
 
 Settings settings;
-
 BluetoothHandler blh;
+EEPROMM_storage eeprom;
 
 PID pidSpeed(&shrd.pidInput, &shrd.pidOutput, &shrd.pidSetpoint, shrd.speedPidKp, shrd.speedPidKi, shrd.speedPidKd, DIRECT);
-
-//////------------------------------------
-////// EEPROM functions
-
-void saveBleLockForced()
-{
-  EEPROM.writeBytes(EEPROM_ADDRESS_BLE_LOCK_FORCED, &blh.bleLockForced, sizeof(blh.bleLockForced));
-  EEPROM.commit();
-
-  Serial.print("save bleLockForced value : ");
-  Serial.println(blh.bleLockForced);
-}
-
-void restoreBleLockForced()
-{
-  EEPROM.readBytes(EEPROM_ADDRESS_BLE_LOCK_FORCED, &blh.bleLockForced, sizeof(blh.bleLockForced));
-
-  Serial.print("restore bleLockForced value : ");
-  Serial.println(blh.bleLockForced);
-}
-
-void saveBrakeMaxPressure()
-{
-  EEPROM.writeBytes(EEPROM_ADDRESS_BRAKE_MAX_PRESSURE, &shrd.brakeMaxPressureRaw, sizeof(shrd.brakeMaxPressureRaw));
-  EEPROM.commit();
-
-  Serial.print("save saveBrakeMaxPressure value : ");
-  Serial.println(shrd.brakeMaxPressureRaw);
-}
-
-void restoreBrakeMaxPressure()
-{
-  EEPROM.readBytes(EEPROM_ADDRESS_BRAKE_MAX_PRESSURE, &shrd.brakeMaxPressureRaw, sizeof(shrd.brakeMaxPressureRaw));
-
-  Serial.print("restore restoreBrakeMaxPressure value : ");
-  Serial.println(shrd.brakeMaxPressureRaw);
-
-  if (shrd.brakeMaxPressureRaw == -1)
-    shrd.brakeMaxPressureRaw = ANALOG_BRAKE_MAX_VALUE;
-}
-
-void saveOdo()
-{
-  EEPROM.writeBytes(EEPROM_ADDRESS_ODO, &shrd.distanceOdo, sizeof(shrd.distanceOdo));
-  EEPROM.commit();
-
-  Serial.print("save saveOdo value : ");
-  Serial.println(shrd.distanceOdo);
-}
-
-void restoreOdo()
-{
-  EEPROM.readBytes(EEPROM_ADDRESS_ODO, &shrd.distanceOdo, sizeof(shrd.distanceOdo));
-
-  shrd.distanceOdoInFlash = shrd.distanceOdo;
-  shrd.distanceOdoBoot = shrd.distanceOdo;
-
-  Serial.print("restore restoreOdo value : ");
-  Serial.println(shrd.distanceOdo);
-
-  if (shrd.distanceOdo == 0xffffffff)
-  {
-    shrd.distanceOdo = 0;
-    shrd.distanceOdoBoot = 0;
-    shrd.distanceOdoInFlash = 0;
-    saveOdo();
-    Serial.print("==> ODO init at 0");
-  }
-}
-
-void saveBatteryCalib()
-{
-  // Read EEPROM
-  int EEAddr = EEPROM_ADDRESS_BATTERY_CALIB;
-  EEPROM.put(EEAddr, shrd.batteryMaxVoltageCalibUser);
-  EEAddr += sizeof(shrd.batteryMaxVoltageCalibUser);
-  EEPROM.put(EEAddr, shrd.batteryMaxVoltageCalibRaw);
-  EEAddr += sizeof(shrd.batteryMaxVoltageCalibRaw);
-  EEPROM.put(EEAddr, shrd.batteryMinVoltageCalibUser);
-  EEAddr += sizeof(shrd.batteryMinVoltageCalibUser);
-  EEPROM.put(EEAddr, shrd.batteryMinVoltageCalibRaw);
-  EEAddr += sizeof(shrd.batteryMinVoltageCalibRaw);
-
-  EEPROM.commit();
-
-  Serial.println("save BatteryCalib value : ");
-  Serial.print("  batteryMaxVoltageCalibUser : ");
-  Serial.println(shrd.batteryMaxVoltageCalibUser);
-  Serial.print("  batteryMaxVoltageCalibRaw : ");
-  Serial.println(shrd.batteryMaxVoltageCalibRaw);
-  Serial.print("  batteryMinVoltageCalibUser : ");
-  Serial.println(shrd.batteryMinVoltageCalibUser);
-  Serial.print("  batteryMinVoltageCalibRaw : ");
-  Serial.println(shrd.batteryMinVoltageCalibRaw);
-}
-
-void restoreBatteryCalib()
-{
-  // Read EEPROM
-  int EEAddr = EEPROM_ADDRESS_BATTERY_CALIB;
-  EEPROM.get(EEAddr, shrd.batteryMaxVoltageCalibUser);
-  EEAddr += sizeof(shrd.batteryMaxVoltageCalibUser);
-  EEPROM.get(EEAddr, shrd.batteryMaxVoltageCalibRaw);
-  EEAddr += sizeof(shrd.batteryMaxVoltageCalibRaw);
-  EEPROM.get(EEAddr, shrd.batteryMinVoltageCalibUser);
-  EEAddr += sizeof(shrd.batteryMinVoltageCalibUser);
-  EEPROM.get(EEAddr, shrd.batteryMinVoltageCalibRaw);
-  EEAddr += sizeof(shrd.batteryMinVoltageCalibRaw);
-
-  Serial.println("restore BatteryCalib value : ");
-  Serial.print("  batteryMaxVoltageCalibUser : ");
-  Serial.println(shrd.batteryMaxVoltageCalibUser);
-  Serial.print("  batteryMaxVoltageCalibRaw : ");
-  Serial.println(shrd.batteryMaxVoltageCalibRaw);
-  Serial.print("  batteryMinVoltageCalibUser : ");
-  Serial.println(shrd.batteryMinVoltageCalibUser);
-  Serial.print("  batteryMinVoltageCalibRaw : ");
-  Serial.println(shrd.batteryMinVoltageCalibRaw);
-}
 
 //////------------------------------------
 //////------------------------------------
@@ -468,11 +334,6 @@ void setupSerial()
 #endif
 }
 
-void setupEPROMM()
-{
-  EEPROM.begin(EEPROM_SIZE);
-}
-
 void setupPID()
 {
 
@@ -518,6 +379,35 @@ void setupAutonomy()
   // filter reinit
   for (int i = 0; i < NB_AUTONOMY_FILTER_DATA; i++)
     autonomyLeftFilter.in(autonomyLeft);
+}
+
+void saveBleLockForced()
+{
+  eeprom.saveBleLockForced(&(blh.bleLockForced));
+}
+void restoreBleLockForced()
+{
+  eeprom.restoreBleLockForced(&(blh.bleLockForced));
+}
+void saveBrakeMinPressure()
+{
+  eeprom.saveBrakeMinPressure();
+}
+void saveBrakeMaxPressure()
+{
+  eeprom.saveBrakeMaxPressure();
+}
+void saveOdo()
+{
+  eeprom.saveOdo();
+}
+void saveBatteryCalib()
+{
+  eeprom.saveBatteryCalib();
+}
+void saveSettings()
+{
+  eeprom.saveSettings();
 }
 
 void resetPid()
@@ -627,23 +517,25 @@ void setup()
 #endif
 
   Serial.println(PSTR("   eeprom ..."));
-  setupEPROMM();
-  restoreBleLockForced();
-  restoreBrakeMaxPressure();
-  restoreOdo();
-  restoreBatteryCalib();
+  eeprom.init();
+  eeprom.setSettings(&settings);
+  eeprom.setSharedData(&shrd);
+  eeprom.restoreBleLockForced(&(blh.bleLockForced));
+  eeprom.restoreBrakeMinPressure();
+  eeprom.restoreBrakeMaxPressure();
+  eeprom.restoreOdo();
+  eeprom.restoreBatteryCalib();
 
   Serial.println(PSTR("   settings ..."));
-  bool settingsStatusOk = settings.restoreSettings();
+  bool settingsStatusOk = eeprom.restoreSettings();
   if (!settingsStatusOk)
   {
-    settings.initSettings();
+    settings.init();
   }
   settings.displaySettings();
 
   Serial.println(PSTR("   BLE ..."));
-  //setupBLE();
-  blh.init(&settings);
+  blh.setSettings(&settings);
   blh.setSharedData(&shrd);
 
   Serial.println(PSTR("   pins ..."));
@@ -771,7 +663,7 @@ void computeDistance(float speed)
     Serial.print(shrd.distanceOdo);
 */
 
-    saveOdo();
+    eeprom.saveOdo();
   }
 
 #if DEBUG_DISPLAY_DISTANCE
@@ -841,18 +733,20 @@ void getBrakeFromAnalog()
 
     brakeFilter.in(brakeAnalogValue);
 
-    if ((brakeAnalogValue < 1000) && (shrd.brakeCalibOrder >= 1))
+    /*
+    if ((brakeAnalogValue < 1000) && (shrd.brakeMaxCalibOrder >= 1))
     {
-      brakeFilterInit.in(brakeAnalogValue);
-      shrd.brakeFilterInitMean = brakeFilterInit.getMean();
+      brakeMaxFilterInit.in(brakeAnalogValue);
+      shrd.brakeMinFilterInitMean = brakeMaxFilterInit.getMean();
     }
 
-    iBrakeCalibOrder++;
-    if (iBrakeCalibOrder > NB_BRAKE_CALIB_DATA)
+    iBrakeMinCalibOrder++;
+    if (iBrakeMinCalibOrder > NB_BRAKE_CALIB_DATA)
     {
-      iBrakeCalibOrder = 0;
-      shrd.brakeCalibOrder = 0;
+      iBrakeMinCalibOrder = 0;
+      shrd.brakeMaxCalibOrder = 0;
     }
+*/
 
     if (settings.getS1F().Electric_brake_progressive_mode == 1)
     {
@@ -862,17 +756,17 @@ void getBrakeFromAnalog()
       shrd.brakeFordidenHighVoltage = isElectricBrakeForbiden();
 
       // alarm controler from braking
-      if ((brakeFilterMeanErr > shrd.brakeFilterInitMean + ANALOG_BRAKE_MIN_OFFSET) && (!shrd.brakeFordidenHighVoltage))
+      if ((brakeFilterMeanErr > shrd.brakeMinPressureRaw + ANALOG_BRAKE_MIN_OFFSET) && (!shrd.brakeFordidenHighVoltage))
       {
 
 #if MINIMO_PWM_BRAKE
-        int32_t brakePwm = brakeAnalogValue - shrd.brakeFilterInitMean;
+        int32_t brakePwm = brakeAnalogValue - shrd.brakeMinPressureRaw;
         if (brakePwm < 0)
           brakePwm = 0;
-        brakePwm = brakePwm / (((float)shrd.brakeMaxPressureRaw - shrd.brakeFilterInitMean) / 200) ;
+        brakePwm = brakePwm / (((float)shrd.brakeMaxPressureRaw - shrd.brakeMinPressureRaw) / 200);
         if (brakePwm > 200)
           brakePwm = 200;
-        ledcWrite(1, brakePwm+55);
+        ledcWrite(1, brakePwm + 55);
         Serial.printf("brake pwm = %d\n", brakePwm);
 #else
         digitalWrite(PIN_OUT_BRAKE, 1);
@@ -922,15 +816,15 @@ void getBrakeFromAnalog()
 #endif
 
         char print_buffer[500];
-        sprintf(print_buffer, ">> brakeNotify = f1 : %d / f2 : %d / brakeFilterInitMean : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d / forbid : %d",
+        sprintf(print_buffer, ">> brakeNotify = f1 : %d / f2 : %d / brakeMinPressureRaw : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d / forbid : %d",
                 brakeFilterMean,
                 brakeFilterMeanErr,
-                shrd.brakeFilterInitMean,
+                shrd.brakeMinPressureRaw,
                 brakeAnalogValue,
                 shrd.brakeSentOrder,
                 shrd.brakeSentOrderOld,
                 shrd.brakeStatus,
-                brakeFilterInit.getMean(),
+                shrd.brakeMaxPressureRaw,
                 shrd.brakeFordidenHighVoltage);
         blh.notifyBleLogs(print_buffer);
       }
@@ -952,7 +846,7 @@ void getBrakeFromAnalog()
                 shrd.brakeSentOrder,
                 shrd.brakeSentOrderOld,
                 shrd.brakeStatus,
-                brakeFilterInit.getMean(),
+                shrd.brakeMaxPressureRaw,
                 shrd.brakeFordidenHighVoltage);
 
         Serial.println(print_buffer);
@@ -1305,13 +1199,13 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 
     if (settings.getS1F().Electric_brake_max_value - settings.getS1F().Electric_brake_min_value > 0)
     {
-      step = (shrd.brakeMaxPressureRaw - shrd.brakeFilterInitMean) / (settings.getS1F().Electric_brake_max_value - settings.getS1F().Electric_brake_min_value);
+      step = (shrd.brakeMaxPressureRaw - shrd.brakeMinPressureRaw) / (settings.getS1F().Electric_brake_max_value - settings.getS1F().Electric_brake_min_value);
 
       int brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
-      if (brakeFilterMeanErr > shrd.brakeFilterInitMean)
+      if (brakeFilterMeanErr > shrd.brakeMinPressureRaw)
       {
 
-        diff = brakeFilterMeanErr - shrd.brakeFilterInitMean;
+        diff = brakeFilterMeanErr - shrd.brakeMinPressureRaw;
         diffStep = diff / step;
         shrd.brakeSentOrder = diffStep + settings.getS1F().Electric_brake_min_value;
       }

@@ -88,7 +88,7 @@ BluetoothHandler::BluetoothHandler()
 {
 }
 
-void BluetoothHandler::init(Settings *data)
+void BluetoothHandler::setSettings(Settings *data)
 {
 
     Serial.println("BLH - init");
@@ -375,7 +375,7 @@ void BluetoothHandler::init(Settings *data)
                 // reset speed PID
                 resetPid();
 
-                settings->saveSettings();
+                saveSettings();
             }
             else if (pCharacteristic->getUUID().toString() == SPEED_LIMITER_CHARACTERISTIC_UUID)
             {
@@ -432,7 +432,7 @@ void BluetoothHandler::init(Settings *data)
                     shrd->brakeMaxPressureRaw = shrd->brakeAnalogValue;
                     saveBrakeMaxPressure();
 
-                    Serial.print("BLH - brake current raw value :");
+                    Serial.print("BLH - brake max current raw value :");
                     Serial.println(shrd->brakeAnalogValue);
                 }
                 //BatMaxVoltage(1),
@@ -463,6 +463,15 @@ void BluetoothHandler::init(Settings *data)
                 else if (rxValue[0] == 3)
                 {
                     shrd->currentCalibOrder = valueInt;
+                }
+                //BrakeMinPressure(4),
+                else if (rxValue[0] == 4)
+                {
+                    shrd->brakeMinPressureRaw = shrd->brakeAnalogValue;
+                    saveBrakeMinPressure();
+
+                    Serial.print("BLH - brake min current raw value :");
+                    Serial.println(shrd->brakeAnalogValue);
                 }
 
                 char print_buffer[500];

@@ -89,8 +89,6 @@ void Settings::displaySettings1()
   Serial.println(settings1.fields.LCD_Speed_adjustement);
   Serial.print("// Speed_limiter_max_speed : ");
   Serial.println(settings1.fields.Speed_limiter_max_speed);
-  
-
 }
 
 void Settings::displaySettings2()
@@ -125,7 +123,6 @@ void Settings::displaySettings3()
   Serial.println(settings3.fields.Bluetooth_pin_code);
   Serial.print("// Battery_max_distance : ");
   Serial.println(settings3.fields.Battery_max_distance);
-
 }
 
 void Settings::displaySettings4()
@@ -149,59 +146,8 @@ void Settings::displaySettings()
   displaySettings5();
 }
 
-void Settings::saveSettings()
+void Settings::init()
 {
-  Serial.print("saveSettings : ");
-  Serial.print(sizeof(settings1));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings2));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings3));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings4));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings5));
-  Serial.println(" bytes");
-
-  EEPROM.put(EEPROM_ADDRESS_SETTINGS1, settings1.buffer);
-  EEPROM.put(EEPROM_ADDRESS_SETTINGS2, settings2.buffer);
-  EEPROM.put(EEPROM_ADDRESS_SETTINGS3, settings3.buffer);
-  EEPROM.put(EEPROM_ADDRESS_SETTINGS4, settings4.buffer);
-  EEPROM.put(EEPROM_ADDRESS_SETTINGS5, settings5.buffer);
-  EEPROM.commit();
-}
-
-boolean Settings::restoreSettings()
-{
-
-  Serial.print("restoreSettings : ");
-  Serial.print(sizeof(settings1));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings2));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings3));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings4));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings5));
-  Serial.println(" bytes");
-
-  EEPROM.get(EEPROM_ADDRESS_SETTINGS1, settings1.buffer);
-  EEPROM.get(EEPROM_ADDRESS_SETTINGS2, settings2.buffer);
-  EEPROM.get(EEPROM_ADDRESS_SETTINGS3, settings3.buffer);
-  EEPROM.get(EEPROM_ADDRESS_SETTINGS4, settings4.buffer);
-  EEPROM.get(EEPROM_ADDRESS_SETTINGS5, settings5.buffer);
-
-  if (settings1.buffer[0] == 0xff ||settings1.buffer[1] == 0xff)
-  return false;
-
-  return true;
-}
-
-
-void Settings::initSettings()
-{
-  Serial.print("initSettings : ");
+  Serial.print("Settings::init : ");
   settings3.fields.Bluetooth_pin_code = 147258;
-
 }

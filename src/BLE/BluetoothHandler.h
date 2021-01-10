@@ -4,7 +4,6 @@
 #include "Arduino.h"
 
 #ifndef _BluetoothHandler_h
-
 #define _BluetoothHandler_h
 
 #include <BLEDevice.h>
@@ -13,12 +12,14 @@
 #include <BLE2902.h>
 #include "Settings.h"
 #include "SharedData.h"
+#include "EEPROM_storage.h"
 
 class BluetoothHandler
 {
 public:
     BluetoothHandler();
-    static void init(Settings *);
+    static void setSettings(Settings *);
+    static void setSharedData(SharedData *);
     static void deinit();
     static void bleOnScanResults(BLEScanResults);
     static void notifyBleLock();
@@ -33,7 +34,6 @@ public:
     static void notifyEcoOrder(uint8_t);
     static void notifyAccelOrder(uint8_t);
     static void notifyAuxOrder(uint8_t);
-    static void setSharedData(SharedData *);
 
     static BLEScan *pBLEScan;
     static BLEServer *pServer;
@@ -70,7 +70,6 @@ public:
     static SharedData *shrd;
     static Settings *settings;
 
-    static int8_t test2;
 };
 
 #endif
