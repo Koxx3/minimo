@@ -75,7 +75,6 @@ public:
 
     uint32_t throttleAnalogValue = 0;
 
-    uint32_t currentCalibOrder = 0;
     uint32_t brakeMaxCalibOrder = 1;
 
     uint32_t voltageActual = 0;
@@ -91,8 +90,8 @@ public:
     uint8_t autonomyFilterMean;
     uint32_t autonomyLeft;
 
-    int32_t currentFilterMean = 0;
-    int32_t currentActual = 0;
+    //int32_t currentRawFilterMean = 0;
+    int32_t currentActual = 0; // in milliamps
     uint8_t currentSensorPresent = 1;
 
     MyActions button1ClickStatus = ACTION_OFF;

@@ -51,8 +51,8 @@
 
 // SMART CONFIGURATION
 #define CONTROLLER_TYPE CONTROLLER_MINIMOTORS
-#define MINIMO_PWM_BRAKE 1
-#define TFT_ENABLED 1
+#define MINIMO_PWM_BRAKE 0
+#define TFT_ENABLED 0
 #define DEBUG_ESP_HTTP_UPDATE 1
 #define TEST_ADC_DAC_REFRESH 0
 #define TEMPERATURE_EXT_READ 0
@@ -123,17 +123,17 @@
 #define ANALOG_TO_VOLTS_A 0.0213
 #define ANALOG_TO_VOLTS_B 5.4225
 #define ANALOG_TO_CURRENT 35
-
 #define ANALOG_CURRENT_MIN_RAW_READING 100
-
-#define NB_CURRENT_FILTER_DATA 200
-#define NB_CURRENT_FILTER_CALIB_DATA 200
-
+#define NB_CURRENT_FILTER_DATA 20
+#define NB_CURRENT_FILTER_CALIB_DATA 20
 #define NB_AUTONOMY_FILTER_DATA 120
 #define NB_VOLTAGE_FILTER_DATA 100
 
 // BUTTONS
 #define BUTTON_LONG_PRESS_TICK 300
+
+// distance
+#define SPEED_TO_DISTANCE_CORRECTION_FACTOR 1.05
 
 #define WATCHDOG_TIMEOUT 1000000 //time in ms to trigger the watchdog
 
@@ -188,8 +188,8 @@ uint16_t throttleAnalogValue = 0;
 MedianFilter voltageFilter(NB_VOLTAGE_FILTER_DATA, 2000);
 MedianFilter voltageLongFilter(NB_VOLTAGE_FILTER_DATA, 50000);
 MedianFilter voltageRawFilter(NB_VOLTAGE_FILTER_DATA, 2000);
-MedianFilter currentFilter(NB_CURRENT_FILTER_DATA, 1830);
-MedianFilter currentFilterInit(NB_CURRENT_FILTER_CALIB_DATA, 1830);
+MedianFilter currentRawFilter(NB_CURRENT_FILTER_DATA, 1830);
+MedianFilter currentRawFilterInit(NB_CURRENT_FILTER_CALIB_DATA, 1830);
 MedianFilter brakeFilter(10 /* 20 */, 900);
 //MedianFilter brakeMaxFilterInit(NB_BRAKE_CALIB_DATA, 900);
 MedianFilter autonomyLeftFilter(NB_AUTONOMY_FILTER_DATA, 0);
@@ -555,9 +555,6 @@ void setup()
   // force BLE lock mode
   blh.setBleLock(false);
 
-  // setup shared datas
-  shrd.currentCalibOrder = NB_CURRENT_FILTER_CALIB_DATA;
-
   Serial.println(PSTR("   init data with settings ..."));
   initDataWithSettings();
 
@@ -647,7 +644,7 @@ void computeDistance(float speed)
   // calculate distance
   uint32_t distanceCurTime = millis();
   uint32_t distanceDiffTime = distanceCurTime - shrd.distancePrevTime;
-  shrd.distanceTrip = shrd.distanceTrip + ((speed * (distanceDiffTime)) / 360);
+  shrd.distanceTrip = shrd.distanceTrip + ((speed * (distanceDiffTime)) / 360) * SPEED_TO_DISTANCE_CORRECTION_FACTOR;
   shrd.distancePrevTime = millis();
 
   shrd.distanceOdo = shrd.distanceOdoBoot + (shrd.distanceTrip / 10000);
@@ -1112,7 +1109,7 @@ void processVescSerial()
     */
 
     shrd.voltageFilterMean = vescCntrl.data.inpVoltage * 1000;
-    shrd.currentFilterMean = vescCntrl.data.avgInputCurrent * 1000;
+    shrd.currentActual = vescCntrl.data.avgInputCurrent * 1000;
   }
 
   /*
@@ -1175,7 +1172,7 @@ void processSmartEscSerial()
 {
 
   shrd.voltageFilterMean = (uint32_t)(smartEscCntrl.data.Controller_Voltage) * 10;
-  shrd.currentFilterMean = (uint32_t)(smartEscCntrl.data.Controller_Current) * 10 / 3.5;
+  shrd.currentActual = (uint32_t)(smartEscCntrl.data.Controller_Current) * 10 / 3.5;
   shrd.currentTemperature = smartEscCntrl.data.MOSFET_temperature;
   if (smartEscCntrl.data.ERPM < 0)
     smartEscCntrl.data.ERPM = 0;
@@ -1672,53 +1669,42 @@ void processAutonomy()
 
 void processCurrent()
 {
-
   if (shrd.currentSensorPresent == 1)
   {
     int currentRead = analogRead(PIN_IN_CURRENT);
-    int currentInMillamps = (currentRead - currentFilterInit.getMean()) * (1000.0 / ANALOG_TO_CURRENT);
-    shrd.currentActual = currentInMillamps;
 
-    if ((shrd.speedCurrent == 0) && (shrd.currentCalibOrder > 0))
+    if (shrd.speedCurrent == 0)
     {
-
       if (currentRead < ANALOG_CURRENT_MIN_RAW_READING)
       {
         shrd.currentSensorPresent = false;
         Serial.println("Current sensor is not detected -> disable reading");
-
-        // saturate filter with 0 values
-        for (int i = 0; i < NB_CURRENT_FILTER_DATA; i++)
-          currentFilter.in(0);
       }
       else
       {
-
-        shrd.currentCalibOrder--;
-        currentFilterInit.in(currentRead);
-
-#if DEBUG_DISPLAY_CURRENT
-        if (shrd.currentCalibOrder == 1)
-          Serial.println("Current calibration end ... ");
-#endif
+        currentRawFilterInit.in(currentRead);
       }
     }
+    currentRawFilter.in(currentRead);
 
     if (shrd.currentSensorPresent)
     {
       // current rest value
-      currentFilter.in(currentInMillamps);
-      shrd.currentFilterMean = currentFilter.getMeanWithoutExtremes(10);
+      int currentRawFilter2 = currentRawFilter.getMeanWithoutExtremes(2);
+      int currentRawFilterInit2 = currentRawFilterInit.getMeanWithoutExtremes(5);
+      int currentInMillamps = (currentRawFilter2 - currentRawFilterInit2) * (1000.0 / ANALOG_TO_CURRENT);
+      shrd.currentActual = currentInMillamps;
     }
-
+    
 #if DEBUG_DISPLAY_CURRENT
-    Serial.print("Current read : ");
+    Serial.print("currentRead : ");
     Serial.print(currentRead);
-    Serial.print(" / currentFilterInit mean : ");
-    Serial.print(currentFilterInit.getMean());
+    Serial.print(" / currentFilterInit getMeanWithoutExtremes : ");
+    Serial.print(currentRawFilterInit.getMeanWithoutExtremes(5));
     Serial.print(" / in amperes : ");
-    Serial.println(currentInMillamps / 1000.0);
+    Serial.println(shrd.currentActual / 1000.0);
 #endif
+
   }
 }
 
@@ -1851,7 +1837,7 @@ void loop()
 #endif
 
 #if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
-  if (i_loop % 10 == 5)
+  if (i_loop % 100 == 5)
   {
     processCurrent();
   }

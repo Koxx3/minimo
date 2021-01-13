@@ -462,7 +462,7 @@ void BluetoothHandler::setSettings(Settings *data)
                 //CurrentZero(3);
                 else if (rxValue[0] == 3)
                 {
-                    shrd->currentCalibOrder = valueInt;
+                    //shrd->currentCalibOrder = valueInt;
                 }
                 //BrakeMinPressure(4),
                 else if (rxValue[0] == 4)
@@ -1036,7 +1036,7 @@ uint8_t BluetoothHandler::setMeasurements()
     i = i + 2;
 
     //current
-    int16_t current = shrd->currentFilterMean / 100;
+    int16_t current = shrd->currentActual / 100;
     memcpy(&txValue[i], &current, 2);
     i = i + 2;
 

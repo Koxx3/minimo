@@ -188,7 +188,7 @@ void tftUpdateData(uint32_t i_loop)
 
     case 5:
     {
-      double power = (_shrd->currentFilterMean / 1000.0 * _shrd->voltageFilterMean / 1000.0);
+      double power = (_shrd->currentActual / 1000.0 * _shrd->voltageFilterMean / 1000.0);
       if (power < 0)
         power = 0;
       sprintf(fmt, "%05.0f", power);
@@ -241,7 +241,7 @@ void tftUpdateData(uint32_t i_loop)
 
     case 11:
     {
-      float current = _shrd->currentFilterMean / 1000.0;
+      float current = _shrd->currentActual / 1000.0;
       if (current > 99)
         current = 99;
       if (current < 0)
