@@ -2,7 +2,7 @@
 ⚠️ **Warning : this is work in progress. I decline all responsability about using informations from this project** ⚠️
 
 To contribute and help this project : 
-[![Donate](https://www.paypal.com/pools/c/8ut4175ux4)]
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/pools/c/8ut4175ux4)
 
 ![Logo](/img/smart.png)
 
