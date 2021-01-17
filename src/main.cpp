@@ -1821,7 +1821,6 @@ void loop()
 #if BRAKE_ANALOG_EXT_READ
   if (i_loop % 10 == 2)
   {
-    //modifyBrakeFromLCD();
     //displayBrake();
     getBrakeFromAnalog();
   }

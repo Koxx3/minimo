@@ -45,6 +45,8 @@
 
 #define MAX_BEACON_INVISIBLE_COUNT 3
 
+#define BEACON_SCAN_PERIOD_IN_SECONDS 10
+
 BLEScan *BluetoothHandler::pBLEScan;
 BLEServer *BluetoothHandler::pServer;
 BLESecurity *BluetoothHandler::pSecurity;
@@ -847,7 +849,7 @@ void BluetoothHandler::setSettings(Settings *data)
     pBLEScan = BLEDevice::getScan();
     pBLEScan->setAdvertisedDeviceCallbacks(new BLEAdvertisedDeviceCallback());
     pBLEScan->setActiveScan(true);
-    pBLEScan->start(10, &bleOnScanResults, false);
+    pBLEScan->start(BEACON_SCAN_PERIOD_IN_SECONDS, &bleOnScanResults, false);
 
     isBtEnabled = true;
 }
@@ -992,7 +994,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
     notifyBleLock();
 
     // launch new scan
-    pBLEScan->start(10, &bleOnScanResults, false);
+    pBLEScan->start(BEACON_SCAN_PERIOD_IN_SECONDS, &bleOnScanResults, false);
 
     // set BT lock
     // if ((!deviceConnected))

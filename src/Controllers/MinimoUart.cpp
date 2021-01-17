@@ -435,7 +435,7 @@ uint8_t MinimoUart::modifyBrakeFromLCD(char var, char data_buffer[])
   if (shrd->brakeSentOrder == -1)
     shrd->brakeSentOrder = var;
 
-  if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_digital)
+  if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_none)
   {
 
     // progressive mode
@@ -597,7 +597,7 @@ uint16_t MinimoUart::generateSpeedRawValue(double speed)
 {
   uint16_t rawValue;
 
-/*
+  /*
   double wheelFactor = (settings->getS1F().Wheel_size / 10.0);
   double polesFactor = settings->getS1F().Motor_pole_number * 10.5;
   rawValue = (uint16_t)(speed / wheelFactor * polesFactor);
@@ -737,8 +737,17 @@ int MinimoUart::readHardSerial(int mode, int i, Stream *hwSerCntrl, Stream *hwSe
 
       if (i == 10)
       {
-        //        var = modifyBrakeFromLCD(var, data_buffer_ori);
-        var = modifyBrakeFromAnalog(var, data_buffer_ori);
+
+        if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_none)
+        {
+          var = modifyBrakeFromLCD(var, data_buffer_ori);
+        }
+        else if ((settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_analog) ||
+                 (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_digital))
+        {
+          var = modifyBrakeFromAnalog(var, data_buffer_ori);
+        }
+
         isModified_LcdToCntrl = 1;
       }
 
@@ -763,7 +772,10 @@ int MinimoUart::readHardSerial(int mode, int i, Stream *hwSerCntrl, Stream *hwSe
     {
       if (i == 4)
       {
-        //getBrakeFromLCD(var, data_buffer_ori);
+        if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_none)
+        {
+          getBrakeFromLCD(var, data_buffer_ori);
+        }
       }
 
       if (i == 6)

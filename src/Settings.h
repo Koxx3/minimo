@@ -38,7 +38,7 @@ public:
     LIST_Electric_brake_type_none = 0,
     LIST_Electric_brake_type_digital,
     LIST_Electric_brake_type_analog
-  } Electric_Brake_Type;
+  } tElectric_Brake_Type;
 
 #pragma pack(push, 1)
   struct field_s1
