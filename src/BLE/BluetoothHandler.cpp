@@ -864,6 +864,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
 
     bool newBleBeaconVisible = false;
     int8_t RSSI = -1;
+    bool beaconFound = false;
 
     for (int i = 0; i < scanResults.getCount(); i++)
     {
@@ -886,10 +887,11 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
         Serial.println(addressBeaconSettings);
 #endif
 
-        bleBeaconRSSI = RSSI;
-
         if (addressBeaconSettings.equals(addressStr))
         {
+            beaconFound = true;
+            bleBeaconRSSI = RSSI;
+
             if (bleBeaconRSSI < settings->getS1F().Beacon_range)
             {
 
@@ -919,6 +921,10 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
             }
         }
     }
+
+    // reset RSSI
+    if (!beaconFound)
+        bleBeaconRSSI = -1;
 
     // count beacon invible times
     if (!newBleBeaconVisible)
