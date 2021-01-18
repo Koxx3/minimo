@@ -1719,7 +1719,8 @@ void loop()
   if (shrd.inOtaMode)
   {
     blh.deinit();
-    OTA_loop();
+    if (shrd.inOtaMode == STD_OTA) std_OTA_loop(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd);
+    if (shrd.inOtaMode == OTA) OTA_loop(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd);
     return;
   }
 

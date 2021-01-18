@@ -31,6 +31,7 @@
 #define ACCEL_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ac"
 #define CALIB_ORDER_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ad"
 #define SWITCH_TO_OTA_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ae"
+#define SWITCH_TO_STD_OTA_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26be"
 #define LOGS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26af"
 #define FAST_UPDATE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b0"
 #define SETTINGS2_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b1"
@@ -502,25 +503,17 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 disableWatchdog();
 
-                // disconnect BT
-                //                pServer->disconnect(0);
-                //                Serial.println("BT disconnect => done");
-
-                //delay(100);
-
-                //  BLEDevice::deinit();
-                //  Serial.println("BT deinit => done");
-
-                //  delay(100);
-
-                // init OTA
-                OTA_setup(settings->getS4F().Wifi_ssid, settings->getS5F().Wifi_pwd);
-
-                Serial.println("OTA init => done");
-                delay(100);
-
-                // Enable wifi & OTA
-                shrd->inOtaMode = true;
+                //OTA_setup(settings->getS4F().Wifi_ssid, settings->getS5F().Wifi_pwd);
+                //Serial.println("OTA init => done");
+                // Enable OTA mode
+                shrd->inOtaMode = OTA;
+            }
+            else if (pCharacteristic->getUUID().toString() == SWITCH_TO_STD_OTA_CHARACTERISTIC_UUID)
+            {
+                Serial.println("Write SWITCH_TO_STD_OTA_CHARACTERISTIC_UUID");
+                disableWatchdog();
+                // Enable STD_OTA mode
+                shrd->inOtaMode = STD_OTA;
             }
             else if (pCharacteristic->getUUID().toString() == FAST_UPDATE_CHARACTERISTIC_UUID)
             {
