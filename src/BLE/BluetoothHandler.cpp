@@ -500,13 +500,8 @@ void BluetoothHandler::setSettings(Settings *data)
             else if (pCharacteristic->getUUID().toString() == SWITCH_TO_OTA_CHARACTERISTIC_UUID)
             {
                 Serial.println("Write SWITCH_TO_OTA_CHARACTERISTIC_UUID");
-
                 disableWatchdog();
-
-                //OTA_setup(settings->getS4F().Wifi_ssid, settings->getS5F().Wifi_pwd);
-                //Serial.println("OTA init => done");
-                // Enable OTA mode
-                shrd->inOtaMode = OTA;
+                shrd->inOtaMode = OTA; // Enable http OTA mode
             }
             else if (pCharacteristic->getUUID().toString() == SWITCH_TO_STD_OTA_CHARACTERISTIC_UUID)
             {
