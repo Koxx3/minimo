@@ -3,5 +3,5 @@
     "version": 2,
     "host": "raw.githubusercontent.com",
     "port": 443,
-    "bin": "/Koxx3/SmartController_SmartDisplay_ESP32/raw/master/ota_updates/minimo/firmware_2.bin"
+    "bin": "/Koxx3/SmartController_SmartDisplay_ESP32/master/ota_updates/minimo/firmware_2.bin"
 }

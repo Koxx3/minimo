@@ -139,7 +139,7 @@ void esp32FOTA::execOTA()
     if (contentLength && isValidContentType)
     {
         // Check if there is enough to OTA Update
-        bool canBegin = Update.begin(contentLength);
+        bool canBegin = Update.begin(contentLength, U_FLASH);
 
         // If yes, begin
         if (canBegin)
@@ -524,7 +524,7 @@ void secureEsp32FOTA::executeOTA()
         if (contentLength && isValid)
         {
             //Serial.println("beginn");
-            bool canBegin = Update.begin(contentLength);
+            bool canBegin = Update.begin(contentLength, U_FLASH);
             if (canBegin)
             {
                 //Serial.println("Begin OTA. This may take 2 - 5 mins to complete. Things might be quite for a while.. Patience!");
@@ -533,11 +533,11 @@ void secureEsp32FOTA::executeOTA()
 
                 if (written == contentLength)
                 {
-                    //Serial.println("Written : " + String(written) + " successfully");
+                    Serial.println("Written : " + String(written) + " successfully");
                 }
                 else
                 {
-                    //Serial.println("Written only : " + String(written) + "/" + String(contentLength) + ". Retry?");
+                    Serial.println("Written only : " + String(written) + "/" + String(contentLength) + ". Retry?");
                 }
 
                 if (Update.end())
