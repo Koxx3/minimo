@@ -43,7 +43,7 @@
 
 #define BLE_PIN_CODE 147258
 
-#define MAX_BEACON_INVISIBLE_COUNT 3
+#define MAX_BEACON_INVISIBLE_COUNT 1
 
 #define BEACON_SCAN_PERIOD_IN_SECONDS 10
 
@@ -512,9 +512,6 @@ void BluetoothHandler::setSettings(Settings *data)
                 //  Serial.println("BT deinit => done");
 
                 //  delay(100);
-
-                // init OTA
-                OTA_setup(settings->getS4F().Wifi_ssid, settings->getS5F().Wifi_pwd);
 
                 Serial.println("OTA init => done");
                 delay(100);

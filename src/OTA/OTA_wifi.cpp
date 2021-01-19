@@ -1,65 +1,123 @@
-#include "Arduino.h"
-#include "ESP32httpUpdate.h"
-#include "app_version.h"
+#include "ArduinoJson.h"
 
-// To inject firmware info into binary file, You have to use following macro according to let
-// OTAdrive to detect binary info automatically
-#define ProductKey "1046690b-a448-4df4-b959-516576470130"
-#define MakeFirmwareInfo(k, v) "&_FirmwareInfo&k=" k "&v=" v "&FirmwareInfo_&"
+/*
+ * 
+ * https://engineerworkshop.com/2019/03/02/esp32-compiler-error-in-arduino-ide-heltec-esp32-tools-esptool-esptool-py-no-module-named-serial-tools-list_ports/
+ * 
+ * This solves the import serial issue
+ * 
+ * https://esp32.com/viewtopic.php?t=9289 this shows library to slow down processor
+ * 
+ * https://www.youtube.com/watch?v=-QIcUTBB7Ww   spiess video for coprocessor programming.
+ * ideona: ulp può leggere adc->tensione batteria per svegliare se è veramente il caso
+ * 
+ * 
+ * https://www.youtube.com/watch?v=Ck55tY7mm1c questo video spiega OTA updates usando il framework di espressif
+ * 
+ * https://github.com/me-no-dev/EspExceptionDecoder exception decoder
+*/
 
+//
 
-void doUpdate();
+#include <WiFiMulti.h>
 
-void OTA_setup(char* wifi_ssid, char* wifi_pwd)
+#include "OTA/esp32fota.h"
+#include <WiFiClientSecure.h>
+#include "Controllers/ControllerType.h"
+
+char *test_root_ca =
+    "-----BEGIN CERTIFICATE-----\n"
+    "MIIDxTCCAq2gAwIBAgIQAqxcJmoLQJuPC3nyrkYldzANBgkqhkiG9w0BAQUFADBsMQswCQYDVQQG\n"
+    "EwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSsw\n"
+    "KQYDVQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5jZSBFViBSb290IENBMB4XDTA2MTExMDAwMDAw\n"
+    "MFoXDTMxMTExMDAwMDAwMFowbDELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZ\n"
+    "MBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTErMCkGA1UEAxMiRGlnaUNlcnQgSGlnaCBBc3N1cmFu\n"
+    "Y2UgRVYgUm9vdCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMbM5XPm+9S75S0t\n"
+    "Mqbf5YE/yc0lSbZxKsPVlDRnogocsF9ppkCxxLeyj9CYpKlBWTrT3JTWPNt0OKRKzE0lgvdKpVMS\n"
+    "OO7zSW1xkX5jtqumX8OkhPhPYlG++MXs2ziS4wblCJEMxChBVfvLWokVfnHoNb9Ncgk9vjo4UFt3\n"
+    "MRuNs8ckRZqnrG0AFFoEt7oT61EKmEFBIk5lYYeBQVCmeVyJ3hlKV9Uu5l0cUyx+mM0aBhakaHPQ\n"
+    "NAQTXKFx01p8VdteZOE3hzBWBOURtCmAEvF5OYiiAhF8J2a3iLd48soKqDirCmTCv2ZdlYTBoSUe\n"
+    "h10aUAsgEsxBu24LUTi4S8sCAwEAAaNjMGEwDgYDVR0PAQH/BAQDAgGGMA8GA1UdEwEB/wQFMAMB\n"
+    "Af8wHQYDVR0OBBYEFLE+w2kD+L9HAdSYJhoIAu9jZCvDMB8GA1UdIwQYMBaAFLE+w2kD+L9HAdSY\n"
+    "JhoIAu9jZCvDMA0GCSqGSIb3DQEBBQUAA4IBAQAcGgaX3NecnzyIZgYIVyHbIUf4KmeqvxgydkAQ\n"
+    "V8GK83rZEWWONfqe/EW1ntlMMUu4kehDLI6zeM7b41N5cdblIZQB2lWHmiRk9opmzN6cN82oNLFp\n"
+    "myPInngiK3BD41VHMWEZ71jFhS9OMPagMRYjyOfiZRYzy78aG6A9+MpeizGLYAiJLQwGXFK3xPkK\n"
+    "mNEVX58Svnw2Yzi9RKR/5CYrCsSXaQ3pjOLAEFe4yHYSkVXySGnYvCoCWw9E1CAx2/S6cCZdkGCe\n"
+    "vEsXCS+0yx5DaMkHJ8HSXPfqIbloEpw8nL+e/IBcm2PN7EeqJSdnoDfzAIJ9VNep+OkuE6N36B9K\n"
+    "-----END CERTIFICATE-----\n";
+
+#define FIRMWARE_VERSION 2
+#define FIRMWARE_TYPE CONTROLLER_MINIMOTORS
+
+WiFiClientSecure clientForOta;
+secureEsp32FOTA secureEsp32FOTA((String)FIRMWARE_TYPE, FIRMWARE_VERSION);
+
+void OTA_setup(char *ssid, char *password)
 {
-  // put your setup code here, to run once:
-  WiFi.begin(wifi_ssid, wifi_pwd);
+
+  //delay(100);
+
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.mode(WIFI_STA);
+
+  //delay(100);
+
+  int n = WiFi.scanNetworks();
+  Serial.println("scan done");
+  if (n == 0)
+  {
+    Serial.println("no networks found");
+  }
+  else
+  {
+    Serial.print(n);
+    Serial.println(" networks found");
+    for (int i = 0; i < n; ++i)
+    {
+      // Print SSID and RSSI for each network found
+      Serial.print(i + 1);
+      Serial.print(": ");
+      Serial.print(WiFi.SSID(i));
+      Serial.print(" (");
+      Serial.print(WiFi.RSSI(i));
+      Serial.print(")");
+      Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " " : "*");
+      delay(10);
+    }
+  }
+
+  WiFi.begin(ssid, password);
+
+  // attempt to connect to Wifi network:
+  byte retries = 0;
   while (WiFi.status() != WL_CONNECTED)
   {
     Serial.print(".");
-    delay(150);
+    // wait 1 second for re-trying
+    delay(1000);
+    retries++;
+    if ((retries % 5) == 4)
+      WiFi.begin(ssid, password); //solves AUTH_FAIL bug on some routers
   }
-
-  Serial.print("Wifi IP:");
+  Serial.println("");
+  Serial.print("Connected, IP: ");
   Serial.println(WiFi.localIP());
+
+  secureEsp32FOTA._host = "raw.githubusercontent.com";                                                             //e.g. example.com
+  secureEsp32FOTA._descriptionOfFirmwareURL = "/chrisjoyce911/esp32FOTA/master/examples/HTTPS/fota/firmware.json"; //e.g. /my-fw-versions/firmware.json
+  secureEsp32FOTA._certificate = test_root_ca;
+  secureEsp32FOTA.clientForOta = clientForOta;
+
+
+  bool shouldExecuteFirmwareUpdate = secureEsp32FOTA.execHTTPSCheck();
+  if (shouldExecuteFirmwareUpdate)
+  {
+    Serial.println("Firmware update available!");
+    secureEsp32FOTA.executeOTA();
+  }
 }
 
 void OTA_loop()
 {
-  uint32_t chipId = 0;
-  for (int i = 0; i < 17; i = i + 8)
-  {
-    chipId |= ((ESP.getEfuseMac() >> (40 - i)) & 0xff) << i;
-  }
-
-  String url = "http://otadrive.com/DeviceApi/GetEsp8266Update?k=";
-  url += ProductKey;
-  url += "&s=" + String(chipId);
-  url += "&v=" + String(Version);
-  
-  // mark binary with version
-  String markVersion = MakeFirmwareInfo(ProductKey, Version);
-
-  Serial.print("Update url :");
-  Serial.println(url);
-
-  t_httpUpdate_return ret = ESPhttpUpdate.update(url, String(Version));
-  switch (ret)
-  {
-  case HTTP_UPDATE_FAILED:
-    Serial.println("Update faild!");
-    break;
-  case HTTP_UPDATE_NO_UPDATES:
-    Serial.println("No new update available");
-    break;
-  // We can't see this, because of reset chip after update OK
-  case HTTP_UPDATE_OK:
-    Serial.println("Update OK");
-    break;
-
-  default:
-    break;
-  }
-
-  delay(2000);
 }
