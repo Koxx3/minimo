@@ -105,7 +105,7 @@ void OTA_setup(char *ssid, char *password)
   Serial.println(WiFi.localIP());
 
   secureEsp32FOTA._host = "raw.githubusercontent.com";                                                             //e.g. example.com
-  secureEsp32FOTA._descriptionOfFirmwareURL = "/chrisjoyce911/esp32FOTA/master/examples/HTTPS/fota/firmware.json"; //e.g. /my-fw-versions/firmware.json
+  secureEsp32FOTA._descriptionOfFirmwareURL = "Koxx3/SmartController_SmartDisplay_ESP32/master/ota_updates/minimo/firmware.json"; //e.g. /my-fw-versions/firmware.json
   secureEsp32FOTA._certificate = test_root_ca;
   secureEsp32FOTA.clientForOta = clientForOta;
 
