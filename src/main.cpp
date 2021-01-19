@@ -1724,6 +1724,7 @@ void loop()
     // init OTA
     OTA_setup(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd);
 
+    shrd.inOtaMode = 0;
     return;
   }
 

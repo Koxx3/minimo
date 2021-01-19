@@ -46,7 +46,7 @@ char *test_root_ca =
     "vEsXCS+0yx5DaMkHJ8HSXPfqIbloEpw8nL+e/IBcm2PN7EeqJSdnoDfzAIJ9VNep+OkuE6N36B9K\n"
     "-----END CERTIFICATE-----\n";
 
-#define FIRMWARE_VERSION 2
+#define FIRMWARE_VERSION 1
 #define FIRMWARE_TYPE CONTROLLER_MINIMOTORS
 
 WiFiClientSecure clientForOta;
@@ -63,6 +63,7 @@ void OTA_setup(char *ssid, char *password)
 
   //delay(100);
 
+#if 
   int n = WiFi.scanNetworks();
   Serial.println("scan done");
   if (n == 0)
@@ -104,17 +105,20 @@ void OTA_setup(char *ssid, char *password)
   Serial.print("Connected, IP: ");
   Serial.println(WiFi.localIP());
 
-  secureEsp32FOTA._host = "raw.githubusercontent.com";                                                             //e.g. example.com
-  secureEsp32FOTA._descriptionOfFirmwareURL = "Koxx3/SmartController_SmartDisplay_ESP32/master/ota_updates/minimo/firmware.json"; //e.g. /my-fw-versions/firmware.json
+  secureEsp32FOTA._host = "raw.githubusercontent.com";                                                                             //e.g. example.com
+  secureEsp32FOTA._descriptionOfFirmwareURL = "/Koxx3/SmartController_SmartDisplay_ESP32/master/ota_updates/minimo/firmware.json"; //e.g. /my-fw-versions/firmware.json
   secureEsp32FOTA._certificate = test_root_ca;
   secureEsp32FOTA.clientForOta = clientForOta;
-
 
   bool shouldExecuteFirmwareUpdate = secureEsp32FOTA.execHTTPSCheck();
   if (shouldExecuteFirmwareUpdate)
   {
     Serial.println("Firmware update available!");
     secureEsp32FOTA.executeOTA();
+  }
+  else
+  {
+    Serial.println("No firmware update available...");
   }
 }
 

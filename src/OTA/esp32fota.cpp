@@ -362,6 +362,9 @@ String secureEsp32FOTA::secureGetContent()
         clientForOta.println("Host: " + String(_host) + "");
         clientForOta.println("Connection: close");
         clientForOta.println();
+
+        Serial.println("json : GET https://" + String(_host) + destinationURL + " HTTP/1.0");
+
         while (clientForOta.connected())
         {
             String line = clientForOta.readStringUntil('\n');
@@ -405,6 +408,8 @@ bool secureEsp32FOTA::execHTTPSCheck()
     int str_len = unparsedDescriptionOfFirmware.length() + 1;
     char JSONMessage[str_len];
     unparsedDescriptionOfFirmware.toCharArray(JSONMessage, str_len);
+
+    Serial.printf("json : got %d characters\n", str_len);
 
     StaticJsonDocument<300> JSONDocument; //Memory pool
     DeserializationError err = deserializeJson(JSONDocument, JSONMessage);
