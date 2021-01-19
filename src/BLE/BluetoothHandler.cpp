@@ -44,7 +44,7 @@
 
 #define BLE_PIN_CODE 147258
 
-#define MAX_BEACON_INVISIBLE_COUNT 3
+#define MAX_BEACON_INVISIBLE_COUNT 1
 
 #define BEACON_SCAN_PERIOD_IN_SECONDS 10
 
@@ -502,13 +502,6 @@ void BluetoothHandler::setSettings(Settings *data)
                 Serial.println("Write SWITCH_TO_OTA_CHARACTERISTIC_UUID");
                 disableWatchdog();
                 shrd->inOtaMode = OTA; // Enable http OTA mode
-            }
-            else if (pCharacteristic->getUUID().toString() == SWITCH_TO_STD_OTA_CHARACTERISTIC_UUID)
-            {
-                Serial.println("Write SWITCH_TO_STD_OTA_CHARACTERISTIC_UUID");
-                disableWatchdog();
-                // Enable STD_OTA mode
-                shrd->inOtaMode = STD_OTA;
             }
             else if (pCharacteristic->getUUID().toString() == FAST_UPDATE_CHARACTERISTIC_UUID)
             {

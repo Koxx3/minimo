@@ -1695,7 +1695,7 @@ void processCurrent()
       int currentInMillamps = (currentRawFilter2 - currentRawFilterInit2) * (1000.0 / ANALOG_TO_CURRENT);
       shrd.currentActual = currentInMillamps;
     }
-    
+
 #if DEBUG_DISPLAY_CURRENT
     Serial.print("currentRead : ");
     Serial.print(currentRead);
@@ -1704,7 +1704,6 @@ void processCurrent()
     Serial.print(" / in amperes : ");
     Serial.println(shrd.currentActual / 1000.0);
 #endif
-
   }
 }
 
@@ -1721,6 +1720,12 @@ void loop()
     blh.deinit();
     if (shrd.inOtaMode == STD_OTA) std_OTA_loop(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd);
     if (shrd.inOtaMode == OTA) OTA_loop(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd);
+
+    //delay(500);
+
+    // init OTA
+    OTA_setup(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd);
+
     return;
   }
 
