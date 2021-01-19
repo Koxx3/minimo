@@ -1,4 +1,17 @@
+#include "Arduino.h"
+//#include "ESP32httpUpdate.h"
+
+#include <WiFi.h>
+#include <ESPmDNS.h>
+#include <WiFiUdp.h>
+#include <ArduinoOTA.h>
 #include "ArduinoJson.h"
+
+#include <WiFiMulti.h>
+
+#include "OTA/esp32fota.h"
+#include <WiFiClientSecure.h>
+#include "Controllers/ControllerType.h"
 
 /*
  * 
@@ -18,12 +31,6 @@
 */
 
 //
-
-#include <WiFiMulti.h>
-
-#include "OTA/esp32fota.h"
-#include <WiFiClientSecure.h>
-#include "Controllers/ControllerType.h"
 
 char *test_root_ca =
     "-----BEGIN CERTIFICATE-----\n"
@@ -49,11 +56,14 @@ char *test_root_ca =
 #define FIRMWARE_VERSION 1
 #define FIRMWARE_TYPE CONTROLLER_MINIMOTORS
 
+static boolean OTA_ide_init = false;
+
 WiFiClientSecure clientForOta;
 secureEsp32FOTA secureEsp32FOTA((String)FIRMWARE_TYPE, FIRMWARE_VERSION);
 
-void OTA_setup(char *ssid, char *password)
+void OTA_server_run(char *ssid, char *password)
 {
+  Serial.println("------------- OTA Server -------------");
 
   //delay(100);
 
@@ -63,7 +73,7 @@ void OTA_setup(char *ssid, char *password)
 
   //delay(100);
 
-#if 
+#if SCAN_WIFI
   int n = WiFi.scanNetworks();
   Serial.println("scan done");
   if (n == 0)
@@ -87,6 +97,7 @@ void OTA_setup(char *ssid, char *password)
       delay(10);
     }
   }
+#endif
 
   WiFi.begin(ssid, password);
 
@@ -122,6 +133,58 @@ void OTA_setup(char *ssid, char *password)
   }
 }
 
-void OTA_loop()
+// STD OTA
+void OTA_ide_setup(char *wifi_ssid, char *wifi_pwd)
 {
+  OTA_ide_init = true;
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(wifi_ssid, wifi_pwd);
+  while (WiFi.waitForConnectResult() != WL_CONNECTED)
+  {
+    Serial.println("Connection Failed! Rebooting...");
+    delay(5000);
+    ESP.restart();
+  }
+  ArduinoOTA.setHostname("SmartContro_OTA");
+  ArduinoOTA.onStart([]() {
+    String type;
+    if (ArduinoOTA.getCommand() == U_FLASH)
+      type = "sketch";
+    else // U_SPIFFS
+      type = "filesystem";
+    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+    Serial.println("Start updating " + type);
+  });
+  ArduinoOTA.onEnd([]() {
+    Serial.println("\nEnd");
+    ESP.restart();
+  });
+  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+  });
+  ArduinoOTA.onError([](ota_error_t error) {
+    Serial.printf("Error[%u]: ", error);
+    if (error == OTA_AUTH_ERROR)
+      Serial.println("Auth Failed");
+    else if (error == OTA_BEGIN_ERROR)
+      Serial.println("Begin Failed");
+    else if (error == OTA_CONNECT_ERROR)
+      Serial.println("Connect Failed");
+    else if (error == OTA_RECEIVE_ERROR)
+      Serial.println("Receive Failed");
+    else if (error == OTA_END_ERROR)
+      Serial.println("End Failed");
+  });
+  ArduinoOTA.begin();
+  Serial.println("Ready");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void OTA_ide_loop(char *wifi_ssid, char *wifi_pwd)
+{
+  Serial.println("------------- OTA IDE -------------");
+  if (!OTA_ide_init)
+    OTA_ide_setup(wifi_ssid, wifi_pwd);
+  ArduinoOTA.handle();
 }

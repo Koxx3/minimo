@@ -1719,10 +1719,14 @@ void loop()
   {
     blh.deinit();
 
-    //delay(500);
-
-    // init OTA
-    OTA_setup(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd);
+    if (shrd.inOtaMode == OTA_SERVER)
+    {
+      OTA_server_run(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd);
+    }
+    else if (shrd.inOtaMode == OTA_IDE)
+    {
+      OTA_ide_loop(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd);
+    }
 
     shrd.inOtaMode = 0;
     return;
@@ -1847,7 +1851,7 @@ void loop()
   }
 #endif
 
-  // keep it fast (/100 not working)
+// keep it fast (/100 not working)
 #if TEMPERATURE_EXT_READ
   if (i_loop % 10 == 6)
   {
@@ -1892,7 +1896,7 @@ void loop()
 #endif
 
 #if TFT_ENABLED
-  //tftUpdateData(i_loop);
+//tftUpdateData(i_loop);
 #endif
 
   // Give a time for ESP

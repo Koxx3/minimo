@@ -15,6 +15,13 @@ typedef enum
     ACTION_ON   // set LED "ON"
 } MyActions;
 
+typedef enum
+{
+    OTA_OFF,        // NORMAL MODE
+    OTA_IDE,    // IDE OTA MODE
+    OTA_SERVER  // OTA CLOUD - SERVER MODE
+} OTAmode;
+
 class SharedData
 {
 public:
@@ -22,7 +29,7 @@ public:
 
     uint32_t timeLastNotifyBle = 0;
 
-    boolean inOtaMode = false;
+    uint8_t inOtaMode = OTA_OFF;
 
     float currentHumidity = 0.0;
     float currentTemperature = 0.0;

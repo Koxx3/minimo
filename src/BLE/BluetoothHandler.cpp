@@ -500,24 +500,11 @@ void BluetoothHandler::setSettings(Settings *data)
             {
                 Serial.println("Write SWITCH_TO_OTA_CHARACTERISTIC_UUID");
 
+                
+                std::string rxValue = pCharacteristic->getValue();
+                shrd->inOtaMode = rxValue[0]; // Enable http OTA mode
+
                 disableWatchdog();
-
-                // disconnect BT
-                //                pServer->disconnect(0);
-                //                Serial.println("BT disconnect => done");
-
-                //delay(100);
-
-                //  BLEDevice::deinit();
-                //  Serial.println("BT deinit => done");
-
-                //  delay(100);
-
-                Serial.println("OTA init => done");
-                delay(100);
-
-                // Enable wifi & OTA
-                shrd->inOtaMode = true;
             }
             else if (pCharacteristic->getUUID().toString() == FAST_UPDATE_CHARACTERISTIC_UUID)
             {
