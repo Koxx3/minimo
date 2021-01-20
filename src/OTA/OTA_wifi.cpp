@@ -126,6 +126,7 @@ void OTA_server_run(char *ssid, char *password)
   {
     Serial.println("Firmware update available!");
     secureEsp32FOTA.executeOTA();
+    ESP.restart();
   }
   else
   {
