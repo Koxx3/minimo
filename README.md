@@ -147,9 +147,9 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Disable electric brake with full battery
     - [✅] Manual calibration for analog brake
     - [✅] Manual calibration for voltage
+    - [✅] Use brake switch as startup for speed limiter
     - [IN PROGRESS 🔄] Automatic ECO mode on low battery 
     - [IN TEST 🔄] LCD Speed adjustment
-    - [IN TEST 🔄] Use brake switch as startup for speed limiter
     - [ ] Exponential acceleration curve
     - [ ] PAS switch
     - [ ] Use relay as speedlimiter output for controller
@@ -174,11 +174,11 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Humidity
         - [✅] Time
         - [✅] Moving time
-        - [IN TEST 🔄] Odometer / distance
+        - [✅] Odometer / distance
+        - [✅] Trip distance
+        - [✅] Average speed
         - [IN TEST 🔄] Brake forbiden
-        - [IN TEST 🔄] Trip distance
         - [IN TEST 🔄] Autonomy
-        - [IN TEST 🔄] Average speed
     - [✅] Auto-launch app with NFC tag
     - [✅] Parameters custom settings
     - [✅] Data logging
