@@ -115,7 +115,7 @@ void OTA_server_run(char *ssid, char *password)
   Serial.print("Connected, IP: ");
   Serial.println(WiFi.localIP());
 
-  secureEsp32FOTA._host = "raw.githubusercontent.com";                                                                                                    
+  secureEsp32FOTA._host = "raw.githubusercontent.com";
   secureEsp32FOTA._descriptionOfFirmwareURL = "/Koxx3/SmartController_SmartDisplay_ESP32/master/ota_updates/" + (String)FIRMWARE_TYPE + "/firmware.json";
   secureEsp32FOTA._certificate = test_root_ca;
   secureEsp32FOTA.clientForOta = clientForOta;
@@ -183,8 +183,13 @@ void OTA_ide_setup(char *wifi_ssid, char *wifi_pwd)
 
 void OTA_ide_loop(char *wifi_ssid, char *wifi_pwd)
 {
-  Serial.println("------------- OTA IDE -------------");
   if (!OTA_ide_init)
+  {
+    Serial.println("------------- OTA IDE -------------");
     OTA_ide_setup(wifi_ssid, wifi_pwd);
-  ArduinoOTA.handle();
+  }
+  else
+  {
+    ArduinoOTA.handle();
+  }
 }

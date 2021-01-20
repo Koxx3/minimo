@@ -1743,10 +1743,14 @@ void loop()
     }
     else if (shrd.inOtaMode == OTA_IDE)
     {
-      OTA_ide_loop(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd);
+      while (1)
+      {
+        OTA_ide_loop(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd);
+        delay(1);
+      }
     }
 
-    shrd.inOtaMode = 0;
+    //shrd.inOtaMode = 0;
     return;
   }
 

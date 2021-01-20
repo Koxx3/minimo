@@ -502,8 +502,6 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 std::string rxValue = pCharacteristic->getValue();
                 shrd->inOtaMode = rxValue[0]; // Enable http OTA mode
-
-                disableWatchdog();
             }
             else if (pCharacteristic->getUUID().toString() == FAST_UPDATE_CHARACTERISTIC_UUID)
             {
@@ -812,7 +810,7 @@ void BluetoothHandler::setSettings(Settings *data)
     pService->start();
 
     isBtEnabled = true;
-    
+
     // Start advertising
     BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
     pAdvertising->addServiceUUID(SERVICE_UUID);
