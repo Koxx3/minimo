@@ -1729,8 +1729,14 @@ void loop()
   // handle Wifi OTA
   if (shrd.inOtaMode)
   {
+
+    // stop watchdog / not all OTA updates have interactive loop
+    disableWatchdog();
+
+    // stop BLE
     blh.deinit();
 
+    // select & launch requested OTA mode
     if (shrd.inOtaMode == OTA_SERVER)
     {
       OTA_server_run(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd);

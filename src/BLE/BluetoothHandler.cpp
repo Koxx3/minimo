@@ -500,7 +500,6 @@ void BluetoothHandler::setSettings(Settings *data)
             {
                 Serial.println("Write SWITCH_TO_OTA_CHARACTERISTIC_UUID");
 
-                
                 std::string rxValue = pCharacteristic->getValue();
                 shrd->inOtaMode = rxValue[0]; // Enable http OTA mode
 
@@ -812,6 +811,8 @@ void BluetoothHandler::setSettings(Settings *data)
     // Start the service
     pService->start();
 
+    isBtEnabled = true;
+    
     // Start advertising
     BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
     pAdvertising->addServiceUUID(SERVICE_UUID);
@@ -835,7 +836,6 @@ void BluetoothHandler::setSettings(Settings *data)
     pBLEScan->setActiveScan(true);
     pBLEScan->start(BEACON_SCAN_PERIOD_IN_SECONDS, &bleOnScanResults, false);
 
-    isBtEnabled = true;
 }
 
 void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
@@ -1232,7 +1232,7 @@ void BluetoothHandler::processBLE()
         }
     }
     // disconnecting
-    if (!deviceConnected && oldDeviceConnected)
+    if (!deviceConnected && oldDeviceConnected && isBtEnabled)
     {
         //delay(500);                  // give the bluetooth stack the chance to get things ready
         pServer->startAdvertising(); // restart advertising
@@ -1240,7 +1240,7 @@ void BluetoothHandler::processBLE()
         oldDeviceConnected = deviceConnected;
     }
     // connecting
-    if (deviceConnected && !oldDeviceConnected)
+    if (deviceConnected && !oldDeviceConnected && isBtEnabled)
     {
         // do stuff here on connecting
         oldDeviceConnected = deviceConnected;
@@ -1256,10 +1256,22 @@ void BluetoothHandler::deinit()
 {
     if (isBtEnabled)
     {
+        // stop advertising
+        BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+        pAdvertising->stop();
+
+        Serial.println("BLH - stop advertising ... done");
+        // stop scanning
+        pBLEScan->stop();
+        Serial.println("BLH - stop scanning ... done");
+
+        // stop BLE stack
         esp_bluedroid_disable();
         esp_bluedroid_deinit();
         esp_bt_controller_disable();
         esp_bt_controller_deinit();
+        Serial.println("BLH - stop scanning ... done");
+
         isBtEnabled = false;
     }
 }
