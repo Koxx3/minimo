@@ -676,7 +676,7 @@ void computeDistance(float speed)
   }
 
 #if DEBUG_DISPLAY_DISTANCE
-  Serial.println("distanceTrip = " + (String)(shrd.distanceTrip / 10) +
+  Serial.println("distanceTrip = " + (String)(shrd.distanceTrip) +
                  " / distanceDiffTime = " + (String)distanceDiffTime +
                  " / speed = " + (String)speed);
 #endif

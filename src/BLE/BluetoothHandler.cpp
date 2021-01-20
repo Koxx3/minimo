@@ -1060,7 +1060,7 @@ Serial.println(current);
     i = i + 2;
 
     // distance trip
-    uint16_t distance = shrd->distanceTrip;
+    uint16_t distance = shrd->distanceTrip / 100;
     memcpy(&txValue[i], &distance, 2);
     i = i + 2;
 
