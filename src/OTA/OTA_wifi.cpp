@@ -53,8 +53,8 @@ char *test_root_ca =
     "vEsXCS+0yx5DaMkHJ8HSXPfqIbloEpw8nL+e/IBcm2PN7EeqJSdnoDfzAIJ9VNep+OkuE6N36B9K\n"
     "-----END CERTIFICATE-----\n";
 
-#define FIRMWARE_VERSION 1
-#define FIRMWARE_TYPE CONTROLLER_MINIMOTORS
+//#define FIRMWARE_VERSION 1
+//#define FIRMWARE_TYPE "smartcontroller_smartdisplay_minimo"
 
 static boolean OTA_ide_init = false;
 

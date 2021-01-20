@@ -1,0 +1,19 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "PlatformIO",
+			"task": "Build",
+			"problemMatcher": [
+				"$platformio"
+			],
+			"group": "build",
+			"label": "PlatformIO: Build"
+		},
+        {
+            "label": "post-build",
+            "type": "shell",
+            "command": "git describe --long > '${workspaceFolder}/version.txt'"
+        }
+	]
+}
