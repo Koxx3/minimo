@@ -19,21 +19,36 @@
 #include "Battery.h"
 #include <Arduino.h>
 
-Battery::Battery(uint32_t minVoltage, uint32_t maxVoltage) {
+Battery::Battery(uint32_t minVoltage, uint32_t maxVoltage)
+{
 	this->minVoltage = minVoltage;
 	this->maxVoltage = maxVoltage;
 }
 
-void Battery::begin(mapFn_t mapFunction) {
+void Battery::begin(mapFn_t mapFunction)
+{
 	this->mapFunction = mapFunction ? mapFunction : &linear;
 }
 
-uint8_t Battery::level(uint32_t voltage) {
+uint8_t Battery::level(uint32_t voltage)
+{
 
-	int nbcells = floor(maxVoltage/4.2/1000);
-    float V = (voltage/nbcells);
-    V /= 1000;
-    return (((-1.1688*pow(V,3))+(12.699*pow(V,2))+(-44.736*V)+51.488)*100);
+	int nbcells = floor(maxVoltage / 4.2 / 1000);
+
+	if (voltage < minVoltage)
+	{
+		return 0;
+	}
+	else if (voltage > maxVoltage)
+	{
+		return 100;
+	}
+	else
+	{
+		float voltagePerCell = (voltage / nbcells);
+		voltagePerCell /= 1000;
+		return (((-1.1688 * pow(voltagePerCell, 3)) + (12.699 * pow(voltagePerCell, 2)) + (-44.736 * voltagePerCell) + 51.488) * 100);
+	}
 	/*
 	if (voltage <= minVoltage) {
 		return 0;
@@ -42,7 +57,4 @@ uint8_t Battery::level(uint32_t voltage) {
 	} else {
 		return (*mapFunction)(voltage, minVoltage, maxVoltage);
 	}*/
-	
 }
-
-
