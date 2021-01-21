@@ -15,7 +15,10 @@
 #include "OTA/OTA_wifi.h"
 
 // See the following for generating UUIDs: https://www.uuidgenerator.net/
-#define SERVICE_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+#define SERVICE_MAIN_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+#define SERVICE_FIRMWARE_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914c"
+#define SERVICE_SETTINGS_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914d"
+
 #define MEASUREMENTS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a0"
 #define MODE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a1"
 #define BRAKE_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a2"
@@ -555,24 +558,24 @@ void BluetoothHandler::setSettings(Settings *data)
         void onRead(BLECharacteristic *pCharacteristic)
         {
 
-
             if (pCharacteristic->getUUID().toString() == FIRMWARE_CHARACTERISTIC_UUID)
             {
 
-//                char print_buffer[20];
+                //                char print_buffer[20];
                 String finalString;
                 String firmwareVersion = (String)FIRMWARE_VERSION;
                 String firmwareType = (String)FIRMWARE_TYPE;
-                firmwareType.replace("smartcontroller_smartdisplay_", ""); 
+                firmwareType.replace("smartcontroller_smartdisplay_", "");
                 //sprintf(print_buffer, "%s_%s", firmwareType.toCharArray(), firmwareVersion.toCharArray());
                 //pCharacteristicMode->setValue((uint8_t *)print_buffer, strlen(print_buffer));
                 finalString = firmwareType + " " + firmwareVersion;
-//                finalString.getBytes((unsigned char *)print_buffer, finalString.length()+1, 0);
-//                pCharacteristicMode->setValue((uint8_t *)print_buffer, strlen(print_buffer));
+                //                finalString.getBytes((unsigned char *)print_buffer, finalString.length()+1, 0);
+                //                pCharacteristicMode->setValue((uint8_t *)print_buffer, strlen(print_buffer));
+                //                pCharacteristicFirmware->setValue(finalString.c_str());
                 pCharacteristicFirmware->setValue(finalString.c_str());
                 Serial.print("BLH - Read firmware : ");
-//                Serial.println(print_buffer);
-//                Serial.println(strlen(print_buffer));
+                //                Serial.println(print_buffer);
+                //                Serial.println(strlen(print_buffer));
                 Serial.println(finalString.c_str());
                 Serial.println(strlen(finalString.c_str()));
             }
@@ -594,10 +597,11 @@ void BluetoothHandler::setSettings(Settings *data)
             else if (pCharacteristic->getUUID().toString() == BRAKE_STATUS_CHARACTERISTIC_UUID)
             {
 
-                byte value[2];
+                byte value[3];
                 value[0] = shrd->brakeSentOrder;
                 value[1] = shrd->brakeStatus;
-                pCharacteristicBrakeSentOrder->setValue((uint8_t *)&value, 2);
+                value[2] = shrd->brakeFordidenHighVoltage;
+                pCharacteristicBrakeSentOrder->setValue((uint8_t *)&value, 3);
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", shrd->brakeSentOrder);
@@ -689,108 +693,120 @@ void BluetoothHandler::setSettings(Settings *data)
     pServer->setCallbacks(new BLEServerCallback());
 
     // Create the BLE Service
-    BLEService *pService = pServer->createService(BLEUUID(SERVICE_UUID), 100);
+    BLEService *pServiceMain = pServer->createService(BLEUUID(SERVICE_MAIN_UUID), 100);
+    BLEService *pServiceFirmware = pServer->createService(BLEUUID(SERVICE_FIRMWARE_UUID), 20);
+    BLEService *pServiceSettings = pServer->createService(BLEUUID(SERVICE_SETTINGS_UUID), 20);
 
     // Create a BLE Characteristic
-    pCharacteristicMeasurements = pService->createCharacteristic(
+
+    //-------------------
+    // services main
+    
+    pCharacteristicMeasurements = pServiceMain->createCharacteristic(
         MEASUREMENTS_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_READ);
 
-    pCharacteristicFirmware = pService->createCharacteristic(
-        FIRMWARE_CHARACTERISTIC_UUID,
-            BLECharacteristic::PROPERTY_READ);
-
-    pCharacteristicMode = pService->createCharacteristic(
+    pCharacteristicMode = pServiceMain->createCharacteristic(
         MODE_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
-    pCharacteristicBrakeSentOrder = pService->createCharacteristic(
+    pCharacteristicBrakeSentOrder = pServiceMain->createCharacteristic(
         BRAKE_STATUS_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
-    pCharacteristicBtlockStatus = pService->createCharacteristic(
+    pCharacteristicBtlockStatus = pServiceMain->createCharacteristic(
         BTLOCK_STATUS_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
-    pCharacteristicSettings1 = pService->createCharacteristic(
-        SETTINGS1_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
-
-    pCharacteristicSpeedLimiter = pService->createCharacteristic(
+    pCharacteristicSpeedLimiter = pServiceMain->createCharacteristic(
         SPEED_LIMITER_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
-    pCharacteristicEco = pService->createCharacteristic(
+    pCharacteristicEco = pServiceMain->createCharacteristic(
         ECO_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
-    pCharacteristicAccel = pService->createCharacteristic(
+    pCharacteristicAccel = pServiceMain->createCharacteristic(
         ACCEL_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
-    pCharacteristicCalibOrder = pService->createCharacteristic(
+    pCharacteristicCalibOrder = pServiceMain->createCharacteristic(
         CALIB_ORDER_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_WRITE);
 
-    pCharacteristicOtaSwitch = pService->createCharacteristic(
+    pCharacteristicOtaSwitch = pServiceMain->createCharacteristic(
         SWITCH_TO_OTA_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_WRITE);
 
-    pCharacteristicLogs = pService->createCharacteristic(
+    pCharacteristicLogs = pServiceMain->createCharacteristic(
         LOGS_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY);
 
-    pCharacteristicFastUpdate = pService->createCharacteristic(
+    pCharacteristicFastUpdate = pServiceMain->createCharacteristic(
         FAST_UPDATE_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_WRITE);
 
-    pCharacteristicSettings2 = pService->createCharacteristic(
-        SETTINGS2_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
-
-    pCharacteristicSettings3 = pService->createCharacteristic(
-        SETTINGS3_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
-
-    pCharacteristicSettings4 = pService->createCharacteristic(
-        SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
-
-    pCharacteristicSettings5 = pService->createCharacteristic(
-        SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
-
-    pCharacteristicAux = pService->createCharacteristic(
+    pCharacteristicAux = pServiceMain->createCharacteristic(
         AUX_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
-    pCharacteristicDistanceRst = pService->createCharacteristic(
+    pCharacteristicDistanceRst = pServiceMain->createCharacteristic(
         DISTANCE_RST_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_WRITE);
 
-    pCharacteristicSpeedPid = pService->createCharacteristic(
+    pCharacteristicSpeedPid = pServiceMain->createCharacteristic(
         SPEED_PID_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_WRITE);
+
+    //-------------------
+    // services firmware
+
+    pCharacteristicFirmware = pServiceFirmware->createCharacteristic(
+        FIRMWARE_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_READ);
+
+    //-------------------
+    // services settings
+
+    pCharacteristicSettings1 = pServiceSettings->createCharacteristic(
+        SETTINGS1_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_WRITE |
+            BLECharacteristic::PROPERTY_READ);
+
+    pCharacteristicSettings2 = pServiceSettings->createCharacteristic(
+        SETTINGS2_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_WRITE |
+            BLECharacteristic::PROPERTY_READ);
+
+    pCharacteristicSettings3 = pServiceSettings->createCharacteristic(
+        SETTINGS3_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_WRITE |
+            BLECharacteristic::PROPERTY_READ);
+
+    pCharacteristicSettings4 = pServiceSettings->createCharacteristic(
+        SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_WRITE |
+            BLECharacteristic::PROPERTY_READ);
+
+    pCharacteristicSettings5 = pServiceSettings->createCharacteristic(
+        SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_WRITE |
+            BLECharacteristic::PROPERTY_READ);
 
     pCharacteristicMeasurements->addDescriptor(new BLE2902());
     pCharacteristicFirmware->addDescriptor(new BLE2902());
@@ -835,13 +851,17 @@ void BluetoothHandler::setSettings(Settings *data)
     pCharacteristicDistanceRst->setCallbacks(new BLECharacteristicCallback());
 
     // Start the service
-    pService->start();
+    pServiceMain->start();
+    pServiceFirmware->start();
+    pServiceSettings->start();
 
     isBtEnabled = true;
 
     // Start advertising
     BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
-    pAdvertising->addServiceUUID(SERVICE_UUID);
+    pAdvertising->addServiceUUID(SERVICE_MAIN_UUID);
+    pAdvertising->addServiceUUID(SERVICE_FIRMWARE_UUID);
+    pAdvertising->addServiceUUID(SERVICE_SETTINGS_UUID);
     pAdvertising->setScanResponse(false);
     pAdvertising->setMinPreferred(0x0); // set value to 0x00 to not advertise this parameter
     BLEDevice::startAdvertising();
@@ -861,7 +881,6 @@ void BluetoothHandler::setSettings(Settings *data)
     pBLEScan->setAdvertisedDeviceCallbacks(new BLEAdvertisedDeviceCallback());
     pBLEScan->setActiveScan(true);
     pBLEScan->start(BEACON_SCAN_PERIOD_IN_SECONDS, &bleOnScanResults, false);
-
 }
 
 void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
