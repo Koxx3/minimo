@@ -29,13 +29,20 @@ void Battery::begin(mapFn_t mapFunction) {
 }
 
 uint8_t Battery::level(uint32_t voltage) {
+
+	int nbcells = floor(maxVoltage/4.2/1000);
+    float V = (voltage/nbcells);
+    V /= 1000;
+    return (((-1.1688*pow(V,3))+(12.699*pow(V,2))+(-44.736*V)+51.488)*100);
+	/*
 	if (voltage <= minVoltage) {
 		return 0;
 	} else if (voltage >= maxVoltage) {
 		return 100;
 	} else {
 		return (*mapFunction)(voltage, minVoltage, maxVoltage);
-	}
+	}*/
+	
 }
 
 
