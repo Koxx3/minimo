@@ -31,7 +31,7 @@
 
 //
 
-char *test_root_ca =
+char *github_root_ca =
     "-----BEGIN CERTIFICATE-----\n"
     "MIIDxTCCAq2gAwIBAgIQAqxcJmoLQJuPC3nyrkYldzANBgkqhkiG9w0BAQUFADBsMQswCQYDVQQG\n"
     "EwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSsw\n"
@@ -52,8 +52,9 @@ char *test_root_ca =
     "vEsXCS+0yx5DaMkHJ8HSXPfqIbloEpw8nL+e/IBcm2PN7EeqJSdnoDfzAIJ9VNep+OkuE6N36B9K\n"
     "-----END CERTIFICATE-----\n";
 
-//#define FIRMWARE_VERSION 1
-//#define FIRMWARE_TYPE "smartcontroller_smartdisplay_minimo"
+// defined in PlatformIO envs
+// #define FIRMWARE_VERSION 1
+// #define FIRMWARE_TYPE "smartcontroller_smartdisplay_minimo"
 
 static boolean OTA_ide_init = false;
 
@@ -117,7 +118,7 @@ void OTA_server_run(char *ssid, char *password)
 
   secureEsp32FOTA._host = "raw.githubusercontent.com";
   secureEsp32FOTA._descriptionOfFirmwareURL = "/Koxx3/SmartController_SmartDisplay_ESP32/master/ota_updates/" + (String)FIRMWARE_TYPE + "/firmware.json";
-  secureEsp32FOTA._certificate = test_root_ca;
+  secureEsp32FOTA._certificate = github_root_ca;
   secureEsp32FOTA.clientForOta = clientForOta;
 
   bool shouldExecuteFirmwareUpdate = secureEsp32FOTA.execHTTPSCheck();

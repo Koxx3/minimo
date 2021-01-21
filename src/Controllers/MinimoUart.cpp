@@ -393,8 +393,17 @@ uint8_t MinimoUart::getBrakeFromLCD(char var, char data_buffer[])
   {
     shrd->brakeStatus = brakeStatusFromLcdNew;
 
-    // reset to min
-    shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value;
+    // reset brake sent to controller
+    if ((settings->getS1F().Electric_brake_progressive_mode == 0)
+        /* && (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_none) */)
+    {
+      //shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value;
+      // test do nothing ...
+    }
+    else
+    {
+      shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value;
+    }
 
 #if DEBUG_DISPLAY_DIGITAL_BRAKE
     Serial.print("Brake released at : ");

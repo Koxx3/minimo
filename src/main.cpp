@@ -44,7 +44,6 @@
 #include "Controllers/SmartEsc.h"
 #include "Controllers/ControllerType.h"
 
-#include "app_version.h"
 
 //////------------------------------------
 ////// Defines
@@ -509,8 +508,7 @@ void setup()
   Serial.begin(BAUD_RATE_CONSOLE);
   Serial.println(PSTR("\n\nsetup --- begin"));
 
-  Serial.print("version : ");
-  Serial.println(Version);
+  Serial.printf("firmware : type = %s / version : %d\n", FIRMWARE_TYPE, FIRMWARE_VERSION);
 
   shrd.timeLastNotifyBle = millis();
 
