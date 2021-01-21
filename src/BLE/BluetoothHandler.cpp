@@ -19,7 +19,7 @@
 #define MEASUREMENTS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a0"
 #define MODE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a1"
 #define BRAKE_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a2"
-//#define  "beb5483e-36e1-4688-b7f5-ea07361b26a3"
+#define FIRMWARE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a3"
 //#define "beb5483e-36e1-4688-b7f5-ea07361b26a4"
 //#define "beb5483e-36e1-4688-b7f5-ea07361b26a5"
 #define BTLOCK_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a6"
@@ -51,6 +51,7 @@ BLEScan *BluetoothHandler::pBLEScan;
 BLEServer *BluetoothHandler::pServer;
 BLESecurity *BluetoothHandler::pSecurity;
 BLECharacteristic *BluetoothHandler::pCharacteristicMeasurements;
+BLECharacteristic *BluetoothHandler::pCharacteristicFirmware;
 BLECharacteristic *BluetoothHandler::pCharacteristicMode;
 BLECharacteristic *BluetoothHandler::pCharacteristicBrakeSentOrder;
 BLECharacteristic *BluetoothHandler::pCharacteristicBtlockStatus;
@@ -554,7 +555,28 @@ void BluetoothHandler::setSettings(Settings *data)
         void onRead(BLECharacteristic *pCharacteristic)
         {
 
-            if (pCharacteristic->getUUID().toString() == MODE_CHARACTERISTIC_UUID)
+
+            if (pCharacteristic->getUUID().toString() == FIRMWARE_CHARACTERISTIC_UUID)
+            {
+
+//                char print_buffer[20];
+                String finalString;
+                String firmwareVersion = (String)FIRMWARE_VERSION;
+                String firmwareType = (String)FIRMWARE_TYPE;
+                firmwareType.replace("smartcontroller_smartdisplay_", ""); 
+                //sprintf(print_buffer, "%s_%s", firmwareType.toCharArray(), firmwareVersion.toCharArray());
+                //pCharacteristicMode->setValue((uint8_t *)print_buffer, strlen(print_buffer));
+                finalString = firmwareType + " " + firmwareVersion;
+//                finalString.getBytes((unsigned char *)print_buffer, finalString.length()+1, 0);
+//                pCharacteristicMode->setValue((uint8_t *)print_buffer, strlen(print_buffer));
+                pCharacteristicFirmware->setValue(finalString.c_str());
+                Serial.print("BLH - Read firmware : ");
+//                Serial.println(print_buffer);
+//                Serial.println(strlen(print_buffer));
+                Serial.println(finalString.c_str());
+                Serial.println(strlen(finalString.c_str()));
+            }
+            else if (pCharacteristic->getUUID().toString() == MODE_CHARACTERISTIC_UUID)
             {
                 pCharacteristicMode->setValue((uint8_t *)&shrd->modeOrder, 1);
 
@@ -675,6 +697,10 @@ void BluetoothHandler::setSettings(Settings *data)
         BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_READ);
 
+    pCharacteristicFirmware = pService->createCharacteristic(
+        FIRMWARE_CHARACTERISTIC_UUID,
+            BLECharacteristic::PROPERTY_READ);
+
     pCharacteristicMode = pService->createCharacteristic(
         MODE_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
@@ -767,6 +793,7 @@ void BluetoothHandler::setSettings(Settings *data)
         BLECharacteristic::PROPERTY_WRITE);
 
     pCharacteristicMeasurements->addDescriptor(new BLE2902());
+    pCharacteristicFirmware->addDescriptor(new BLE2902());
     pCharacteristicMode->addDescriptor(new BLE2902());
     pCharacteristicBrakeSentOrder->addDescriptor(new BLE2902());
     pCharacteristicBtlockStatus->addDescriptor(new BLE2902());
@@ -787,6 +814,7 @@ void BluetoothHandler::setSettings(Settings *data)
     pCharacteristicDistanceRst->addDescriptor(new BLE2902());
 
     pCharacteristicMeasurements->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicFirmware->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicMode->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicBrakeSentOrder->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicBtlockStatus->setCallbacks(new BLECharacteristicCallback());

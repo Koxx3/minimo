@@ -39,6 +39,7 @@ public:
     static BLEServer *pServer;
     static BLESecurity *pSecurity;
     static BLECharacteristic *pCharacteristicMeasurements;
+    static BLECharacteristic *pCharacteristicFirmware;
     static BLECharacteristic *pCharacteristicMode;
     static BLECharacteristic *pCharacteristicBrakeSentOrder;
     static BLECharacteristic *pCharacteristicBtlockStatus;
