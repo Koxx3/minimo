@@ -6,11 +6,11 @@
 // Serial general debugs
 #define DEBUG_TIMELOOP_MS                           0
 #define DEBUG_TIMELOOP_NS                           0
-#define DEBUG_DISPLAY_BLE_SCAN                      1
+#define DEBUG_DISPLAY_BLE_SCAN                      0
 #define DEBUG_DISPLAY_BLE_NOTIFY                    0
 #define DEBUG_DISPLAY_SPEED                         0
 #define DEBUG_DISPLAY_MODE                          0
-#define DEBUG_DISPLAY_DIGITAL_BRAKE                 1
+#define DEBUG_DISPLAY_DIGITAL_BRAKE                 0
 #define DEBUG_DISPLAY_ANALOG_BRAKE                  0
 #define DEBUG_DISPLAY_ECO                           0
 #define DEBUG_DISPLAY_ACCEL                         0
@@ -25,6 +25,8 @@
 #define DEBUG_DISPLAY_DISTANCE                      0
 #define DEBUG_DISPLAY_AUTONOMY                      0
 #define DEBUG_DISPLAY_SHTC3                         0
+
+#define DEBUG_BRAKE_SENT_ORDER                      0
 
 // Serial frame deconding debugs
 #define DEBUG_DISPLAY_FRAME_LCD_TO_CNTRL            0

@@ -44,7 +44,6 @@
 #include "Controllers/SmartEsc.h"
 #include "Controllers/ControllerType.h"
 
-
 //////------------------------------------
 ////// Defines
 
@@ -686,7 +685,7 @@ void getBrakeFromAnalog()
   brakeAnalogValue = analogRead(PIN_IN_ABRAKE);
   shrd.brakeAnalogValue = brakeAnalogValue;
 
-  if (settings.getS2F().Electric_brake_type == settings.LIST_Electric_brake_type_analog)
+  if (settings.getS2F().Electric_brake_type == settings.LIST_Electric_brake_type_smart_analog)
   {
 
     int brakeFilterMean = brakeFilter.getMean();
@@ -1205,8 +1204,14 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
   //*********************************
   // shrd.brakeSentOrder = var;
   // BUG TO FIX ???
+#if DEBUG_BRAKE_SENT_ORDER
+  Serial.println("modifyBrakeFromLCD - 1 - modifyBrakeFromAnalog : " + (String)shrd.brakeSentOrder);
+#endif
 
   shrd.brakeSentOrder = settings.getS1F().Electric_brake_min_value;
+#if DEBUG_BRAKE_SENT_ORDER
+  Serial.println("modifyBrakeFromLCD - 2 - modifyBrakeFromAnalog : " + (String)shrd.brakeSentOrder);
+#endif
 
   if (settings.getS1F().Electric_brake_progressive_mode == 1)
   {
@@ -1225,7 +1230,14 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 
         diff = brakeFilterMeanErr - shrd.brakeMinPressureRaw;
         diffStep = diff / step;
+#if DEBUG_BRAKE_SENT_ORDER
+        Serial.println("modifyBrakeFromLCD - 3 - modifyBrakeFromAnalog : " + (String)shrd.brakeSentOrder);
+#endif
+
         shrd.brakeSentOrder = diffStep + settings.getS1F().Electric_brake_min_value;
+#if DEBUG_BRAKE_SENT_ORDER
+        Serial.println("modifyBrakeFromLCD - 4 - modifyBrakeFromAnalog : " + (String)shrd.brakeSentOrder);
+#endif
       }
     }
 

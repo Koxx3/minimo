@@ -403,6 +403,9 @@ uint8_t MinimoUart::getBrakeFromLCD(char var, char data_buffer[])
     else
     {
       shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value;
+#if DEBUG_BRAKE_SENT_ORDER
+      Serial.println("getBrakeFromLCD - 1 - brakeSentOrder : " + (String)shrd->brakeSentOrder);
+#endif
     }
 
 #if DEBUG_DISPLAY_DIGITAL_BRAKE
@@ -440,11 +443,19 @@ uint8_t MinimoUart::modifyBrakeFromLCD(char var, char data_buffer[])
 
   uint32_t currentTime = millis();
 
+#if DEBUG_BRAKE_SENT_ORDER
+  Serial.println("modifyBrakeFromLCD - 1 - brakeSentOrder : " + (String)shrd->brakeSentOrder);
+#endif
+
   // init from LCD brake mode
   if (shrd->brakeSentOrder == -1)
     shrd->brakeSentOrder = var;
 
-  if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_none)
+#if DEBUG_BRAKE_SENT_ORDER
+  Serial.println("modifyBrakeFromLCD - 2 - brakeSentOrder : " + (String)shrd->brakeSentOrder);
+#endif
+
+  if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_cntrl)
   {
 
     // progressive mode
@@ -496,7 +507,15 @@ uint8_t MinimoUart::modifyBrakeFromLCD(char var, char data_buffer[])
         blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakeStatus, shrd->brakeFordidenHighVoltage);
       }
 
+#if DEBUG_BRAKE_SENT_ORDER
+      Serial.println("modifyBrakeFromLCD - 3 - brakeSentOrder : " + (String)shrd->brakeSentOrder);
+#endif
+
       shrd->brakeSentOrderOld = shrd->brakeSentOrder;
+
+#if DEBUG_BRAKE_SENT_ORDER
+      Serial.println("modifyBrakeFromLCD - 4 - brakeSentOrder : " + (String)shrd->brakeSentOrder);
+#endif
     }
 
 #if DEBUG_DISPLAY_DIGITAL_BRAKE
@@ -518,6 +537,10 @@ uint8_t MinimoUart::modifyBrakeFromLCD(char var, char data_buffer[])
     Serial.println(print_buffer);
 #endif
   }
+
+#if DEBUG_BRAKE_SENT_ORDER
+  Serial.println("modifyBrakeFromLCD - 5 - brakeSentOrder : " + (String)shrd->brakeSentOrder);
+#endif
 
   return shrd->brakeSentOrder;
 }
@@ -747,12 +770,12 @@ int MinimoUart::readHardSerial(int mode, int i, Stream *hwSerCntrl, Stream *hwSe
       if (i == 10)
       {
 
-        if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_none)
+        if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_cntrl)
         {
           var = modifyBrakeFromLCD(var, data_buffer_ori);
         }
-        else if ((settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_analog) ||
-                 (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_digital))
+        else if ((settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_smart_analog) ||
+                 (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_smart_digital))
         {
           var = modifyBrakeFromAnalog(var, data_buffer_ori);
         }
@@ -781,7 +804,7 @@ int MinimoUart::readHardSerial(int mode, int i, Stream *hwSerCntrl, Stream *hwSe
     {
       if (i == 4)
       {
-        if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_none)
+        if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_cntrl)
         {
           getBrakeFromLCD(var, data_buffer_ori);
         }

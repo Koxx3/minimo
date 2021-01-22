@@ -35,9 +35,9 @@ public:
   // The actions I ca do...
   typedef enum Electric_Brake_Type
   {
-    LIST_Electric_brake_type_none = 0,
-    LIST_Electric_brake_type_digital,
-    LIST_Electric_brake_type_analog
+    LIST_Electric_brake_type_cntrl = 0,
+    LIST_Electric_brake_type_smart_digital,
+    LIST_Electric_brake_type_smart_analog
   } tElectric_Brake_Type;
 
 #pragma pack(push, 1)
