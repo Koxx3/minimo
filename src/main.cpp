@@ -657,7 +657,7 @@ void computeDistance(float speed)
   shrd.distanceTrip = shrd.distanceTrip + ((speed * (distanceDiffTime)) / 360) * SPEED_TO_DISTANCE_CORRECTION_FACTOR;
   shrd.distancePrevTime = millis();
 
-  shrd.distanceOdo = shrd.distanceOdoBoot + (shrd.distanceTrip / 10000);
+  shrd.distanceOdo = shrd.distanceOdoBoot + (shrd.distanceTrip / 1000);
 
   if ((shrd.speedOld != 0) && (speed == 0) && (shrd.distanceOdoInFlash != shrd.distanceOdo))
   {
