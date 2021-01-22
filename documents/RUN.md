@@ -13,6 +13,7 @@ Once you have all the electronic, you'll need to flash/install the softwares.
   - copy patch-esp\BLESecurity.* in C:\Users\ \<username>\ \.platformio\packages\framework-arduinoespressif32\libraries\BLE\src
 - Burn efuse for GPIO12 with the script called 'burn_efuse_gpio12.bat'
   - burn_efuse_gpio12.bat <COM_PORT>
+- Erase the ESP32 (especially if you used the ESP32 for other purpose before)
 - Flash the ESP32
 
 ## Connect Smartphone
