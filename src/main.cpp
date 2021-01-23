@@ -750,27 +750,10 @@ void getBrakeFromAnalog()
 
     brakeFilter.in(brakeAnalogValue);
 
-    /*
-    if ((brakeAnalogValue < 1000) && (shrd.brakeMaxCalibOrder >= 1))
-    {
-      brakeMaxFilterInit.in(brakeAnalogValue);
-      shrd.brakeMinFilterInitMean = brakeMaxFilterInit.getMean();
-    }
-
-    iBrakeMinCalibOrder++;
-    if (iBrakeMinCalibOrder > NB_BRAKE_CALIB_DATA)
-    {
-      iBrakeMinCalibOrder = 0;
-      shrd.brakeMaxCalibOrder = 0;
-    }
-*/
-
     if (settings.getS1F().Electric_brake_progressive_mode == 1)
     {
       brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
       brakeFilterMean = brakeFilter.getMean();
-
-      shrd.brakeFordidenHighVoltage = isElectricBrakeForbiden();
 
       // alarm controler from braking
       if ((brakeFilterMeanErr > shrd.brakeMinPressureRaw + ANALOG_BRAKE_MIN_OFFSET) && (!shrd.brakeFordidenHighVoltage))
@@ -1058,6 +1041,7 @@ bool isElectricBrakeForbiden()
     return false;
   }
 
+/*
   float voltage = shrd.voltageFilterMean / 1000.0;
   float bat_min = settings.getS3F().Battery_min_voltage / 10.0;
   float bat_max = settings.getS3F().Battery_max_voltage / 10.0;
@@ -1077,6 +1061,9 @@ bool isElectricBrakeForbiden()
 #endif
 
   return (voltage > maxVoltage);
+*/
+
+  return (shrd.batteryLevel > settings.getS1F().Electric_brake_disabled_percent_limit);
 }
 
 void processVescSerial()
@@ -1636,6 +1623,28 @@ void processVoltageLongFilter()
   shrd.voltageFilterLongMean = voltageLongFilter.getMean();
 }
 
+void processVoltageTooHighForBrake()
+{
+
+  bool isElectricBrakeForbidenNew = isElectricBrakeForbiden();
+
+#if DEBUG_BLE_DISPLAY_VOLTAGE_TOO_HIGH
+  Serial.printf("processVoltageTooHighForBrake : isElectricBrakeForbidenNew = %d / brakeFordidenHighVoltage = %d \n", isElectricBrakeForbidenNew, shrd.brakeFordidenHighVoltage);
+#endif
+
+  if (shrd.brakeFordidenHighVoltage != isElectricBrakeForbidenNew)
+  {
+
+    shrd.brakeFordidenHighVoltage = isElectricBrakeForbidenNew;
+
+    // notify
+    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus, shrd.brakeFordidenHighVoltage);
+#if DEBUG_BLE_DISPLAY_VOLTAGE_TOO_HIGH
+    Serial.printf("processVoltageTooHighForBrake : notify\n");
+#endif
+  }
+}
+
 void processAutonomy()
 {
 
@@ -1851,6 +1860,7 @@ void loop()
   if (i_loop % 1000 == 0)
   {
     processVoltageLongFilter();
+    processVoltageTooHighForBrake();
   }
 #endif
 

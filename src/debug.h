@@ -25,6 +25,7 @@
 #define DEBUG_DISPLAY_DISTANCE                      0
 #define DEBUG_DISPLAY_AUTONOMY                      0
 #define DEBUG_DISPLAY_SHTC3                         0
+#define DEBUG_BLE_DISPLAY_VOLTAGE_TOO_HIGH          0
 
 #define DEBUG_BRAKE_SENT_ORDER                      0
 

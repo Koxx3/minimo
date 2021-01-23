@@ -459,9 +459,9 @@ uint8_t MinimoUart::modifyBrakeFromLCD(char var, char data_buffer[])
   {
 
     // progressive mode
-    if (settings->getS1F().Electric_brake_progressive_mode == 1)
+    if ((settings->getS1F().Electric_brake_progressive_mode == 1))
     {
-      if (shrd->brakeStatus == 1)
+      if ((shrd->brakeStatus == 1) && (shrd->brakeFordidenHighVoltage == 0))
       {
         if (shrd->brakeSentOrder < settings->getS1F().Electric_brake_max_value)
         {
@@ -490,8 +490,12 @@ uint8_t MinimoUart::modifyBrakeFromLCD(char var, char data_buffer[])
         // notify bluetooth
         blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakeStatus, shrd->brakeFordidenHighVoltage);
       }
-      else
+      else if (shrd->brakeFordidenHighVoltage == 1)
       // progressive brake enabled but brake released
+      {
+        shrd->brakeSentOrder = 0;
+      }
+      else // progressive brake enabled but brake released
       {
         shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value;
       }
@@ -499,6 +503,14 @@ uint8_t MinimoUart::modifyBrakeFromLCD(char var, char data_buffer[])
     else
     // progressive brake disabled
     {
+      if (shrd->brakeFordidenHighVoltage == 1)
+      {
+        shrd->brakeSentOrder = 0;
+      } else
+      {
+        // take value from display ... (not the best, we should get the last BLE value)
+        shrd->brakeSentOrder = var;
+      }
 
       // notify brake LCD value
       if (shrd->brakeSentOrder != shrd->brakeSentOrderOld)
