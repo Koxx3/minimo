@@ -127,6 +127,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 - [✅] Power 🔋
     - [✅] Convert 12V to 5V
     - [✅] Convert 80V to 5V
+    - [IN PROGRESS 🔄] Convert 100V to 5V
 
 - [ ] Features ⚙️
     - [✅] Save settings in non volatile memory
