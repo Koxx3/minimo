@@ -560,24 +560,14 @@ void BluetoothHandler::setSettings(Settings *data)
 
             if (pCharacteristic->getUUID().toString() == FIRMWARE_CHARACTERISTIC_UUID)
             {
-
-                //                char print_buffer[20];
                 String finalString;
                 String firmwareVersion = (String)FIRMWARE_VERSION;
                 String firmwareType = (String)FIRMWARE_TYPE;
                 firmwareType.replace("smartcontroller_smartdisplay_", "");
-                //sprintf(print_buffer, "%s_%s", firmwareType.toCharArray(), firmwareVersion.toCharArray());
-                //pCharacteristicMode->setValue((uint8_t *)print_buffer, strlen(print_buffer));
                 finalString = firmwareType + " " + firmwareVersion;
-                //                finalString.getBytes((unsigned char *)print_buffer, finalString.length()+1, 0);
-                //                pCharacteristicMode->setValue((uint8_t *)print_buffer, strlen(print_buffer));
-                //                pCharacteristicFirmware->setValue(finalString.c_str());
                 pCharacteristicFirmware->setValue(finalString.c_str());
                 Serial.print("BLH - Read firmware : ");
-                //                Serial.println(print_buffer);
-                //                Serial.println(strlen(print_buffer));
                 Serial.println(finalString.c_str());
-                Serial.println(strlen(finalString.c_str()));
             }
             else if (pCharacteristic->getUUID().toString() == MODE_CHARACTERISTIC_UUID)
             {
