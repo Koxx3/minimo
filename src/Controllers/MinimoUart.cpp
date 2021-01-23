@@ -367,18 +367,18 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
   return newPower;
 }
 
-uint8_t MinimoUart::getBrakeFromLCD(char var, char data_buffer[])
+uint8_t MinimoUart::getBrakeFromDisplay(char var, char data_buffer[])
 {
 
   uint8_t brake = (var - data_buffer[3]) & 0x20;
-  uint8_t brakeStatusFromLcdNew = brake >> 5;
+  uint8_t brakePressedStatusFromDisplayNew = brake >> 5;
 
-  shrd->brakeLcd = var;
+  shrd->brakeDisplay = var;
 
   //uint8_t brakeStatusFromLcdNew = brakeStatus;
-  if ((brakeStatusFromLcdNew == 1) && (shrd->brakeStatusOld == 0))
+  if ((brakePressedStatusFromDisplayNew == 1) && (shrd->brakePressedStatusOld == 0))
   {
-    shrd->brakeStatus = brakeStatusFromLcdNew;
+    shrd->brakePressedStatus = brakePressedStatusFromDisplayNew;
     timeLastBrake = millis();
 
 #if DEBUG_DISPLAY_DIGITAL_BRAKE
@@ -387,18 +387,27 @@ uint8_t MinimoUart::getBrakeFromLCD(char var, char data_buffer[])
 #endif
 
     // notify bluetooth
-    blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakeStatus, shrd->brakeFordidenHighVoltage);
+    blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
   }
-  else if ((brakeStatusFromLcdNew == 0) && (shrd->brakeStatusOld == 1))
+  else if ((brakePressedStatusFromDisplayNew == 0) && (shrd->brakePressedStatusOld == 1))
   {
-    shrd->brakeStatus = brakeStatusFromLcdNew;
+    shrd->brakePressedStatus = brakePressedStatusFromDisplayNew;
 
     // reset brake sent to controller
-    if ((settings->getS1F().Electric_brake_progressive_mode == 0)
-        /* && (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_none) */)
+    if (settings->getS1F().Electric_brake_progressive_mode == 0)
     {
-      //shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value;
-      // test do nothing ...
+      if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_cntrl)
+      {
+        if (shrd->brakeSentOrderFromBLE < 0)
+        {
+          shrd->brakeSentOrder = shrd->brakeDisplay;
+        }
+        else
+        {
+          //  do nothing ...
+          shrd->brakeSentOrder = shrd->brakeSentOrderFromBLE;
+        }
+      }
     }
     else
     {
@@ -414,11 +423,11 @@ uint8_t MinimoUart::getBrakeFromLCD(char var, char data_buffer[])
 #endif
 
     // notify bluetooth
-    blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakeStatus, shrd->brakeFordidenHighVoltage);
+    blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
   }
 
-  shrd->brakeStatusOld = brakeStatusFromLcdNew;
-  shrd->brakeStatus = brakeStatusFromLcdNew;
+  shrd->brakePressedStatusOld = brakePressedStatusFromDisplayNew;
+  shrd->brakePressedStatus = brakePressedStatusFromDisplayNew;
 
   /*
   char print_buffer[500];
@@ -438,7 +447,7 @@ uint8_t MinimoUart::getBrakeFromLCD(char var, char data_buffer[])
   return brake;
 }
 
-uint8_t MinimoUart::modifyBrakeFromLCD(char var, char data_buffer[])
+uint8_t MinimoUart::modifyBrakeFromDisplay(char var, char data_buffer[])
 {
 
   uint32_t currentTime = millis();
@@ -461,7 +470,7 @@ uint8_t MinimoUart::modifyBrakeFromLCD(char var, char data_buffer[])
     // progressive mode
     if ((settings->getS1F().Electric_brake_progressive_mode == 1))
     {
-      if ((shrd->brakeStatus == 1) && (shrd->brakeFordidenHighVoltage == 0))
+      if ((shrd->brakePressedStatus == 1) && (shrd->brakeFordidenHighVoltage == 0))
       {
         if (shrd->brakeSentOrder < settings->getS1F().Electric_brake_max_value)
         {
@@ -488,7 +497,7 @@ uint8_t MinimoUart::modifyBrakeFromLCD(char var, char data_buffer[])
         }
 
         // notify bluetooth
-        blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakeStatus, shrd->brakeFordidenHighVoltage);
+        blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
       }
       else if (shrd->brakeFordidenHighVoltage == 1)
       // progressive brake enabled but brake released
@@ -506,17 +515,21 @@ uint8_t MinimoUart::modifyBrakeFromLCD(char var, char data_buffer[])
       if (shrd->brakeFordidenHighVoltage == 1)
       {
         shrd->brakeSentOrder = 0;
-      } else
+      }
+      else
       {
         // take value from display ... (not the best, we should get the last BLE value)
-        shrd->brakeSentOrder = var;
+        if (shrd->brakeSentOrderFromBLE >= 0)
+          shrd->brakeSentOrder = shrd->brakeSentOrderFromBLE;
+        else
+          shrd->brakeSentOrder = var;
       }
 
       // notify brake LCD value
       if (shrd->brakeSentOrder != shrd->brakeSentOrderOld)
       {
         // notify bluetooth
-        blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakeStatus, shrd->brakeFordidenHighVoltage);
+        blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
       }
 
 #if DEBUG_BRAKE_SENT_ORDER
@@ -534,7 +547,7 @@ uint8_t MinimoUart::modifyBrakeFromLCD(char var, char data_buffer[])
     char print_buffer[500];
     sprintf(print_buffer, "%s %02x %s %02x %s %02x %s %d %s %d %s %d",
             "Brake Status : ",
-            shrd->brakeStatus,
+            shrd->brakePressedStatus,
             " / brakeSentOrder  : ",
             shrd->brakeSentOrder,
             " / Current LCD brake  : ",
@@ -784,7 +797,7 @@ int MinimoUart::readHardSerial(int mode, int i, Stream *hwSerCntrl, Stream *hwSe
 
         if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_cntrl)
         {
-          var = modifyBrakeFromLCD(var, data_buffer_ori);
+          var = modifyBrakeFromDisplay(var, data_buffer_ori);
         }
         else if ((settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_smart_analog) ||
                  (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_smart_digital))
@@ -818,7 +831,7 @@ int MinimoUart::readHardSerial(int mode, int i, Stream *hwSerCntrl, Stream *hwSe
       {
         if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_cntrl)
         {
-          getBrakeFromLCD(var, data_buffer_ori);
+          getBrakeFromDisplay(var, data_buffer_ori);
         }
       }
 

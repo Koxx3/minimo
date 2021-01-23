@@ -632,7 +632,7 @@ void displaySpeed()
 void displayBrake()
 {
   Serial.print("Brake : ");
-  Serial.println(shrd.brakeStatus);
+  Serial.println(shrd.brakePressedStatus);
 }
 
 void displayButton1()
@@ -772,7 +772,7 @@ void getBrakeFromAnalog()
         digitalWrite(PIN_OUT_BRAKE, 1);
 #endif
 
-        if (shrd.brakeStatus == 0)
+        if (shrd.brakePressedStatus == 0)
         {
           char print_buffer[500];
           sprintf(print_buffer, ">>>> brake IO ON");
@@ -782,7 +782,7 @@ void getBrakeFromAnalog()
           blh.notifyBleLogs(print_buffer);
         }
 
-        shrd.brakeStatus = 1;
+        shrd.brakePressedStatus = 1;
       }
       else
       {
@@ -792,7 +792,7 @@ void getBrakeFromAnalog()
         digitalWrite(PIN_OUT_BRAKE, 0);
 #endif
 
-        if (shrd.brakeStatus == 1)
+        if (shrd.brakePressedStatus == 1)
         {
           char print_buffer[500];
           sprintf(print_buffer, ">>>> brake IO OFF");
@@ -802,13 +802,13 @@ void getBrakeFromAnalog()
           blh.notifyBleLogs(print_buffer);
         }
 
-        shrd.brakeStatus = 0;
+        shrd.brakePressedStatus = 0;
       }
 
       // notify brake LCD value
-      if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
+      if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakePressedStatus != shrd.brakePressedStatusOld))
       {
-        blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus, shrd.brakeFordidenHighVoltage);
+        blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakePressedStatus, shrd.brakeFordidenHighVoltage);
 
 #if DEBUG_DISPLAY_ANALOG_BRAKE
         Serial.print("brake notify : ");
@@ -823,13 +823,13 @@ void getBrakeFromAnalog()
                 brakeAnalogValue,
                 shrd.brakeSentOrder,
                 shrd.brakeSentOrderOld,
-                shrd.brakeStatus,
+                shrd.brakePressedStatus,
                 shrd.brakeMaxPressureRaw,
                 shrd.brakeFordidenHighVoltage);
         blh.notifyBleLogs(print_buffer);
       }
 
-      shrd.brakeStatusOld = shrd.brakeStatus;
+      shrd.brakePressedStatusOld = shrd.brakePressedStatus;
       shrd.brakeSentOrderOld = shrd.brakeSentOrder;
 
 #if DEBUG_BLE_DISPLAY_ANALOG_BRAKE
@@ -1135,15 +1135,15 @@ void processKellySerial1()
   shrd.voltageFilterMean = kellyCntrl.data1.B_Voltage * 1000;
   shrd.currentTemperature = kellyCntrl.data1.Controller_temperature;
 
-  shrd.brakeStatus = kellyCntrl.data1.BRK_SW;
+  shrd.brakePressedStatus = kellyCntrl.data1.BRK_SW;
 
   // notify brake LCD value
-  if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
+  if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakePressedStatus != shrd.brakePressedStatusOld))
   {
-    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus, shrd.brakeFordidenHighVoltage);
+    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakePressedStatus, shrd.brakeFordidenHighVoltage);
   }
 
-  shrd.brakeStatusOld = shrd.brakeStatus;
+  shrd.brakePressedStatusOld = shrd.brakePressedStatus;
 }
 
 void processKellySerial2()
@@ -1177,12 +1177,12 @@ void processSmartEscSerial()
   //Serial.println("voltageFilterMean " + (String)shrd.voltageFilterMean + " / shrd.currentFilterMean = " + (String)shrd.currentFilterMean + " / currentTemperature = " + (String)shrd.currentTemperature + " / ERPM = " + (String)smartEscCntrl.data.ERPM + " / speedCurrent = " + (String)shrd.speedCurrent + " / Throttle = " + (String)smartEscCntrl.data.Throttle);
 
   // notify brake LCD value
-  if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
+  if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakePressedStatus != shrd.brakePressedStatusOld))
   {
-    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus, shrd.brakeFordidenHighVoltage);
+    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakePressedStatus, shrd.brakeFordidenHighVoltage);
   }
 
-  shrd.brakeStatusOld = shrd.brakeStatus;
+  shrd.brakePressedStatusOld = shrd.brakePressedStatus;
 }
 
 uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
@@ -1638,7 +1638,7 @@ void processVoltageTooHighForBrake()
     shrd.brakeFordidenHighVoltage = isElectricBrakeForbidenNew;
 
     // notify
-    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus, shrd.brakeFordidenHighVoltage);
+    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakePressedStatus, shrd.brakeFordidenHighVoltage);
 #if DEBUG_BLE_DISPLAY_VOLTAGE_TOO_HIGH
     Serial.printf("processVoltageTooHighForBrake : notify\n");
 #endif

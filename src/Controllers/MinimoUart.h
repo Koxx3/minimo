@@ -68,14 +68,14 @@ public:
     uint8_t modifyModeOld(char var, char data_buffer[]);
     uint8_t getMode(char var, char data_buffer[]);
     uint8_t modifyMode(char var, char data_buffer[]);
-    uint8_t getBrakeFromLCD(char var, char data_buffer[]);
+    uint8_t getBrakeFromDisplay(char var, char data_buffer[]);
     void displayDecodedFrame(int mode, char data_buffer[], byte checksum);
     double getSpeed();
     uint8_t modifyAccel(char var, char data_buffer[]);
     uint16_t generateSpeedRawValue(double speed);
     uint8_t modifySpeed(char var, char data_buffer[], uint8_t byte);
     uint8_t modifyPower(char var, char data_buffer[]);
-    uint8_t modifyBrakeFromLCD(char var, char data_buffer[]);
+    uint8_t modifyBrakeFromDisplay(char var, char data_buffer[]);
     uint8_t modifyEco(char var, char data_buffer[]);
     void setPID(PID *pidSpeed_p);
 

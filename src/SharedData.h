@@ -68,17 +68,19 @@ public:
 
     uint8_t auxOrder = 0;
 
-    uint8_t brakeStatus = 0;
-    uint8_t brakeStatusOld = 0;
-    int8_t brakeSentOrder = -1;
-    uint8_t brakeLcd = 0;
-    int8_t brakeLcdOld = -1;
-    int8_t brakeSentOrderOld = -1;
+    uint8_t brakePressedStatus = 0; // is brake pressed
+    uint8_t brakePressedStatusOld = 0;
+    int8_t brakeSentOrder = -1;  // brake force order sent to controller
+    int8_t brakeSentOrderOld = -1; 
+    int8_t brakeSentOrderFromBLE = -1; // brake force order from LCD
+    uint8_t brakeDisplay = 0;   // brake force order sent from escooter display
+    int8_t brakeDisplayOld = -1;
+
+    uint8_t brakeFordidenHighVoltage = 0;
+
     int32_t brakeMaxPressureRaw = -1;
     int32_t brakeMinPressureRaw = -1;
     uint32_t brakeAnalogValue = 0;
-    uint8_t brakeFordidenHighVoltage = 0;
-//    uint32_t brakeMinFilterInitMean = 0;
 
     uint32_t throttleAnalogValue = 0;
 

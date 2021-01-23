@@ -10,7 +10,7 @@
 #define DEBUG_DISPLAY_BLE_NOTIFY                    0
 #define DEBUG_DISPLAY_SPEED                         0
 #define DEBUG_DISPLAY_MODE                          0
-#define DEBUG_DISPLAY_DIGITAL_BRAKE                 0
+#define DEBUG_DISPLAY_DIGITAL_BRAKE                 1
 #define DEBUG_DISPLAY_ANALOG_BRAKE                  0
 #define DEBUG_DISPLAY_ECO                           0
 #define DEBUG_DISPLAY_ACCEL                         0

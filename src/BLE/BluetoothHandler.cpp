@@ -224,6 +224,7 @@ void BluetoothHandler::setSettings(Settings *data)
             {
                 std::string rxValue = pCharacteristic->getValue();
                 shrd->brakeSentOrder = rxValue[0];
+                shrd->brakeSentOrderFromBLE = rxValue[0];
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", shrd->brakeSentOrder);
@@ -589,7 +590,7 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 byte value[3];
                 value[0] = shrd->brakeSentOrder;
-                value[1] = shrd->brakeStatus;
+                value[1] = shrd->brakePressedStatus;
                 value[2] = shrd->brakeFordidenHighVoltage;
                 pCharacteristicBrakeSentOrder->setValue((uint8_t *)&value, 3);
 
