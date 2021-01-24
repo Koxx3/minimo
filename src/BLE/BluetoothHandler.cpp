@@ -103,8 +103,7 @@ void BluetoothHandler::setSettings(Settings *data)
     {
         void onConnect(BLEServer *pServer)
         {
-            Serial.println("BLE connected");
-            deviceConnected = true;
+            Serial.println("BLE connecting");
 
             if (bleLockForced == 0)
             {
@@ -129,7 +128,7 @@ void BluetoothHandler::setSettings(Settings *data)
 
         void onDisconnect(BLEServer *pServer)
         {
-            Serial.println("BLE disonnected");
+            Serial.println("BLE disconnected");
             deviceConnected = false;
 
             if (bleLockForced == 0)
@@ -197,11 +196,14 @@ void BluetoothHandler::setSettings(Settings *data)
                 uint16_t length;
                 esp_ble_gap_get_whitelist_size(&length);
                 Serial.println("onAuthenticationComplete : success");
+                deviceConnected = true;
             }
             else
             {
                 Serial.print("BLH - onAuthenticationComplete : hummm ... failed / reason : ");
                 Serial.println(cmpl.fail_reason);
+
+                deviceConnected = false;
             }
         }
     };
@@ -692,7 +694,7 @@ void BluetoothHandler::setSettings(Settings *data)
 
     //-------------------
     // services main
-    
+
     pCharacteristicMeasurements = pServiceMain->createCharacteristic(
         MEASUREMENTS_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
@@ -1050,74 +1052,68 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
 
 uint8_t BluetoothHandler::setMeasurements()
 {
-    /*         
-        speedValue = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT8);
-        voltage = (parser.getIntValue(BluetoothBytesParser.FORMAT_SINT16) / 10.0);
-        current = (float) (parser.getIntValue(BluetoothBytesParser.FORMAT_SINT16) / 10.0);
-        power = parser.getIntValue(BluetoothBytesParser.FORMAT_SINT16);
-        temperature =  (float) (parser.getIntValue(BluetoothBytesParser.FORMAT_SINT16) / 10.0);
-        humidity =  (float) (parser.getIntValue(BluetoothBytesParser.FORMAT_SINT16) / 10.0);
-        distance =  (float) (parser.getIntValue(BluetoothBytesParser.FORMAT_SINT16) / 10.0);
-        */
 
-    char txValue[20];
     uint8_t i = 0;
 
-    //speedValue
-    uint8_t speedCurrent = shrd->speedCurrent;
-    memcpy(&txValue[i], &speedCurrent, 1);
-    i = i + 1;
+    if (deviceConnected)
+    {
+        char txValue[20];
 
-    //voltage
-    uint16_t voltage = shrd->voltageFilterMean / 100;
-    memcpy(&txValue[i], &voltage, 2);
-    i = i + 2;
+        //speedValue
+        uint8_t speedCurrent = shrd->speedCurrent;
+        memcpy(&txValue[i], &speedCurrent, 1);
+        i = i + 1;
 
-    //current
-    int16_t current = shrd->currentActual / 100;
-    memcpy(&txValue[i], &current, 2);
-    i = i + 2;
+        //voltage
+        uint16_t voltage = shrd->voltageFilterMean / 100;
+        memcpy(&txValue[i], &voltage, 2);
+        i = i + 2;
 
-    /*
+        //current
+        int16_t current = shrd->currentActual / 100;
+        memcpy(&txValue[i], &current, 2);
+        i = i + 2;
+
+        /*
 Serial.print(shrd->currentFilterMean);
 Serial.print(" / ");
 Serial.println(current);
 */
 
-    // power
-    int16_t power = (current) * (voltage) / 100;
-    memcpy(&txValue[i], &power, 2);
-    i = i + 2;
+        // power
+        int16_t power = (current) * (voltage) / 100;
+        memcpy(&txValue[i], &power, 2);
+        i = i + 2;
 
-    // temperature
-    int16_t temp = shrd->currentTemperature * 10.0;
-    uint16_t hr = shrd->currentHumidity * 10.0;
-    memcpy(&txValue[i], &temp, 2);
-    i = i + 2;
-    memcpy(&txValue[i], &hr, 2);
-    i = i + 2;
+        // temperature
+        int16_t temp = shrd->currentTemperature * 10.0;
+        uint16_t hr = shrd->currentHumidity * 10.0;
+        memcpy(&txValue[i], &temp, 2);
+        i = i + 2;
+        memcpy(&txValue[i], &hr, 2);
+        i = i + 2;
 
-    // distance trip
-    uint16_t distance = shrd->distanceTrip / 100;
-    memcpy(&txValue[i], &distance, 2);
-    i = i + 2;
+        // distance trip
+        uint16_t distance = shrd->distanceTrip / 100;
+        memcpy(&txValue[i], &distance, 2);
+        i = i + 2;
 
-    // distance odo
-    uint32_t distanceOdo = shrd->distanceOdo;
-    memcpy(&txValue[i], &distanceOdo, 4);
-    i = i + 4;
+        // distance odo
+        uint32_t distanceOdo = shrd->distanceOdo;
+        memcpy(&txValue[i], &distanceOdo, 4);
+        i = i + 4;
 
-    // battery level
-    uint8_t batLevel = shrd->batteryLevel;
-    memcpy(&txValue[i], &batLevel, 1);
-    i = i + 1;
+        // battery level
+        uint8_t batLevel = shrd->batteryLevel;
+        memcpy(&txValue[i], &batLevel, 1);
+        i = i + 1;
 
-    // battery autonomy
-    uint8_t autonomy = shrd->autonomyFilterMean;
-    memcpy(&txValue[i], &autonomy, 1);
-    i = i + 1;
+        // battery autonomy
+        uint8_t autonomy = shrd->autonomyFilterMean;
+        memcpy(&txValue[i], &autonomy, 1);
+        i = i + 1;
 
-    /*
+        /*
     txValue[i] = 0xff;
 
     char print_buffer[500];
@@ -1141,87 +1137,119 @@ Serial.println(current);
     Serial.println(print_buffer);
 */
 
-    pCharacteristicMeasurements->setValue((uint8_t *)&txValue[0], i);
-
+        pCharacteristicMeasurements->setValue((uint8_t *)&txValue[0], i);
+    }
     return i;
 }
 
 void BluetoothHandler::notifyMeasurements()
 {
-    // notify of new log
-    setMeasurements();
-    pCharacteristicMeasurements->notify();
+    if (deviceConnected)
+    {
+        // notify of new log
+        setMeasurements();
+        pCharacteristicMeasurements->notify();
+    }
 }
 
 void BluetoothHandler::notifyBleLogs(char *txt)
 {
-    // notify of new log
-    pCharacteristicLogs->setValue((uint8_t *)txt, strlen(txt));
-    pCharacteristicLogs->notify();
+    if (deviceConnected)
+    {
+        // notify of new log
+        pCharacteristicLogs->setValue((uint8_t *)txt, strlen(txt));
+        pCharacteristicLogs->notify();
+    }
 }
 
 void BluetoothHandler::notifyModeOrder(uint8_t val)
 {
-    pCharacteristicMode->setValue((uint8_t *)&val, 1);
-    pCharacteristicMode->notify();
+    if (deviceConnected)
+    {
+        pCharacteristicMode->setValue((uint8_t *)&val, 1);
+        pCharacteristicMode->notify();
+    }
 }
 
 void BluetoothHandler::notifyBreakeSentOrder(uint8_t order, uint8_t isPressed, uint8_t brakeFordidenHighVoltage)
 {
-    byte value[3];
-    value[0] = order;
-    value[1] = isPressed;
-    value[2] = brakeFordidenHighVoltage;
-    pCharacteristicBrakeSentOrder->setValue((uint8_t *)&value, 3);
-    pCharacteristicBrakeSentOrder->notify();
+
+    if (deviceConnected)
+    {
+        byte value[3];
+        value[0] = order;
+        value[1] = isPressed;
+        value[2] = brakeFordidenHighVoltage;
+        pCharacteristicBrakeSentOrder->setValue((uint8_t *)&value, 3);
+        pCharacteristicBrakeSentOrder->notify();
+    }
 }
 
 void BluetoothHandler::notifyEcoOrder(uint8_t val)
 {
-    pCharacteristicEco->setValue((uint8_t *)&val, 1);
-    pCharacteristicEco->notify();
+
+    if (deviceConnected)
+    {
+        pCharacteristicEco->setValue((uint8_t *)&val, 1);
+        pCharacteristicEco->notify();
+    }
 }
 
 void BluetoothHandler::notifyAccelOrder(uint8_t val)
 {
-    pCharacteristicAccel->setValue((uint8_t *)&val, 1);
-    pCharacteristicAccel->notify();
+
+    if (deviceConnected)
+    {
+        pCharacteristicAccel->setValue((uint8_t *)&val, 1);
+        pCharacteristicAccel->notify();
+    }
 }
 
 void BluetoothHandler::notifySpeedLimiterStatus(uint8_t val)
 {
-    pCharacteristicSpeedLimiter->setValue((uint8_t *)&val, 1);
-    pCharacteristicSpeedLimiter->notify();
+
+    if (deviceConnected)
+    {
+        pCharacteristicSpeedLimiter->setValue((uint8_t *)&val, 1);
+        pCharacteristicSpeedLimiter->notify();
+    }
 }
 
 void BluetoothHandler::notifyAuxOrder(uint8_t val)
 {
-    pCharacteristicAux->setValue((uint8_t *)&val, 1);
-    pCharacteristicAux->notify();
+    if (deviceConnected)
+    {
+        pCharacteristicAux->setValue((uint8_t *)&val, 1);
+        pCharacteristicAux->notify();
+    }
 }
 
 void BluetoothHandler::notifyBleLock()
 {
-    byte value[4];
-    value[0] = bleLockStatus;
-    value[1] = bleBeaconVisible;
-    value[2] = bleBeaconRSSI;
-    value[3] = bleLockForced;
-    pCharacteristicBtlockStatus->setValue((uint8_t *)&value, 4);
-    pCharacteristicBtlockStatus->notify();
+
+    if (deviceConnected)
+    {
+        byte value[4];
+        value[0] = bleLockStatus;
+        value[1] = bleBeaconVisible;
+        value[2] = bleBeaconRSSI;
+        value[3] = bleLockForced;
+        pCharacteristicBtlockStatus->setValue((uint8_t *)&value, 4);
+        pCharacteristicBtlockStatus->notify();
 
 #if DEBUG_DISPLAY_BLE_NOTIFY
-    Serial.print("BLH - notifyBleLock : bleLockStatus = ");
-    Serial.print(bleLockStatus);
-    Serial.print(" / bleBeaconVisible = ");
-    Serial.print(bleBeaconVisible);
-    Serial.print(" / bleBeaconRSSI = ");
-    Serial.print(bleBeaconRSSI);
+        Serial.print("BLH - notifyBleLock : bleLockStatus = ");
+        Serial.print(bleLockStatus);
+        Serial.print(" / bleBeaconVisible = ");
+        Serial.print(bleBeaconVisible);
+        Serial.print(" / bleBeaconRSSI = ");
+        Serial.print(bleBeaconRSSI);
 
-    Serial.print(" / bleLockForced = ");
-    Serial.print(bleLockForced);
-    Serial.println("");
+        Serial.print(" / bleLockForced = ");
+        Serial.print(bleLockForced);
+        Serial.println("");
 #endif
+    }
 }
 
 void BluetoothHandler::setBleLock(bool force)
@@ -1270,7 +1298,7 @@ void BluetoothHandler::processBLE()
     // disconnecting
     if (!deviceConnected && oldDeviceConnected && isBtEnabled)
     {
-        //delay(500);                  // give the bluetooth stack the chance to get things ready
+        delay(500);                  // give the bluetooth stack the chance to get things ready
         pServer->startAdvertising(); // restart advertising
         Serial.println("start advertising");
         oldDeviceConnected = deviceConnected;

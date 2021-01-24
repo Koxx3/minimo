@@ -33,7 +33,10 @@ void Battery::begin(mapFn_t mapFunction)
 uint8_t Battery::level(uint32_t voltage)
 {
 
-	int nbcells = floor(maxVoltage / 4.2 / 1000);
+	// JO1
+	//int nbcells = floor(maxVoltage / 4.2 / 1000);
+	// JO2
+	int nbcells = ceil(maxVoltage / 4.2 / 1000);
 
 	if (voltage < minVoltage)
 	{
@@ -47,7 +50,10 @@ uint8_t Battery::level(uint32_t voltage)
 	{
 		float voltagePerCell = (voltage / nbcells);
 		voltagePerCell /= 1000;
-		return (((-1.1688 * pow(voltagePerCell, 3)) + (12.699 * pow(voltagePerCell, 2)) + (-44.736 * voltagePerCell) + 51.488) * 100);
+		// JO1
+		// return (((-1.1688 * pow(voltagePerCell, 3)) + (12.699 * pow(voltagePerCell, 2)) + (-44.736 * voltagePerCell) + 51.488) * 100);
+		// JO2
+		return (((0.3814 * pow(voltagePerCell, 3)) - 3.8607 * pow(voltagePerCell, 2) + 13.69 * voltagePerCell - 16.623) * 100);
 	}
 	/*
 	if (voltage <= minVoltage) {

@@ -145,7 +145,7 @@
 // distance
 #define SPEED_TO_DISTANCE_CORRECTION_FACTOR 1.05
 
-#define WATCHDOG_TIMEOUT 1000000 //time in ms to trigger the watchdog
+#define WATCHDOG_TIMEOUT 1000 // 1s // time in ms to trigger the watchdog
 
 //////------------------------------------
 ////// Variables
@@ -731,14 +731,13 @@ void getBrakeFromAnalog()
 #if DEBUG_DISPLAY_ANALOG_BRAKE
       Serial.println("brake ANALOG_BRAKE_MAX_ERR_VALUE");
       char print_buffer[500];
-      sprintf(print_buffer, "brake ANALOG_BRAKE_MAX_ERR_VALUE / f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d",
+      sprintf(print_buffer, "brake ANALOG_BRAKE_MAX_ERR_VALUE / f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d",
               brakeFilterMean,
               brakeFilterMeanErr,
               brakeAnalogValue,
               shrd.brakeSentOrder,
               shrd.brakeSentOrderOld,
-              shrd.brakeStatus,
-              brakeFilterInit.getMean());
+              shrd.brakePressedStatus);
       blh.notifyBleLogs(print_buffer);
       Serial.println(print_buffer);
 #endif
@@ -1231,13 +1230,12 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 #if DEBUG_DISPLAY_ANALOG_BRAKE
 
     char print_buffer[500];
-    sprintf(print_buffer, "brakeFilter : %d / brakeAnalogValue : %d / brakeSentOrder : %d  / brakeSentOrderOld : %d / shrd.brakeStatus : %d / brakeFilterInit : %d / step : %d ",
+    sprintf(print_buffer, "brakeFilter : %d / brakeAnalogValue : %d / brakeSentOrder : %d  / brakeSentOrderOld : %d / shrd.brakeStatus : %d / step : %d ",
             brakeFilter.getMean(),
             brakeAnalogValue,
             shrd.brakeSentOrder,
             shrd.brakeSentOrderOld,
-            shrd.brakeStatus,
-            brakeFilterInit.getMean(),
+            shrd.brakePressedStatus,
             step);
     blh.notifyBleLogs(print_buffer);
 
