@@ -371,14 +371,14 @@ uint8_t MinimoUart::getBrakeFromDisplay(char var, char data_buffer[])
 {
 
   uint8_t brake = (var - data_buffer[3]) & 0x20;
-  uint8_t brakePressedStatusFromDisplayNew = brake >> 5;
+  uint8_t brakePressedStatusFromControllerNew = brake >> 5;
 
   shrd->brakeDisplay = var;
 
   //uint8_t brakeStatusFromLcdNew = brakeStatus;
-  if ((brakePressedStatusFromDisplayNew == 1) && (shrd->brakePressedStatusOld == 0))
+  if ((brakePressedStatusFromControllerNew == 1) && (shrd->brakePressedStatusOld == 0))
   {
-    shrd->brakePressedStatus = brakePressedStatusFromDisplayNew;
+    shrd->brakePressedStatus = brakePressedStatusFromControllerNew;
     timeLastBrake = millis();
 
 #if DEBUG_DISPLAY_DIGITAL_BRAKE
@@ -389,9 +389,9 @@ uint8_t MinimoUart::getBrakeFromDisplay(char var, char data_buffer[])
     // notify bluetooth
     blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
   }
-  else if ((brakePressedStatusFromDisplayNew == 0) && (shrd->brakePressedStatusOld == 1))
+  else if ((brakePressedStatusFromControllerNew == 0) && (shrd->brakePressedStatusOld == 1))
   {
-    shrd->brakePressedStatus = brakePressedStatusFromDisplayNew;
+    shrd->brakePressedStatus = brakePressedStatusFromControllerNew;
 
     // reset brake sent to controller
     if (settings->getS1F().Electric_brake_progressive_mode == 0)
@@ -426,8 +426,8 @@ uint8_t MinimoUart::getBrakeFromDisplay(char var, char data_buffer[])
     blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
   }
 
-  shrd->brakePressedStatusOld = brakePressedStatusFromDisplayNew;
-  shrd->brakePressedStatus = brakePressedStatusFromDisplayNew;
+  shrd->brakePressedStatusOld = brakePressedStatusFromControllerNew;
+  shrd->brakePressedStatus = brakePressedStatusFromControllerNew;
 
   /*
   char print_buffer[500];

@@ -1103,9 +1103,9 @@ Serial.println(current);
     i = i + 2;
 
     // distance odo
-    uint16_t distanceOdo = shrd->distanceOdo;
-    memcpy(&txValue[i], &distanceOdo, 2);
-    i = i + 2;
+    uint32_t distanceOdo = shrd->distanceOdo;
+    memcpy(&txValue[i], &distanceOdo, 4);
+    i = i + 4;
 
     // battery level
     uint8_t batLevel = shrd->batteryLevel;
