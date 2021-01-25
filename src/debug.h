@@ -22,7 +22,7 @@
 #define DEBUG_DISPLAY_DHT                           0
 #define DEBUG_DISPLAY_SPEED_PID                     0
 #define DEBUG_DISPLAY_BRAKE_FORBIDEN                0
-#define DEBUG_DISPLAY_DISTANCE                      0
+#define DEBUG_DISPLAY_DISTANCE                      1
 #define DEBUG_DISPLAY_AUTONOMY                      0
 #define DEBUG_DISPLAY_SHTC3                         0
 #define DEBUG_BLE_DISPLAY_VOLTAGE_TOO_HIGH          0
