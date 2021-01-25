@@ -373,8 +373,6 @@ uint8_t MinimoUart::getBrakeFromDisplay(char var, char data_buffer[])
   uint8_t brake = (var - data_buffer[3]) & 0x20;
   uint8_t brakePressedStatusFromControllerNew = brake >> 5;
 
-  shrd->brakeDisplay = var;
-
   //uint8_t brakeStatusFromLcdNew = brakeStatus;
   if ((brakePressedStatusFromControllerNew == 1) && (shrd->brakePressedStatusOld == 0))
   {
@@ -429,7 +427,7 @@ uint8_t MinimoUart::getBrakeFromDisplay(char var, char data_buffer[])
   shrd->brakePressedStatusOld = brakePressedStatusFromControllerNew;
   shrd->brakePressedStatus = brakePressedStatusFromControllerNew;
 
-  /*
+/*
   char print_buffer[500];
   sprintf(print_buffer, "%s %02x / %s %02x / %s %02x",
           "var",
@@ -459,6 +457,8 @@ uint8_t MinimoUart::modifyBrakeFromDisplay(char var, char data_buffer[])
   // init from LCD brake mode
   if (shrd->brakeSentOrder == -1)
     shrd->brakeSentOrder = var;
+
+  shrd->brakeDisplay = var;
 
 #if DEBUG_BRAKE_SENT_ORDER
   Serial.println("modifyBrakeFromLCD - 2 - brakeSentOrder : " + (String)shrd->brakeSentOrder);
