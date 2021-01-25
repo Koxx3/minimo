@@ -1040,7 +1040,7 @@ bool isElectricBrakeForbiden()
     return false;
   }
 
-/*
+  /*
   float voltage = shrd.voltageFilterMean / 1000.0;
   float bat_min = settings.getS3F().Battery_min_voltage / 10.0;
   float bat_max = settings.getS3F().Battery_max_voltage / 10.0;
@@ -1535,10 +1535,12 @@ void processVoltage()
     Serial.println(" => eject ");
 */
 
-    char print_buffer[500];
-    sprintf(print_buffer, "Voltage read 4095 ==> eject");
-    blh.notifyBleLogs(print_buffer);
-
+    if (i_loop % 1000 == 0)
+    {
+      char print_buffer[500];
+      sprintf(print_buffer, "Voltage read 4095 ==> eject");
+      blh.notifyBleLogs(print_buffer);
+    }
     return;
   }
   if (voltageRaw < 900)
@@ -1549,9 +1551,12 @@ void processVoltage()
     Serial.println(" => eject ");
     */
 
-    char print_buffer[500];
-    sprintf(print_buffer, "Voltage read <900 ==> eject");
-    blh.notifyBleLogs(print_buffer);
+    if (i_loop % 1000 == 0)
+    {
+      char print_buffer[500];
+      sprintf(print_buffer, "Voltage read <900 ==> eject");
+      blh.notifyBleLogs(print_buffer);
+    }
 
     return;
   }

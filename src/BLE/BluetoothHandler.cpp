@@ -42,7 +42,7 @@
 #define SPEED_PID_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b4"
 #define DISTANCE_RST_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b5"
 
-#define BLE_MTU 128
+#define BLE_MTU 23
 
 #define BLE_PIN_CODE 147258
 
@@ -87,6 +87,7 @@ Settings *BluetoothHandler::settings;
 SharedData *BluetoothHandler::shrd;
 
 uint32_t bleBeaconInvisibleCount = 0;
+uint32_t errCounter = 0;
 
 bool isBtEnabled;
 
@@ -655,6 +656,24 @@ void BluetoothHandler::setSettings(Settings *data)
                 Serial.println(print_buffer);
             }
         }
+
+        void onStatus(BLECharacteristic *pCharacteristic, Status s, uint32_t code)
+        {
+            //Serial.printf("BLH - onStatus: status = %d / code = %d / errCounter = %d\n", s, code, errCounter);
+
+            if (code == 0xffffffff)
+            {
+                Serial.printf("BLH - >>>> onStatus: status = %d / code = %d / errCounter = %d\n", s, code, errCounter);
+                errCounter++;
+
+                // reset connexion if too many errors
+                if (errCounter > 1000)
+                {
+                    pServer->disconnect(pServer->getConnId());
+                    errCounter = 0;
+                }
+            }
+        }
     };
 
     // Init settings
@@ -1156,9 +1175,45 @@ void BluetoothHandler::notifyBleLogs(char *txt)
 {
     if (deviceConnected)
     {
+        char bufferSend[21];
+
+        /*
+        memcpy(fullStringBufferWithEnd, txt, strlen(txt));
+        fullStringBufferWithEnd[strlen(txt)] = '\0';
+*/
+
+        bufferSend[20] = '\0';
+        int size = 0;
+
         // notify of new log
-        pCharacteristicLogs->setValue((uint8_t *)txt, strlen(txt));
-        pCharacteristicLogs->notify();
+        int nbChunks = ceil((strlen(txt) + 1) / 20.0);
+        int lastChunkSize = (strlen(txt) + 1) % 20;
+
+        //Serial.printf("BLH - notifyBleLogs : nbChunks = %d / lastChunkSize = %d\n", nbChunks, lastChunkSize);
+
+        for (int i = 0; i < nbChunks; i++)
+        {
+            //memset(txt, 0, 20);
+            if ((i == nbChunks - 1) && (lastChunkSize > 0))
+            {
+                size = lastChunkSize;
+               // bufferSend[lastChunkSize] = '\0';
+            }
+            else
+            {
+                size = 20;
+            }
+
+            //Serial.printf("BLH - notifyBleLogs : size = %d / i = %d\n", size, i);
+
+            memcpy(&bufferSend, &txt[i * 20], size);
+
+            //Serial.printf("BLH - notifyBleLogs : chunk = %s\n", bufferSend);
+
+            pCharacteristicLogs->setValue((uint8_t *)bufferSend, size);
+            pCharacteristicLogs->notify();
+
+        }
     }
 }
 
