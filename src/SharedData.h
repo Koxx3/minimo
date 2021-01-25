@@ -40,7 +40,7 @@ public:
     double speedMax = 0.0;
     double speedOld = 0;
 
-    uint16_t distanceTrip = 0; // 1 unit = 0.1m ?
+    uint32_t distanceTrip = 0; // 1 unit = 0.1m ?
     uint32_t distanceOdo = 0;  // 1 unit = 100m
     uint32_t distanceOdoBoot = 0;
     uint32_t distanceOdoInFlash = 0;

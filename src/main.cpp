@@ -653,6 +653,7 @@ void computeDistance(float speed)
   // calculate distance
   uint32_t distanceCurTime = millis();
   uint32_t distanceDiffTime = distanceCurTime - shrd.distancePrevTime;
+  uint32_t oldDistanceTrip = shrd.distanceTrip;
   shrd.distanceTrip = shrd.distanceTrip + ((speed * (distanceDiffTime)) / 360) * SPEED_TO_DISTANCE_CORRECTION_FACTOR;
   shrd.distancePrevTime = millis();
 
@@ -675,7 +676,8 @@ void computeDistance(float speed)
 #if DEBUG_DISPLAY_DISTANCE
   Serial.println("distanceTrip = " + (String)(shrd.distanceTrip) +
                  " / distanceDiffTime = " + (String)distanceDiffTime +
-                 " / speed = " + (String)speed);
+                 " / speed = " + (String)speed +
+                 " / oldDistanceTrip = " + (String)oldDistanceTrip);
 #endif
 }
 
