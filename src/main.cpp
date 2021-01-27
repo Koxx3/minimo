@@ -1,5 +1,4 @@
 //////////////////////////////////////////
-// TODO : check button long press processing
 // TODO : current loop
 // TODO : LCD error indicators
 // TODO : mode Z button/settings
