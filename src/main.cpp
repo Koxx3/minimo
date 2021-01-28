@@ -62,14 +62,14 @@
 #endif
 
 #define MINIMO_PWM_BRAKE 0
-#define TFT_ENABLED 0
+#define TFT_ENABLED 1
 #define DEBUG_ESP_HTTP_UPDATE 1
 #define TEST_ADC_DAC_REFRESH 0
 #define TEMPERATURE_EXT_READ 0
 #define TEMPERATURE_INT_READ 1
 #define VOLTAGE_EXT_READ 1
 #define BRAKE_ANALOG_EXT_READ 1
-#define THROTTLE_ANALOG_EXT_READ 0
+#define THROTTLE_ANALOG_EXT_READ 1
 
 // PINOUT
 #define PCB_V132
@@ -202,6 +202,7 @@ MedianFilter currentRawFilter(NB_CURRENT_FILTER_DATA, 1830);
 MedianFilter currentRawFilterInit(NB_CURRENT_FILTER_CALIB_DATA, 1830);
 MedianFilter brakeFilter(10 /* 20 */, 900);
 //MedianFilter brakeMaxFilterInit(NB_BRAKE_CALIB_DATA, 900);
+MedianFilter throttleFilterInit(5 /* 20 */, 900);
 MedianFilter autonomyLeftFilter(NB_AUTONOMY_FILTER_DATA, 0);
 
 Settings settings;
@@ -653,7 +654,11 @@ void computeDistance(float speed)
   // calculate distance
   uint32_t distanceCurTime = millis();
   uint32_t distanceDiffTime = distanceCurTime - shrd.distancePrevTime;
+
+#if DEBUG_DISPLAY_DISTANCE
   uint32_t oldDistanceTrip = shrd.distanceTrip;
+#endif
+
   shrd.distanceTrip = shrd.distanceTrip + ((speed * (distanceDiffTime)) / 360) * SPEED_TO_DISTANCE_CORRECTION_FACTOR;
   shrd.distancePrevTime = millis();
 
@@ -869,13 +874,11 @@ void getThrottleFromAnalog()
 
   //  Serial.printf("throttle : %d\n", throttleAnalogValue);
 
-  /*
-  if (settings.getS2F().Electric_brake_type == settings.LIST_Electric_brake_type_analog)
-  {
+      throttleFilterInit.in(throttleAnalogValue);
 
-    int brakeFilterMean = brakeFilter.getMean();
-    int brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
-
+//    int brakeFilterMean = brakeFilter.getMean();
+ //   int brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
+/*
     // ignore out of range datas ... and notify
     if (brakeAnalogValue < ANALOG_BRAKE_MIN_ERR_VALUE)
     {
@@ -1884,7 +1887,7 @@ void loop()
 #endif
 
 #if THROTTLE_ANALOG_EXT_READ
-  if (i_loop % 10 == 4)
+  if (i_loop/* % 10 == 4*/)
   {
     //modifyBrakeFromLCD();
     //displayBrake();
@@ -1909,9 +1912,9 @@ void loop()
 
 #if TEST_ADC_DAC_REFRESH
 
-  if ((i_loop % 10 == 7))
+  if ((i_loop /*% 10 == 7*/))
   {
-    uint32_t dacOutput = shrd.throttleAnalogValue * 0.66;
+    uint32_t dacOutput = (throttleFilterInit.getMeanWithoutExtremes(1) * 1.0) + 150;
     if (dacOutput > 4095)
       dacOutput = 4095;
 
