@@ -1,14 +1,11 @@
 //////////////////////////////////////////
-// TODO : check button long press processing
 // TODO : current loop
 // TODO : LCD error indicators
 // TODO : mode Z button/settings
 // TODO : auto mode shift on low battery
 // TODO : exponential throttle
-// TODO : change OTA to AWS
 // TODO : reduce SHTC3 read time - brake read function in 2 parts
 // BUG : original regulator perturbation
-// BUGFIX IN TEST : beacon signal variation lock escooter
 // BUG : mode Z / android
 // BUG : push button make brake analog read wrong
 //////////////////////////////////////////
