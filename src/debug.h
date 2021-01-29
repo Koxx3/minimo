@@ -22,7 +22,7 @@
 #define DEBUG_DISPLAY_DHT                           0
 #define DEBUG_DISPLAY_SPEED_PID                     0
 #define DEBUG_DISPLAY_BRAKE_FORBIDEN                0
-#define DEBUG_DISPLAY_DISTANCE                      1
+#define DEBUG_DISPLAY_DISTANCE                      0
 #define DEBUG_DISPLAY_AUTONOMY                      0
 #define DEBUG_DISPLAY_SHTC3                         0
 #define DEBUG_BLE_DISPLAY_VOLTAGE_TOO_HIGH          0
@@ -32,7 +32,7 @@
 // Serial frame deconding debugs
 #define DEBUG_DISPLAY_FRAME_LCD_TO_CNTRL            0
 #define DEBUG_DISPLAY_FRAME_CNTRL_TO_LCD            0
-#define DEBUG_DISPLAY_DECODED_FRAME_CNTRL_TO_LCD    0
+#define DEBUG_DISPLAY_DECODED_FRAME_CNTRL_TO_LCD    1
 #define DEBUG_SERIAL_CHECKSUM_LCD_TO_CNTRL          0
 #define DEBUG_SERIAL_CHECKSUM_CNTRL_TO_LCD          0
 
