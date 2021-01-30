@@ -55,7 +55,8 @@ uint8_t Battery::level(uint32_t voltage)
 		uint8_t newPercent = (( -4.20921039523091 * pow(voltByCell, 6) + 89.5678977374918 * pow(voltByCell, 5) - 792.517590803443 * pow(voltByCell, 4) + 3731.78638415294 * pow(voltByCell, 3) - 9860.74988643843 * pow(voltByCell, 2) + 13860.4702660684 * voltByCell - 8095.45450089135) * 100);
 		
 		if (newPercent == OldPercent || currentMillis < 30000) return newPercent;						// dans les 30 secondes après le startup, la tension se stabilise et on n'a pas baisé la batterie donc on prends la valeur "crue"
-		
+		if (OldPercent == 0) OldPercent = newPercent;													// Après les 30 secondes, old est pas initialisé (si pas cette ligne on retombe à 0 %)
+
 		else if (abs(newPercent-OldPercent) > 80) {														// en cas de gros changement on remet à jour (en utilisation "normale" inutile ?? je pense)
 			OldPercent = newPercent;
 			return newPercent;
@@ -66,6 +67,7 @@ uint8_t Battery::level(uint32_t voltage)
 			if (newPercent > OldPercent) OldPercent++;
 			else OldPercent--;
 		}
+		
 		return OldPercent;	
 	}
 	//Jo's percentage V5
