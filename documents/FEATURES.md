@@ -42,7 +42,7 @@ Warning :
 With the smartphone, you can se the minimal / maximal brake level you want to achieve with the lever.
 The brake pressure will determine the electric brake level applied between min/max.
 
-## Progressive acceleration (NOT READY YET - will require v1.3.1 hardware at minimum)
+## Progressive acceleration (NOT READY YET - will require v1.3.3 hardware at minimum)
 You can change the acceleration curve to have a more controllable e-scooter at low speed and avoid jerky accelerations.
 The acceleration curve (normal or different expentionnals) can be set in the smartphone settings.
 
@@ -94,6 +94,9 @@ There is 2 external possible sensors you can add :
 
 ## Performance graphics
 It can display performance graphics on your smartphone.
+
+## Data logs
+It can store many data received (voltage, current, humidity ...) in real time in a CSV file, and share those datas with a simple click.
 
 ## Error logs
 It can display all error logs from the internal microcontroller.
