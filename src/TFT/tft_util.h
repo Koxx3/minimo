@@ -3,7 +3,7 @@
 
 #include <TFT_eSPI.h>
 
-#define ILI_DIGIT_DARK TFT_OLIVE
+#define ILI_DIGIT_DARK 0x528A // 90 - too much : 0x5ACB // 70 : 0x4228 // 50 : 0x3186
 
 #define SCALE_FACTOR_X 1.5
 #define SCALE_FACTOR_Y 1.33
