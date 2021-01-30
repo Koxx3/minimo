@@ -95,6 +95,9 @@ There is 2 external possible sensors you can add :
 ## Performance graphics
 It can display performance graphics on your smartphone.
 
+## Data logs
+It can store many data received (voltage, current, humidity ...) in real time in a CSV file, and share those datas with a simple click.
+
 ## Error logs
 It can display all error logs from the internal microcontroller.
 I can help you to understand issues you have with your e-scooter (overheating, damaged cables, humidity traces ...)
