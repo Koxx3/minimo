@@ -19,6 +19,9 @@
 #include "Battery.h"
 #include <Arduino.h>
 
+int OldMillis = 0;
+uint8_t OldPercent = 0;
+
 Battery::Battery(uint32_t minVoltage, uint32_t maxVoltage)
 {
 	this->minVoltage = minVoltage;
@@ -33,9 +36,6 @@ void Battery::begin(mapFn_t mapFunction)
 uint8_t Battery::level(uint32_t voltage)
 {
 
-	// JO1
-	//int nbcells = floor(maxVoltage / 4.2 / 1000);
-	// JO2
 	int nbcells = ceil(maxVoltage / 4.2 / 1000);
 
 	if (voltage < minVoltage)
@@ -46,21 +46,38 @@ uint8_t Battery::level(uint32_t voltage)
 	{
 		return 100;
 	}
+	//Jo's percentage V5
 	else
 	{
-		float voltagePerCell = (voltage / nbcells);
-		voltagePerCell /= 1000;
-		// JO1
-		// return (((-1.1688 * pow(voltagePerCell, 3)) + (12.699 * pow(voltagePerCell, 2)) + (-44.736 * voltagePerCell) + 51.488) * 100);
-		// JO2
-		return (((0.3814 * pow(voltagePerCell, 3)) - 3.8607 * pow(voltagePerCell, 2) + 13.69 * voltagePerCell - 16.623) * 100);
+		float voltByCell = (voltage / nbcells);
+		voltByCell /= 1000;
+		int currentMillis = millis();
+		uint8_t newPercent = ((-4.20921039523091 * pow(voltByCell, 6) + 89.5678977374918 * pow(voltByCell, 5) - 792.517590803443 * pow(voltByCell, 4) + 3731.78638415294 * pow(voltByCell, 3) - 9860.74988643843 * pow(voltByCell, 2) + 13860.4702660684 * voltByCell - 8095.45450089135) * 100);
+
+		if (newPercent == OldPercent || currentMillis < 30000)
+		{
+			return newPercent; // dans les 30 secondes après le startup, la tension se stabilise et on n'a pas baisé la batterie donc on prends la valeur "crue"
+		}
+		if (OldPercent == 0)
+		{
+			OldPercent = newPercent; // Après les 30 secondes, old est pas initialisé (si pas cette ligne on retombe à 0 %)
+		}
+		else if (abs(newPercent - OldPercent) > 80)
+		{ // en cas de gros changement on remet à jour (en utilisation "normale" inutile ?? je pense)
+			OldPercent = newPercent;
+			return newPercent;
+		}
+
+		else if (currentMillis - OldMillis > 15000)
+		{ // toutes les 10 sec, on abaisse ou remonte le % si jamais la tension à varié. Basé sur le fait qu'on ne peut pas cramer plus d'1% de batt en 10 sec.
+			OldMillis = currentMillis;
+			if (newPercent > OldPercent)
+				OldPercent++;
+			else
+				OldPercent--;
+		}
+
+		return OldPercent;
 	}
-	/*
-	if (voltage <= minVoltage) {
-		return 0;
-	} else if (voltage >= maxVoltage) {
-		return 100;
-	} else {
-		return (*mapFunction)(voltage, minVoltage, maxVoltage);
-	}*/
+	//Jo's percentage V5
 }
