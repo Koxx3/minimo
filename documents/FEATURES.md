@@ -42,7 +42,7 @@ Warning :
 With the smartphone, you can se the minimal / maximal brake level you want to achieve with the lever.
 The brake pressure will determine the electric brake level applied between min/max.
 
-## Progressive acceleration (NOT READY YET - will require v1.3.1 hardware at minimum)
+## Progressive acceleration (NOT READY YET - will require v1.3.3 hardware at minimum)
 You can change the acceleration curve to have a more controllable e-scooter at low speed and avoid jerky accelerations.
 The acceleration curve (normal or different expentionnals) can be set in the smartphone settings.
 
