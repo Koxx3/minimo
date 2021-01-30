@@ -1,2 +1,2 @@
 
-void drawBatteryJauge(Adafruit_ILI9341 *tft, uint8_t batteryPercent);
+void drawBatteryJauge(TFT_eSPI *tft, uint8_t batteryPercent);

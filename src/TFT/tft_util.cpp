@@ -74,7 +74,7 @@ const bool FONT_DIGITS_3x5[10][5][3] = {
     }};
 
 void tft_util_draw_digit(
-    Adafruit_ILI9341 *tft, uint8_t digit, uint16_t x, uint16_t y,
+    TFT_eSPI *tft, uint8_t digit, uint16_t x, uint16_t y,
     uint16_t fg_color, uint16_t bg_color, uint8_t magnify)
 {
     for (int xx = 0; xx < 3; xx++)
@@ -90,7 +90,7 @@ void tft_util_draw_digit(
 }
 
 void tft_util_draw_number(
-    Adafruit_ILI9341 *tft, char *number, uint16_t x, uint16_t y,
+    TFT_eSPI *tft, char *number, uint16_t x, uint16_t y,
     uint16_t fg_color, uint16_t bg_color, uint8_t spacing, uint8_t magnify)
 {
     uint16_t cursor_x = x;
@@ -110,14 +110,14 @@ void tft_util_draw_number(
         else if (ch == '.')
         {
             tft->fillRect(cursor_x, y, magnify - 1, 5 * magnify - 1, bg_color);
-            tft->fillRect(cursor_x, y + 4 * magnify, magnify - 1, magnify - 1, ILI9341_RED);
+            tft->fillRect(cursor_x, y + 4 * magnify, magnify - 1, magnify - 1, TFT_RED);
             cursor_x += magnify + spacing;
         }
         else if (ch == ':')
         {
             tft->fillRect(cursor_x, y, magnify - 1, 5 * magnify - 1, bg_color);
-            tft->fillRect(cursor_x, y + 4 * magnify, magnify - 1, magnify - 1,  activeDigit ? ILI9341_RED : ILI_DIGIT_DARK);
-            tft->fillRect(cursor_x, y + 2 * magnify, magnify - 1, magnify - 1,  activeDigit ? ILI9341_RED : ILI_DIGIT_DARK);
+            tft->fillRect(cursor_x, y + 4 * magnify, magnify - 1, magnify - 1,  activeDigit ? TFT_RED : ILI_DIGIT_DARK);
+            tft->fillRect(cursor_x, y + 2 * magnify, magnify - 1, magnify - 1,  activeDigit ? TFT_RED : ILI_DIGIT_DARK);
             cursor_x += magnify + spacing;
         }
         else if (ch == '-')

@@ -1,4 +1,5 @@
-#include "Adafruit_ILI9341.h"
+#include "TFT_eSPI.h"
+#include "tft_util.h"
 
 byte rgbtable[34][3]{
     {0, 255, 192},
@@ -52,7 +53,7 @@ byte rgbtableInv[34][3]{
     {0, 255, 192}
     };
 
-void drawColorBar(Adafruit_ILI9341 *tft, int value, int spotx, int spoty, int pix)
+void drawColorBar(TFT_eSPI *tft, int value, int spotx, int spoty, int pix)
 {
     uint16_t color;
     for (int i = 0; i < 23; i++)
@@ -63,14 +64,14 @@ void drawColorBar(Adafruit_ILI9341 *tft, int value, int spotx, int spoty, int pi
         }
         else
         {
-            color = ILI9341_DARKGREY;
+            color = ILI_DIGIT_DARK;
         }
-        tft->fillRect(spotx + (i * pix), spoty, pix - 2 , 18, color);
+        tft->fillRect(spotx + (i * pix), spoty, pix - 2 , 18 * SCALE_FACTOR_X, color);
     }
 }
 
-void drawBatteryJauge(Adafruit_ILI9341 *tft, uint8_t batteryPercent)
+void drawBatteryJauge(TFT_eSPI *tft, uint8_t batteryPercent)
 {
     int8_t bars = batteryPercent * 24.0 / 100;    
-    drawColorBar(tft, bars , 222, 5, 4);
+    drawColorBar(tft, bars , 222 * SCALE_FACTOR_X, 5 * SCALE_FACTOR_X, 4 * SCALE_FACTOR_X);
 }

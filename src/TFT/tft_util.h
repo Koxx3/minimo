@@ -1,18 +1,21 @@
 #ifndef TFT_UTIL_H
 #define TFT_UTIL_H
 
-#include "Adafruit_ILI9341.h"
+#include <TFT_eSPI.h>
 
-#define ILI_DIGIT_DARK 0x10A2
+#define ILI_DIGIT_DARK TFT_OLIVE
+
+#define SCALE_FACTOR_X 1.5
+#define SCALE_FACTOR_Y 1.33
 
 void tft_util_draw_digit(
-        Adafruit_ILI9341* tft, uint8_t digit, uint16_t x, uint16_t y,
+        TFT_eSPI* tft, uint8_t digit, uint16_t x, uint16_t y,
         uint16_t fg_color, uint16_t bg_color, uint8_t magnify = 1);
 
 void tft_util_draw_number(
-        Adafruit_ILI9341* tft, char *number, uint16_t x, uint16_t y,
+        TFT_eSPI* tft, char *number, uint16_t x, uint16_t y,
         uint16_t fg_color, uint16_t bg_color, uint8_t spacing, uint8_t magnify = 1);
 
-uint16_t progress_to_color(float progress, Adafruit_ILI9341* tft);
+uint16_t progress_to_color(float progress, TFT_eSPI* tft);
 
 #endif //TFT_UTIL_H
