@@ -13,7 +13,9 @@
 #include "FORCED_SQUARE9pt7b.h"
 #include "FORCED_SQUARE6pt7b.h"
 
-#include "TFT/smart.c"
+//#include "TFT/smart.c"
+//#include "TFT/smart_logo.h"
+#include "TFT/smart_splash.h"
 
 #define SEP_LINE 2 * SCALE_FACTOR_X
 #define SMALLEST_FONT_SIZE 4 * SCALE_FACTOR_Y
@@ -71,7 +73,7 @@ void tftSetupBacklight()
 void tftBacklightFull()
 {
 
-  ledcWrite(0, 4095);
+  ledcWrite(0, 1023);
 }
 
 void tftBacklightLow()
@@ -130,9 +132,15 @@ void tftUpdateData(uint32_t i_loop)
 
     tftBacklightFull();
 
+    // Swap the colour byte order when rendering
+    tft.setSwapBytes(true);
+
     // draw splash scree
     //tft.drawBitmap((320 - gimp_image.width) / 2, (240 - gimp_image.height) / 2, (uint8_t *)gimp_image.pixel_data, gimp_image.width, gimp_image.height, TFT_BLACK, TFT_BLACK);
-    delay(2000);
+    //tft.drawXBitmap((320 - gimp_image.width) / 2, (240 - gimp_image.height) / 2, (uint8_t *)gimp_image.pixel_data, gimp_image.width, gimp_image.height, TFT_BLACK);
+    tft.pushImage((480 - smart_splash_logoWidth) / 2, (320 - smart_splash_logoHeight) / 2, smart_splash_logoWidth, smart_splash_logoHeight, smart_splash);
+
+    delay(3000);
     tft.fillScreen(TFT_BLACK);
 
     // init TFT settings
