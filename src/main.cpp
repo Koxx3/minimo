@@ -1685,9 +1685,9 @@ void processAutonomy()
 
   autonomyLeft = (settings.getS3F().Battery_max_distance / 10) * (shrd.batteryLevel) / 100.0;
 
-  autonomyLeftFilter.in(autonomyLeft);
+  //autonomyLeftFilter.in(autonomyLeft);
   shrd.autonomyFilterMean = autonomyLeftFilter.getMean();
-
+  shrd.autonomyFilterMean = autonomyLeft;
 #if DEBUG_DISPLAY_AUTONOMY
   Serial.println("bat level : " + (String)shrd.batteryLevel +
                  " / voltageInMilliVolts = " + voltageInMilliVolts +

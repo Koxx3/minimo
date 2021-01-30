@@ -1130,8 +1130,7 @@ Serial.println(current);
         i = i + 1;
 
         // battery autonomy
-        //uint8_t autonomy = shrd->autonomyFilterMean;
-        uint8_t autonomy = shrd->autonomyLeft;      //Test sans filtre vu qu'il est fait côté %
+        uint8_t autonomy = shrd->autonomyFilterMean;
         memcpy(&txValue[i], &autonomy, 1);
         i = i + 1;
 
@@ -1330,7 +1329,7 @@ void BluetoothHandler::processBLE()
     // notify changed value
     if (deviceConnected)
     {
-        uint16_t period = 500;
+        uint16_t period = 250;
         if (fastUpdate)
             period = 100;
 
