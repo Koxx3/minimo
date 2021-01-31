@@ -1,12 +1,14 @@
 #include "tft_util.h"
-#include "Adafruit_ILI9341.h"
+#include <TFT_eSPI.h>
 #include "text_screen.h"
 
+/*
 #include <Fonts/FreeSans9pt7b.h>
 #include <Fonts/FreeMono18pt7b.h>
 #include <Fonts/FreeMono9pt7b.h>
 #include <Fonts/FreeMono12pt7b.h>
 #include <Fonts/FreeMonoBold12pt7b.h>
+*/
 
 char _line_buffer[MAX_LINE_LENGTH + 1];
 
@@ -24,7 +26,7 @@ void heartbeat(Adafruit_ILI9341* tft, uint32_t duration_ms, bool successful_vesc
 
 */
 
-void write_text_line(Adafruit_ILI9341 *tft, const char *value, int x, int y, uint16_t color)
+void write_text_line(TFT_eSPI *tft, const char *value, int x, int y, uint16_t color)
 {
     for (int i = 0; i < strlen(value); i++)
         _line_buffer[i] = value[i];
@@ -33,7 +35,7 @@ void write_text_line(Adafruit_ILI9341 *tft, const char *value, int x, int y, uin
     write_line_buffer(tft, x, y, color);
 }
 
-void write_line_buffer(Adafruit_ILI9341 *tft, int x, int y, uint16_t color)
+void write_line_buffer(TFT_eSPI *tft, int x, int y, uint16_t color)
 {
     // space padding
     for (int i = strlen(_line_buffer); i < MAX_LINE_LENGTH; i++)
