@@ -636,21 +636,16 @@ void computeDistance(float speed)
   {
     shrd.distanceOdoInFlash = shrd.distanceOdo;
 
-    /*
-    Serial.print("saveOdo : distanceOdoInFlash ");
-    Serial.print(shrd.distanceOdoInFlash);
-    Serial.print(" / distanceOdoBoot : ");
-    Serial.print(shrd.distanceOdo);
-*/
-
     eeprom.saveOdo();
   }
 
 #if DEBUG_DISPLAY_DISTANCE
   Serial.println("distanceTrip = " + (String)(shrd.distanceTrip) +
+                 " / oldDistanceTrip = " + (String)oldDistanceTrip +
                  " / distanceDiffTime = " + (String)distanceDiffTime +
                  " / speed = " + (String)speed +
-                 " / oldDistanceTrip = " + (String)oldDistanceTrip);
+                 " / shrd.distanceOdoInFlash = " + (String)shrd.distanceOdoInFlash +
+                 " / shrd.distanceOdo = " + (String)shrd.distanceOdo);
 #endif
 }
 
@@ -841,11 +836,11 @@ void getThrottleFromAnalog()
 
   //  Serial.printf("throttle : %d\n", throttleAnalogValue);
 
-      throttleFilterInit.in(throttleAnalogValue);
+  throttleFilterInit.in(throttleAnalogValue);
 
-//    int brakeFilterMean = brakeFilter.getMean();
- //   int brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
-/*
+  //    int brakeFilterMean = brakeFilter.getMean();
+  //   int brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
+  /*
     // ignore out of range datas ... and notify
     if (brakeAnalogValue < ANALOG_BRAKE_MIN_ERR_VALUE)
     {
@@ -1854,7 +1849,7 @@ void loop()
 #endif
 
 #if THROTTLE_ANALOG_EXT_READ
-  if (i_loop/* % 10 == 4*/)
+  if (i_loop /* % 10 == 4*/)
   {
     //modifyBrakeFromLCD();
     //displayBrake();
@@ -1912,6 +1907,11 @@ void loop()
     shrd.currentHumidity = mySHTC3.toPercent();
   }
 #endif
+
+  if (i_loop % 200 == 0)
+  {
+    computeDistance(100);
+  }
 
 #if TFT_ENABLED
 //tftUpdateData(i_loop);

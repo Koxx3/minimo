@@ -181,7 +181,7 @@ void tftUpdateData(uint32_t i_loop)
     {
     case 0:
     {
-      sprintf(fmt, "%03.0f", speed );
+      sprintf(fmt, "%03.0f", _shrd->speedCurrent );
       tft_util_draw_number(&tft, fmt, COLUMN2 * SCALE_FACTOR_X, LINE_1Y, TFT_WHITE, TFT_BLACK, 5, BIG_FONT_SIZE);
 
       speed = speed + 2.2;
@@ -253,7 +253,7 @@ void tftUpdateData(uint32_t i_loop)
 
     case 9:
     {
-      float odo = _shrd->distanceOdo;
+      float odo = _shrd->distanceOdo / 10;
       sprintf(fmt, "%05.0f", (odo));
       tft_util_draw_number(&tft, fmt, COLUMN1 * SCALE_FACTOR_X, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
