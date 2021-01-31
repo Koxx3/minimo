@@ -17,8 +17,6 @@
 //#include "TFT/smart_logo.h"
 #include "TFT/smart_splash.h"
 
-
-
 // Stock font and GFXFF reference handle
 #define GFXFF 1
 
@@ -38,6 +36,11 @@
 #define LINE_4Y 155 * SCALE_FACTOR_Y
 #define LINE_5Y 210 * SCALE_FACTOR_Y
 
+#define COLUMN1 52 * SCALE_FACTOR_X
+#define COLUMN2 84 * SCALE_FACTOR_X
+#define COLUMN3 130 * SCALE_FACTOR_X
+#define COLUMN4 200 * SCALE_FACTOR_X
+
 #define LINE_TEXT_OFFSET 7
 
 #define PIN_SPI_CS -1  // goes to TFT CS -- not used
@@ -46,10 +49,6 @@
 
 #define PIN_OUT_BACKLIGHT 5
 
-#define TFT_CS PA1
-#define TFT_DC PB3
-#define TFT_LED PB0
-#define TFT_RST PB4
 
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
 TFT_eSPI tft = TFT_eSPI();
@@ -153,20 +152,23 @@ void tftUpdateData(uint32_t i_loop)
 
     // init TFT settings
     tft.setTextSize(1);
-    tft.setFreeFont(FONT_FORCED_SQUARE10pt7b);                   // Select the font
+    tft.setFreeFont(FONT_FORCED_SQUARE10pt7b); // Select the font
+    tft.setTextColor(TFT_RED, TFT_BLACK);
+    tft.setTextDatum(BR_DATUM);
 
     // draw interface
-    write_text_line(&tft, txt_mode, 174 * SCALE_FACTOR_X, LINE_2Y - LINE_TEXT_OFFSET, TFT_RED);
-    write_text_line(&tft, txt_volts, 266 * SCALE_FACTOR_X, LINE_2Y - LINE_TEXT_OFFSET, TFT_RED);
-    write_text_line(&tft, txt_odo, 80 * SCALE_FACTOR_X, LINE_3Y - LINE_TEXT_OFFSET, TFT_RED);
-    write_text_line(&tft, txt_trip, 175 * SCALE_FACTOR_X, LINE_3Y - LINE_TEXT_OFFSET, TFT_RED);
-    write_text_line(&tft, txt_auton, 263 * SCALE_FACTOR_X, LINE_3Y - LINE_TEXT_OFFSET, TFT_RED);
-    write_text_line(&tft, txt_time, 129 * SCALE_FACTOR_X, LINE_4Y - LINE_TEXT_OFFSET, TFT_RED);
-    write_text_line(&tft, txt_temp, 269 * SCALE_FACTOR_X, LINE_4Y - LINE_TEXT_OFFSET, TFT_RED);
-    write_text_line(&tft, txt_power, 66 * SCALE_FACTOR_X, LINE_5Y - LINE_TEXT_OFFSET, TFT_RED);
-    write_text_line(&tft, txt_current, 148 * SCALE_FACTOR_X, LINE_5Y - LINE_TEXT_OFFSET, TFT_RED);
-    write_text_line(&tft, txt_hr, 285 * SCALE_FACTOR_X, LINE_5Y - LINE_TEXT_OFFSET, TFT_RED);
+    tft.drawString(txt_mode, COLUMN3 * SCALE_FACTOR_X, LINE_2Y - LINE_TEXT_OFFSET, GFXFF);
+    tft.drawString(txt_volts, COLUMN4 * SCALE_FACTOR_X, LINE_2Y - LINE_TEXT_OFFSET, GFXFF);
+    tft.drawString(txt_odo, COLUMN1 * SCALE_FACTOR_X, LINE_3Y - LINE_TEXT_OFFSET, GFXFF);
+    tft.drawString(txt_trip, COLUMN3 * SCALE_FACTOR_X, LINE_3Y - LINE_TEXT_OFFSET, GFXFF);
+    tft.drawString(txt_auton, COLUMN4 * SCALE_FACTOR_X, LINE_3Y - LINE_TEXT_OFFSET, GFXFF);
+    tft.drawString(txt_time, COLUMN2 * SCALE_FACTOR_X, LINE_4Y - LINE_TEXT_OFFSET, GFXFF);
+    tft.drawString(txt_temp, COLUMN4 * SCALE_FACTOR_X, LINE_4Y - LINE_TEXT_OFFSET, GFXFF);
+    tft.drawString(txt_power, COLUMN1 * SCALE_FACTOR_X, LINE_5Y - LINE_TEXT_OFFSET, GFXFF);
+    tft.drawString(txt_current, COLUMN3 * SCALE_FACTOR_X, LINE_5Y - LINE_TEXT_OFFSET, GFXFF);
+    tft.drawString(txt_hr, COLUMN4 * SCALE_FACTOR_X, LINE_5Y - LINE_TEXT_OFFSET, GFXFF);
 
+    // draw grid
     tft.fillRect(210 * SCALE_FACTOR_X, 0 * SCALE_FACTOR_Y, SEP_LINE, 253 * SCALE_FACTOR_X, ILI_DIGIT_DARK);
     tft.fillRect(0 * SCALE_FACTOR_X, 79 * SCALE_FACTOR_Y, 210 * SCALE_FACTOR_X, SEP_LINE, ILI_DIGIT_DARK);
     tft.fillRect(0 * SCALE_FACTOR_X, 189 * SCALE_FACTOR_Y, 210 * SCALE_FACTOR_X, SEP_LINE, ILI_DIGIT_DARK);
@@ -178,7 +180,7 @@ void tftUpdateData(uint32_t i_loop)
     {
     case 0:
     {
-      sprintf(fmt, "%03.0f", speed /* _shrd->speedCurrent*/);
+      sprintf(fmt, "%03.0f", speed );
       tft_util_draw_number(&tft, fmt, 5 * SCALE_FACTOR_X, LINE_1Y, TFT_WHITE, TFT_BLACK, 5, BIG_FONT_SIZE);
 
       speed = speed + 2.2;
