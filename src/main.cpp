@@ -1908,10 +1908,12 @@ void loop()
   }
 #endif
 
+/* test display
   if (i_loop % 200 == 0)
   {
     computeDistance(100);
   }
+  */
 
 #if TFT_ENABLED
 //tftUpdateData(i_loop);
