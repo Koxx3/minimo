@@ -98,8 +98,8 @@ void EEPROMM_storage::saveOdo()
   EEPROM.writeBytes(EEPROM_ADDRESS_ODO, &shrd->distanceOdo, sizeof(shrd->distanceOdo));
   EEPROM.commit();
 
-  Serial.print("save saveOdo value : ");
-  Serial.println(shrd->distanceOdo);
+  //Serial.print("save saveOdo value : ");
+  //Serial.println(shrd->distanceOdo);
 }
 
 void EEPROMM_storage::restoreOdo()
