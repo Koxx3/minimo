@@ -208,6 +208,17 @@ EEPROMM_storage eeprom;
 
 PID pidSpeed(&shrd.pidInput, &shrd.pidOutput, &shrd.pidSetpoint, shrd.speedPidKp, shrd.speedPidKi, shrd.speedPidKd, DIRECT);
 
+#define bbsize 109100
+byte BigBuffer[bbsize] = {0};
+uint32_t LastLoopStart;
+
+String getAllHeap()
+{
+  char temp[300];
+  sprintf(temp, "Heap: Free:%i, Min:%i, Size:%i, Alloc:%i", ESP.getFreeHeap(), ESP.getMinFreeHeap(), ESP.getHeapSize(), ESP.getMaxAllocHeap());
+  return temp;
+}
+
 //////------------------------------------
 //////------------------------------------
 ////// Setups
@@ -1716,6 +1727,13 @@ void processCurrent()
 void loop()
 {
 
+#if DEBUG_CRASH
+  if (millis() > 5000)
+    shrd.speedCurrent = millis() % 2000;
+  if (millis() > 5000 && millis() % 20 == 0)
+    computeDistance(shrd.speedCurrent);
+#endif
+
   // handle Wifi OTA
   if (shrd.inOtaMode)
   {
@@ -1908,7 +1926,7 @@ void loop()
   }
 #endif
 
-/* test display
+  /* test display
   if (i_loop % 200 == 0)
   {
     computeDistance(100);
@@ -1941,6 +1959,13 @@ void loop()
 #endif
 
   i_loop++;
+
+  if ((micros() - LastLoopStart) >= 10000000ul)
+  {
+    Serial.print(getAllHeap());
+    Serial.printf(",  Stack HWM: %i \n", uxTaskGetStackHighWaterMark(NULL));
+    LastLoopStart = micros();
+  }
 
   resetWatchdog();
 }

@@ -29,6 +29,8 @@
 
 #define DEBUG_BRAKE_SENT_ORDER                      0
 
+#define DEBUG_CRASH                                 1
+
 // Serial frame deconding debugs
 #define DEBUG_DISPLAY_FRAME_LCD_TO_CNTRL            0
 #define DEBUG_DISPLAY_FRAME_CNTRL_TO_LCD            0
