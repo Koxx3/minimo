@@ -1958,14 +1958,15 @@ void loop()
   timeLoop = millis();
 #endif
 
-  i_loop++;
 
-  if ((micros() - LastLoopStart) >= 5 * 60000000ul)
+  if (((micros() - LastLoopStart) >= 5 * 60000000ul) ||(i_loop == 0))
   {
     Serial.print(getAllHeap());
     Serial.printf(",  Stack HWM: %i \n", uxTaskGetStackHighWaterMark(NULL));
     LastLoopStart = micros();
   }
+  
+  i_loop++;
 
   resetWatchdog();
 }
