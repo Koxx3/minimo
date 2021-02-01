@@ -1960,7 +1960,7 @@ void loop()
 
   i_loop++;
 
-  if ((micros() - LastLoopStart) >= 10000000ul)
+  if ((micros() - LastLoopStart) >= 5 * 60000000ul)
   {
     Serial.print(getAllHeap());
     Serial.printf(",  Stack HWM: %i \n", uxTaskGetStackHighWaterMark(NULL));
