@@ -5,3 +5,5 @@
 .vscode/ipch
 ~$MINIMO.xlsx
 esptool
+
+*.log
