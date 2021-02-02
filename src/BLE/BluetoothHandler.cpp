@@ -25,7 +25,7 @@
 //#define BRAKE_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a2"
 #define FIRMWARE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a3"
 #define KEEP_ALIVE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a4"
-#define GENERAL_ORDERS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a5"
+#define COMMANDS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a5"
 #define BTLOCK_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a6"
 #define SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a7"
 #define SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
@@ -125,7 +125,7 @@ void BluetoothHandler::setSettings(Settings *data)
                 }
             }
 
-            // notify general order feedback
+            // notify commands feedback
             // notify of current modes / values (for value not uptate by LCD)
             notifyCommandsFeedback();
         };
@@ -505,10 +505,10 @@ void BluetoothHandler::setSettings(Settings *data)
                 //Serial.println("BLH - Write : KEEP_ALIVE_CHARACTERISTIC_UUID");
                 checkAndSaveOdo();
             }
-            else if (pCharacteristic->getUUID().toString() == GENERAL_ORDERS_CHARACTERISTIC_UUID)
+            else if (pCharacteristic->getUUID().toString() == COMMANDS_CHARACTERISTIC_UUID)
             {
-                Serial.println("BLH - Write : GENERAL_ORDERS_CHARACTERISTIC_UUID");
-                getGeneralOrderDataPacket((uint8_t *)pCharacteristic->getValue().data());
+                Serial.println("BLH - Write : COMMANDS_CHARACTERISTIC_UUID");
+                getCommandsDataPacket((uint8_t *)pCharacteristic->getValue().data());
 
                 notifyCommandsFeedback();
             }
@@ -541,10 +541,10 @@ void BluetoothHandler::setSettings(Settings *data)
                 Serial.print("BLH - Read measurement : nb bytes");
                 Serial.println(nb_bytes);
             }
-            else if (pCharacteristic->getUUID().toString() == GENERAL_ORDERS_CHARACTERISTIC_UUID)
+            else if (pCharacteristic->getUUID().toString() == COMMANDS_CHARACTERISTIC_UUID)
             {
                 int nb_bytes = setCommandsDataPacket();
-                Serial.print("BLH - Read general orders : nb bytes");
+                Serial.print("BLH - Read commands : nb bytes");
                 Serial.println(nb_bytes);
             }
             else
@@ -677,7 +677,7 @@ void BluetoothHandler::setSettings(Settings *data)
         BLECharacteristic::PROPERTY_WRITE);
 
     pCharacteristicCommands = pServiceMain->createCharacteristic(
-        GENERAL_ORDERS_CHARACTERISTIC_UUID,
+        COMMANDS_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
@@ -1023,9 +1023,9 @@ uint8_t BluetoothHandler::setCommandsDataPacket()
     return ind;
 }
 
-void BluetoothHandler::getGeneralOrderDataPacket(uint8_t *rxValue)
+void BluetoothHandler::getCommandsDataPacket(uint8_t *rxValue)
 {
-    Serial.println("getGeneralOrderDataPacket");
+    Serial.println("getCommandsDataPacket");
 
     int32_t ind = 0;
 
@@ -1040,7 +1040,7 @@ void BluetoothHandler::getGeneralOrderDataPacket(uint8_t *rxValue)
     buffer_get_uint8(rxValue, &ind); /*shrd->brakeFordidenHighVoltage*/
     fastUpdate = buffer_get_uint8(rxValue, &ind);
 
-    buffer_display("getGeneralOrderDataPacket : ", rxValue, ind);
+    buffer_display("getCommandsDataPacket : ", rxValue, ind);
 }
 
 void BluetoothHandler::notifyCommandsFeedback()
