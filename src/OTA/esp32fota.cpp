@@ -352,7 +352,7 @@ the host.
 String secureEsp32FOTA::secureGetContent()
 {
     String destinationURL = _descriptionOfFirmwareURL;
-    char *certificate = _certificate;
+    //char *certificate = _certificate;
 
     bool canConnectToServer = prepareConnection(_host);
     if (canConnectToServer)
@@ -397,7 +397,7 @@ of secureEsp32FOTA accordingly.
 */
 bool secureEsp32FOTA::execHTTPSCheck()
 {
-    char *certificate = _certificate;
+    //char *certificate = _certificate;
 
     String destinationUrl = _descriptionOfFirmwareURL;
     OTADescription obj;
@@ -459,13 +459,13 @@ server, url and certificate.
 
 void secureEsp32FOTA::executeOTA()
 {
-    char *certificate = _certificate;
+    //char *certificate = _certificate;
 
     Serial.println("location of fw " + String(locationOfFirmware) + _bin + " HTTP/1.0");
 
     bool canCorrectlyConnectToServer = prepareConnection(locationOfFirmware);
-    int contentLength;
-    bool isValid;
+    int contentLength = 0;
+    bool isValid = false;
     bool gotHTTPStatus = false;
     if (canCorrectlyConnectToServer)
     {
