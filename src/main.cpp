@@ -206,17 +206,6 @@ EEPROMM_storage eeprom;
 
 PID pidSpeed(&shrd.pidInput, &shrd.pidOutput, &shrd.pidSetpoint, shrd.speedPidKp, shrd.speedPidKi, shrd.speedPidKd, DIRECT);
 
-#define bbsize 109100
-byte BigBuffer[bbsize] = {0};
-uint32_t LastLoopStart;
-
-String getAllHeap()
-{
-  char temp[300];
-  sprintf(temp, "Heap: Free:%i, Min:%i, Size:%i, Alloc:%i", ESP.getFreeHeap(), ESP.getMinFreeHeap(), ESP.getHeapSize(), ESP.getMaxAllocHeap());
-  return temp;
-}
-
 //////------------------------------------
 //////------------------------------------
 ////// Setups
@@ -1966,14 +1955,6 @@ void loop()
   timeLoop = millis();
 #endif
 
-
-  if (((micros() - LastLoopStart) >= 5 * 60000000ul) ||(i_loop == 0))
-  {
-    Serial.print(getAllHeap());
-    Serial.printf(",  Stack HWM: %i \n", uxTaskGetStackHighWaterMark(NULL));
-    LastLoopStart = micros();
-  }
-  
   i_loop++;
 
 #if ENABLE_Watchdog
