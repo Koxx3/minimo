@@ -216,6 +216,10 @@ void BluetoothHandler::setSettings(Settings *data)
         void onWrite(BLECharacteristic *pCharacteristic)
         {
 
+
+            //const char *uuid = pCharacteristic->getUUID().toString().data();
+            //Serial.println("onWrite : " + (String)(uuid));
+
             /* if (pCharacteristic->getUUID().toString() == BRAKE_STATUS_CHARACTERISTIC_UUID)
             {
                 std::string rxValue = pCharacteristic->getValue();
@@ -521,7 +525,8 @@ void BluetoothHandler::setSettings(Settings *data)
         void onRead(BLECharacteristic *pCharacteristic)
         {
 
-            Serial.println("onRead");
+            const char *uuid = pCharacteristic->getUUID().toString().data();
+            Serial.println("onRead : " + (String)(uuid));
 
             if (pCharacteristic->getUUID().toString() == FIRMWARE_CHARACTERISTIC_UUID)
             {
