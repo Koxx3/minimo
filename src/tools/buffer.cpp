@@ -23,129 +23,177 @@
  */
 
 #include "buffer.h"
+#include <Arduino.h>
 
-void buffer_append_int8(uint8_t* buffer, int8_t number, int32_t *index) {
+void buffer_append_int8(uint8_t *buffer, int8_t number, int32_t *index)
+{
 	buffer[(*index)++] = number;
 }
 
-void buffer_append_uint8(uint8_t* buffer, uint8_t number, int32_t *index) {
+void buffer_append_uint8(uint8_t *buffer, uint8_t number, int32_t *index)
+{
 	buffer[(*index)++] = number;
 }
 
-void buffer_append_int16(uint8_t* buffer, int16_t number, int32_t *index) {
+void buffer_append_int16(uint8_t *buffer, int16_t number, int32_t *index)
+{
 	buffer[(*index)++] = number >> 8;
 	buffer[(*index)++] = number;
 }
 
-void buffer_append_uint16(uint8_t* buffer, uint16_t number, int32_t *index) {
+void buffer_append_int16_inv(uint8_t *buffer, int16_t number, int32_t *index)
+{
+	buffer[(*index)++] = number;
+	buffer[(*index)++] = number >> 8;
+}
+
+void buffer_append_uint16(uint8_t *buffer, uint16_t number, int32_t *index)
+{
 	buffer[(*index)++] = number >> 8;
 	buffer[(*index)++] = number;
 }
 
-void buffer_append_int32(uint8_t* buffer, int32_t number, int32_t *index) {
+void buffer_append_uint16_inv(uint8_t *buffer, uint16_t number, int32_t *index)
+{
+	buffer[(*index)++] = number;
+	buffer[(*index)++] = number >> 8;
+}
+
+void buffer_append_int32(uint8_t *buffer, int32_t number, int32_t *index)
+{
 	buffer[(*index)++] = number >> 24;
 	buffer[(*index)++] = number >> 16;
 	buffer[(*index)++] = number >> 8;
 	buffer[(*index)++] = number;
 }
 
-void buffer_append_uint32(uint8_t* buffer, uint32_t number, int32_t *index) {
+void buffer_append_int32_inv(uint8_t *buffer, int32_t number, int32_t *index)
+{
+	buffer[(*index)++] = number;
+	buffer[(*index)++] = number >> 8;
+	buffer[(*index)++] = number >> 16;
+	buffer[(*index)++] = number >> 24;
+}
+
+void buffer_append_uint32(uint8_t *buffer, uint32_t number, int32_t *index)
+{
 	buffer[(*index)++] = number >> 24;
 	buffer[(*index)++] = number >> 16;
 	buffer[(*index)++] = number >> 8;
 	buffer[(*index)++] = number;
 }
 
-void buffer_append_float16(uint8_t* buffer, float number, float scale, int32_t *index) {
-    buffer_append_int16(buffer, (int16_t)(number * scale), index);
+void buffer_append_uint32_inv(uint8_t *buffer, uint32_t number, int32_t *index)
+{
+	buffer[(*index)++] = number;
+	buffer[(*index)++] = number >> 8;
+	buffer[(*index)++] = number >> 16;
+	buffer[(*index)++] = number >> 24;
 }
 
-void buffer_append_float32(uint8_t* buffer, float number, float scale, int32_t *index) {
-    buffer_append_int32(buffer, (int32_t)(number * scale), index);
+void buffer_append_float16(uint8_t *buffer, float number, float scale, int32_t *index)
+{
+	buffer_append_int16(buffer, (int16_t)(number * scale), index);
 }
 
-int8_t buffer_get_int8(const uint8_t *buffer, int32_t *index) {
-	int8_t res =	((uint8_t) buffer[*index]);
+void buffer_append_float32(uint8_t *buffer, float number, float scale, int32_t *index)
+{
+	buffer_append_int32(buffer, (int32_t)(number * scale), index);
+}
+
+int8_t buffer_get_int8(const uint8_t *buffer, int32_t *index)
+{
+	int8_t res = ((uint8_t)buffer[*index]);
 	*index += 1;
 	return res;
 }
 
-uint8_t buffer_get_uint8(const uint8_t *buffer, int32_t *index) {
-	uint8_t res = 	((uint8_t) buffer[*index]);
+uint8_t buffer_get_uint8(const uint8_t *buffer, int32_t *index)
+{
+	uint8_t res = ((uint8_t)buffer[*index]);
 	*index += 1;
 	return res;
 }
 
-int16_t buffer_get_int16(const uint8_t *buffer, int32_t *index) {
-	int16_t res =	((uint16_t) buffer[*index]) << 8 |
-					((uint16_t) buffer[*index + 1]);
+int16_t buffer_get_int16(const uint8_t *buffer, int32_t *index)
+{
+	int16_t res = ((uint16_t)buffer[*index]) << 8 |
+				  ((uint16_t)buffer[*index + 1]);
 	*index += 2;
 	return res;
 }
 
-int16_t buffer_get_int16_inv(const uint8_t *buffer, int32_t *index) {
-	int16_t res =	((uint16_t) buffer[*index]) |
-					((uint16_t) buffer[*index + 1] << 8);
+int16_t buffer_get_int16_inv(const uint8_t *buffer, int32_t *index)
+{
+	int16_t res = ((uint16_t)buffer[*index]) |
+				  ((uint16_t)buffer[*index + 1] << 8);
 	*index += 2;
 	return res;
 }
 
-uint16_t buffer_get_uint16(const uint8_t *buffer, int32_t *index) {
-	uint16_t res = 	((uint16_t) buffer[*index]) << 8 |
-					((uint16_t) buffer[*index + 1]);
+uint16_t buffer_get_uint16(const uint8_t *buffer, int32_t *index)
+{
+	uint16_t res = ((uint16_t)buffer[*index]) << 8 |
+				   ((uint16_t)buffer[*index + 1]);
 	*index += 2;
 	return res;
 }
 
-uint16_t buffer_get_uint16_inv(const uint8_t *buffer, int32_t *index) {
-	uint16_t res = 	((uint16_t) buffer[*index]) |
-					((uint16_t) buffer[*index + 1] << 8);
+uint16_t buffer_get_uint16_inv(const uint8_t *buffer, int32_t *index)
+{
+	uint16_t res = ((uint16_t)buffer[*index]) |
+				   ((uint16_t)buffer[*index + 1] << 8);
 	*index += 2;
 	return res;
 }
 
-int32_t buffer_get_int32(const uint8_t *buffer, int32_t *index) {
-	int32_t res =	((uint32_t) buffer[*index]) << 24 |
-					((uint32_t) buffer[*index + 1]) << 16 |
-					((uint32_t) buffer[*index + 2]) << 8 |
-					((uint32_t) buffer[*index + 3]);
+int32_t buffer_get_int32(const uint8_t *buffer, int32_t *index)
+{
+	int32_t res = ((uint32_t)buffer[*index]) << 24 |
+				  ((uint32_t)buffer[*index + 1]) << 16 |
+				  ((uint32_t)buffer[*index + 2]) << 8 |
+				  ((uint32_t)buffer[*index + 3]);
 	*index += 4;
 	return res;
 }
 
-uint32_t buffer_get_uint32(const uint8_t *buffer, int32_t *index) {
-	uint32_t res =	((uint32_t) buffer[*index]) << 24 |
-					((uint32_t) buffer[*index + 1]) << 16 |
-					((uint32_t) buffer[*index + 2]) << 8 |
-					((uint32_t) buffer[*index + 3]);
+uint32_t buffer_get_uint32(const uint8_t *buffer, int32_t *index)
+{
+	uint32_t res = ((uint32_t)buffer[*index]) << 24 |
+				   ((uint32_t)buffer[*index + 1]) << 16 |
+				   ((uint32_t)buffer[*index + 2]) << 8 |
+				   ((uint32_t)buffer[*index + 3]);
 	*index += 4;
 	return res;
 }
 
-float buffer_get_float16(const uint8_t *buffer, float scale, int32_t *index) {
-    return (float)buffer_get_int16(buffer, index) / scale;
+float buffer_get_float16(const uint8_t *buffer, float scale, int32_t *index)
+{
+	return (float)buffer_get_int16(buffer, index) / scale;
 }
 
-float buffer_get_float32(const uint8_t *buffer, float scale, int32_t *index) {
-    return (float)buffer_get_int32(buffer, index) / scale;
+float buffer_get_float32(const uint8_t *buffer, float scale, int32_t *index)
+{
+	return (float)buffer_get_int32(buffer, index) / scale;
 }
 
-bool buffer_get_bool(const uint8_t *buffer, int32_t *index) {
-	
-		if (buffer[*index] == 1)
-		{
-			index++;
-			return true;
-		}
-		else
-		{
-			index++;
-			return false;
-		}
-		
+bool buffer_get_bool(const uint8_t *buffer, int32_t *index)
+{
+
+	if (buffer[*index] == 1)
+	{
+		index++;
+		return true;
+	}
+	else
+	{
+		index++;
+		return false;
+	}
 }
 
-void buffer_append_bool(uint8_t *buffer,bool value, int32_t *index) {
+void buffer_append_bool(uint8_t *buffer, bool value, int32_t *index)
+{
 
 	if (value == true)
 	{
@@ -157,5 +205,12 @@ void buffer_append_bool(uint8_t *buffer,bool value, int32_t *index) {
 		buffer[*index] = 0;
 		(*index)++;
 	}
+}
 
+void buffer_display(const char *title, uint8_t *buffer, uint32_t size)
+{
+	Serial.print(title);
+	for (int i = 0; i < size; i++)
+		Serial.printf("%02x ", buffer[i]);
+	Serial.println("(" + (String)size + ")");
 }

@@ -30,9 +30,13 @@
 void buffer_append_int8(uint8_t* buffer, int8_t number, int32_t *index);
 void buffer_append_uint8(uint8_t* buffer, uint8_t number, int32_t *index);
 void buffer_append_int16(uint8_t* buffer, int16_t number, int32_t *index);
+void buffer_append_int16_inv(uint8_t* buffer, int16_t number, int32_t *index);
 void buffer_append_uint16(uint8_t* buffer, uint16_t number, int32_t *index);
+void buffer_append_uint16_inv(uint8_t* buffer, uint16_t number, int32_t *index);
 void buffer_append_int32(uint8_t* buffer, int32_t number, int32_t *index);
+void buffer_append_int32_inv(uint8_t* buffer, int32_t number, int32_t *index);
 void buffer_append_uint32(uint8_t* buffer, uint32_t number, int32_t *index);
+void buffer_append_uint32_inv(uint8_t* buffer, uint32_t number, int32_t *index);
 void buffer_append_float16(uint8_t* buffer, float number, float scale, int32_t *index);
 void buffer_append_float32(uint8_t* buffer, float number, float scale, int32_t *index);
 void buffer_append_bool(uint8_t *buffer,bool value, int32_t *index);
@@ -49,5 +53,7 @@ bool buffer_get_bool(const uint8_t *buffer, int32_t *index);
 
 int16_t buffer_get_int16_inv(const uint8_t *buffer, int32_t *index);
 uint16_t buffer_get_uint16_inv(const uint8_t *buffer, int32_t *index);
+
+void buffer_display(const char *title, uint8_t *buffer, uint32_t size);
 	
 #endif /* BUFFER_H_ */
