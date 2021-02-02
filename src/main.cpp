@@ -141,6 +141,7 @@
 // distance
 #define SPEED_TO_DISTANCE_CORRECTION_FACTOR 1.05
 
+#define ENABLE_WATCHDOG 1
 #define WATCHDOG_TIMEOUT 1000 // 1s // time in ms to trigger the watchdog
 
 //////------------------------------------
@@ -411,7 +412,7 @@ void setupButtons()
   button2.setPressTicks(BUTTON_LONG_PRESS_TICK);
 }
 
-#if ENABLE_Watchdog
+#if ENABLE_WATCHDOG
 void IRAM_ATTR triggerWatchdog()
 {
   ets_printf("watchdog => reboot\n");
@@ -533,7 +534,7 @@ void setup()
   Serial.println(PSTR("   init data with settings ..."));
   initDataWithSettings();
 
-#if ENABLE_Watchdog
+#if ENABLE_WATCHDOG
   Serial.println(PSTR("   watchdog ..."));
   setupWatchdog();
 #endif
@@ -623,7 +624,7 @@ void checkAndSaveOdo()
   {
     shrd.distanceOdoInFlash = shrd.distanceOdo;
 
-    //#ifndef DEBUG_CRASH
+    //#ifndef DEBUG_FAKE_SPEED
     eeprom.saveOdo();
     //#endif
   }
@@ -1726,7 +1727,7 @@ void processCurrent()
 void loop()
 {
 
-#if DEBUG_CRASH
+#if DEBUG_FAKE_SPEED
   if (millis() > 5000)
     shrd.speedCurrent = millis() % 2000;
   if (millis() > 5000 && millis() % 20 == 0)
@@ -1737,7 +1738,7 @@ void loop()
   if (shrd.inOtaMode)
   {
 
-#if ENABLE_Watchdog
+#if ENABLE_WATCHDOG
     // stop watchdog / not all OTA updates have interactive loop
     disableWatchdog();
 #endif
@@ -1961,7 +1962,7 @@ void loop()
 
   i_loop++;
 
-#if ENABLE_Watchdog
+#if ENABLE_WATCHDOG
   resetWatchdog();
 #endif
 }

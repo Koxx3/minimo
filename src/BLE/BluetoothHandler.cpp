@@ -21,8 +21,8 @@
 #define SERVICE_SETTINGS_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914d"
 
 #define MEASUREMENTS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a0"
-//#define MODE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a1"
-//#define BRAKE_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a2"
+//#define xxx "beb5483e-36e1-4688-b7f5-ea07361b26a1"
+//#define xxx "beb5483e-36e1-4688-b7f5-ea07361b26a2"
 #define FIRMWARE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a3"
 #define KEEP_ALIVE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a4"
 #define COMMANDS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a5"
@@ -30,16 +30,16 @@
 #define SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a7"
 #define SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
 #define SETTINGS1_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a9"
-//#define SPEED_LIMITER_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26aa"
-//#define ECO_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ab"
-//#define ACCEL_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ac"
+//#define xxx "beb5483e-36e1-4688-b7f5-ea07361b26aa"
+//#define xxx "beb5483e-36e1-4688-b7f5-ea07361b26ab"
+//#define xxx "beb5483e-36e1-4688-b7f5-ea07361b26ac"
 #define CALIB_ORDER_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ad"
 #define SWITCH_TO_OTA_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ae"
 #define LOGS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26af"
 #define FAST_UPDATE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b0"
 #define SETTINGS2_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b1"
 #define SETTINGS3_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b2"
-//#define AUX_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b3"
+//#define xxxx "beb5483e-36e1-4688-b7f5-ea07361b26b3"
 #define SPEED_PID_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b4"
 #define DISTANCE_RST_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b5"
 
@@ -54,28 +54,27 @@
 BLEScan *BluetoothHandler::pBLEScan;
 BLEServer *BluetoothHandler::pServer;
 BLESecurity *BluetoothHandler::pSecurity;
+
+// Main services
 BLECharacteristic *BluetoothHandler::pCharacteristicMeasurements;
-BLECharacteristic *BluetoothHandler::pCharacteristicFirmware;
-//BLECharacteristic *BluetoothHandler::pCharacteristicMode;
-//BLECharacteristic *BluetoothHandler::pCharacteristicBrakeSentOrder;
 BLECharacteristic *BluetoothHandler::pCharacteristicBtlockStatus;
-BLECharacteristic *BluetoothHandler::pCharacteristicSettings1;
-//BLECharacteristic *BluetoothHandler::pCharacteristicSpeedLimiter;
-//BLECharacteristic *BluetoothHandler::pCharacteristicEco;
-//BLECharacteristic *BluetoothHandler::pCharacteristicAccel;
 BLECharacteristic *BluetoothHandler::pCharacteristicCalibOrder;
 BLECharacteristic *BluetoothHandler::pCharacteristicOtaSwitch;
 BLECharacteristic *BluetoothHandler::pCharacteristicLogs;
-//BLECharacteristic *BluetoothHandler::pCharacteristicFastUpdate;
-BLECharacteristic *BluetoothHandler::pCharacteristicSettings2;
-BLECharacteristic *BluetoothHandler::pCharacteristicSettings3;
-BLECharacteristic *BluetoothHandler::pCharacteristicSettings4;
-BLECharacteristic *BluetoothHandler::pCharacteristicSettings5;
-//BLECharacteristic *BluetoothHandler::pCharacteristicAux;
 BLECharacteristic *BluetoothHandler::pCharacteristicSpeedPid;
 BLECharacteristic *BluetoothHandler::pCharacteristicDistanceRst;
 BLECharacteristic *BluetoothHandler::pCharacteristicKeepAlive;
 BLECharacteristic *BluetoothHandler::pCharacteristicCommands;
+
+// Settings services
+BLECharacteristic *BluetoothHandler::pCharacteristicSettings1;
+BLECharacteristic *BluetoothHandler::pCharacteristicSettings2;
+BLECharacteristic *BluetoothHandler::pCharacteristicSettings3;
+BLECharacteristic *BluetoothHandler::pCharacteristicSettings4;
+BLECharacteristic *BluetoothHandler::pCharacteristicSettings5;
+
+// firmware services
+BLECharacteristic *BluetoothHandler::pCharacteristicFirmware;
 
 int8_t BluetoothHandler::bleLockStatus;
 int8_t BluetoothHandler::bleBeaconVisible;
