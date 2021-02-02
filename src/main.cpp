@@ -419,6 +419,7 @@ void setupButtons()
   button2.setPressTicks(BUTTON_LONG_PRESS_TICK);
 }
 
+#if ENABLE_Watchdog
 void IRAM_ATTR triggerWatchdog()
 {
   ets_printf("watchdog => reboot\n");
@@ -442,6 +443,7 @@ void disableWatchdog()
 {
   timerAlarmDisable(timer);
 }
+#endif
 
 void taskUpdateTFT(void *parameter)
 {
@@ -467,6 +469,10 @@ void taskUpdateTFT(void *parameter)
 ////// Setup
 void setup()
 {
+  
+  esp_bt_sleep_disable();
+  esp_ble_scan_dupilcate_list_flush();
+
 #if TFT_ENABLED
   tftSetupBacklight();
 #endif
@@ -535,8 +541,10 @@ void setup()
   Serial.println(PSTR("   init data with settings ..."));
   initDataWithSettings();
 
+#if ENABLE_Watchdog
   Serial.println(PSTR("   watchdog ..."));
   setupWatchdog();
+#endif
 
   setupVoltage();
   setupBattery();
@@ -1720,8 +1728,10 @@ void loop()
   if (shrd.inOtaMode)
   {
 
+#if ENABLE_Watchdog
     // stop watchdog / not all OTA updates have interactive loop
     disableWatchdog();
+#endif
 
     // stop BLE
     blh.deinit();
@@ -1942,7 +1952,9 @@ void loop()
 
   i_loop++;
 
+#if ENABLE_Watchdog
   resetWatchdog();
+#endif
 }
 
 /////////// End
