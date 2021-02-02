@@ -95,9 +95,8 @@ public:
     float batteryMaxVoltageCalibUser;
     uint32_t batteryMaxVoltageCalibRaw;
 
-    uint32_t batteryLevel;
-    uint8_t autonomyFilterMean;
-    uint32_t autonomyLeft;
+    uint8_t batteryLevel;
+    uint8_t autonomyLeft;
 
     //int32_t currentRawFilterMean = 0;
     int32_t currentActual = 0; // in milliamps

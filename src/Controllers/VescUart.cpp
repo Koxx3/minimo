@@ -244,9 +244,9 @@ bool VescUart::processReadPacket(uint8_t *message)
 		return true;
 	}
 	case COMM_GET_VALUES_SELECTIVE:
-	{
-		uint32_t mask = 0xFFFFFFFF;
-	}
+//	{
+//		uint32_t mask = 0xFFFFFFFF;
+//	}
 	default:
 		return false;
 	}

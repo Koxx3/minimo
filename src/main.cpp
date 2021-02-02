@@ -133,7 +133,6 @@
 #define ANALOG_CURRENT_MIN_RAW_READING 100
 #define NB_CURRENT_FILTER_DATA 20
 #define NB_CURRENT_FILTER_CALIB_DATA 20
-#define NB_AUTONOMY_FILTER_DATA 120
 #define NB_VOLTAGE_FILTER_DATA 100
 
 // BUTTONS
@@ -200,7 +199,6 @@ MedianFilter currentRawFilterInit(NB_CURRENT_FILTER_CALIB_DATA, 1830);
 MedianFilter brakeFilter(10 /* 20 */, 900);
 //MedianFilter brakeMaxFilterInit(NB_BRAKE_CALIB_DATA, 900);
 MedianFilter throttleFilterInit(5 /* 20 */, 900);
-MedianFilter autonomyLeftFilter(NB_AUTONOMY_FILTER_DATA, 0);
 
 Settings settings;
 BluetoothHandler blh;
@@ -349,14 +347,8 @@ void setupVoltage()
 
 void setupAutonomy()
 {
-
   shrd.batteryLevel = batt.level(shrd.voltageActual);
-
-  uint8_t autonomyLeft = (settings.getS3F().Battery_max_distance / 10) * (shrd.batteryLevel) / 100.0;
-
-  // filter reinit
-  for (int i = 0; i < NB_AUTONOMY_FILTER_DATA; i++)
-    autonomyLeftFilter.in(autonomyLeft);
+  shrd.autonomyLeft = (settings.getS3F().Battery_max_distance / 10) * (shrd.batteryLevel) / 100.0;
 }
 
 void saveBleLockForced()
@@ -1627,11 +1619,7 @@ void processVoltageTooHighForBrake()
 void processAutonomy()
 {
 
-  uint8_t autonomyLeft;
-  uint32_t correctedVoltage = 0;
-  float correction = 0.0;
-  int32_t voltageDiff = 0;
-  float currentFactor = 0.0;
+
 
   // Compute battery level with or without current sensor
   if (!shrd.currentSensorPresent)
@@ -1644,28 +1632,24 @@ void processAutonomy()
     // compute with fake battery voltage based on mean voltage value corrected with realtime current
     if (shrd.currentActual > 1000) // 1A
     {
-      voltageDiff = (shrd.voltageFilterLongMean - shrd.voltageActual);
-      currentFactor = (1.0 + (shrd.currentActual / 1000.0));
-      correction = voltageDiff / currentFactor;
-      correctedVoltage = shrd.voltageFilterLongMean - correction;
+      int32_t voltageDiff = (shrd.voltageFilterLongMean - shrd.voltageActual);
+      float currentFactor = (1.0 + (shrd.currentActual / 1000.0));
+      float correction = voltageDiff / currentFactor;
+      uint32_t correctedVoltage = shrd.voltageFilterLongMean - correction;
       shrd.batteryLevel = batt.level(correctedVoltage);
     }
     else
     {
-      shrd.batteryLevel = batt.level(shrd.voltageActual);
+      shrd.batteryLevel = batt.level(shrd.voltageFilterMean);
     }
   }
 
-  autonomyLeft = (settings.getS3F().Battery_max_distance / 10) * (shrd.batteryLevel) / 100.0;
+  shrd.autonomyLeft = (settings.getS3F().Battery_max_distance / 10) * (shrd.batteryLevel) / 100.0;
 
-  //autonomyLeftFilter.in(autonomyLeft);
-  shrd.autonomyFilterMean = autonomyLeftFilter.getMean();
-  shrd.autonomyFilterMean = autonomyLeft;
 #if DEBUG_DISPLAY_AUTONOMY
   Serial.println("bat level : " + (String)shrd.batteryLevel +
                  " / voltageInMilliVolts = " + voltageInMilliVolts +
                  " / autonomy = " + (String)autonomyLeft +
-                 " / autonomyFilterMean = " + (String)shrd.autonomyFilterMean +
                  " / bat dst = " + (String)(settings.getS3F().Battery_max_distance / 10) +
                  " / voltageFilterLongMean = " + (String)shrd.voltageFilterLongMean +
                  " / voltageActual = " + (String)shrd.voltageActual +
@@ -1723,7 +1707,6 @@ void processCurrent()
 
 void loop()
 {
-
   // handle Wifi OTA
   if (shrd.inOtaMode)
   {

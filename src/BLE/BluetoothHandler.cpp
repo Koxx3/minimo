@@ -1084,8 +1084,7 @@ uint8_t BluetoothHandler::setMeasurements()
         i = i + 1;
 
         //voltage
-        //uint16_t voltage = shrd->voltageFilterMean / 100;
-        uint16_t voltage = shrd->voltageActual  / 100; //test de précision sans filtre
+        uint16_t voltage = shrd->voltageActual  / 100; 
         memcpy(&txValue[i], &voltage, 2);
         i = i + 2;
 
@@ -1094,15 +1093,8 @@ uint8_t BluetoothHandler::setMeasurements()
         memcpy(&txValue[i], &current, 2);
         i = i + 2;
 
-        /*
-Serial.print(shrd->currentFilterMean);
-Serial.print(" / ");
-Serial.println(current);
-*/
-
         // power
-        //int16_t power = (current) * (voltage) / 100;
-        int16_t power = shrd->voltageFilterMean / 100; // comparatif au test de précision
+        int16_t power = (current) * (voltage) / 100;
         memcpy(&txValue[i], &power, 2);
         i = i + 2;
 
@@ -1130,7 +1122,7 @@ Serial.println(current);
         i = i + 1;
 
         // battery autonomy
-        uint8_t autonomy = shrd->autonomyFilterMean;
+        uint8_t autonomy = shrd->autonomyLeft;
         memcpy(&txValue[i], &autonomy, 1);
         i = i + 1;
 

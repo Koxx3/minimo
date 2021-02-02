@@ -114,8 +114,6 @@ void MinimoUart::displayDecodedFrame(int mode, char data_buffer[], byte checksum
           ((data_buffer[10] - data_buffer[3]) & 0xff) >> 2);
 
   Serial.println(print_buffer);
-  shrd->currentActual = ((data_buffer[10] - data_buffer[3]) & 0xff)*1000;
-  blh->notifyBleLogs(print_buffer);
 }
 
 //////------------------------------------

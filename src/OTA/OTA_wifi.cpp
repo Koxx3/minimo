@@ -31,7 +31,7 @@
 
 //
 
-char *github_root_ca =
+char *github_root_ca = (char*)
     "-----BEGIN CERTIFICATE-----\n"
     "MIIDxTCCAq2gAwIBAgIQAqxcJmoLQJuPC3nyrkYldzANBgkqhkiG9w0BAQUFADBsMQswCQYDVQQG\n"
     "EwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSsw\n"
