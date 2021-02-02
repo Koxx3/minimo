@@ -644,7 +644,9 @@ void computeDistance(float speed)
   {
     shrd.distanceOdoInFlash = shrd.distanceOdo;
 
+#ifndef DEBUG_CRASH
     eeprom.saveOdo();
+#endif    
   }
 
 #if DEBUG_DISPLAY_DISTANCE
@@ -1723,6 +1725,13 @@ void processCurrent()
 
 void loop()
 {
+
+#if DEBUG_CRASH
+  if (millis() > 5000)
+    shrd.speedCurrent = millis() % 2000;
+  if (millis() > 5000 && millis() % 20 == 0)
+    computeDistance(shrd.speedCurrent);
+#endif
 
   // handle Wifi OTA
   if (shrd.inOtaMode)
