@@ -461,7 +461,7 @@ void taskUpdateTFT(void *parameter)
 ////// Setup
 void setup()
 {
-  
+
   esp_bt_sleep_disable();
   esp_ble_scan_dupilcate_list_flush();
 
@@ -615,6 +615,20 @@ void displayButton2()
   Serial.println(shrd.button1ClickStatus);
 }
 
+void checkAndSaveOdo()
+{
+
+  if (((shrd.speedOld != 0) && (shrd.speedCurrent == 0) && (shrd.distanceOdoInFlash != shrd.distanceOdo)) || /* save when speed become 0 */
+      (shrd.distanceOdo > shrd.distanceOdoInFlash + 10) /* save every kilometer */)
+  {
+    shrd.distanceOdoInFlash = shrd.distanceOdo;
+
+    //#ifndef DEBUG_CRASH
+    eeprom.saveOdo();
+    //#endif
+  }
+}
+
 void computeDistance(float speed)
 {
 
@@ -626,17 +640,17 @@ void computeDistance(float speed)
   uint32_t oldDistanceTrip = shrd.distanceTrip;
 #endif
 
-  shrd.distanceTrip = shrd.distanceTrip + ((speed * (distanceDiffTime)) / 360) * SPEED_TO_DISTANCE_CORRECTION_FACTOR;
+  uint32_t tripDiff = ((speed * (distanceDiffTime)) / 360) * SPEED_TO_DISTANCE_CORRECTION_FACTOR;
+  shrd.distanceTrip = shrd.distanceTrip + tripDiff;
+  shrd.distanceTripForOdo = shrd.distanceTripForOdo + tripDiff;
   shrd.distancePrevTime = millis();
 
-  shrd.distanceOdo = shrd.distanceOdoBoot + (shrd.distanceTrip / 1000);
+  shrd.distanceOdo = shrd.distanceOdoBoot + (shrd.distanceTripForOdo / 1000);
 
-  if (((shrd.speedOld != 0) && (speed == 0) && (shrd.distanceOdoInFlash != shrd.distanceOdo)) || /* save when speed become 0 */
-      (shrd.distanceOdo > shrd.distanceOdoInFlash + 10) /* save every kilometer */)
+  // if BLE is not connected, save ODO in the main thread ... else save on BLE keep alive
+  if (blh.deviceStatus == BLE_STATUS_DISCONNECTED)
   {
-    shrd.distanceOdoInFlash = shrd.distanceOdo;
-
-    eeprom.saveOdo();
+    checkAndSaveOdo();
   }
 
 #if DEBUG_DISPLAY_DISTANCE
@@ -1707,6 +1721,14 @@ void processCurrent()
 
 void loop()
 {
+
+#if DEBUG_CRASH
+  if (millis() > 5000)
+    shrd.speedCurrent = millis() % 2000;
+  if (millis() > 5000 && millis() % 20 == 0)
+    computeDistance(shrd.speedCurrent);
+#endif
+
   // handle Wifi OTA
   if (shrd.inOtaMode)
   {
@@ -1901,7 +1923,7 @@ void loop()
   }
 #endif
 
-/* test display
+  /* test display
   if (i_loop % 200 == 0)
   {
     computeDistance(100);
