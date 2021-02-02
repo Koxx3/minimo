@@ -680,7 +680,8 @@ void getBrakeFromAnalog()
     {
       shrd.speedLimiter = 0;
 
-      blh.notifySpeedLimiterStatus(shrd.speedLimiter);
+      //      blh.notifySpeedLimiterStatus(shrd.speedLimiter);
+      blh.notifyCommandsFeedback();
 
       Serial.print("notifySpeedLimiterStatus => disabled by brake / ");
       Serial.println(shrd.speedLimiter);
@@ -693,19 +694,17 @@ void getBrakeFromAnalog()
       Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE");
 #endif
 
-      /*
       char print_buffer[500];
-      sprintf(print_buffer, "brake ANALOG_BRAKE_MIN_ERR_VALUE / f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d",
+      sprintf(print_buffer, "brake ANALOG_BRAKE_MIN_ERR_VALUE / f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d",
               brakeFilterMean,
               brakeFilterMeanErr,
               brakeAnalogValue,
               shrd.brakeSentOrder,
               shrd.brakeSentOrderOld,
-              shrd.brakeStatus,
-              brakeFilterInit.getMean());
+              shrd.brakePressedStatus);
       blh.notifyBleLogs(print_buffer);
       Serial.println(print_buffer);
-*/
+
       return;
     }
 
@@ -791,7 +790,8 @@ void getBrakeFromAnalog()
       // notify brake LCD value
       if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakePressedStatus != shrd.brakePressedStatusOld))
       {
-        blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakePressedStatus, shrd.brakeFordidenHighVoltage);
+        //        blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakePressedStatus, shrd.brakeFordidenHighVoltage);
+        blh.notifyCommandsFeedback();
 
 #if DEBUG_DISPLAY_ANALOG_BRAKE
         Serial.print("brake notify : ");
@@ -1121,7 +1121,8 @@ void processKellySerial1()
   // notify brake LCD value
   if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakePressedStatus != shrd.brakePressedStatusOld))
   {
-    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakePressedStatus, shrd.brakeFordidenHighVoltage);
+    //    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakePressedStatus, shrd.brakeFordidenHighVoltage);
+    blh.notifyCommandsFeedback();
   }
 
   shrd.brakePressedStatusOld = shrd.brakePressedStatus;
@@ -1160,7 +1161,8 @@ void processSmartEscSerial()
   // notify brake LCD value
   if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakePressedStatus != shrd.brakePressedStatusOld))
   {
-    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakePressedStatus, shrd.brakeFordidenHighVoltage);
+    //    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakePressedStatus, shrd.brakeFordidenHighVoltage);
+    blh.notifyCommandsFeedback();
   }
 
   shrd.brakePressedStatusOld = shrd.brakePressedStatus;
@@ -1403,7 +1405,8 @@ void processAuxEvent(uint8_t buttonId, bool isLongPress)
     {
       shrd.auxOrder = 0;
     }
-    blh.notifyAuxOrder(shrd.auxOrder);
+    //    blh.notifyAuxOrder(shrd.auxOrder);
+    blh.notifyCommandsFeedback();
 
     Serial.print("processAuxEvent => ok / ");
     Serial.println(shrd.auxOrder);
@@ -1431,7 +1434,8 @@ void processSpeedLimiterEvent(uint8_t buttonId, bool isLongPress)
     {
       shrd.speedLimiter = 0;
     }
-    blh.notifySpeedLimiterStatus(shrd.speedLimiter);
+    //blh.notifySpeedLimiterStatus(shrd.speedLimiter);
+    blh.notifyCommandsFeedback();
 
     Serial.print("notifySpeedLimiterStatus => ok / ");
     Serial.println(shrd.speedLimiter);
@@ -1623,7 +1627,9 @@ void processVoltageTooHighForBrake()
     shrd.brakeFordidenHighVoltage = isElectricBrakeForbidenNew;
 
     // notify
-    blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakePressedStatus, shrd.brakeFordidenHighVoltage);
+    //blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakePressedStatus, shrd.brakeFordidenHighVoltage);
+    blh.notifyCommandsFeedback();
+
 #if DEBUG_BLE_DISPLAY_VOLTAGE_TOO_HIGH
     Serial.printf("processVoltageTooHighForBrake : notify\n");
 #endif
@@ -1632,8 +1638,6 @@ void processVoltageTooHighForBrake()
 
 void processAutonomy()
 {
-
-
 
   // Compute battery level with or without current sensor
   if (!shrd.currentSensorPresent)

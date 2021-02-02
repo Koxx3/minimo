@@ -13,6 +13,7 @@
 #include "esp_bt_defs.h"
 #include "esp_bt_main.h"
 #include "OTA/OTA_wifi.h"
+#include "tools/buffer.h"
 
 // See the following for generating UUIDs: https://www.uuidgenerator.net/
 #define SERVICE_MAIN_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
@@ -20,25 +21,25 @@
 #define SERVICE_SETTINGS_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914d"
 
 #define MEASUREMENTS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a0"
-#define MODE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a1"
-#define BRAKE_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a2"
+//#define MODE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a1"
+//#define BRAKE_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a2"
 #define FIRMWARE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a3"
 #define KEEP_ALIVE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a4"
-//#define "beb5483e-36e1-4688-b7f5-ea07361b26a5"
+#define GENERAL_ORDERS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a5"
 #define BTLOCK_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a6"
 #define SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a7"
 #define SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
 #define SETTINGS1_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a9"
-#define SPEED_LIMITER_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26aa"
-#define ECO_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ab"
-#define ACCEL_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ac"
+//#define SPEED_LIMITER_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26aa"
+//#define ECO_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ab"
+//#define ACCEL_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ac"
 #define CALIB_ORDER_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ad"
 #define SWITCH_TO_OTA_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ae"
 #define LOGS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26af"
 #define FAST_UPDATE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b0"
 #define SETTINGS2_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b1"
 #define SETTINGS3_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b2"
-#define AUX_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b3"
+//#define AUX_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b3"
 #define SPEED_PID_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b4"
 #define DISTANCE_RST_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b5"
 
@@ -55,25 +56,26 @@ BLEServer *BluetoothHandler::pServer;
 BLESecurity *BluetoothHandler::pSecurity;
 BLECharacteristic *BluetoothHandler::pCharacteristicMeasurements;
 BLECharacteristic *BluetoothHandler::pCharacteristicFirmware;
-BLECharacteristic *BluetoothHandler::pCharacteristicMode;
-BLECharacteristic *BluetoothHandler::pCharacteristicBrakeSentOrder;
+//BLECharacteristic *BluetoothHandler::pCharacteristicMode;
+//BLECharacteristic *BluetoothHandler::pCharacteristicBrakeSentOrder;
 BLECharacteristic *BluetoothHandler::pCharacteristicBtlockStatus;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings1;
-BLECharacteristic *BluetoothHandler::pCharacteristicSpeedLimiter;
-BLECharacteristic *BluetoothHandler::pCharacteristicEco;
-BLECharacteristic *BluetoothHandler::pCharacteristicAccel;
+//BLECharacteristic *BluetoothHandler::pCharacteristicSpeedLimiter;
+//BLECharacteristic *BluetoothHandler::pCharacteristicEco;
+//BLECharacteristic *BluetoothHandler::pCharacteristicAccel;
 BLECharacteristic *BluetoothHandler::pCharacteristicCalibOrder;
 BLECharacteristic *BluetoothHandler::pCharacteristicOtaSwitch;
 BLECharacteristic *BluetoothHandler::pCharacteristicLogs;
-BLECharacteristic *BluetoothHandler::pCharacteristicFastUpdate;
+//BLECharacteristic *BluetoothHandler::pCharacteristicFastUpdate;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings2;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings3;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings4;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings5;
-BLECharacteristic *BluetoothHandler::pCharacteristicAux;
+//BLECharacteristic *BluetoothHandler::pCharacteristicAux;
 BLECharacteristic *BluetoothHandler::pCharacteristicSpeedPid;
 BLECharacteristic *BluetoothHandler::pCharacteristicDistanceRst;
 BLECharacteristic *BluetoothHandler::pCharacteristicKeepAlive;
+BLECharacteristic *BluetoothHandler::pCharacteristicCommands;
 
 int8_t BluetoothHandler::bleLockStatus;
 int8_t BluetoothHandler::bleBeaconVisible;
@@ -123,9 +125,9 @@ void BluetoothHandler::setSettings(Settings *data)
                 }
             }
 
+            // notify general order feedback
             // notify of current modes / values (for value not uptate by LCD)
-            pCharacteristicSpeedLimiter->setValue((uint8_t *)&shrd->speedLimiter, 1);
-            pCharacteristicSpeedLimiter->notify();
+            notifyCommandsFeedback();
         };
 
         void onDisconnect(BLEServer *pServer)
@@ -214,17 +216,8 @@ void BluetoothHandler::setSettings(Settings *data)
     {
         void onWrite(BLECharacteristic *pCharacteristic)
         {
-            if (pCharacteristic->getUUID().toString() == MODE_CHARACTERISTIC_UUID)
-            {
-                std::string rxValue = pCharacteristic->getValue();
-                shrd->modeOrder = rxValue[0];
 
-                char print_buffer[500];
-                sprintf(print_buffer, "%02x", shrd->modeOrder);
-                Serial.print("BLH - Write mode : ");
-                Serial.println(print_buffer);
-            }
-            else if (pCharacteristic->getUUID().toString() == BRAKE_STATUS_CHARACTERISTIC_UUID)
+            /* if (pCharacteristic->getUUID().toString() == BRAKE_STATUS_CHARACTERISTIC_UUID)
             {
                 std::string rxValue = pCharacteristic->getValue();
                 shrd->brakeSentOrder = rxValue[0];
@@ -235,7 +228,9 @@ void BluetoothHandler::setSettings(Settings *data)
                 Serial.print("BLH - Write brakeSentOrder : ");
                 Serial.println(print_buffer);
             }
-            else if (pCharacteristic->getUUID().toString() == SETTINGS1_CHARACTERISTIC_UUID)
+            else 
+            */
+            if (pCharacteristic->getUUID().toString() == SETTINGS1_CHARACTERISTIC_UUID)
             {
                 std::string rxValue = pCharacteristic->getValue();
 
@@ -388,48 +383,6 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 saveSettings();
             }
-            else if (pCharacteristic->getUUID().toString() == SPEED_LIMITER_CHARACTERISTIC_UUID)
-            {
-                std::string rxValue = pCharacteristic->getValue();
-                shrd->speedLimiter = rxValue[0];
-
-                char print_buffer[500];
-                sprintf(print_buffer, "%02x", shrd->speedLimiter);
-                Serial.print("BLH - Write speedLimiter : ");
-                Serial.println(print_buffer);
-
-                // notify of current value
-                pCharacteristicSpeedLimiter->setValue((uint8_t *)&shrd->speedLimiter, 1);
-                pCharacteristicSpeedLimiter->notify();
-            }
-            else if (pCharacteristic->getUUID().toString() == ECO_CHARACTERISTIC_UUID)
-            {
-                std::string rxValue = pCharacteristic->getValue();
-                shrd->ecoOrder = rxValue[0];
-
-                char print_buffer[500];
-                sprintf(print_buffer, "%02x", shrd->ecoOrder);
-                Serial.print("BLH - Write eco : ");
-                Serial.println(print_buffer);
-
-                // notify of current value
-                pCharacteristicEco->setValue((uint8_t *)&shrd->ecoOrder, 1);
-                pCharacteristicEco->notify();
-            }
-            else if (pCharacteristic->getUUID().toString() == ACCEL_CHARACTERISTIC_UUID)
-            {
-                std::string rxValue = pCharacteristic->getValue();
-                shrd->accelOrder = rxValue[0];
-
-                char print_buffer[500];
-                sprintf(print_buffer, "%02x", shrd->accelOrder);
-                Serial.print("BLH - Write accel : ");
-                Serial.println(print_buffer);
-
-                // notify of current value
-                pCharacteristicAccel->setValue((uint8_t *)&shrd->accelOrder, 1);
-                pCharacteristicAccel->notify();
-            }
             else if (pCharacteristic->getUUID().toString() == CALIB_ORDER_CHARACTERISTIC_UUID)
             {
                 std::string rxValue = pCharacteristic->getValue();
@@ -512,7 +465,8 @@ void BluetoothHandler::setSettings(Settings *data)
                 std::string rxValue = pCharacteristic->getValue();
                 shrd->inOtaMode = rxValue[0]; // Enable http OTA mode
             }
-            else if (pCharacteristic->getUUID().toString() == FAST_UPDATE_CHARACTERISTIC_UUID)
+            else
+                /* if (pCharacteristic->getUUID().toString() == FAST_UPDATE_CHARACTERISTIC_UUID)
             {
                 Serial.println("Write FAST_UPDATE_CHARACTERISTIC_UUID");
 
@@ -522,21 +476,9 @@ void BluetoothHandler::setSettings(Settings *data)
                 Serial.print("BLH - Fast update = ");
                 Serial.println(fastUpdate);
             }
-            else if (pCharacteristic->getUUID().toString() == AUX_CHARACTERISTIC_UUID)
-            {
-                std::string rxValue = pCharacteristic->getValue();
-                shrd->auxOrder = rxValue[0];
-
-                char print_buffer[500];
-                sprintf(print_buffer, "%02x", shrd->auxOrder);
-                Serial.print("BLH - Write aux : ");
-                Serial.println(print_buffer);
-
-                // notify of current value
-                pCharacteristicAux->setValue((uint8_t *)&shrd->auxOrder, 1);
-                pCharacteristicAux->notify();
-            }
-            else if (pCharacteristic->getUUID().toString() == DISTANCE_RST_CHARACTERISTIC_UUID)
+            else
+            */
+                if (pCharacteristic->getUUID().toString() == DISTANCE_RST_CHARACTERISTIC_UUID)
             {
                 shrd->distanceTrip = 0;
             }
@@ -563,10 +505,24 @@ void BluetoothHandler::setSettings(Settings *data)
                 //Serial.println("BLH - Write : KEEP_ALIVE_CHARACTERISTIC_UUID");
                 checkAndSaveOdo();
             }
+            else if (pCharacteristic->getUUID().toString() == GENERAL_ORDERS_CHARACTERISTIC_UUID)
+            {
+                Serial.println("BLH - Write : GENERAL_ORDERS_CHARACTERISTIC_UUID");
+                getGeneralOrderDataPacket((uint8_t *)pCharacteristic->getValue().data());
+
+                notifyCommandsFeedback();
+            }
+            else
+            {
+                const char *uuid = pCharacteristic->getUUID().toString().data();
+                Serial.println("BLH - Write : unknown " + (String)(uuid));
+            }
         }
 
         void onRead(BLECharacteristic *pCharacteristic)
         {
+
+            Serial.println("onRead");
 
             if (pCharacteristic->getUUID().toString() == FIRMWARE_CHARACTERISTIC_UUID)
             {
@@ -579,22 +535,21 @@ void BluetoothHandler::setSettings(Settings *data)
                 Serial.print("BLH - Read firmware : ");
                 Serial.println(finalString.c_str());
             }
-            else if (pCharacteristic->getUUID().toString() == MODE_CHARACTERISTIC_UUID)
-            {
-                pCharacteristicMode->setValue((uint8_t *)&shrd->modeOrder, 1);
-
-                char print_buffer[500];
-                sprintf(print_buffer, "%02x", shrd->modeOrder);
-                Serial.print("BLH - Read mode : ");
-                Serial.println(print_buffer);
-            }
             else if (pCharacteristic->getUUID().toString() == MEASUREMENTS_CHARACTERISTIC_UUID)
             {
-                int nb_bytes = setMeasurements();
+                int nb_bytes = setMeasurementsDataPacket();
                 Serial.print("BLH - Read measurement : nb bytes");
                 Serial.println(nb_bytes);
             }
-            else if (pCharacteristic->getUUID().toString() == BRAKE_STATUS_CHARACTERISTIC_UUID)
+            else if (pCharacteristic->getUUID().toString() == GENERAL_ORDERS_CHARACTERISTIC_UUID)
+            {
+                int nb_bytes = setCommandsDataPacket();
+                Serial.print("BLH - Read general orders : nb bytes");
+                Serial.println(nb_bytes);
+            }
+            else
+                /*
+             if (pCharacteristic->getUUID().toString() == BRAKE_STATUS_CHARACTERISTIC_UUID)
             {
 
                 byte value[3];
@@ -608,7 +563,9 @@ void BluetoothHandler::setSettings(Settings *data)
                 Serial.print("BLH - Read breakeSentOrder : ");
                 Serial.println(print_buffer);
             }
-            else if (pCharacteristic->getUUID().toString() == BTLOCK_STATUS_CHARACTERISTIC_UUID)
+            else 
+            */
+                if (pCharacteristic->getUUID().toString() == BTLOCK_STATUS_CHARACTERISTIC_UUID)
             {
 
                 notifyBleLock();
@@ -623,42 +580,6 @@ void BluetoothHandler::setSettings(Settings *data)
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", bleLockStatus);
                 Serial.print("BLH - Read bleLock : ");
-                Serial.println(print_buffer);
-            }
-            else if (pCharacteristic->getUUID().toString() == SPEED_LIMITER_CHARACTERISTIC_UUID)
-            {
-                pCharacteristicSpeedLimiter->setValue((uint8_t *)&shrd->speedLimiter, 1);
-
-                char print_buffer[500];
-                sprintf(print_buffer, "%d", shrd->speedLimiter);
-                Serial.print("BLH - Read speedLimiter : ");
-                Serial.println(print_buffer);
-            }
-            else if (pCharacteristic->getUUID().toString() == ECO_CHARACTERISTIC_UUID)
-            {
-                pCharacteristicEco->setValue((uint8_t *)&shrd->ecoOrder, 1);
-
-                char print_buffer[500];
-                sprintf(print_buffer, "%d", shrd->ecoOrder);
-                Serial.print("BLH - Read eco : ");
-                Serial.println(print_buffer);
-            }
-            else if (pCharacteristic->getUUID().toString() == ACCEL_CHARACTERISTIC_UUID)
-            {
-                pCharacteristicAccel->setValue((uint8_t *)&shrd->accelOrder, 1);
-
-                char print_buffer[500];
-                sprintf(print_buffer, "%d", shrd->accelOrder);
-                Serial.print("BLH - Read accel : ");
-                Serial.println(print_buffer);
-            }
-            else if (pCharacteristic->getUUID().toString() == AUX_CHARACTERISTIC_UUID)
-            {
-                pCharacteristicAux->setValue((uint8_t *)&shrd->auxOrder, 1);
-
-                char print_buffer[500];
-                sprintf(print_buffer, "%d", shrd->auxOrder);
-                Serial.print("BLH - Read aux : ");
                 Serial.println(print_buffer);
             }
         }
@@ -711,7 +632,7 @@ void BluetoothHandler::setSettings(Settings *data)
     pServer->setCallbacks(new BLEServerCallback());
 
     // Create the BLE Service
-    BLEService *pServiceMain = pServer->createService(BLEUUID(SERVICE_MAIN_UUID), 100);
+    BLEService *pServiceMain = pServer->createService(BLEUUID(SERVICE_MAIN_UUID), 40);
     BLEService *pServiceFirmware = pServer->createService(BLEUUID(SERVICE_FIRMWARE_UUID), 20);
     BLEService *pServiceSettings = pServer->createService(BLEUUID(SERVICE_SETTINGS_UUID), 20);
 
@@ -725,38 +646,8 @@ void BluetoothHandler::setSettings(Settings *data)
         BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_READ);
 
-    pCharacteristicMode = pServiceMain->createCharacteristic(
-        MODE_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
-
-    pCharacteristicBrakeSentOrder = pServiceMain->createCharacteristic(
-        BRAKE_STATUS_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
-
     pCharacteristicBtlockStatus = pServiceMain->createCharacteristic(
         BTLOCK_STATUS_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
-
-    pCharacteristicSpeedLimiter = pServiceMain->createCharacteristic(
-        SPEED_LIMITER_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
-
-    pCharacteristicEco = pServiceMain->createCharacteristic(
-        ECO_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
-
-    pCharacteristicAccel = pServiceMain->createCharacteristic(
-        ACCEL_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
@@ -773,27 +664,23 @@ void BluetoothHandler::setSettings(Settings *data)
         LOGS_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY);
 
-    pCharacteristicFastUpdate = pServiceMain->createCharacteristic(
-        FAST_UPDATE_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE);
-
-    pCharacteristicAux = pServiceMain->createCharacteristic(
-        AUX_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
-
     pCharacteristicDistanceRst = pServiceMain->createCharacteristic(
         DISTANCE_RST_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_WRITE);
+
+    pCharacteristicKeepAlive = pServiceMain->createCharacteristic(
+        KEEP_ALIVE_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_WRITE);
 
     pCharacteristicSpeedPid = pServiceMain->createCharacteristic(
         SPEED_PID_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_WRITE);
 
-    pCharacteristicKeepAlive = pServiceMain->createCharacteristic(
-        KEEP_ALIVE_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE);
+    pCharacteristicCommands = pServiceMain->createCharacteristic(
+        GENERAL_ORDERS_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_NOTIFY |
+            BLECharacteristic::PROPERTY_WRITE |
+            BLECharacteristic::PROPERTY_READ);
 
     //-------------------
     // services firmware
@@ -830,49 +717,43 @@ void BluetoothHandler::setSettings(Settings *data)
         BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
+    //////////////
     pCharacteristicMeasurements->addDescriptor(new BLE2902());
-    pCharacteristicFirmware->addDescriptor(new BLE2902());
-    pCharacteristicMode->addDescriptor(new BLE2902());
-    pCharacteristicBrakeSentOrder->addDescriptor(new BLE2902());
     pCharacteristicBtlockStatus->addDescriptor(new BLE2902());
-    pCharacteristicSettings1->addDescriptor(new BLE2902());
-    pCharacteristicSpeedLimiter->addDescriptor(new BLE2902());
-    pCharacteristicEco->addDescriptor(new BLE2902());
-    pCharacteristicAccel->addDescriptor(new BLE2902());
     pCharacteristicCalibOrder->addDescriptor(new BLE2902());
     pCharacteristicOtaSwitch->addDescriptor(new BLE2902());
     pCharacteristicLogs->addDescriptor(new BLE2902());
-    pCharacteristicFastUpdate->addDescriptor(new BLE2902());
+    pCharacteristicSpeedPid->addDescriptor(new BLE2902());
+    pCharacteristicDistanceRst->addDescriptor(new BLE2902());
+    pCharacteristicKeepAlive->addDescriptor(new BLE2902());
+    pCharacteristicCommands->addDescriptor(new BLE2902());
+
+    pCharacteristicSettings1->addDescriptor(new BLE2902());
     pCharacteristicSettings2->addDescriptor(new BLE2902());
     pCharacteristicSettings3->addDescriptor(new BLE2902());
     pCharacteristicSettings4->addDescriptor(new BLE2902());
     pCharacteristicSettings5->addDescriptor(new BLE2902());
-    pCharacteristicAux->addDescriptor(new BLE2902());
-    pCharacteristicSpeedPid->addDescriptor(new BLE2902());
-    pCharacteristicDistanceRst->addDescriptor(new BLE2902());
-    pCharacteristicKeepAlive->addDescriptor(new BLE2902());
 
+    pCharacteristicFirmware->addDescriptor(new BLE2902());
+
+    //////////////
     pCharacteristicMeasurements->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicFirmware->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicMode->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicBrakeSentOrder->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicBtlockStatus->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicSettings1->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicSpeedLimiter->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicEco->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicAccel->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicCalibOrder->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicOtaSwitch->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicLogs->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicFastUpdate->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicSpeedPid->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicDistanceRst->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicKeepAlive->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicCommands->setCallbacks(new BLECharacteristicCallback());
+
+    pCharacteristicSettings1->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettings2->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettings3->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettings4->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettings5->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicAux->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicSpeedPid->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicDistanceRst->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicKeepAlive->setCallbacks(new BLECharacteristicCallback());
+
+    pCharacteristicFirmware->setCallbacks(new BLECharacteristicCallback());
 
     // Start the service
     pServiceMain->start();
@@ -1081,104 +962,114 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
     // }
 }
 
-uint8_t BluetoothHandler::setMeasurements()
+uint8_t BluetoothHandler::setMeasurementsDataPacket()
 {
+    //Serial.println("setMeasurementsDataPacket");
 
-    uint8_t i = 0;
+    int32_t ind = 0;
 
     if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
-        char txValue[20];
 
-        //speedValue
-        uint8_t speedCurrent = shrd->speedCurrent;
-        memcpy(&txValue[i], &speedCurrent, 1);
-        i = i + 1;
+        uint8_t txValue[20];
 
-        //voltage
-        uint16_t voltage = shrd->voltageActual  / 100; 
-        memcpy(&txValue[i], &voltage, 2);
-        i = i + 2;
+        buffer_append_uint8(txValue, shrd->speedCurrent, &ind);
+        buffer_append_uint16_inv(txValue, (shrd->voltageActual / 100), &ind);
+        buffer_append_int16_inv(txValue, (shrd->currentActual / 100), &ind);
+        buffer_append_int16_inv(txValue, (shrd->currentActual / 100) * (shrd->voltageActual / 100), &ind);
+        buffer_append_int16_inv(txValue, (shrd->currentTemperature * 10.0), &ind);
+        buffer_append_uint16_inv(txValue, (shrd->currentHumidity * 10.0), &ind);
+        buffer_append_uint16_inv(txValue, (shrd->distanceTrip / 100), &ind);
+        buffer_append_uint32_inv(txValue, (shrd->distanceOdo), &ind);
+        buffer_append_uint8(txValue, (shrd->batteryLevel), &ind);
+        buffer_append_uint8(txValue, (shrd->autonomyLeft), &ind);
 
-        //current
-        int16_t current = shrd->currentActual / 100;
-        memcpy(&txValue[i], &current, 2);
-        i = i + 2;
+        pCharacteristicMeasurements->setValue((uint8_t *)&txValue[0], ind);
 
-        // power
-        int16_t power = (current) * (voltage) / 100;
-        memcpy(&txValue[i], &power, 2);
-        i = i + 2;
-
-        // temperature
-        int16_t temp = shrd->currentTemperature * 10.0;
-        uint16_t hr = shrd->currentHumidity * 10.0;
-        memcpy(&txValue[i], &temp, 2);
-        i = i + 2;
-        memcpy(&txValue[i], &hr, 2);
-        i = i + 2;
-
-        // distance trip
-        uint16_t distance = shrd->distanceTrip / 100;
-        memcpy(&txValue[i], &distance, 2);
-        i = i + 2;
-
-        // distance odo
-        uint32_t distanceOdo = shrd->distanceOdo;
-        memcpy(&txValue[i], &distanceOdo, 4);
-        i = i + 4;
-
-        // battery level
-        uint8_t batLevel = shrd->batteryLevel;
-        memcpy(&txValue[i], &batLevel, 1);
-        i = i + 1;
-
-        // battery autonomy
-        uint8_t autonomy = shrd->autonomyLeft;
-        memcpy(&txValue[i], &autonomy, 1);
-        i = i + 1;
-
-        /*
-    txValue[i] = 0xff;
-
-    char print_buffer[500];
-    sprintf(print_buffer, "%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x / %d",
-            txValue[0],
-            txValue[1],
-            txValue[2],
-            txValue[3],
-            txValue[4],
-            txValue[5],
-            txValue[6],
-            txValue[7],
-            txValue[8],
-            txValue[9],
-            txValue[10],
-            txValue[11],
-            txValue[12],
-            txValue[13],
-            i);
-
-    Serial.println(print_buffer);
-*/
-
-        pCharacteristicMeasurements->setValue((uint8_t *)&txValue[0], i);
+        //Serial.println("setMeasurementsDataPacket : sent " + (String)ind);
     }
-    return i;
+    return ind;
+}
+
+uint8_t BluetoothHandler::setCommandsDataPacket()
+{
+
+    Serial.println("setCommandsDataPacket");
+
+    int32_t ind = 0;
+
+    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
+    {
+        uint8_t txValue[20];
+
+        buffer_append_uint8(txValue, shrd->modeOrder, &ind);
+        buffer_append_uint8(txValue, shrd->speedLimiter, &ind);
+        buffer_append_uint8(txValue, shrd->ecoOrder, &ind);
+        buffer_append_uint8(txValue, shrd->accelOrder, &ind);
+        buffer_append_uint8(txValue, shrd->auxOrder, &ind);
+        buffer_append_uint8(txValue, shrd->brakeSentOrder, &ind);
+        buffer_append_uint8(txValue, shrd->brakeSentOrderFromBLE, &ind);
+        buffer_append_uint8(txValue, shrd->brakePressedStatus, &ind);
+        buffer_append_uint8(txValue, shrd->brakeFordidenHighVoltage, &ind);
+        buffer_append_uint8(txValue, fastUpdate, &ind);
+
+        // copy values
+        shrd->brakeSentOrderFromBLE = shrd->brakeSentOrder;
+
+        pCharacteristicCommands->setValue((uint8_t *)&txValue[0], ind);
+
+        buffer_display("setCommandsDataPacket : ", txValue, ind);
+    }
+    return ind;
+}
+
+void BluetoothHandler::getGeneralOrderDataPacket(uint8_t *rxValue)
+{
+    Serial.println("getGeneralOrderDataPacket");
+
+    int32_t ind = 0;
+
+    shrd->modeOrder = buffer_get_uint8(rxValue, &ind);
+    shrd->speedLimiter = buffer_get_uint8(rxValue, &ind);
+    shrd->ecoOrder = buffer_get_uint8(rxValue, &ind);
+    shrd->accelOrder = buffer_get_uint8(rxValue, &ind);
+    shrd->auxOrder = buffer_get_uint8(rxValue, &ind);
+    shrd->brakeSentOrder = buffer_get_uint8(rxValue, &ind);
+    shrd->brakeSentOrderFromBLE = buffer_get_uint8(rxValue, &ind);
+    buffer_get_uint8(rxValue, &ind); /*shrd->brakePressedStatus*/
+    buffer_get_uint8(rxValue, &ind); /*shrd->brakeFordidenHighVoltage*/
+    fastUpdate = buffer_get_uint8(rxValue, &ind);
+
+    buffer_display("getGeneralOrderDataPacket : ", rxValue, ind);
+}
+
+void BluetoothHandler::notifyCommandsFeedback()
+{
+    Serial.println("notifyCommandsFeedback");
+
+    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
+    {
+        // notify of new log
+        setCommandsDataPacket();
+        pCharacteristicCommands->notify();
+    }
 }
 
 void BluetoothHandler::notifyMeasurements()
 {
+    // Serial.println("notifyMeasurements");
+
     if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         // notify of new log
-        setMeasurements();
+        setMeasurementsDataPacket();
         pCharacteristicMeasurements->notify();
     }
 }
 
 void BluetoothHandler::notifyBleLogs(char *txt)
 {
+
     if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         char bufferSend[21];
@@ -1222,15 +1113,7 @@ void BluetoothHandler::notifyBleLogs(char *txt)
     }
 }
 
-void BluetoothHandler::notifyModeOrder(uint8_t val)
-{
-    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
-    {
-        pCharacteristicMode->setValue((uint8_t *)&val, 1);
-        pCharacteristicMode->notify();
-    }
-}
-
+/*
 void BluetoothHandler::notifyBreakeSentOrder(uint8_t order, uint8_t isPressed, uint8_t brakeFordidenHighVoltage)
 {
 
@@ -1244,48 +1127,12 @@ void BluetoothHandler::notifyBreakeSentOrder(uint8_t order, uint8_t isPressed, u
         pCharacteristicBrakeSentOrder->notify();
     }
 }
-
-void BluetoothHandler::notifyEcoOrder(uint8_t val)
-{
-
-    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
-    {
-        pCharacteristicEco->setValue((uint8_t *)&val, 1);
-        pCharacteristicEco->notify();
-    }
-}
-
-void BluetoothHandler::notifyAccelOrder(uint8_t val)
-{
-
-    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
-    {
-        pCharacteristicAccel->setValue((uint8_t *)&val, 1);
-        pCharacteristicAccel->notify();
-    }
-}
-
-void BluetoothHandler::notifySpeedLimiterStatus(uint8_t val)
-{
-
-    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
-    {
-        pCharacteristicSpeedLimiter->setValue((uint8_t *)&val, 1);
-        pCharacteristicSpeedLimiter->notify();
-    }
-}
-
-void BluetoothHandler::notifyAuxOrder(uint8_t val)
-{
-    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
-    {
-        pCharacteristicAux->setValue((uint8_t *)&val, 1);
-        pCharacteristicAux->notify();
-    }
-}
+*/
 
 void BluetoothHandler::notifyBleLock()
 {
+
+    //Serial.println("notifyBleLock");
 
     if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
@@ -1329,6 +1176,8 @@ void BluetoothHandler::setBleLock(bool force)
 void BluetoothHandler::processBLE()
 {
 
+#ifndef DEBUG_NEW
+
     // notify changed value
     if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
@@ -1363,6 +1212,8 @@ void BluetoothHandler::processBLE()
         Serial.println("start advertising");
     }
     oldDeviceStatus = deviceStatus;
+
+#endif
 }
 
 void BluetoothHandler::setSharedData(SharedData *data)

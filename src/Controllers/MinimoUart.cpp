@@ -217,7 +217,8 @@ uint8_t MinimoUart::modifyMode(char var, char data_buffer[])
     shrd->modeLcdOld = modeLcd;
 
     // notify bluetooth
-    blh->notifyModeOrder(shrd->modeOrder);
+    //blh->notifyModeOrder(shrd->modeOrder);
+    blh->notifyCommandsFeedback();
   }
 
   /*
@@ -242,7 +243,8 @@ uint8_t MinimoUart::modifyMode(char var, char data_buffer[])
       shrd->modeOrderBeforeNitro = shrd->modeOrder;
     }
     shrd->modeOrder = 3;
-    blh->notifyModeOrder(shrd->modeOrder);
+    //blh->notifyModeOrder(shrd->modeOrder);
+    blh->notifyCommandsFeedback();
 
 #if DEBUG_DISPLAY_NITRO
     Serial.print(" !!!!!!!!!!!!! LIST_Button_press_action_Nitro_boost in PROGRESS !!!!!!!!!!!!! ");
@@ -255,14 +257,15 @@ uint8_t MinimoUart::modifyMode(char var, char data_buffer[])
     {
       shrd->modeOrder = shrd->modeOrderBeforeNitro;
 
-      blh->notifyModeOrder(shrd->modeOrder);
+      // blh->notifyModeOrder(shrd->modeOrder);
+    blh->notifyCommandsFeedback();
 
 #if DEBUG_DISPLAY_NITRO
-      Serial.print(" !!!!!!!!!!!!! LIST_Button_press_action_Nitro_boost STOPPED !!!!!!!!!!!!! ");
-      Serial.println(shrd->modeOrder);
+    Serial.print(" !!!!!!!!!!!!! LIST_Button_press_action_Nitro_boost STOPPED !!!!!!!!!!!!! ");
+    Serial.println(shrd->modeOrder);
 #endif
 
-      shrd->modeOrderBeforeNitro = -1;
+    shrd->modeOrderBeforeNitro = -1;
     }
   }
 
@@ -385,7 +388,8 @@ uint8_t MinimoUart::getBrakeFromDisplay(char var, char data_buffer[])
 #endif
 
     // notify bluetooth
-    blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
+    //blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
+        blh->notifyCommandsFeedback();
   }
   else if ((brakePressedStatusFromControllerNew == 0) && (shrd->brakePressedStatusOld == 1))
   {
@@ -421,7 +425,8 @@ uint8_t MinimoUart::getBrakeFromDisplay(char var, char data_buffer[])
 #endif
 
     // notify bluetooth
-    blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
+    //blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
+        blh->notifyCommandsFeedback();
   }
 
   shrd->brakePressedStatusOld = brakePressedStatusFromControllerNew;
@@ -497,7 +502,8 @@ uint8_t MinimoUart::modifyBrakeFromDisplay(char var, char data_buffer[])
         }
 
         // notify bluetooth
-        blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
+        //blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
+            blh->notifyCommandsFeedback();
       }
       else if (shrd->brakeFordidenHighVoltage == 1)
       // progressive brake enabled but brake released
@@ -529,7 +535,8 @@ uint8_t MinimoUart::modifyBrakeFromDisplay(char var, char data_buffer[])
       if (shrd->brakeSentOrder != shrd->brakeSentOrderOld)
       {
         // notify bluetooth
-        blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
+        //blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
+            blh->notifyCommandsFeedback();
       }
 
 #if DEBUG_BRAKE_SENT_ORDER
@@ -583,7 +590,8 @@ uint8_t MinimoUart::modifyEco(char var, char data_buffer[])
     shrd->ecoLcdOld = shrd->ecoLcd;
 
     // notify bluetooth
-    blh->notifyEcoOrder(shrd->ecoOrder);
+    //    blh->notifyEcoOrder(shrd->ecoOrder);
+        blh->notifyCommandsFeedback();
   }
 
 #if DEBUG_DISPLAY_ECO
@@ -611,7 +619,8 @@ uint8_t MinimoUart::modifyAccel(char var, char data_buffer[])
     shrd->accelLcdOld = shrd->accelLcd;
 
     // notify bluetooth
-    blh->notifyAccelOrder(shrd->accelOrder);
+    //blh->notifyAccelOrder(shrd->accelOrder);
+    blh->notifyCommandsFeedback();
 
     /*
     Serial.print("Accel ==> notify new accelOrder : ");
