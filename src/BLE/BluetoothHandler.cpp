@@ -80,16 +80,14 @@ int8_t BluetoothHandler::bleBeaconRSSI;
 int8_t BluetoothHandler::bleLockForced;
 int8_t BluetoothHandler::fastUpdate;
 
-bool BluetoothHandler::deviceConnected;
-bool BluetoothHandler::oldDeviceConnected;
+BluetoothHandler::BleStatus BluetoothHandler::deviceStatus;
+BluetoothHandler::BleStatus BluetoothHandler::oldDeviceStatus;
 
 Settings *BluetoothHandler::settings;
 SharedData *BluetoothHandler::shrd;
 
 uint32_t bleBeaconInvisibleCount = 0;
 uint32_t errCounter = 0;
-
-bool isBtEnabled;
 
 BluetoothHandler::BluetoothHandler()
 {
@@ -105,6 +103,8 @@ void BluetoothHandler::setSettings(Settings *data)
         void onConnect(BLEServer *pServer)
         {
             Serial.println("BLE connecting");
+
+            deviceStatus = BLE_STATUS_CONNECTED_AND_AUTHENTIFYING;
 
             if (bleLockForced == 0)
             {
@@ -130,7 +130,7 @@ void BluetoothHandler::setSettings(Settings *data)
         void onDisconnect(BLEServer *pServer)
         {
             Serial.println("BLE disconnected");
-            deviceConnected = false;
+            deviceStatus = BLE_STATUS_DISCONNECTED;
 
             if (bleLockForced == 0)
             {
@@ -197,14 +197,14 @@ void BluetoothHandler::setSettings(Settings *data)
                 uint16_t length;
                 esp_ble_gap_get_whitelist_size(&length);
                 Serial.println("onAuthenticationComplete : success");
-                deviceConnected = true;
+                deviceStatus = BLE_STATUS_CONNECTED_AND_AUTHENTIFIED;
             }
             else
             {
                 Serial.print("BLH - onAuthenticationComplete : hummm ... failed / reason : ");
                 Serial.println(cmpl.fail_reason);
 
-                deviceConnected = false;
+                deviceStatus = BLE_STATUS_DISCONNECTED;
             }
         }
     };
@@ -867,7 +867,7 @@ void BluetoothHandler::setSettings(Settings *data)
     pServiceFirmware->start();
     pServiceSettings->start();
 
-    isBtEnabled = true;
+    deviceStatus = BLE_STATUS_DISCONNECTED;
 
     // Start advertising
     BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
@@ -998,7 +998,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
     {
         if (settings->getS1F().Bluetooth_lock_mode == 2)
         {
-            if ((!bleBeaconVisible) && (!deviceConnected))
+            if ((!bleBeaconVisible) && (deviceStatus != BLE_STATUS_DISCONNECTED))
             {
                 bleLockStatus = 1;
 
@@ -1008,7 +1008,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
                 Serial.println();
 #endif
             }
-            else if ((!bleBeaconVisible) && (deviceConnected))
+            else if ((!bleBeaconVisible) && (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED))
             {
                 bleLockStatus = 0;
 
@@ -1074,7 +1074,7 @@ uint8_t BluetoothHandler::setMeasurements()
 
     uint8_t i = 0;
 
-    if (deviceConnected)
+    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         char txValue[20];
 
@@ -1085,7 +1085,7 @@ uint8_t BluetoothHandler::setMeasurements()
 
         //voltage
         //uint16_t voltage = shrd->voltageFilterMean / 100;
-        uint16_t voltage = shrd->voltageActual  / 100; //test de précision sans filtre
+        uint16_t voltage = shrd->voltageActual / 100; //test de précision sans filtre
         memcpy(&txValue[i], &voltage, 2);
         i = i + 2;
 
@@ -1165,7 +1165,7 @@ Serial.println(current);
 
 void BluetoothHandler::notifyMeasurements()
 {
-    if (deviceConnected)
+    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         // notify of new log
         setMeasurements();
@@ -1175,7 +1175,7 @@ void BluetoothHandler::notifyMeasurements()
 
 void BluetoothHandler::notifyBleLogs(char *txt)
 {
-    if (deviceConnected)
+    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         char bufferSend[21];
 
@@ -1199,7 +1199,7 @@ void BluetoothHandler::notifyBleLogs(char *txt)
             if ((i == nbChunks - 1) && (lastChunkSize > 0))
             {
                 size = lastChunkSize;
-               // bufferSend[lastChunkSize] = '\0';
+                // bufferSend[lastChunkSize] = '\0';
             }
             else
             {
@@ -1214,14 +1214,13 @@ void BluetoothHandler::notifyBleLogs(char *txt)
 
             pCharacteristicLogs->setValue((uint8_t *)bufferSend, size);
             pCharacteristicLogs->notify();
-
         }
     }
 }
 
 void BluetoothHandler::notifyModeOrder(uint8_t val)
 {
-    if (deviceConnected)
+    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         pCharacteristicMode->setValue((uint8_t *)&val, 1);
         pCharacteristicMode->notify();
@@ -1231,7 +1230,7 @@ void BluetoothHandler::notifyModeOrder(uint8_t val)
 void BluetoothHandler::notifyBreakeSentOrder(uint8_t order, uint8_t isPressed, uint8_t brakeFordidenHighVoltage)
 {
 
-    if (deviceConnected)
+    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         byte value[3];
         value[0] = order;
@@ -1245,7 +1244,7 @@ void BluetoothHandler::notifyBreakeSentOrder(uint8_t order, uint8_t isPressed, u
 void BluetoothHandler::notifyEcoOrder(uint8_t val)
 {
 
-    if (deviceConnected)
+    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         pCharacteristicEco->setValue((uint8_t *)&val, 1);
         pCharacteristicEco->notify();
@@ -1255,7 +1254,7 @@ void BluetoothHandler::notifyEcoOrder(uint8_t val)
 void BluetoothHandler::notifyAccelOrder(uint8_t val)
 {
 
-    if (deviceConnected)
+    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         pCharacteristicAccel->setValue((uint8_t *)&val, 1);
         pCharacteristicAccel->notify();
@@ -1265,7 +1264,7 @@ void BluetoothHandler::notifyAccelOrder(uint8_t val)
 void BluetoothHandler::notifySpeedLimiterStatus(uint8_t val)
 {
 
-    if (deviceConnected)
+    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         pCharacteristicSpeedLimiter->setValue((uint8_t *)&val, 1);
         pCharacteristicSpeedLimiter->notify();
@@ -1274,7 +1273,7 @@ void BluetoothHandler::notifySpeedLimiterStatus(uint8_t val)
 
 void BluetoothHandler::notifyAuxOrder(uint8_t val)
 {
-    if (deviceConnected)
+    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         pCharacteristicAux->setValue((uint8_t *)&val, 1);
         pCharacteristicAux->notify();
@@ -1284,7 +1283,7 @@ void BluetoothHandler::notifyAuxOrder(uint8_t val)
 void BluetoothHandler::notifyBleLock()
 {
 
-    if (deviceConnected)
+    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         byte value[4];
         value[0] = bleLockStatus;
@@ -1327,7 +1326,7 @@ void BluetoothHandler::processBLE()
 {
 
     // notify changed value
-    if (deviceConnected)
+    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         uint16_t period = 250;
         if (fastUpdate)
@@ -1353,19 +1352,13 @@ void BluetoothHandler::processBLE()
         }
     }
     // disconnecting
-    if (!deviceConnected && oldDeviceConnected && isBtEnabled)
+    if ((deviceStatus != oldDeviceStatus) && (deviceStatus == BLE_STATUS_DISCONNECTED))
     {
         delay(500);                  // give the bluetooth stack the chance to get things ready
         pServer->startAdvertising(); // restart advertising
         Serial.println("start advertising");
-        oldDeviceConnected = deviceConnected;
     }
-    // connecting
-    if (deviceConnected && !oldDeviceConnected && isBtEnabled)
-    {
-        // do stuff here on connecting
-        oldDeviceConnected = deviceConnected;
-    }
+    oldDeviceStatus = deviceStatus;
 }
 
 void BluetoothHandler::setSharedData(SharedData *data)
@@ -1375,7 +1368,7 @@ void BluetoothHandler::setSharedData(SharedData *data)
 
 void BluetoothHandler::deinit()
 {
-    if (isBtEnabled)
+    if (deviceStatus != BLE_STATUS_DISABLED)
     {
         // stop advertising
         BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
@@ -1393,6 +1386,6 @@ void BluetoothHandler::deinit()
         esp_bt_controller_deinit();
         Serial.println("BLH - stop scanning ... done");
 
-        isBtEnabled = false;
+        deviceStatus = BLE_STATUS_DISABLED;
     }
 }

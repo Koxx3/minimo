@@ -35,6 +35,14 @@ public:
     static void notifyAccelOrder(uint8_t);
     static void notifyAuxOrder(uint8_t);
 
+    typedef enum
+    {
+        BLE_STATUS_DISABLED,
+        BLE_STATUS_DISCONNECTED,
+        BLE_STATUS_CONNECTED_AND_AUTHENTIFYING,
+        BLE_STATUS_CONNECTED_AND_AUTHENTIFIED,
+    } BleStatus;
+
     static BLEScan *pBLEScan;
     static BLEServer *pServer;
     static BLESecurity *pSecurity;
@@ -65,12 +73,11 @@ public:
     static int8_t bleLockForced;
     static int8_t fastUpdate;
 
-    static bool deviceConnected;
-    static bool oldDeviceConnected;
+    static BleStatus deviceStatus;
+    static BleStatus oldDeviceStatus;
 
     static SharedData *shrd;
     static Settings *settings;
-
 };
 
 #endif
