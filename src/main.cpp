@@ -631,9 +631,9 @@ void checkAndSaveOdo()
   {
     shrd.distanceOdoInFlash = shrd.distanceOdo;
 
-//#ifndef DEBUG_CRASH
+    //#ifndef DEBUG_CRASH
     eeprom.saveOdo();
-//#endif
+    //#endif
   }
 }
 
@@ -648,10 +648,12 @@ void computeDistance(float speed)
   uint32_t oldDistanceTrip = shrd.distanceTrip;
 #endif
 
-  shrd.distanceTrip = shrd.distanceTrip + ((speed * (distanceDiffTime)) / 360) * SPEED_TO_DISTANCE_CORRECTION_FACTOR;
+  uint32_t tripDiff = ((speed * (distanceDiffTime)) / 360) * SPEED_TO_DISTANCE_CORRECTION_FACTOR;
+  shrd.distanceTrip = shrd.distanceTrip + tripDiff;
+  shrd.distanceTripForOdo = shrd.distanceTripForOdo + tripDiff;
   shrd.distancePrevTime = millis();
 
-  shrd.distanceOdo = shrd.distanceOdoBoot + (shrd.distanceTrip / 1000);
+  shrd.distanceOdo = shrd.distanceOdoBoot + (shrd.distanceTripForOdo / 1000);
 
   // if BLE is not connected, save ODO in the main thread ... else save on BLE keep alive
   if (blh.deviceStatus == BLE_STATUS_DISCONNECTED)
