@@ -50,3 +50,4 @@ void setupAutonomy();
 void setupBattery();
 
 void computeDistance(float);
+void checkAndSaveOdo();

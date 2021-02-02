@@ -23,7 +23,7 @@
 #define MODE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a1"
 #define BRAKE_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a2"
 #define FIRMWARE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a3"
-//#define "beb5483e-36e1-4688-b7f5-ea07361b26a4"
+#define KEEP_ALIVE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a4"
 //#define "beb5483e-36e1-4688-b7f5-ea07361b26a5"
 #define BTLOCK_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a6"
 #define SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a7"
@@ -73,6 +73,7 @@ BLECharacteristic *BluetoothHandler::pCharacteristicSettings5;
 BLECharacteristic *BluetoothHandler::pCharacteristicAux;
 BLECharacteristic *BluetoothHandler::pCharacteristicSpeedPid;
 BLECharacteristic *BluetoothHandler::pCharacteristicDistanceRst;
+BLECharacteristic *BluetoothHandler::pCharacteristicKeepAlive;
 
 int8_t BluetoothHandler::bleLockStatus;
 int8_t BluetoothHandler::bleBeaconVisible;
@@ -80,8 +81,8 @@ int8_t BluetoothHandler::bleBeaconRSSI;
 int8_t BluetoothHandler::bleLockForced;
 int8_t BluetoothHandler::fastUpdate;
 
-BluetoothHandler::BleStatus BluetoothHandler::deviceStatus;
-BluetoothHandler::BleStatus BluetoothHandler::oldDeviceStatus;
+BleStatus BluetoothHandler::deviceStatus;
+BleStatus BluetoothHandler::oldDeviceStatus;
 
 Settings *BluetoothHandler::settings;
 SharedData *BluetoothHandler::shrd;
@@ -557,6 +558,11 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 resetPid();
             }
+            else if (pCharacteristic->getUUID().toString() == KEEP_ALIVE_CHARACTERISTIC_UUID)
+            {
+                //Serial.println("BLH - Write : KEEP_ALIVE_CHARACTERISTIC_UUID");
+                checkAndSaveOdo();
+            }
         }
 
         void onRead(BLECharacteristic *pCharacteristic)
@@ -785,6 +791,10 @@ void BluetoothHandler::setSettings(Settings *data)
         SPEED_PID_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_WRITE);
 
+    pCharacteristicKeepAlive = pServiceMain->createCharacteristic(
+        KEEP_ALIVE_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_WRITE);
+
     //-------------------
     // services firmware
 
@@ -840,6 +850,7 @@ void BluetoothHandler::setSettings(Settings *data)
     pCharacteristicAux->addDescriptor(new BLE2902());
     pCharacteristicSpeedPid->addDescriptor(new BLE2902());
     pCharacteristicDistanceRst->addDescriptor(new BLE2902());
+    pCharacteristicKeepAlive->addDescriptor(new BLE2902());
 
     pCharacteristicMeasurements->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicFirmware->setCallbacks(new BLECharacteristicCallback());
@@ -861,6 +872,7 @@ void BluetoothHandler::setSettings(Settings *data)
     pCharacteristicAux->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSpeedPid->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicDistanceRst->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicKeepAlive->setCallbacks(new BLECharacteristicCallback());
 
     // Start the service
     pServiceMain->start();

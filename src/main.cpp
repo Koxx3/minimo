@@ -469,7 +469,7 @@ void taskUpdateTFT(void *parameter)
 ////// Setup
 void setup()
 {
-  
+
   esp_bt_sleep_disable();
   esp_ble_scan_dupilcate_list_flush();
 
@@ -623,6 +623,20 @@ void displayButton2()
   Serial.println(shrd.button1ClickStatus);
 }
 
+void checkAndSaveOdo()
+{
+
+  if (((shrd.speedOld != 0) && (shrd.speedCurrent == 0) && (shrd.distanceOdoInFlash != shrd.distanceOdo)) || /* save when speed become 0 */
+      (shrd.distanceOdo > shrd.distanceOdoInFlash + 10) /* save every kilometer */)
+  {
+    shrd.distanceOdoInFlash = shrd.distanceOdo;
+
+//#ifndef DEBUG_CRASH
+    eeprom.saveOdo();
+//#endif
+  }
+}
+
 void computeDistance(float speed)
 {
 
@@ -639,14 +653,10 @@ void computeDistance(float speed)
 
   shrd.distanceOdo = shrd.distanceOdoBoot + (shrd.distanceTrip / 1000);
 
-  if (((shrd.speedOld != 0) && (speed == 0) && (shrd.distanceOdoInFlash != shrd.distanceOdo)) || /* save when speed become 0 */
-      (shrd.distanceOdo > shrd.distanceOdoInFlash + 10) /* save every kilometer */)
+  // if BLE is not connected, save ODO in the main thread ... else save on BLE keep alive
+  if (blh.deviceStatus == BLE_STATUS_DISCONNECTED)
   {
-    shrd.distanceOdoInFlash = shrd.distanceOdo;
-
-#ifndef DEBUG_CRASH
-    eeprom.saveOdo();
-#endif    
+    checkAndSaveOdo();
   }
 
 #if DEBUG_DISPLAY_DISTANCE
@@ -1927,7 +1937,7 @@ void loop()
   }
 #endif
 
-/* test display
+  /* test display
   if (i_loop % 200 == 0)
   {
     computeDistance(100);

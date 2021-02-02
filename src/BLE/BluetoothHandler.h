@@ -14,6 +14,14 @@
 #include "SharedData.h"
 #include "EEPROM_storage.h"
 
+typedef enum
+{
+    BLE_STATUS_DISABLED,
+    BLE_STATUS_DISCONNECTED,
+    BLE_STATUS_CONNECTED_AND_AUTHENTIFYING,
+    BLE_STATUS_CONNECTED_AND_AUTHENTIFIED,
+} BleStatus;
+
 class BluetoothHandler
 {
 public:
@@ -34,14 +42,6 @@ public:
     static void notifyEcoOrder(uint8_t);
     static void notifyAccelOrder(uint8_t);
     static void notifyAuxOrder(uint8_t);
-
-    typedef enum
-    {
-        BLE_STATUS_DISABLED,
-        BLE_STATUS_DISCONNECTED,
-        BLE_STATUS_CONNECTED_AND_AUTHENTIFYING,
-        BLE_STATUS_CONNECTED_AND_AUTHENTIFIED,
-    } BleStatus;
 
     static BLEScan *pBLEScan;
     static BLEServer *pServer;
@@ -66,6 +66,7 @@ public:
     static BLECharacteristic *pCharacteristicAux;
     static BLECharacteristic *pCharacteristicSpeedPid;
     static BLECharacteristic *pCharacteristicDistanceRst;
+    static BLECharacteristic *pCharacteristicKeepAlive;
 
     static int8_t bleLockStatus;
     static int8_t bleBeaconVisible;
