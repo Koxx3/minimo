@@ -973,7 +973,7 @@ uint8_t BluetoothHandler::setMeasurementsDataPacket()
         uint8_t txValue[20];
 
         buffer_append_uint8(txValue, shrd->speedCurrent, &ind);
-        buffer_append_uint16_inv(txValue, (shrd->voltageActual / 100), &ind);
+        buffer_append_uint16_inv(txValue, (ceil(shrd->voltageFilterMean / 100.0)), &ind);
         buffer_append_int16_inv(txValue, (shrd->currentActual / 100), &ind);
         buffer_append_int16_inv(txValue, (shrd->currentActual / 100) * (shrd->voltageActual / 100), &ind);
         buffer_append_int16_inv(txValue, (shrd->currentTemperature * 10.0), &ind);
