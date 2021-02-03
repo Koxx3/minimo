@@ -506,7 +506,7 @@ void BluetoothHandler::setSettings(Settings *data)
             else if (pCharacteristic->getUUID().toString() == KEEP_ALIVE_CHARACTERISTIC_UUID)
             {
                 //Serial.println("BLH - Write : KEEP_ALIVE_CHARACTERISTIC_UUID");
-                checkAndSaveOdo();
+                //checkAndSaveOdo();
             }
             else if (pCharacteristic->getUUID().toString() == COMMANDS_CHARACTERISTIC_UUID)
             {

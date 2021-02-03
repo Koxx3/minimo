@@ -38,4 +38,4 @@
 #define DEBUG_SERIAL_CHECKSUM_CNTRL_TO_LCD          0
 
 #define SERIAL_FAKE_CURRENT                         0
-#define DEBUG_FAKE_SPEED                            0
+#define DEBUG_FAKE_SPEED                            1
