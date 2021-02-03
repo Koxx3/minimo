@@ -122,7 +122,7 @@ void EEPROMM_storage::restoreOdo()
   //EEPROM.readBytes(EEPROM_ADDRESS_ODO, &shrd->distanceOdo, sizeof(shrd->distanceOdo));
 
   preferences.begin(APP_STORAGE, false);
-  shrd->distanceOdo = preferences.getUInt("distanceOdo");
+  shrd->distanceOdo = preferences.getUInt("distanceOdo", 0xffffffff);
   preferences.end();
 
   shrd->distanceOdoInFlash = shrd->distanceOdo;
