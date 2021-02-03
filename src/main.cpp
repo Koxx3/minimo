@@ -1962,6 +1962,15 @@ void loop()
 
   i_loop++;
 
+/* crash test 1
+  *((volatile int*)NULL) = 42;
+*/
+
+  int test = 5 / 0;
+  Serial.println(test);
+
+
+
 #if ENABLE_WATCHDOG
   resetWatchdog();
 #endif
