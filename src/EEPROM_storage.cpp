@@ -4,6 +4,9 @@
 #include <EEPROM.h>
 #include "EEPROM_storage.h"
 #include "main.h"
+#include <Preferences.h>
+
+Preferences preferences;
 
 EEPROMM_storage::EEPROMM_storage()
 {
@@ -12,6 +15,7 @@ EEPROMM_storage::EEPROMM_storage()
 void EEPROMM_storage::init()
 {
   EEPROM.begin(EEPROM_SIZE);
+
 }
 
 void EEPROMM_storage::test()
@@ -95,8 +99,17 @@ void EEPROMM_storage::restoreBrakeMaxPressure()
 
 void EEPROMM_storage::saveOdo()
 {
-  EEPROM.writeBytes(EEPROM_ADDRESS_ODO, &shrd->distanceOdo, sizeof(shrd->distanceOdo));
-  EEPROM.commit();
+  uint32_t time = micros();
+
+  //  EEPROM.writeBytes(EEPROM_ADDRESS_ODO, &shrd->distanceOdo, sizeof(shrd->distanceOdo));
+  //  EEPROM.commit();
+
+  preferences.begin("my-app", false);
+  preferences.putUInt("distanceOdo", shrd->distanceOdo);
+  preferences.end();
+
+  Serial.print("time write : ");
+  Serial.println(micros() - time);
 
   //Serial.print("save saveOdo value : ");
   //Serial.println(shrd->distanceOdo);
@@ -124,6 +137,9 @@ void EEPROMM_storage::restoreOdo()
 
 void EEPROMM_storage::saveBatteryCalib()
 {
+
+  uint32_t time = millis();
+
   // Read EEPROM
   int EEAddr = EEPROM_ADDRESS_BATTERY_CALIB;
   EEPROM.put(EEAddr, shrd->batteryMaxVoltageCalibUser);
@@ -136,6 +152,8 @@ void EEPROMM_storage::saveBatteryCalib()
   EEAddr += sizeof(shrd->batteryMinVoltageCalibRaw);
 
   EEPROM.commit();
+
+  Serial.println(millis() - time);
 
   Serial.println("save BatteryCalib value : ");
   Serial.print("  batteryMaxVoltageCalibUser : ");

@@ -553,7 +553,7 @@ void setup()
       NULL,            // Parameter to pass
       0,               // Task priority
       NULL,            // Task handle,
-      1);
+      1);              // Core
 #endif
 
   // End off setup
