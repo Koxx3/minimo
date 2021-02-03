@@ -6,6 +6,8 @@
 #include "main.h"
 #include <Preferences.h>
 
+#define APP_STORAGE "APP_STORAGE"
+
 Preferences preferences;
 
 EEPROMM_storage::EEPROMM_storage()
@@ -104,7 +106,7 @@ void EEPROMM_storage::saveOdo()
   //  EEPROM.writeBytes(EEPROM_ADDRESS_ODO, &shrd->distanceOdo, sizeof(shrd->distanceOdo));
   //  EEPROM.commit();
 
-  preferences.begin("my-app", false);
+  preferences.begin(APP_STORAGE, false);
   preferences.putUInt("distanceOdo", shrd->distanceOdo);
   preferences.end();
 
@@ -117,7 +119,11 @@ void EEPROMM_storage::saveOdo()
 
 void EEPROMM_storage::restoreOdo()
 {
-  EEPROM.readBytes(EEPROM_ADDRESS_ODO, &shrd->distanceOdo, sizeof(shrd->distanceOdo));
+  //EEPROM.readBytes(EEPROM_ADDRESS_ODO, &shrd->distanceOdo, sizeof(shrd->distanceOdo));
+
+  preferences.begin(APP_STORAGE, false);
+  shrd->distanceOdo = preferences.getUInt("distanceOdo");
+  preferences.end();
 
   shrd->distanceOdoInFlash = shrd->distanceOdo;
   shrd->distanceOdoBoot = shrd->distanceOdo;
