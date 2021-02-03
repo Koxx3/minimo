@@ -1966,9 +1966,10 @@ void loop()
   *((volatile int*)NULL) = 42;
 */
 
+/* crash test 2
   int test = 5 / 0;
   Serial.println(test);
-
+*/
 
 
 #if ENABLE_WATCHDOG
