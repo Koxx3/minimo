@@ -1,3 +1,6 @@
+#ifndef _debug_h
+#define _debug_h
+
 // Bluetooth debugs
 #define DEBUG_BLE_DISPLAY_VOLTAGE                   0
 #define DEBUG_BLE_DISPLAY_ANALOG_BRAKE              0
@@ -38,4 +41,6 @@
 #define DEBUG_SERIAL_CHECKSUM_CNTRL_TO_LCD          0
 
 #define SERIAL_FAKE_CURRENT                         0
-#define DEBUG_FAKE_SPEED                            1
+#define DEBUG_FAKE_SPEED                            0
+
+#endif

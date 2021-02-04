@@ -1,11 +1,11 @@
 //////------------------------------------
 ////// Manage bluetooth
 
-#include "Arduino.h"
-
 #ifndef _BluetoothHandler_h
 #define _BluetoothHandler_h
 
+
+#include "Arduino.h"
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>

@@ -325,7 +325,6 @@ void setupPID()
 void setupBattery()
 {
   batt = Battery(settings.getS3F().Battery_min_voltage * 100, settings.getS3F().Battery_max_voltage * 100);
-  batt.begin(&sigmoidal);
 
   Serial.println("Battery : min = " + (String)settings.getS3F().Battery_min_voltage + " / max = " + settings.getS3F().Battery_max_voltage);
 }
@@ -542,8 +541,6 @@ void setup()
   setupVoltage();
   setupBattery();
   setupAutonomy();
-
-  batt.begin(&sigmoidal);
 
 #if TFT_ENABLED
   xTaskCreatePinnedToCore(

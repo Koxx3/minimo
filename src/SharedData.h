@@ -1,13 +1,11 @@
 //////------------------------------------
 ////// Manage settings exchanged in BLE and stored in EEPOM
 
-#include "Arduino.h"
-#include "Filters/MedianFilter.h"
-
 #ifndef _SharedData_h
-
 #define _SharedData_h
 
+#include "Arduino.h"
+#include "Filters/MedianFilter.h"
 // The actions I ca do...
 typedef enum
 {

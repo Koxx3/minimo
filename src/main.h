@@ -1,4 +1,5 @@
-
+#ifndef _main_h
+#define _main_h
 
 #define BRAKE_TYPE_ANALOG 1
 #if BRAKE_TYPE_ANALOG
@@ -51,3 +52,5 @@ void setupBattery();
 
 void computeDistance(float);
 void checkAndSaveOdo();
+
+#endif
