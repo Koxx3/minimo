@@ -34,11 +34,21 @@
 #define LINE_4Y 155 * SCALE_FACTOR_Y
 #define LINE_5Y 210 * SCALE_FACTOR_Y
 
-#define COLUMN1 80 * SCALE_FACTOR_X // 78 for 3.5
+#if (TFT_MODEL == 1) // 2.4"
+#define SCALE_FACTOR_X 1.5 
+#define SCALE_FACTOR_Y 1.33
+#define COLUMN1 80 * SCALE_FACTOR_X  // 78 for 3.5
 #define COLUMN2 130 * SCALE_FACTOR_X // 120 for 3.5
 #define COLUMN3 153 * SCALE_FACTOR_X // 120 for 3.5 // equal COLUMN2
 #define COLUMN4 200 * SCALE_FACTOR_X // 192 for 3.5
 #define COLUMN5 307 * SCALE_FACTOR_X // 307 for 3.5
+#else  // 3.5"
+#define COLUMN1 80 * SCALE_FACTOR_X  // 78 for 3.5
+#define COLUMN2 115 * SCALE_FACTOR_X // 120 for 3.5
+#define COLUMN3 115 * SCALE_FACTOR_X // 120 for 3.5
+#define COLUMN4 200 * SCALE_FACTOR_X // 192 for 3.5
+#define COLUMN5 307 * SCALE_FACTOR_X // 307 for 3.5
+#endif
 
 #define LINE_TEXT_OFFSET 7
 

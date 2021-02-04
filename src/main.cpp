@@ -62,6 +62,8 @@
 #define TFT_ENABLED 0
 #endif
 
+#pragma message "TFT_ENABLED: " XSTR(TFT_ENABLED)
+
 #define MINIMO_PWM_BRAKE 0
 #define DEBUG_ESP_HTTP_UPDATE 1
 #define TEST_ADC_DAC_REFRESH 0
