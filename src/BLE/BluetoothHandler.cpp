@@ -174,7 +174,8 @@ void BluetoothHandler::setSettings(Settings *data)
         uint32_t onPassKeyRequest()
         {
             Serial.print("BLH - onPassKeyRequest : ");
-            uint32_t pinCode = settings->getS3F().Bluetooth_pin_code;
+            uint32_t pinCode;
+            pinCode = settings->getS3F().Bluetooth_pin_code;
             Serial.println(pinCode);
             return pinCode;
         }

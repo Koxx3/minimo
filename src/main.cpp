@@ -13,13 +13,13 @@
 //////------------------------------------
 ////// Inludes
 
-#include <Arduino.h>
+
 #include "main.h"
 #include "Settings.h"
 #include "SharedData.h"
 #include "debug.h"
 #include "OneButton.h"
-#include "EEPROM_storage.h"
+#include "prefs_storage.h"
 #include <Wire.h>
 #include <Adafruit_MCP4725.h>
 #include <PID_v1.h>
@@ -208,7 +208,7 @@ MedianFilter throttleFilterInit(5 /* 20 */, 900);
 
 Settings settings;
 BluetoothHandler blh;
-EEPROMM_storage eeprom;
+preferences prefs;
 
 PID pidSpeed(&shrd.pidInput, &shrd.pidOutput, &shrd.pidSetpoint, shrd.speedPidKp, shrd.speedPidKi, shrd.speedPidKd, DIRECT);
 
@@ -358,31 +358,31 @@ void setupAutonomy()
 
 void saveBleLockForced()
 {
-  eeprom.saveBleLockForced(&(blh.bleLockForced));
+  prefs.saveBleLockForced(&(blh.bleLockForced));
 }
 void restoreBleLockForced()
 {
-  eeprom.restoreBleLockForced(&(blh.bleLockForced));
+  prefs.restoreBleLockForced(&(blh.bleLockForced));
 }
 void saveBrakeMinPressure()
 {
-  eeprom.saveBrakeMinPressure();
+  prefs.saveBrakeMinPressure();
 }
 void saveBrakeMaxPressure()
 {
-  eeprom.saveBrakeMaxPressure();
+  prefs.saveBrakeMaxPressure();
 }
 void saveOdo()
 {
-  eeprom.saveOdo();
+  prefs.saveOdo();
 }
 void saveBatteryCalib()
 {
-  eeprom.saveBatteryCalib();
+  prefs.saveBatteryCalib();
 }
 void saveSettings()
 {
-  eeprom.saveSettings();
+  prefs.saveSettings();
 }
 
 void resetPid()
@@ -496,18 +496,17 @@ void setup()
   setupShtc3();
 #endif
 
-  Serial.println(PSTR("   eeprom ..."));
-  eeprom.init();
-  eeprom.setSettings(&settings);
-  eeprom.setSharedData(&shrd);
-  eeprom.restoreBleLockForced(&(blh.bleLockForced));
-  eeprom.restoreBrakeMinPressure();
-  eeprom.restoreBrakeMaxPressure();
-  eeprom.restoreOdo();
-  eeprom.restoreBatteryCalib();
+  Serial.println(PSTR("   prefs ..."));
+  prefs.setSettings(&settings);
+  prefs.setSharedData(&shrd);
+  prefs.restoreBleLockForced(&(blh.bleLockForced));
+  prefs.restoreBrakeMinPressure();
+  prefs.restoreBrakeMaxPressure();
+  prefs.restoreOdo();
+  prefs.restoreBatteryCalib();
 
   Serial.println(PSTR("   settings ..."));
-  bool settingsStatusOk = eeprom.restoreSettings();
+  bool settingsStatusOk = prefs.restoreSettings();
   if (!settingsStatusOk)
   {
     settings.init();
@@ -627,7 +626,7 @@ void checkAndSaveOdo()
     shrd.distanceOdoInFlash = shrd.distanceOdo;
 
     //#ifndef DEBUG_FAKE_SPEED
-    eeprom.saveOdo();
+    prefs.saveOdo();
     //#endif
   }
 }
