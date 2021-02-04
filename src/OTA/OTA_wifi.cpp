@@ -1,3 +1,6 @@
+//////------------------------------------
+////// OTA Services functions
+
 #include "Arduino.h"
 
 #include <WiFi.h>
@@ -11,25 +14,6 @@
 #include "OTA/esp32fota.h"
 #include <WiFiClientSecure.h>
 #include "Controllers/ControllerType.h"
-
-/*
- * 
- * https://engineerworkshop.com/2019/03/02/esp32-compiler-error-in-arduino-ide-heltec-esp32-tools-esptool-esptool-py-no-module-named-serial-tools-list_ports/
- * 
- * This solves the import serial issue
- * 
- * https://esp32.com/viewtopic.php?t=9289 this shows library to slow down processor
- * 
- * https://www.youtube.com/watch?v=-QIcUTBB7Ww   spiess video for coprocessor programming.
- * ideona: ulp può leggere adc->tensione batteria per svegliare se è veramente il caso
- * 
- * 
- * https://www.youtube.com/watch?v=Ck55tY7mm1c questo video spiega OTA updates usando il framework di espressif
- * 
- * https://github.com/me-no-dev/EspExceptionDecoder exception decoder
-*/
-
-//
 
 char *github_root_ca = (char*)
     "-----BEGIN CERTIFICATE-----\n"
