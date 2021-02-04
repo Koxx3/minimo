@@ -16,7 +16,7 @@ Battery::Battery(uint32_t minVoltage, uint32_t maxVoltage)
 uint8_t Battery::level(uint32_t voltage)
 {
 
-	int nbcells = ceil(maxVoltage / 4.2 / 1000);
+	int nbcells = max((int)ceil(maxVoltage / 4.2 / 1000),1);
 
 	if (voltage < minVoltage)
 	{

@@ -12,7 +12,7 @@
 #include <BLE2902.h>
 #include "Settings.h"
 #include "SharedData.h"
-#include "EEPROM_storage.h"
+#include "prefs_storage.h"
 
 typedef enum
 {

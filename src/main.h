@@ -1,6 +1,7 @@
 #ifndef _main_h
 #define _main_h
 
+#include <Arduino.h>
 #define BRAKE_TYPE_ANALOG 1
 #if BRAKE_TYPE_ANALOG
 #define ANALOG_BRAKE_MIN_ERR_VALUE 400

@@ -1,7 +1,6 @@
 #include <Arduino.h>
-#include <EEPROM.h>
 #include "settings.h"
-#include "EEPROM_storage.h"
+#include "prefs_storage.h"
 
 Settings::Settings()
 {
