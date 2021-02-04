@@ -35,8 +35,6 @@
 #define LINE_5Y 210 * SCALE_FACTOR_Y
 
 #if (TFT_MODEL == 1) // 2.4"
-#define SCALE_FACTOR_X 1.5 
-#define SCALE_FACTOR_Y 1.33
 #define COLUMN1 80 * SCALE_FACTOR_X  // 78 for 3.5
 #define COLUMN2 130 * SCALE_FACTOR_X // 120 for 3.5
 #define COLUMN3 153 * SCALE_FACTOR_X // 120 for 3.5 // equal COLUMN2
