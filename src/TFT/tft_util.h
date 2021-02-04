@@ -5,11 +5,12 @@
 
 #define ILI_DIGIT_DARK 0x528A // 90 - too much : 0x5ACB // 70 : 0x4228 // 50 : 0x3186
 
-#ifndef SCALE_FACTOR_X
-#define SCALE_FACTOR_X 1.5
-#endif
 
-#ifndef SCALE_FACTOR_Y
+#if (TFT_MODEL == 1) // 2.4"
+#define SCALE_FACTOR_X 1 
+#define SCALE_FACTOR_Y 1
+#else  // 3.5"
+#define SCALE_FACTOR_X 1.5 
 #define SCALE_FACTOR_Y 1.33
 #endif
 

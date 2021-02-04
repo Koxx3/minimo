@@ -62,8 +62,6 @@
 #define TFT_ENABLED 0
 #endif
 
-#pragma message "TFT_ENABLED: " XSTR(TFT_ENABLED)
-
 #define MINIMO_PWM_BRAKE 0
 #define DEBUG_ESP_HTTP_UPDATE 1
 #define TEST_ADC_DAC_REFRESH 0
@@ -704,7 +702,10 @@ void getBrakeFromAnalog()
               shrd.brakeSentOrder,
               shrd.brakeSentOrderOld,
               shrd.brakePressedStatus);
-      blh.notifyBleLogs(print_buffer);
+
+      // too fast for BLE !!!
+      //blh.notifyBleLogs(print_buffer);
+
       Serial.println(print_buffer);
 
       return;
@@ -723,7 +724,10 @@ void getBrakeFromAnalog()
               shrd.brakeSentOrder,
               shrd.brakeSentOrderOld,
               shrd.brakePressedStatus);
-      blh.notifyBleLogs(print_buffer);
+              
+      // too fast for BLE !!!
+      //blh.notifyBleLogs(print_buffer);
+
       Serial.println(print_buffer);
 #endif
       return;
