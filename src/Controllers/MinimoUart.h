@@ -79,8 +79,8 @@ public:
     uint8_t modifyEco(char var, char data_buffer[]);
     void setPID(PID *pidSpeed_p);
 
-    int readHardSerial(int mode, int i, Stream *hwSerCntrl, Stream *hwSerLcd, int serialMode, char *data_buffer_ori, char *data_buffer_mod);
-    void processMinimotorsSerial();
+    void readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSerLcd, int serialMode, char *data_buffer_ori, char *data_buffer_mod);
+    void processMinimotorsSerial(uint32_t i_loop, boolean simulatedDisplay);
 
 private:
     Stream *hwSerCntrl;
