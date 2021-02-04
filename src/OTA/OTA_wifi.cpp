@@ -1,5 +1,5 @@
 //////------------------------------------
-////// OTA Services functions
+////// OTA Services
 
 #include "Arduino.h"
 
