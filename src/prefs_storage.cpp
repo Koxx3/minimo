@@ -46,7 +46,7 @@ void preferences::saveBleLockForced(int8_t *bleLockForced)
 void preferences::restoreBleLockForced(int8_t *bleLockForced)
 {
   prefs.begin(APP_STORAGE, false);
-  *bleLockForced = prefs.getInt("bleLockForced");
+  *bleLockForced = prefs.getInt("bleLockForced", 0);
   prefs.end();
 
   Serial.print("restore bleLockForced value : ");
@@ -66,7 +66,7 @@ void preferences::saveBrakeMinPressure()
 void preferences::restoreBrakeMinPressure()
 {
   prefs.begin(APP_STORAGE, false);
-  shrd->brakeMinPressureRaw = prefs.getInt("brakeMinPressureRaw");
+  shrd->brakeMinPressureRaw = prefs.getInt("brakeMinPressureRaw", 900);
   prefs.end();
 
   Serial.print("restore restoreBrakeMinPressure value : ");
@@ -89,7 +89,7 @@ void preferences::saveBrakeMaxPressure()
 void preferences::restoreBrakeMaxPressure()
 {
   prefs.begin(APP_STORAGE, false);
-  shrd->brakeMaxPressureRaw = prefs.getInt("brakeMaxPressureRaw");
+  shrd->brakeMaxPressureRaw = prefs.getInt("brakeMaxPressureRaw", 2000);
   prefs.end();
 
   Serial.print("restore restoreBrakeMaxPressure value : ");
@@ -101,7 +101,7 @@ void preferences::restoreBrakeMaxPressure()
 
 void preferences::saveOdo()
 {
-  uint32_t time = micros();
+  //uint32_t time = micros();
 
   prefs.begin(APP_STORAGE, false);
   prefs.putUInt("distanceOdo", shrd->distanceOdo);
@@ -119,7 +119,7 @@ void preferences::restoreOdo()
   
 
   prefs.begin(APP_STORAGE, false);
-  shrd->distanceOdo = prefs.getUInt("distanceOdo");
+  shrd->distanceOdo = prefs.getUInt("distanceOdo", 0xffffffff);
   prefs.end();
 
   shrd->distanceOdoInFlash = shrd->distanceOdo;
