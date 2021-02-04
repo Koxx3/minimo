@@ -1762,7 +1762,7 @@ void loop()
   }
 
 #if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
-  minomoCntrl.processMinimotorsSerial();
+  minomoCntrl.processMinimotorsSerial(i_loop, false);
 #elif CONTROLLER_TYPE == CONTROLLER_VESC
   if (i_loop % 10 == 1)
   {
