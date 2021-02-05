@@ -15,6 +15,7 @@
 #define DEBUG_DISPLAY_MODE                          0
 #define DEBUG_DISPLAY_DIGITAL_BRAKE                 0
 #define DEBUG_DISPLAY_ANALOG_BRAKE                  0
+#define DEBUG_DISPLAY_THROTTLE                      0
 #define DEBUG_DISPLAY_ECO                           0
 #define DEBUG_DISPLAY_ACCEL                         0
 #define DEBUG_DISPLAY_NITRO                         0
@@ -23,7 +24,7 @@
 #define DEBUG_DISPLAY_VOLTAGE                       0
 #define DEBUG_DISPLAY_CURRENT                       0
 #define DEBUG_DISPLAY_DHT                           0
-#define DEBUG_DISPLAY_SPEED_PID                     0
+#define DEBUG_DISPLAY_MINIMO_MOD_POWER              0
 #define DEBUG_DISPLAY_BRAKE_FORBIDEN                0
 #define DEBUG_DISPLAY_DISTANCE                      0
 #define DEBUG_DISPLAY_AUTONOMY                      0

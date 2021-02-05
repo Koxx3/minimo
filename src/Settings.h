@@ -125,7 +125,6 @@ public:
   {
     uint8_t Throttle_input_min;
     uint8_t Throttle_input_max;
-    uint8_t Throttle_filter_length;
     uint8_t Throttle_output_min;
     uint8_t Throttle_output_max;
     uint8_t Throttle_output_curve;

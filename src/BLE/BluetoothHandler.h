@@ -48,7 +48,6 @@ public:
     static BLECharacteristic *pCharacteristicCalibOrder;
     static BLECharacteristic *pCharacteristicOtaSwitch;
     static BLECharacteristic *pCharacteristicLogs;
-    static BLECharacteristic *pCharacteristicSpeedPid;
     static BLECharacteristic *pCharacteristicDistanceRst;
     static BLECharacteristic *pCharacteristicKeepAlive;
     static BLECharacteristic *pCharacteristicCommands;

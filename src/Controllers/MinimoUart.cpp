@@ -44,11 +44,6 @@ void MinimoUart::setLcdSerialPort(Stream *port)
   hwSerLcd = port;
 }
 
-void MinimoUart::setPID(PID *pidSpeed_p)
-{
-  pidSpeed = pidSpeed_p;
-}
-
 void setSharedData(SharedData *);
 
 //////------------------------------------
@@ -315,6 +310,17 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
   Serial.print("V");
   */
 
+
+#if DEBUG_DISPLAY_MINIMO_MOD_POWER
+    Serial.print("blh->bleLockStatus = ");
+    Serial.print(blh->bleLockStatus);
+    Serial.print(" / shrd->speedLimiter = ");
+    Serial.print(shrd->speedLimiter);
+    Serial.print(" / shrd->Speed_limiter_max_speed = ");
+    Serial.print(settings->getS1F().Speed_limiter_max_speed);
+    Serial.println("%");
+#endif
+
   // lock escooter by reducing power to 5%
   if (blh->bleLockStatus == true)
   {
@@ -323,18 +329,14 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
   }
   else if (shrd->speedLimiter == 1)
   {
-    //    newPower = 37;
-
-    // PID regulation for 25 km/h
-    newPower = shrd->pidOutput / 2.55;
+    // Apply limit
+    newPower = settings->getS1F().Speed_limiter_max_speed;
     if (newPower < 5)
     {
       newPower = 5;
     }
 
-#if DEBUG_DISPLAY_SPEED_PID
-    Serial.print(" / output = ");
-    Serial.print(shrd->pidOutput);
+#if DEBUG_DISPLAY_MINIMO_MOD_POWER
     Serial.print(" / new_power = ");
     Serial.print(newPower);
     Serial.println("%");
@@ -693,7 +695,7 @@ uint8_t MinimoUart::modifySpeed(char var, char data_buffer[], uint8_t byte)
 
     if ((shrd->speedLimiter == 1) && (speedToProcess > settings->getS1F().Speed_limiter_max_speed))
     {
-      speedToProcess = settings->getS1F().Speed_limiter_max_speed;
+      speedToProcess = 25;
     }
 
     uint16_t rawSpeed = generateSpeedRawValue(speedToProcess);
@@ -890,14 +892,6 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
         shrd->speedCurrent = getSpeed();
 
 #if ALLOW_CNTRL_TO_LCD_MODIFICATIONS
-        shrd->pidInput = shrd->speedCurrent;
-        pidSpeed->Compute();
-
-#if DEBUG_DISPLAY_SPEED_PID
-        Serial.print("Input = ");
-        Serial.print(shrd->pidInput);
-#endif
-
         var = modifySpeed(var, data_buffer_mod, 1);
 #endif
 

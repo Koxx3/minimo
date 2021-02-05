@@ -21,7 +21,6 @@
 #include "prefs_storage.h"
 #include <Wire.h>
 #include <Adafruit_MCP4725.h>
-#include <PID_v1.h>
 #include "SHTC3/SparkFun_SHTC3.h"
 
 #include "esp32-hal-uart.h"
@@ -208,8 +207,6 @@ Settings settings;
 BluetoothHandler blh;
 preferences prefs;
 
-PID pidSpeed(&shrd.pidInput, &shrd.pidOutput, &shrd.pidSetpoint, shrd.speedPidKp, shrd.speedPidKi, shrd.speedPidKd, DIRECT);
-
 //////------------------------------------
 //////------------------------------------
 ////// Setups
@@ -250,6 +247,7 @@ void setupDac()
   // page 22
 
   dac.begin(0x60, &I2Cone);
+  dac.setVoltage(0, false);
 }
 
 void setupShtc3()
@@ -273,8 +271,7 @@ void setupSerial()
   minomoCntrl.setSettings(&settings);
   minomoCntrl.setSharedData(&shrd);
   minomoCntrl.setBluetoothHandler(&blh);
-  minomoCntrl.setPID(&pidSpeed);
-
+  
   // minimotor controller
   hwSerCntrl.begin(BAUD_RATE_MINIMOTORS, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
   minomoCntrl.setControllerSerialPort(&hwSerCntrl);
@@ -312,17 +309,6 @@ void setupSerial()
   hwSerCntrl.setUartIrqIdleTrigger(1);
 
 #endif
-}
-
-void setupPID()
-{
-
-  shrd.pidSetpoint = settings.getS1F().Speed_limiter_max_speed;
-
-  //turn the PID on
-  pidSpeed.SetMode(AUTOMATIC);
-  //myPID.SetSampleTime(10);
-  //myPID.SetOutputLimits(0,100);
 }
 
 void setupBattery()
@@ -381,14 +367,6 @@ void saveBatteryCalib()
 void saveSettings()
 {
   prefs.saveSettings();
-}
-
-void resetPid()
-{
-
-  shrd.pidSetpoint = settings.getS1F().Speed_limiter_max_speed;
-  pidSpeed.SetTunings(shrd.speedPidKp, shrd.speedPidKi, shrd.speedPidKd);
-  Serial.println("set PID tunings");
 }
 
 void initDataWithSettings()
@@ -520,9 +498,6 @@ void setup()
 
   Serial.println(PSTR("   buttons ..."));
   setupButtons();
-
-  Serial.println(PSTR("   PID ..."));
-  setupPID();
 
 #if TFT_ENABLED
   Serial.println(PSTR("   TFT ..."));
@@ -1020,21 +995,52 @@ void getThrottleFromAnalog()
 
 void processThrottleOutput()
 {
-  uint32_t dacOutput = (throttleFilterInit.getMeanWithoutExtremes(2) * 0.66);
-  if (dacOutput > 4095)
-    dacOutput = 4095;
+  uint32_t filteredThrottleIn = throttleFilterInit.getMeanWithoutExtremes(2);
+  uint32_t throttleInMillv = filteredThrottleIn * ANALOG_TO_VOLTS_5V * 1000;
 
-  dac.setVoltage(dacOutput, false);
+  uint32_t tInMin = settings.getS6F().Throttle_input_min * 50;
+  uint32_t tInMax = settings.getS6F().Throttle_input_max * 50;
+  uint32_t tOutMin = settings.getS6F().Throttle_output_min * 50;
+  uint32_t tOutMax = settings.getS6F().Throttle_output_max * 50;
 
-/*
+  uint32_t rangeInMilliv = tInMax - tInMin;
+  uint32_t rangeOutilliv = tOutMax - tOutMin;
+
+  // map to percent range
+  float throttlePercent = map(throttleInMillv - tInMin, 0, rangeInMilliv, 0, 100);
+  throttlePercent = constrain(throttlePercent, 0, 100);
+
+  // apply exponential curve
+  if (settings.getS6F().Throttle_output_curve == settings.LIST_Throttle_curve_type_1)
+    throttlePercent = (exp(throttlePercent / 100.0) - 1) / (exp(1) - 1) * 100;
+  else if (settings.getS6F().Throttle_output_curve == settings.LIST_Throttle_curve_type_2)
+    throttlePercent = (exp(throttlePercent / 100.0 * 2) - 1) / (exp(2) - 1) * 100;
+  else if (settings.getS6F().Throttle_output_curve == settings.LIST_Throttle_curve_type_3)
+    throttlePercent = (exp(throttlePercent / 100.0 * 3) - 1) / (exp(3) - 1) * 100;
+  else if (settings.getS6F().Throttle_output_curve == settings.LIST_Throttle_curve_type_4)
+    throttlePercent = (exp(throttlePercent / 100.0 * 4) - 1) / (exp(4) - 1) * 100;
+
+  // map to output millivolts
+  uint32_t throttleOutMilliv = map(throttlePercent, 0, 100, 0, rangeOutilliv) + tOutMin;
+
+  // compute DAC output
+  uint32_t throttleOutDac = throttleOutMilliv / (ANALOG_TO_VOLTS_5V * 1000);
+
+  dac.setVoltage(throttleOutDac, false);
+
+#if DEBUG_DISPLAY_THROTTLE
   char print_buffer[500];
-  sprintf(print_buffer, "throttleAnalogValue raw : %d / volts : %1.3fV / dacOutput raw : %d / volts %1.3fV",
-          throttleAnalogValue,
-          throttleAnalogValue * ANALOG_TO_VOLTS_5V,
-          dacOutput,
-          dacOutput * ANALOG_TO_VOLTS_5V);
+  sprintf(print_buffer, "filteredThrottleIn : %d / throttleInMillv : %d / tInMin : %d / tInMax : %d / rangeInMilliv : %d / throttlePercent = %2.2f / throttleOutMilliv = %d / throttleOutDac = %d",
+          filteredThrottleIn,
+          throttleInMillv,
+          tInMin,
+          tInMax,
+          rangeInMilliv,
+          throttlePercent,
+          throttleOutMilliv,
+          throttleOutDac);
   Serial.println(print_buffer);
-  */
+#endif
 }
 
 bool isElectricBrakeForbiden()

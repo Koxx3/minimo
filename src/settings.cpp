@@ -2,6 +2,9 @@
 #include "settings.h"
 #include "prefs_storage.h"
 
+
+#define BLE_PIN_CODE 147258
+
 Settings::Settings()
 {
 }
@@ -25,6 +28,10 @@ Settings::field_s4 Settings::getS4F()
 Settings::field_s5 Settings::getS5F()
 {
   return settings5.fields;
+}
+Settings::field_s6 Settings::getS6F()
+{
+  return settings6.fields;
 }
 
 unsigned char *Settings::getS1B()
@@ -146,8 +153,6 @@ void Settings::displaySettings6()
   Serial.println(settings6.fields.Throttle_input_min);
   Serial.print("// Throttle_input_max : ");
   Serial.println(settings6.fields.Throttle_input_max);
-  Serial.print("// Throttle_filter_length : ");
-  Serial.println(settings6.fields.Throttle_filter_length);
   Serial.print("// Throttle_output_min : ");
   Serial.println(settings6.fields.Throttle_output_min);
   Serial.print("// Throttle_output_max : ");
@@ -169,5 +174,5 @@ void Settings::displaySettings()
 void Settings::init()
 {
   Serial.print("Settings::init : ");
-  settings3.fields.Bluetooth_pin_code = 147258;
+  settings3.fields.Bluetooth_pin_code = BLE_PIN_CODE;
 }
