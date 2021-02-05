@@ -241,8 +241,8 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
 
-                Serial.print("BLH - Settings1 len : ");
-                Serial.println(rxValue.length());
+                //Serial.print("BLH - Settings1 len : ");
+                //Serial.println(rxValue.length());
                 Serial.print("BLH - Settings1 size : ");
                 Serial.println(rxValue.size());
 
@@ -268,8 +268,8 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
 
-                Serial.print("BLH - Settings2 len : ");
-                Serial.println(rxValue.length());
+                //Serial.print("BLH - Settings2 len : ");
+                //Serial.println(rxValue.length());
                 Serial.print("BLH - Settings2 size : ");
                 Serial.println(rxValue.size());
 
@@ -295,8 +295,8 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
 
-                Serial.print("BLH - Settings3 len : ");
-                Serial.println(rxValue.length());
+                //Serial.print("BLH - Settings3 len : ");
+                //Serial.println(rxValue.length());
                 Serial.print("BLH - Settings3 size : ");
                 Serial.println(rxValue.size());
 
@@ -329,8 +329,8 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
 
-                Serial.print("BLH - Settings4 len : ");
-                Serial.println(rxValue.length());
+                //Serial.print("BLH - Settings4 len : ");
+                //Serial.println(rxValue.length());
                 Serial.print("BLH - Settings4 size : ");
                 Serial.println(rxValue.size());
 
@@ -359,8 +359,8 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
 
-                Serial.print("BLH - Settings5 len : ");
-                Serial.println(rxValue.length());
+                //Serial.print("BLH - Settings5 len : ");
+                //Serial.println(rxValue.length());
                 Serial.print("BLH - Settings5 size : ");
                 Serial.println(rxValue.size());
 
@@ -390,8 +390,8 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
 
-                Serial.print("BLH - Settings6 len : ");
-                Serial.println(rxValue.length());
+                //Serial.print("BLH - Settings6 len : ");
+                //Serial.println(rxValue.length());
                 Serial.print("BLH - Settings6 size : ");
                 Serial.println(rxValue.size());
 
@@ -1002,8 +1002,8 @@ uint8_t BluetoothHandler::setMeasurementsDataPacket()
 
 uint8_t BluetoothHandler::setCommandsDataPacket()
 {
+    //Serial.println("setCommandsDataPacket");
 
-    Serial.println("setCommandsDataPacket");
 
     int32_t ind = 0;
 
@@ -1027,7 +1027,9 @@ uint8_t BluetoothHandler::setCommandsDataPacket()
 
         pCharacteristicCommands->setValue((uint8_t *)&txValue[0], ind);
 
-        buffer_display("setCommandsDataPacket : ", txValue, ind);
+
+        //buffer_display("setCommandsDataPacket : ", txValue, ind);
+
     }
     return ind;
 }
@@ -1054,7 +1056,7 @@ void BluetoothHandler::getCommandsDataPacket(uint8_t *rxValue)
 
 void BluetoothHandler::notifyCommandsFeedback()
 {
-    Serial.println("notifyCommandsFeedback");
+    //Serial.println("notifyCommandsFeedback");
 
     if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
