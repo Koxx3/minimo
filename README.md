@@ -100,7 +100,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Decode datas : speed, voltage, controller temperature
     - [ ] Error codes processing
  
-- [ ] Serial Kaabo / Zero / Appolo
+- [ ] Serial Zero / Appolo / Weped
 
 - [✅] Bluetooth 
     - [✅] Communication with Android
@@ -144,6 +144,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Nitro Boost continuous
         - [✅] Nitro Boost ON/OFF
         - [✅] Aux ON/OFF       
+        - [ ] Switch modes 1/2/3 or 2/3   
         - [ ] Mode Z ON/OFF
     - [✅] Disable electric brake with full battery
     - [✅] Manual calibration for analog brake
@@ -153,7 +154,6 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Exponential acceleration curve
     - [IN PROGRESS 🔄] Automatic ECO mode on low battery 
     - [ ] PAS switch
-    - [ ] Use relay as speedlimiter output for controller
     - [ ] Dynamic BLE debug infos
     - [ ] Configurable current loop regulation
     - [ ] Customize mode Z with different power / max speed
@@ -178,8 +178,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Odometer / distance
         - [✅] Trip distance
         - [✅] Average speed
+        - [✅] Autonomy
         - [IN TEST 🔄] Brake forbiden
-        - [IN TEST 🔄] Autonomy
     - [✅] Auto-launch app with NFC tag
     - [✅] Parameters custom settings
     - [✅] Data logging
