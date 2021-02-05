@@ -310,6 +310,17 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
   Serial.print("V");
   */
 
+
+#if DEBUG_DISPLAY_MINIMO_MOD_POWER
+    Serial.print("blh->bleLockStatus = ");
+    Serial.print(blh->bleLockStatus);
+    Serial.print(" / shrd->speedLimiter = ");
+    Serial.print(shrd->speedLimiter);
+    Serial.print(" / shrd->Speed_limiter_max_speed = ");
+    Serial.print(settings->getS1F().Speed_limiter_max_speed);
+    Serial.println("%");
+#endif
+
   // lock escooter by reducing power to 5%
   if (blh->bleLockStatus == true)
   {
@@ -318,14 +329,14 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
   }
   else if (shrd->speedLimiter == 1)
   {
-    // PID regulation for 25 km/h
+    // Apply limit
     newPower = settings->getS1F().Speed_limiter_max_speed;
     if (newPower < 5)
     {
       newPower = 5;
     }
 
-#if DEBUG_DISPLAY_SPEED_PID
+#if DEBUG_DISPLAY_MINIMO_MOD_POWER
     Serial.print(" / new_power = ");
     Serial.print(newPower);
     Serial.println("%");
@@ -684,7 +695,7 @@ uint8_t MinimoUart::modifySpeed(char var, char data_buffer[], uint8_t byte)
 
     if ((shrd->speedLimiter == 1) && (speedToProcess > settings->getS1F().Speed_limiter_max_speed))
     {
-      speedToProcess = settings->getS1F().Speed_limiter_max_speed;
+      speedToProcess = 25;
     }
 
     uint16_t rawSpeed = generateSpeedRawValue(speedToProcess);

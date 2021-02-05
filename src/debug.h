@@ -24,7 +24,7 @@
 #define DEBUG_DISPLAY_VOLTAGE                       0
 #define DEBUG_DISPLAY_CURRENT                       0
 #define DEBUG_DISPLAY_DHT                           0
-#define DEBUG_DISPLAY_SPEED_PID                     1
+#define DEBUG_DISPLAY_MINIMO_MOD_POWER              0
 #define DEBUG_DISPLAY_BRAKE_FORBIDEN                0
 #define DEBUG_DISPLAY_DISTANCE                      0
 #define DEBUG_DISPLAY_AUTONOMY                      0
