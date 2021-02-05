@@ -26,6 +26,10 @@ Settings::field_s5 Settings::getS5F()
 {
   return settings5.fields;
 }
+Settings::field_s6 Settings::getS6F()
+{
+  return settings6.fields;
+}
 
 unsigned char *Settings::getS1B()
 {
@@ -146,8 +150,6 @@ void Settings::displaySettings6()
   Serial.println(settings6.fields.Throttle_input_min);
   Serial.print("// Throttle_input_max : ");
   Serial.println(settings6.fields.Throttle_input_max);
-  Serial.print("// Throttle_filter_length : ");
-  Serial.println(settings6.fields.Throttle_filter_length);
   Serial.print("// Throttle_output_min : ");
   Serial.println(settings6.fields.Throttle_output_min);
   Serial.print("// Throttle_output_max : ");

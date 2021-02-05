@@ -185,21 +185,6 @@ void preferences::restoreBatteryCalib()
 
 void preferences::saveSettings()
 {
-  Serial.print("saveSettings : ");
-  Serial.print(sizeof(settings->settings1));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings->settings2));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings->settings3));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings->settings4));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings->settings5));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings->settings6));
-  
-  Serial.println(" bytes");
-
   prefs.begin(APP_STORAGE, false);
   prefs.putBytes(SETTINGS1, settings->settings1.buffer, sizeof(settings->settings1));
   prefs.putBytes(SETTINGS2, settings->settings2.buffer, sizeof(settings->settings2));
@@ -212,24 +197,13 @@ void preferences::saveSettings()
 
 boolean preferences::restoreSettings()
 {
-
-  Serial.print("Settings::restore : ");
-  Serial.print(sizeof(settings->settings1));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings->settings2));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings->settings3));
-  Serial.print(" / ");
-  Serial.print(sizeof(settings->settings4));
-  Serial.println(" bytes");
-    
   prefs.begin(APP_STORAGE, false);
   prefs.getBytes(SETTINGS1, settings->settings1.buffer, prefs.getBytesLength(SETTINGS1));
   prefs.getBytes(SETTINGS2, settings->settings2.buffer, prefs.getBytesLength(SETTINGS2));
   prefs.getBytes(SETTINGS3, settings->settings3.buffer, prefs.getBytesLength(SETTINGS3));
   prefs.getBytes(SETTINGS4, settings->settings4.buffer, prefs.getBytesLength(SETTINGS4));
   prefs.getBytes(SETTINGS5, settings->settings5.buffer, prefs.getBytesLength(SETTINGS5));
-  prefs.getBytes(SETTINGS6, settings->settings5.buffer, prefs.getBytesLength(SETTINGS6));
+  prefs.getBytes(SETTINGS6, settings->settings6.buffer, prefs.getBytesLength(SETTINGS6));
   prefs.end();
 
   if (settings->settings1.buffer[0] == 0xff || settings->settings1.buffer[1] == 0xff)
