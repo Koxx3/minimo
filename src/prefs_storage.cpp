@@ -195,6 +195,8 @@ void preferences::saveSettings()
   Serial.print(sizeof(settings->settings4));
   Serial.print(" / ");
   Serial.print(sizeof(settings->settings5));
+  Serial.print(" / ");
+  Serial.print(sizeof(settings->settings6));
   
   Serial.println(" bytes");
 
@@ -204,6 +206,7 @@ void preferences::saveSettings()
   prefs.putBytes(SETTINGS3, settings->settings3.buffer, sizeof(settings->settings3));
   prefs.putBytes(SETTINGS4, settings->settings4.buffer, sizeof(settings->settings4));
   prefs.putBytes(SETTINGS5, settings->settings5.buffer, sizeof(settings->settings5));
+  prefs.putBytes(SETTINGS6, settings->settings6.buffer, sizeof(settings->settings6));
   prefs.end();
 }
 
@@ -226,6 +229,7 @@ boolean preferences::restoreSettings()
   prefs.getBytes(SETTINGS3, settings->settings3.buffer, prefs.getBytesLength(SETTINGS3));
   prefs.getBytes(SETTINGS4, settings->settings4.buffer, prefs.getBytesLength(SETTINGS4));
   prefs.getBytes(SETTINGS5, settings->settings5.buffer, prefs.getBytesLength(SETTINGS5));
+  prefs.getBytes(SETTINGS6, settings->settings5.buffer, prefs.getBytesLength(SETTINGS6));
   prefs.end();
 
   if (settings->settings1.buffer[0] == 0xff || settings->settings1.buffer[1] == 0xff)

@@ -4,7 +4,6 @@
 #ifndef _BluetoothHandler_h
 #define _BluetoothHandler_h
 
-
 #include "Arduino.h"
 #include <BLEDevice.h>
 #include <BLEServer.h>
@@ -38,12 +37,12 @@ public:
     static void notifyCommandsFeedback();
     static uint8_t setMeasurementsDataPacket();
     static uint8_t setCommandsDataPacket();
-    static void getCommandsDataPacket(uint8_t*);
-    
+    static void getCommandsDataPacket(uint8_t *);
+
     static BLEScan *pBLEScan;
     static BLEServer *pServer;
     static BLESecurity *pSecurity;
-    
+
     static BLECharacteristic *pCharacteristicMeasurements;
     static BLECharacteristic *pCharacteristicBtlockStatus;
     static BLECharacteristic *pCharacteristicCalibOrder;
@@ -59,6 +58,7 @@ public:
     static BLECharacteristic *pCharacteristicSettings3;
     static BLECharacteristic *pCharacteristicSettings4;
     static BLECharacteristic *pCharacteristicSettings5;
+    static BLECharacteristic *pCharacteristicSettings6;
 
     static BLECharacteristic *pCharacteristicFirmware;
 

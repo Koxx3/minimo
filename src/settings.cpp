@@ -47,6 +47,10 @@ unsigned char *Settings::getS5B()
 {
   return settings5.buffer;
 }
+unsigned char *Settings::getS6B()
+{
+  return settings6.buffer;
+}
 
 void Settings::displaySettings1()
 {
@@ -136,6 +140,22 @@ void Settings::displaySettings5()
   Serial.println(settings5.fields.Wifi_pwd);
 }
 
+void Settings::displaySettings6()
+{
+  Serial.print("// Throttle_input_min : ");
+  Serial.println(settings6.fields.Throttle_input_min);
+  Serial.print("// Throttle_input_max : ");
+  Serial.println(settings6.fields.Throttle_input_max);
+  Serial.print("// Throttle_filter_length : ");
+  Serial.println(settings6.fields.Throttle_filter_length);
+  Serial.print("// Throttle_output_min : ");
+  Serial.println(settings6.fields.Throttle_output_min);
+  Serial.print("// Throttle_output_max : ");
+  Serial.println(settings6.fields.Throttle_output_max);
+  Serial.print("// Throttle_output_curve : ");
+  Serial.println(settings6.fields.Throttle_output_curve);
+}
+
 void Settings::displaySettings()
 {
   displaySettings1();
@@ -143,6 +163,7 @@ void Settings::displaySettings()
   displaySettings3();
   displaySettings4();
   displaySettings5();
+  displaySettings6();
 }
 
 void Settings::init()

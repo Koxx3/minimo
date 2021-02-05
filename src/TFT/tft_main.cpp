@@ -19,9 +19,13 @@
 #define GFXFF 1
 
 // Easily remembered name for the font
-#define FONT_FORCED_SQUARE9pt7b &FORCED_SQUARE9pt7b
+#if (TFT_MODEL == 1) // 2.4"
 #define FONT_FORCED_SQUARE6pt7b &FORCED_SQUARE6pt7b
+#endif
+//#define FONT_FORCED_SQUARE9pt7b &FORCED_SQUARE9pt7b
+#if (TFT_MODEL == 2) // 3.5"
 #define FONT_FORCED_SQUARE10pt7b &FORCED_SQUARE10pt7b
+#endif
 
 #define SEP_LINE 2 * SCALE_FACTOR_X
 #define SMALLEST_FONT_SIZE 4 * SCALE_FACTOR_Y
@@ -34,13 +38,13 @@
 #define LINE_4Y 155 * SCALE_FACTOR_Y
 #define LINE_5Y 210 * SCALE_FACTOR_Y
 
-#if (TFT_MODEL == 1) // 2.4"
+#if (TFT_MODEL == 1)                 // 2.4"
 #define COLUMN1 80 * SCALE_FACTOR_X  // 78 for 3.5
 #define COLUMN2 130 * SCALE_FACTOR_X // 120 for 3.5
 #define COLUMN3 153 * SCALE_FACTOR_X // 120 for 3.5 // equal COLUMN2
 #define COLUMN4 200 * SCALE_FACTOR_X // 192 for 3.5
 #define COLUMN5 307 * SCALE_FACTOR_X // 307 for 3.5
-#else  // 3.5"
+#else                                // 3.5"
 #define COLUMN1 80 * SCALE_FACTOR_X  // 78 for 3.5
 #define COLUMN2 115 * SCALE_FACTOR_X // 120 for 3.5
 #define COLUMN3 115 * SCALE_FACTOR_X // 120 for 3.5
@@ -161,12 +165,11 @@ void tftUpdateData(uint32_t i_loop)
     // init TFT settings
     tft.setTextSize(1);
 
-    if (SCALE_FACTOR_Y >= 1.5)
-      tft.setFreeFont(FONT_FORCED_SQUARE10pt7b); // Select the font
-    else if (SCALE_FACTOR_Y >= 1.3)
-      tft.setFreeFont(FONT_FORCED_SQUARE9pt7b); // Select the font
-    else
-      tft.setFreeFont(FONT_FORCED_SQUARE6pt7b); // Select the font
+#if (TFT_MODEL == 2)                           // 3.5"
+    tft.setFreeFont(FONT_FORCED_SQUARE10pt7b);
+#else
+    tft.setFreeFont(FONT_FORCED_SQUARE6pt7b);
+#endif
 
     tft.setTextColor(TFT_RED, TFT_BLACK);
     tft.setTextDatum(BR_DATUM);

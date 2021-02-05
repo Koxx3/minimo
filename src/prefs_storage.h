@@ -11,6 +11,7 @@
 #define SETTINGS3 "SETTINGS3"
 #define SETTINGS4 "SETTINGS4"
 #define SETTINGS5 "SETTINGS5"
+#define SETTINGS6 "SETTINGS6"
 
 class preferences
 {

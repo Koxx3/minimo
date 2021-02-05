@@ -13,7 +13,6 @@
 //////------------------------------------
 ////// Inludes
 
-
 #include "main.h"
 #include "Settings.h"
 #include "SharedData.h"
@@ -64,7 +63,7 @@
 
 #define MINIMO_PWM_BRAKE 0
 #define DEBUG_ESP_HTTP_UPDATE 1
-#define TEST_ADC_DAC_REFRESH 0
+#define TEST_ADC_DAC_REFRESH 1
 #define TEMPERATURE_EXT_READ 0
 #define TEMPERATURE_INT_READ 1
 #define VOLTAGE_EXT_READ 1
@@ -130,6 +129,7 @@
 #define BAUD_RATE_CONSOLE 921600
 
 // ADC
+#define ANALOG_TO_VOLTS_5V 0.0012207 // 4096 = 5V
 #define ANALOG_TO_VOLTS_A 0.0213
 #define ANALOG_TO_VOLTS_B 5.4225
 #define ANALOG_TO_CURRENT 35
@@ -202,7 +202,7 @@ MedianFilter currentRawFilter(NB_CURRENT_FILTER_DATA, 1830);
 MedianFilter currentRawFilterInit(NB_CURRENT_FILTER_CALIB_DATA, 1830);
 MedianFilter brakeFilter(10 /* 20 */, 900);
 //MedianFilter brakeMaxFilterInit(NB_BRAKE_CALIB_DATA, 900);
-MedianFilter throttleFilterInit(5 /* 20 */, 900);
+MedianFilter throttleFilterInit(10 /* 20 */, 900);
 
 Settings settings;
 BluetoothHandler blh;
@@ -724,7 +724,7 @@ void getBrakeFromAnalog()
               shrd.brakeSentOrder,
               shrd.brakeSentOrderOld,
               shrd.brakePressedStatus);
-              
+
       // too fast for BLE !!!
       //blh.notifyBleLogs(print_buffer);
 
@@ -1015,6 +1015,25 @@ void getThrottleFromAnalog()
 
     }
   }
+  */
+}
+
+void processThrottleOutput()
+{
+  uint32_t dacOutput = (throttleFilterInit.getMeanWithoutExtremes(2) * 0.66);
+  if (dacOutput > 4095)
+    dacOutput = 4095;
+
+  dac.setVoltage(dacOutput, false);
+
+/*
+  char print_buffer[500];
+  sprintf(print_buffer, "throttleAnalogValue raw : %d / volts : %1.3fV / dacOutput raw : %d / volts %1.3fV",
+          throttleAnalogValue,
+          throttleAnalogValue * ANALOG_TO_VOLTS_5V,
+          dacOutput,
+          dacOutput * ANALOG_TO_VOLTS_5V);
+  Serial.println(print_buffer);
   */
 }
 
@@ -1898,22 +1917,9 @@ void loop()
 #endif
 
 #if TEST_ADC_DAC_REFRESH
-
-  if ((i_loop /*% 10 == 7*/))
+  if (i_loop /*% 10 == 7*/)
   {
-    uint32_t dacOutput = (throttleFilterInit.getMeanWithoutExtremes(1) * 1.0) + 150;
-    if (dacOutput > 4095)
-      dacOutput = 4095;
-
-    //dacOutput = (i_loop / 10) % 4096;
-    dac.setVoltage(dacOutput, false);
-
-    char print_buffer[500];
-    sprintf(print_buffer, "throttleAnalogValue raw : %d / dacOutput : %d / i_loop : %d",
-            throttleAnalogValue,
-            dacOutput,
-            i_loop);
-    Serial.println(print_buffer);
+    processThrottleOutput();
   }
 #endif
 
@@ -1967,15 +1973,14 @@ void loop()
 
   i_loop++;
 
-/* crash test 1
+  /* crash test 1
   *((volatile int*)NULL) = 42;
 */
 
-/* crash test 2
+  /* crash test 2
   int test = 5 / 0;
   Serial.println(test);
 */
-
 
 #if ENABLE_WATCHDOG
   resetWatchdog();
