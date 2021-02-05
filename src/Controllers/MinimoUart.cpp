@@ -44,11 +44,6 @@ void MinimoUart::setLcdSerialPort(Stream *port)
   hwSerLcd = port;
 }
 
-void MinimoUart::setPID(PID *pidSpeed_p)
-{
-  pidSpeed = pidSpeed_p;
-}
-
 void setSharedData(SharedData *);
 
 //////------------------------------------
@@ -323,18 +318,14 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
   }
   else if (shrd->speedLimiter == 1)
   {
-    //    newPower = 37;
-
     // PID regulation for 25 km/h
-    newPower = shrd->pidOutput / 2.55;
+    newPower = settings->getS1F().Speed_limiter_max_speed;
     if (newPower < 5)
     {
       newPower = 5;
     }
 
 #if DEBUG_DISPLAY_SPEED_PID
-    Serial.print(" / output = ");
-    Serial.print(shrd->pidOutput);
     Serial.print(" / new_power = ");
     Serial.print(newPower);
     Serial.println("%");
@@ -890,14 +881,6 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
         shrd->speedCurrent = getSpeed();
 
 #if ALLOW_CNTRL_TO_LCD_MODIFICATIONS
-        shrd->pidInput = shrd->speedCurrent;
-        pidSpeed->Compute();
-
-#if DEBUG_DISPLAY_SPEED_PID
-        Serial.print("Input = ");
-        Serial.print(shrd->pidInput);
-#endif
-
         var = modifySpeed(var, data_buffer_mod, 1);
 #endif
 

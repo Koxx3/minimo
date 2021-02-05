@@ -39,12 +39,10 @@
 #define SETTINGS2_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b1"
 #define SETTINGS3_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b2"
 //#define xxxx "beb5483e-36e1-4688-b7f5-ea07361b26b3"
-#define SPEED_PID_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b4"
+//#define xxxx "beb5483e-36e1-4688-b7f5-ea07361b26b4"
 #define DISTANCE_RST_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b5"
 
 #define BLE_MTU 23
-
-#define BLE_PIN_CODE 147258
 
 #define MAX_BEACON_INVISIBLE_COUNT 1
 
@@ -60,7 +58,6 @@ BLECharacteristic *BluetoothHandler::pCharacteristicBtlockStatus;
 BLECharacteristic *BluetoothHandler::pCharacteristicCalibOrder;
 BLECharacteristic *BluetoothHandler::pCharacteristicOtaSwitch;
 BLECharacteristic *BluetoothHandler::pCharacteristicLogs;
-BLECharacteristic *BluetoothHandler::pCharacteristicSpeedPid;
 BLECharacteristic *BluetoothHandler::pCharacteristicDistanceRst;
 BLECharacteristic *BluetoothHandler::pCharacteristicKeepAlive;
 BLECharacteristic *BluetoothHandler::pCharacteristicCommands;
@@ -381,9 +378,6 @@ void BluetoothHandler::setSettings(Settings *data)
                 // update BLE PIN code
                 pSecurity->setStaticPIN(settings->getS3F().Bluetooth_pin_code);
 
-                // reset speed PID
-                resetPid();
-
             }
             else if (pCharacteristic->getUUID().toString() == SETTINGS6_CHARACTERISTIC_UUID)
             {
@@ -512,24 +506,6 @@ void BluetoothHandler::setSettings(Settings *data)
                 if (pCharacteristic->getUUID().toString() == DISTANCE_RST_CHARACTERISTIC_UUID)
             {
                 shrd->distanceTrip = 0;
-            }
-            else if (pCharacteristic->getUUID().toString() == SPEED_PID_CHARACTERISTIC_UUID)
-            {
-                std::string rxValue = pCharacteristic->getValue();
-
-                uint32_t temp;
-                memcpy(&temp, &rxValue[0], 4);
-                shrd->speedPidKp = temp / 1000.0;
-                memcpy(&temp, &rxValue[4], 4);
-                shrd->speedPidKi = temp / 1000.0;
-                memcpy(&temp, &rxValue[8], 4);
-                shrd->speedPidKd = temp / 1000.0;
-
-                char print_buffer[500];
-                sprintf(print_buffer, "BLH - Write : speedPidKp = %02.2f / speedPidKi = %02.2f / speedPidKd =  %02.2f", shrd->speedPidKp, shrd->speedPidKi, shrd->speedPidKd);
-                Serial.println(print_buffer);
-
-                resetPid();
             }
             else if (pCharacteristic->getUUID().toString() == KEEP_ALIVE_CHARACTERISTIC_UUID)
             {
@@ -704,10 +680,6 @@ void BluetoothHandler::setSettings(Settings *data)
         KEEP_ALIVE_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_WRITE);
 
-    pCharacteristicSpeedPid = pServiceMain->createCharacteristic(
-        SPEED_PID_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE);
-
     pCharacteristicCommands = pServiceMain->createCharacteristic(
         COMMANDS_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_NOTIFY |
@@ -760,7 +732,6 @@ void BluetoothHandler::setSettings(Settings *data)
     pCharacteristicCalibOrder->addDescriptor(new BLE2902());
     pCharacteristicOtaSwitch->addDescriptor(new BLE2902());
     pCharacteristicLogs->addDescriptor(new BLE2902());
-    pCharacteristicSpeedPid->addDescriptor(new BLE2902());
     pCharacteristicDistanceRst->addDescriptor(new BLE2902());
     pCharacteristicKeepAlive->addDescriptor(new BLE2902());
     pCharacteristicCommands->addDescriptor(new BLE2902());
@@ -780,7 +751,6 @@ void BluetoothHandler::setSettings(Settings *data)
     pCharacteristicCalibOrder->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicOtaSwitch->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicLogs->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicSpeedPid->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicDistanceRst->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicKeepAlive->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicCommands->setCallbacks(new BLECharacteristicCallback());

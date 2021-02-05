@@ -21,7 +21,6 @@
 #include "prefs_storage.h"
 #include <Wire.h>
 #include <Adafruit_MCP4725.h>
-#include <PID_v1.h>
 #include "SHTC3/SparkFun_SHTC3.h"
 
 #include "esp32-hal-uart.h"
@@ -208,8 +207,6 @@ Settings settings;
 BluetoothHandler blh;
 preferences prefs;
 
-PID pidSpeed(&shrd.pidInput, &shrd.pidOutput, &shrd.pidSetpoint, shrd.speedPidKp, shrd.speedPidKi, shrd.speedPidKd, DIRECT);
-
 //////------------------------------------
 //////------------------------------------
 ////// Setups
@@ -250,6 +247,7 @@ void setupDac()
   // page 22
 
   dac.begin(0x60, &I2Cone);
+  dac.setVoltage(0, false);
 }
 
 void setupShtc3()
@@ -273,8 +271,7 @@ void setupSerial()
   minomoCntrl.setSettings(&settings);
   minomoCntrl.setSharedData(&shrd);
   minomoCntrl.setBluetoothHandler(&blh);
-  minomoCntrl.setPID(&pidSpeed);
-
+  
   // minimotor controller
   hwSerCntrl.begin(BAUD_RATE_MINIMOTORS, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
   minomoCntrl.setControllerSerialPort(&hwSerCntrl);
@@ -312,17 +309,6 @@ void setupSerial()
   hwSerCntrl.setUartIrqIdleTrigger(1);
 
 #endif
-}
-
-void setupPID()
-{
-
-  shrd.pidSetpoint = settings.getS1F().Speed_limiter_max_speed;
-
-  //turn the PID on
-  pidSpeed.SetMode(AUTOMATIC);
-  //myPID.SetSampleTime(10);
-  //myPID.SetOutputLimits(0,100);
 }
 
 void setupBattery()
@@ -381,14 +367,6 @@ void saveBatteryCalib()
 void saveSettings()
 {
   prefs.saveSettings();
-}
-
-void resetPid()
-{
-
-  shrd.pidSetpoint = settings.getS1F().Speed_limiter_max_speed;
-  pidSpeed.SetTunings(shrd.speedPidKp, shrd.speedPidKi, shrd.speedPidKd);
-  Serial.println("set PID tunings");
 }
 
 void initDataWithSettings()
@@ -520,9 +498,6 @@ void setup()
 
   Serial.println(PSTR("   buttons ..."));
   setupButtons();
-
-  Serial.println(PSTR("   PID ..."));
-  setupPID();
 
 #if TFT_ENABLED
   Serial.println(PSTR("   TFT ..."));

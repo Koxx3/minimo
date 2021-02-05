@@ -77,7 +77,6 @@ public:
     uint8_t modifyPower(char var, char data_buffer[]);
     uint8_t modifyBrakeFromDisplay(char var, char data_buffer[]);
     uint8_t modifyEco(char var, char data_buffer[]);
-    void setPID(PID *pidSpeed_p);
 
     void readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSerLcd, int serialMode, char *data_buffer_ori, char *data_buffer_mod);
     void processMinimotorsSerial(uint32_t i_loop, boolean simulatedDisplay);
@@ -89,7 +88,6 @@ private:
 
     SharedData *shrd;
     Settings *settings;
-    PID *pidSpeed;
 
     uint32_t timeLastBrake = 0;
 

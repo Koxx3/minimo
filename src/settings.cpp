@@ -2,6 +2,9 @@
 #include "settings.h"
 #include "prefs_storage.h"
 
+
+#define BLE_PIN_CODE 147258
+
 Settings::Settings()
 {
 }
@@ -171,5 +174,5 @@ void Settings::displaySettings()
 void Settings::init()
 {
   Serial.print("Settings::init : ");
-  settings3.fields.Bluetooth_pin_code = 147258;
+  settings3.fields.Bluetooth_pin_code = BLE_PIN_CODE;
 }

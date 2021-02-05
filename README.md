@@ -122,7 +122,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Send LED status
     - [✅] Send optocopler order
     - [✅] Internal temperature sensor
-    - [IN PROGRESS 🔄] Throttle signal regeneration
+    - [✅] Throttle signal regeneration
 
 - [✅] Power 🔋
     - [✅] Convert 12V to 5V
@@ -137,7 +137,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Current measure auto calibration (at startup)
     - [✅] Current measure manual calibration
     - [✅] Speed limiter at startup
-    - [✅] Configurable speed loop regulation
+    - [✅] Configurable speed limit
     - [ ] Remote physical button
         - [✅] Speed limiter ON/OFF
         - [✅] Lock ON      
@@ -149,9 +149,9 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Manual calibration for analog brake
     - [✅] Manual calibration for voltage
     - [✅] Use brake switch as startup for speed limiter
+    - [✅] LCD Speed adjustment
+    - [✅] Exponential acceleration curve
     - [IN PROGRESS 🔄] Automatic ECO mode on low battery 
-    - [IN TEST 🔄] LCD Speed adjustment
-    - [ ] Exponential acceleration curve
     - [ ] PAS switch
     - [ ] Use relay as speedlimiter output for controller
     - [ ] Dynamic BLE debug infos
