@@ -17,6 +17,7 @@ public:
   void displaySettings3();
   void displaySettings4();
   void displaySettings5();
+  void displaySettings6();
   void displaySettings();
   void init();
 
@@ -32,13 +33,21 @@ public:
     LIST_Button_press_action_Nitro_boost_on_off,
   } ButtonActions;
 
-  // The actions I ca do...
   typedef enum Electric_Brake_Type
   {
     LIST_Electric_brake_type_cntrl = 0,
     LIST_Electric_brake_type_smart_digital,
     LIST_Electric_brake_type_smart_analog
   } tElectric_Brake_Type;
+
+  typedef enum LIST_Throttle_curve
+  {    
+    LIST_Throttle_curve_type_0 = 0,
+    LIST_Throttle_curve_type_1,
+    LIST_Throttle_curve_type_2,
+    LIST_Throttle_curve_type_3,
+    LIST_Throttle_curve_type_4
+  } tThrottle_curve;
 
 #pragma pack(push, 1)
   struct field_s1
@@ -111,6 +120,19 @@ public:
   } __attribute__((packed));
 #pragma pack(pop)
 
+#pragma pack(push, 1)
+  struct field_s6
+  {
+    uint8_t Throttle_input_min;
+    uint8_t Throttle_input_max;
+    uint8_t Throttle_filter_length;
+    uint8_t Throttle_output_min;
+    uint8_t Throttle_output_max;
+    uint8_t Throttle_output_curve;
+
+  } __attribute__((packed));
+#pragma pack(pop)
+
   union settings_bt1
   {
     struct field_s1 fields;
@@ -141,23 +163,32 @@ public:
     unsigned char buffer[sizeof(struct field_s5)];
   };
 
+  union settings_bt6
+  {
+    struct field_s6 fields;
+    unsigned char buffer[sizeof(struct field_s6)];
+  };
+
   union settings_bt1 settings1;
   union settings_bt2 settings2;
   union settings_bt3 settings3;
   union settings_bt4 settings4;
   union settings_bt5 settings5;
+  union settings_bt6 settings6;
 
   field_s1 getS1F();
   field_s2 getS2F();
   field_s3 getS3F();
   field_s4 getS4F();
   field_s5 getS5F();
+  field_s6 getS6F();
 
   unsigned char *getS1B();
   unsigned char *getS2B();
   unsigned char *getS3B();
   unsigned char *getS4B();
   unsigned char *getS5B();
+  unsigned char *getS6B();
 };
 
 #endif

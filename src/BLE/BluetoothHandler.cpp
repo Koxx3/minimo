@@ -29,7 +29,7 @@
 #define SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a7"
 #define SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
 #define SETTINGS1_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a9"
-//#define xxx "beb5483e-36e1-4688-b7f5-ea07361b26aa"
+#define SETTINGS6_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26aa"
 //#define xxx "beb5483e-36e1-4688-b7f5-ea07361b26ab"
 //#define xxx "beb5483e-36e1-4688-b7f5-ea07361b26ac"
 #define CALIB_ORDER_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ad"
@@ -71,6 +71,7 @@ BLECharacteristic *BluetoothHandler::pCharacteristicSettings2;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings3;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings4;
 BLECharacteristic *BluetoothHandler::pCharacteristicSettings5;
+BLECharacteristic *BluetoothHandler::pCharacteristicSettings6;
 
 // firmware services
 BLECharacteristic *BluetoothHandler::pCharacteristicFirmware;
@@ -215,7 +216,6 @@ void BluetoothHandler::setSettings(Settings *data)
     {
         void onWrite(BLECharacteristic *pCharacteristic)
         {
-
 
             //const char *uuid = pCharacteristic->getUUID().toString().data();
             //Serial.println("onWrite : " + (String)(uuid));
@@ -384,6 +384,34 @@ void BluetoothHandler::setSettings(Settings *data)
                 // reset speed PID
                 resetPid();
 
+            }
+            else if (pCharacteristic->getUUID().toString() == SETTINGS6_CHARACTERISTIC_UUID)
+            {
+                std::string rxValue = pCharacteristic->getValue();
+
+                for (int i = 0; i < rxValue.length(); i++)
+                {
+                    settings->getS6B()[i] = rxValue[i];
+                }
+
+                //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
+
+                Serial.print("BLH - Settings6 len : ");
+                Serial.println(rxValue.length());
+                Serial.print("BLH - Settings6 size : ");
+                Serial.println(rxValue.size());
+
+                Serial.print("BLH - Settings6 : ");
+                for (int i = 0; i < rxValue.length(); i++)
+                {
+                    char print_buffer[5];
+                    sprintf(print_buffer, "%02x ", rxValue[i]);
+                    Serial.print(print_buffer);
+                }
+                Serial.println("");
+
+                settings->displaySettings6();
+                
                 saveSettings();
             }
             else if (pCharacteristic->getUUID().toString() == CALIB_ORDER_CHARACTERISTIC_UUID)
@@ -721,6 +749,11 @@ void BluetoothHandler::setSettings(Settings *data)
         BLECharacteristic::PROPERTY_WRITE |
             BLECharacteristic::PROPERTY_READ);
 
+    pCharacteristicSettings6 = pServiceSettings->createCharacteristic(
+        SETTINGS6_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_WRITE |
+            BLECharacteristic::PROPERTY_READ);
+
     //////////////
     pCharacteristicMeasurements->addDescriptor(new BLE2902());
     pCharacteristicBtlockStatus->addDescriptor(new BLE2902());
@@ -737,6 +770,7 @@ void BluetoothHandler::setSettings(Settings *data)
     pCharacteristicSettings3->addDescriptor(new BLE2902());
     pCharacteristicSettings4->addDescriptor(new BLE2902());
     pCharacteristicSettings5->addDescriptor(new BLE2902());
+    pCharacteristicSettings6->addDescriptor(new BLE2902());
 
     pCharacteristicFirmware->addDescriptor(new BLE2902());
 
@@ -756,6 +790,7 @@ void BluetoothHandler::setSettings(Settings *data)
     pCharacteristicSettings3->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettings4->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettings5->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicSettings6->setCallbacks(new BLECharacteristicCallback());
 
     pCharacteristicFirmware->setCallbacks(new BLECharacteristicCallback());
 
