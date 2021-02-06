@@ -168,6 +168,9 @@ void Settings::displaySettings6()
   Serial.println(settings6.fields.Temperature_warning);
   Serial.print("// Humidity_warning : ");
   Serial.println(settings6.fields.Humidity_warning);
+  Serial.print("// Throttle_regeneration : ");
+  Serial.println(settings6.fields.Throttle_regeneration);
+  
 }
 
 void Settings::displaySettings()

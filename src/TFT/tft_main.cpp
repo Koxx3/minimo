@@ -395,8 +395,14 @@ void tftUpdateData(uint32_t i_loop)
       tft.setTextColor(_shrd->currentHumidity > _settings->getS6F().Humidity_warning ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
       tft.drawString(txt_hr, COLUMN0, LINE_3Y + i, GFXFF);
 
+      boolean error = _shrd->errorThrottle ||
+                      _shrd->errorBrake ||
+                      _shrd->errorSerialDisplayToContrl ||
+                      _shrd->errorSerialContrlToDisplay ||
+                      _shrd->errorSerialContrlDataFeedback;
+
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
-      tft.setTextColor(ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+      tft.setTextColor(error ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
       tft.drawString(txt_err, COLUMN0, LINE_3Y + i, GFXFF);
 
       break;

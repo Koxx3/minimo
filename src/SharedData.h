@@ -104,6 +104,12 @@ public:
     uint32_t button2LpDuration = 0;
     boolean button1LpProcessed = false;
     boolean button2LpProcessed = false;
+
+    boolean errorThrottle = false;
+    boolean errorBrake = false;
+    boolean errorSerialDisplayToContrl = false;
+    boolean errorSerialContrlToDisplay = false;
+    boolean errorSerialContrlDataFeedback = false;
 };
 
 #endif

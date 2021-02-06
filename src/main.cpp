@@ -62,12 +62,10 @@
 
 #define MINIMO_PWM_BRAKE 0
 #define DEBUG_ESP_HTTP_UPDATE 1
-#define TEST_ADC_DAC_REFRESH 1
 #define TEMPERATURE_EXT_READ 0
 #define TEMPERATURE_INT_READ 1
 #define VOLTAGE_EXT_READ 1
 #define BRAKE_ANALOG_EXT_READ 1
-#define THROTTLE_ANALOG_EXT_READ 1
 
 // PINOUT
 #define PCB_V132
@@ -271,7 +269,7 @@ void setupSerial()
   minomoCntrl.setSettings(&settings);
   minomoCntrl.setSharedData(&shrd);
   minomoCntrl.setBluetoothHandler(&blh);
-  
+
   // minimotor controller
   hwSerCntrl.begin(BAUD_RATE_MINIMOTORS, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
   minomoCntrl.setControllerSerialPort(&hwSerCntrl);
@@ -528,10 +526,9 @@ void setup()
 #if ENABLE_WATCHDOG
   Serial.println(PSTR("Watchdog enabled"));
   setupWatchdog();
-#endif 
+#endif
   // End of setup
   Serial.println("setup --- end\n");
-
 }
 
 void notifyBleLogFrame(int mode, char data_buffer[], byte checksum)
@@ -660,10 +657,14 @@ void getBrakeFromAnalog()
 
       Serial.print("notifySpeedLimiterStatus => disabled by brake / ");
       Serial.println(shrd.speedLimiter);
+
+      shrd.errorBrake = true;
+
+      return;
     }
 
     // ignore out of range datas ... and notify
-    if (brakeAnalogValue < ANALOG_BRAKE_MIN_ERR_VALUE)
+    else if (brakeAnalogValue < ANALOG_BRAKE_MIN_ERR_VALUE)
     {
 #if DEBUG_DISPLAY_ANALOG_BRAKE
       Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE");
@@ -683,7 +684,13 @@ void getBrakeFromAnalog()
 
       Serial.println(print_buffer);
 
+      shrd.errorBrake = true;
+
       return;
+    }
+    else
+    {
+      shrd.errorBrake = false;
     }
 
     // ignore out of range datas ... and notify
@@ -828,169 +835,41 @@ void getThrottleFromAnalog()
 
   throttleAnalogValue = analogRead(PIN_IN_ATHROTTLE);
   shrd.throttleAnalogValue = throttleAnalogValue;
-
-  //  Serial.printf("throttle : %d\n", throttleAnalogValue);
-
   throttleFilterInit.in(throttleAnalogValue);
 
-  //    int brakeFilterMean = brakeFilter.getMean();
-  //   int brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
-  /*
-    // ignore out of range datas ... and notify
-    if (brakeAnalogValue < ANALOG_BRAKE_MIN_ERR_VALUE)
-    {
-#if DEBUG_DISPLAY_ANALOG_BRAKE
-      Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE");
-#endif
+  // ignore out of range datas ... and notify
+  if (throttleAnalogValue < settings.getS6F().Throttle_input_min * 0.66 * 0.75)
+  {
+    char print_buffer[500];
+    sprintf(print_buffer, "throttle : value too low / throttleAnalogValue : %d / throttleFilterInit.getMean() : %d",
+            throttleAnalogValue,
+            throttleFilterInit.getMean());
+    //blh.notifyBleLogs(print_buffer);
+    Serial.println(print_buffer);
 
-      char print_buffer[500];
-      sprintf(print_buffer, "brake ANALOG_BRAKE_MIN_ERR_VALUE / f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d",
-              brakeFilterMean,
-              brakeFilterMeanErr,
-              brakeAnalogValue,
-              shrd.brakeSentOrder,
-              shrd.brakeSentOrderOld,
-              shrd.brakeStatus,
-              brakeFilterInit.getMean());
-      blh.notifyBleLogs(print_buffer);
-      Serial.println(print_buffer);
+    shrd.errorThrottle = true;
 
-      return;
-    }
-
-    // ignore out of range datas ... and notify
-    if (brakeAnalogValue > ANALOG_BRAKE_MAX_ERR_VALUE)
-    {
-#if DEBUG_DISPLAY_ANALOG_BRAKE
-      Serial.println("brake ANALOG_BRAKE_MAX_ERR_VALUE");
-      char print_buffer[500];
-      sprintf(print_buffer, "brake ANALOG_BRAKE_MAX_ERR_VALUE / f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d",
-              brakeFilterMean,
-              brakeFilterMeanErr,
-              brakeAnalogValue,
-              shrd.brakeSentOrder,
-              shrd.brakeSentOrderOld,
-              shrd.brakeStatus,
-              brakeFilterInit.getMean());
-      blh.notifyBleLogs(print_buffer);
-      Serial.println(print_buffer);
-#endif
-      return;
-    }
-
-    if (brakeAnalogValue > shrd.brakeMaxPressureRaw)
-      brakeAnalogValue = shrd.brakeMaxPressureRaw;
-
-    brakeFilter.in(brakeAnalogValue);
-
-    if ((brakeAnalogValue < 1000) && (shrd.brakeCalibOrder >= 1))
-    {
-      brakeFilterInit.in(brakeAnalogValue);
-      shrd.brakeFilterInitMean = brakeFilterInit.getMean();
-    }
-
-    iBrakeCalibOrder++;
-    if (iBrakeCalibOrder > NB_BRAKE_CALIB_DATA)
-    {
-      iBrakeCalibOrder = 0;
-      shrd.brakeCalibOrder = 0;
-    }
-
-    if (settings.getS1F().Electric_brake_progressive_mode == 1)
-    {
-      brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
-      brakeFilterMean = brakeFilter.getMean();
-
-      shrd.brakeFordidenHighVoltage = isElectricBrakeForbiden();
-
-      // alarm controler from braking
-      if ((brakeFilterMeanErr > shrd.brakeFilterInitMean + ANALOG_BRAKE_MIN_OFFSET) && (!shrd.brakeFordidenHighVoltage))
-      {
-        digitalWrite(PIN_OUT_BRAKE, 1);
-
-        if (shrd.brakeStatus == 0)
-        {
-          char print_buffer[500];
-          sprintf(print_buffer, ">>>> brake IO ON");
-
-          Serial.println(print_buffer);
-
-          blh.notifyBleLogs(print_buffer);
-        }
-
-        shrd.brakeStatus = 1;
-      }
-      else
-      {
-        digitalWrite(PIN_OUT_BRAKE, 0);
-
-        if (shrd.brakeStatus == 1)
-        {
-          char print_buffer[500];
-          sprintf(print_buffer, ">>>> brake IO OFF");
-
-          Serial.println(print_buffer);
-
-          blh.notifyBleLogs(print_buffer);
-        }
-
-        shrd.brakeStatus = 0;
-      }
-
-      // notify brake LCD value
-      if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakeStatus != shrd.brakeStatusOld))
-      {
-        blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakeStatus, shrd.brakeFordidenHighVoltage);
-
-#if DEBUG_DISPLAY_ANALOG_BRAKE
-        Serial.print("brake notify : ");
-        Serial.println(shrd.brakeSentOrder);
-#endif
-
-        char print_buffer[500];
-        sprintf(print_buffer, ">> brakeNotify = f1 : %d / f2 : %d / brakeFilterInitMean : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d / forbid : %d",
-                brakeFilterMean,
-                brakeFilterMeanErr,
-                shrd.brakeFilterInitMean,
-                brakeAnalogValue,
-                shrd.brakeSentOrder,
-                shrd.brakeSentOrderOld,
-                shrd.brakeStatus,
-                brakeFilterInit.getMean(),
-                shrd.brakeFordidenHighVoltage);
-        blh.notifyBleLogs(print_buffer);
-      }
-
-      shrd.brakeStatusOld = shrd.brakeStatus;
-      shrd.brakeSentOrderOld = shrd.brakeSentOrder;
-
-#if DEBUG_BLE_DISPLAY_ANALOG_BRAKE
-
-      if ((brakeFilterMeanErr > shrd.brakeFilterInitMean + ANALOG_BRAKE_MIN_OFFSET))
-      {
-
-        char print_buffer[500];
-        sprintf(print_buffer, "brake = f1 : %d / f2 : %d / brakeFilterInitMean : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d / forbid : %d",
-                brakeFilterMean,
-                brakeFilterMeanErr,
-                shrd.brakeFilterInitMean,
-                brakeAnalogValue,
-                shrd.brakeSentOrder,
-                shrd.brakeSentOrderOld,
-                shrd.brakeStatus,
-                brakeFilterInit.getMean(),
-                shrd.brakeFordidenHighVoltage);
-
-        Serial.println(print_buffer);
-
-        blh.notifyBleLogs(print_buffer);
-      }
-
-#endif
-
-    }
+    return;
   }
-  */
+
+  // ignore out of range datas ... and notify
+  if (throttleAnalogValue < settings.getS6F().Throttle_input_max * 0.66 * 1.25)
+  {
+    char print_buffer[500];
+    sprintf(print_buffer, "throttle : value too low / throttleAnalogValue : %d / throttleFilterInit.getMean() : %d",
+            throttleAnalogValue,
+            throttleFilterInit.getMean());
+    //blh.notifyBleLogs(print_buffer);
+    Serial.println(print_buffer);
+
+    shrd.errorThrottle = true;
+
+    return;
+  }
+  else
+  {
+    shrd.errorThrottle = false;
+  }
 }
 
 void processThrottleOutput()
@@ -1870,22 +1749,11 @@ void loop()
     processAutonomy();
   }
 
-#if BRAKE_ANALOG_EXT_READ
   if (i_loop % 10 == 2)
   {
     //displayBrake();
     getBrakeFromAnalog();
   }
-#endif
-
-#if THROTTLE_ANALOG_EXT_READ
-  if (i_loop /* % 10 == 4*/)
-  {
-    //modifyBrakeFromLCD();
-    //displayBrake();
-    getThrottleFromAnalog();
-  }
-#endif
 
 #if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
   if (i_loop % 100 == 5)
@@ -1902,12 +1770,11 @@ void loop()
   }
 #endif
 
-#if TEST_ADC_DAC_REFRESH
-  if (i_loop /*% 10 == 7*/)
+  if (settings.getS6F().Throttle_regeneration)
   {
+    getThrottleFromAnalog();
     processThrottleOutput();
   }
-#endif
 
 #if HAS_I2C && TEMPERATURE_INT_READ
   if (i_loop % 100 == 8)
