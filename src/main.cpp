@@ -1546,12 +1546,6 @@ void processVoltage()
   // eject false reading
   if (voltageRaw == 4095)
   {
-    /*
-    Serial.print("Voltage read : ");
-    Serial.print(voltageRaw);
-    Serial.println(" => eject ");
-*/
-
     if (i_loop % 1000 == 0)
     {
       char print_buffer[500];
@@ -1562,32 +1556,18 @@ void processVoltage()
   }
   if (voltageRaw < 900)
   {
-    /*
-    Serial.print("Voltage read : ");
-    Serial.print(voltageRaw);
-    Serial.println(" => eject ");
-    */
-
     if (i_loop % 1000 == 0)
     {
       char print_buffer[500];
-      sprintf(print_buffer, "Voltage read <900 ==> eject");
+      sprintf(print_buffer, "Voltage read < 900 ==> eject");
       blh.notifyBleLogs(print_buffer);
     }
 
     return;
   }
 
-  //double correctedValue = -0.000000000000016 * pow(voltageRaw, 4) + 0.000000000118171 * pow(voltageRaw, 3) - 0.000000301211691 * pow(voltageRaw, 2) + 0.001109019271794 * voltageRaw + 0.034143524634089;
-
-  if ((shrd.batteryMaxVoltageCalibRaw != 0xffffffff) && ((shrd.batteryMinVoltageCalibRaw == 0xffffffff)))
-  {
-    // single point calibration
-    voltageInMilliVolts = voltageRaw * shrd.batteryMaxVoltageCalibUser / shrd.batteryMaxVoltageCalibRaw * 1000.0;
-
-    //    Serial.println("algo A / voltageRaw = " + (String)voltageRaw + " / voltageInMilliVolts = " + (String)voltageInMilliVolts);
-  }
-  else if ((shrd.batteryMaxVoltageCalibRaw != 0xffffffff) && ((shrd.batteryMinVoltageCalibRaw != 0xffffffff)))
+  // Voltage calibration
+  if (shrd.batteryMaxVoltageCalibRaw != 0)
   {
     // dual point calibration
     double a = (shrd.batteryMaxVoltageCalibUser - shrd.batteryMinVoltageCalibUser) / (shrd.batteryMaxVoltageCalibRaw - shrd.batteryMinVoltageCalibRaw);
