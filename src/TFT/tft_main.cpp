@@ -380,7 +380,7 @@ void tftUpdateData(uint32_t i_loop)
       tft.setTextDatum(TC_DATUM);
 
       int i = 0;
-      tft.setTextColor(_settings->pasEnabled ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+      tft.setTextColor(_shrd->pasEnabled ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
       tft.drawString(txt_pas, COLUMN0, LINE_3Y + i, GFXFF);
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);

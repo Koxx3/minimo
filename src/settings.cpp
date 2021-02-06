@@ -159,6 +159,12 @@ void Settings::displaySettings6()
   Serial.println(settings6.fields.Throttle_output_max);
   Serial.print("// Throttle_output_curve : ");
   Serial.println(settings6.fields.Throttle_output_curve);
+  Serial.print("// Pas_enabled : ");
+  Serial.println(settings6.fields.Pas_enabled);
+  Serial.print("// Abs_enabled : ");
+  Serial.println(settings6.fields.Abs_enabled);
+  Serial.print("// Display_brightness : ");
+  Serial.println(settings6.fields.Display_brightness);
 }
 
 void Settings::displaySettings()

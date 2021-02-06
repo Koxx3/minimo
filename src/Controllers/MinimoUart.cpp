@@ -384,15 +384,19 @@ uint8_t MinimoUart::modifyPas(char var, char data_buffer[])
 {
 
 #if MINIMO_SIMULATED_DISPLAY
-  shrd->pasEnabled = _settings->pasEnabled;
+  shrd->pasEnabled = settings->getS6F().Pas_enabled;
+  if (shrd->pasEnabled)
+  var = var | 0x02;
+  else
+  var = var & 0xfd;
 #else
-  shrd->pasEnabled = (var - data_buffer[3]) >> 1 & 0x01;
+  shrd->pasEnabled = (var >> 1) & 0x01;
+#endif
+
+
 #if DEBUG_DISPLAY_MINIMO_MOD_PAS
-  Serial.printf("var = %02x / (var - data_buffer[3]) = %02x / blh->pasEnable = %d\n", var, (var - data_buffer[3]), shrd->pasEnabled);
+  Serial.printf("var = %02x / shrd->pasEnable = %d\n", var,  shrd->pasEnabled);
 #endif
-#endif
-
-
   return var;
 }
 
@@ -846,7 +850,7 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
         isModified_LcdToCntrl = 1;
       }
 
-      if (*i == 5)
+      if (*i == 6)
       {
 
         var = modifyPas(var, data_buffer_ori);
