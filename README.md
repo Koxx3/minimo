@@ -184,6 +184,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Parameters custom settings
     - [✅] Data logging
     - [✅] History graphics
+    - [ ] Wizzard with escooter model choice
     - [ ] UI configuration (hide items)
     
 
