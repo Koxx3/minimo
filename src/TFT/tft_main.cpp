@@ -9,9 +9,13 @@
 
 #include "SharedData.h"
 #include "Settings.h"
-#include "FORCED_SQUARE10pt7b.h"
-#include "FORCED_SQUARE9pt7b.h"
 #include "FORCED_SQUARE6pt7b.h"
+#include "FORCED_SQUARE7pt7b.h"
+#include "FORCED_SQUARE8pt7b.h"
+#include "FORCED_SQUARE9pt7b.h"
+#include "FORCED_SQUARE10pt7b.h"
+#include "FORCED_SQUARE12pt7b.h"
+#include "FORCED_SQUARE14pt7b.h"
 
 #include "TFT/smart_splash.h"
 
@@ -19,31 +23,62 @@
 #define GFXFF 1
 
 // Easily remembered name for the font
-#if (TFT_MODEL == 1) // 2.4"
 #define FONT_FORCED_SQUARE6pt7b &FORCED_SQUARE6pt7b
-#endif
-//#define FONT_FORCED_SQUARE9pt7b &FORCED_SQUARE9pt7b
-#if (TFT_MODEL == 2) // 3.5"
+#define FONT_FORCED_SQUARE7pt7b &FORCED_SQUARE7pt7b
+#define FONT_FORCED_SQUARE8pt7b &FORCED_SQUARE8pt7b
+#define FONT_FORCED_SQUARE9pt7b &FORCED_SQUARE9pt7b
 #define FONT_FORCED_SQUARE10pt7b &FORCED_SQUARE10pt7b
-#endif
+#define FONT_FORCED_SQUARE12pt7b &FORCED_SQUARE12pt7b
+#define FONT_FORCED_SQUARE14pt7b &FORCED_SQUARE14pt7b
 
 #define SEP_LINE 2 * SCALE_FACTOR_X
+#define UNIT_LEFT_MARGIN 5 * SCALE_FACTOR_X
+
 #define SMALLEST_FONT_SIZE 4 * SCALE_FACTOR_Y
 #define SMALL_FONT_SIZE 5 * SCALE_FACTOR_Y
-#define BIG_FONT_SIZE 13 * SCALE_FACTOR_Y
+#define MEDIUM_FONT_SIZE 8 * SCALE_FACTOR_Y
+#define BIG_FONT_SIZE 18 * SCALE_FACTOR_Y
 
-#define LINE_1Y 5 * SCALE_FACTOR_Y
-#define LINE_2Y 46 * SCALE_FACTOR_Y
-#define LINE_3Y 100 * SCALE_FACTOR_Y
-#define LINE_4Y 155 * SCALE_FACTOR_Y
-#define LINE_5Y 210 * SCALE_FACTOR_Y
+#define LINE_1Y 9 * SCALE_FACTOR_Y
+#define LINE_2Y 23 * SCALE_FACTOR_Y
+#define LINE_2Y_UNIT (LINE_2Y + 27) * SCALE_FACTOR_Y
+#define LINE_3Y 79 * SCALE_FACTOR_Y
+#define LINE_3Y_UNIT1 (LINE_3Y + 95) * SCALE_FACTOR_Y // Km/m speed
+#define LINE_3Y_UNIT2 (LINE_3Y + 26) * SCALE_FACTOR_Y // speed max
+#define LINE_3Y_UNIT3 (LINE_3Y + 15) * SCALE_FACTOR_Y // Km/h speed max
+#define LINE_4Y 210 * SCALE_FACTOR_Y
+#define LINE_4Y_UNIT (LINE_4Y + 22) * SCALE_FACTOR_Y
+
+// separation lines
+// for left indicators
+#define LINE_POINT1X 38 * SCALE_FACTOR_X
+#define LINE_POINT1Y 58 * SCALE_FACTOR_Y
+#define LINE_POINT2X (38 + 15) * SCALE_FACTOR_X
+#define LINE_POINT2Y (58 + 15) * SCALE_FACTOR_Y
+#define LINE_POINT3X (38 + 15) * SCALE_FACTOR_X
+#define LINE_POINT3Y 173 * SCALE_FACTOR_Y
+#define LINE_POINT4X 38 * SCALE_FACTOR_X
+#define LINE_POINT4Y (173 + 15) * SCALE_FACTOR_Y
+// upper
+#define LINE_POINT5X 70 * SCALE_FACTOR_X
+#define LINE_POINT5Y LINE_POINT1Y
+// lower
+#define LINE_POINT6X 70 * SCALE_FACTOR_X
+#define LINE_POINT6Y LINE_POINT4Y
+
+#define SPACE_INDICATORS_Y 19
 
 #if (TFT_MODEL == 1)                 // 2.4"
-#define COLUMN1 80 * SCALE_FACTOR_X  // 78 for 3.5
-#define COLUMN2 130 * SCALE_FACTOR_X // 120 for 3.5
-#define COLUMN3 153 * SCALE_FACTOR_X // 120 for 3.5 // equal COLUMN2
-#define COLUMN4 200 * SCALE_FACTOR_X // 192 for 3.5
-#define COLUMN5 307 * SCALE_FACTOR_X // 307 for 3.5
+#define COLUMN0 24 * SCALE_FACTOR_X  // 78 for 3.5
+#define COLUMN1 39 * SCALE_FACTOR_X  // 78 for 3.5
+#define COLUMN2 82 * SCALE_FACTOR_X  // 120 for 3.5
+#define COLUMN3 118 * SCALE_FACTOR_X // 120 for 3.5
+#define COLUMN4 219 * SCALE_FACTOR_X // 192 for 3.5
+#define COLUMN5 225 * SCALE_FACTOR_X // 307 for 3.5
+#define COLUMN6 215 * SCALE_FACTOR_X // 307 for 3.5
+#define COLUMN7 247 * SCALE_FACTOR_X // 307 for 3.5
+#define COLUMN8 279 * SCALE_FACTOR_X // 307 for 3.5
+#define COLUMN9 292 * SCALE_FACTOR_X // 307 for 3.5
 #else                                // 3.5"
 #define COLUMN1 80 * SCALE_FACTOR_X  // 78 for 3.5
 #define COLUMN2 115 * SCALE_FACTOR_X // 120 for 3.5
@@ -52,7 +87,7 @@
 #define COLUMN5 307 * SCALE_FACTOR_X // 307 for 3.5
 #endif
 
-#define LINE_TEXT_OFFSET 7
+#define LINE_TEXT_OFFSET 6
 
 #define PIN_SPI_CS -1  // goes to TFT CS -- not used
 #define PIN_SPI_DC 2   // goes to TFT DC
@@ -68,16 +103,21 @@ Settings *_settings;
 
 float speed = 10.0;
 
-const char *txt_mode = "MODE";
-const char *txt_temp = "TEMP";
+const char *txt_temp = "TMP";
+const char *txt_pas = "PAS";
 const char *txt_volts = "VOLTS";
-const char *txt_current = "CURRENT";
+const char *txt_err = "ERR";
 const char *txt_auton = "AUTON";
-const char *txt_odo = "ODO";
 const char *txt_time = "TIME";
 const char *txt_trip = "TRIP";
 const char *txt_hr = "HR";
 const char *txt_power = "POWER";
+const char *txt_brk = "BRK";
+const char *txt_kmh = "Km/h";
+const char *txt_km = "Km";
+const char *txt_max = "Max";
+const char *txt_w = "W";
+const char *txt_v = "V";
 
 void tftSetupBacklight()
 {
@@ -165,32 +205,52 @@ void tftUpdateData(uint32_t i_loop)
     // init TFT settings
     tft.setTextSize(1);
 
-#if (TFT_MODEL == 2)                           // 3.5"
+#if (TFT_MODEL == 2) // 3.5"
     tft.setFreeFont(FONT_FORCED_SQUARE10pt7b);
 #else
     tft.setFreeFont(FONT_FORCED_SQUARE6pt7b);
 #endif
 
+    // draw interface - labels
     tft.setTextColor(TFT_RED, TFT_BLACK);
     tft.setTextDatum(BR_DATUM);
+    tft.drawString(txt_volts, COLUMN4, LINE_2Y - LINE_TEXT_OFFSET, GFXFF);
+    tft.drawString(txt_auton, COLUMN3, LINE_2Y - LINE_TEXT_OFFSET, GFXFF);
+    tft.drawString(txt_power, COLUMN2, LINE_4Y - LINE_TEXT_OFFSET, GFXFF);
+    tft.drawString(txt_time, COLUMN6, LINE_4Y - LINE_TEXT_OFFSET, GFXFF);
+    tft.drawString(txt_trip, COLUMN9, LINE_4Y - LINE_TEXT_OFFSET, GFXFF);
 
-    // draw interface
-    tft.drawString(txt_mode, COLUMN4, LINE_2Y - LINE_TEXT_OFFSET, GFXFF);
-    tft.drawString(txt_volts, COLUMN5, LINE_2Y - LINE_TEXT_OFFSET, GFXFF);
-    tft.drawString(txt_time, COLUMN3, LINE_3Y - LINE_TEXT_OFFSET, GFXFF);
-    tft.drawString(txt_auton, COLUMN5, LINE_3Y - LINE_TEXT_OFFSET, GFXFF);
-    tft.drawString(txt_odo, COLUMN1, LINE_4Y - LINE_TEXT_OFFSET, GFXFF);
-    tft.drawString(txt_trip, COLUMN4, LINE_4Y - LINE_TEXT_OFFSET, GFXFF);
-    tft.drawString(txt_temp, COLUMN5, LINE_4Y - LINE_TEXT_OFFSET, GFXFF);
-    tft.drawString(txt_power, COLUMN1, LINE_5Y - LINE_TEXT_OFFSET, GFXFF);
-    tft.drawString(txt_current, COLUMN4, LINE_5Y - LINE_TEXT_OFFSET, GFXFF);
-    tft.drawString(txt_hr, COLUMN5, LINE_5Y - LINE_TEXT_OFFSET, GFXFF);
+    // draw interface - units
+#if (TFT_MODEL == 2) // 3.5"
+    tft.setFreeFont(FONT_FORCED_SQUARE10pt7b);
+#else
+    tft.setFreeFont(FONT_FORCED_SQUARE7pt7b);
+#endif
+    tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    tft.setTextDatum(BL_DATUM);
+    tft.drawString(txt_km, COLUMN3 + UNIT_LEFT_MARGIN, LINE_2Y_UNIT, GFXFF);
+    tft.drawString(txt_v, COLUMN4 + UNIT_LEFT_MARGIN, LINE_2Y_UNIT, GFXFF);
+    tft.drawString(txt_kmh, COLUMN8 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT2, GFXFF);
+    tft.drawString(txt_max, COLUMN8 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT3, GFXFF);
+    tft.drawString(txt_w, COLUMN2 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF);
+    tft.drawString(txt_km, COLUMN9 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF);
+
+#if (TFT_MODEL == 2) // 3.5"
+    tft.setFreeFont(FONT_FORCED_SQUARE10pt7b);
+#else
+    tft.setFreeFont(FONT_FORCED_SQUARE14pt7b);
+#endif
+    tft.drawString(txt_kmh, COLUMN5 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT1, GFXFF);
 
     // draw grid
-    tft.fillRect(210 * SCALE_FACTOR_X, 0 * SCALE_FACTOR_Y, SEP_LINE, 253 * SCALE_FACTOR_X, ILI_DIGIT_DARK);
-    tft.fillRect(0 * SCALE_FACTOR_X, 79 * SCALE_FACTOR_Y, 210 * SCALE_FACTOR_X, SEP_LINE, ILI_DIGIT_DARK);
-    tft.fillRect(0 * SCALE_FACTOR_X, 189 * SCALE_FACTOR_Y, 210 * SCALE_FACTOR_X, SEP_LINE, ILI_DIGIT_DARK);
-    tft.fillRect(210 * SCALE_FACTOR_X, 134 * SCALE_FACTOR_Y, 129 * SCALE_FACTOR_X, SEP_LINE, ILI_DIGIT_DARK);
+    tft.drawLine(0, LINE_POINT1Y, LINE_POINT1X, LINE_POINT1Y, ILI_DIGIT_DARK_DISABLED);
+    tft.drawLine(LINE_POINT1X, LINE_POINT1Y, LINE_POINT2X, LINE_POINT2Y, ILI_DIGIT_DARK_DISABLED);
+    tft.drawLine(LINE_POINT2X, LINE_POINT2Y, LINE_POINT3X, LINE_POINT3Y, ILI_DIGIT_DARK_DISABLED);
+    tft.drawLine(LINE_POINT3X, LINE_POINT3Y, LINE_POINT4X, LINE_POINT4Y, ILI_DIGIT_DARK_DISABLED);
+    tft.drawLine(LINE_POINT4X, LINE_POINT4Y, 0, LINE_POINT4Y, ILI_DIGIT_DARK_DISABLED);
+
+    tft.drawLine(LINE_POINT5X, LINE_POINT5Y, TFT_HEIGHT, LINE_POINT5Y, ILI_DIGIT_DARK_DISABLED);
+    tft.drawLine(LINE_POINT6X, LINE_POINT6Y, TFT_HEIGHT, LINE_POINT6Y, ILI_DIGIT_DARK_DISABLED);
   }
   else
   {
@@ -198,29 +258,28 @@ void tftUpdateData(uint32_t i_loop)
     {
     case 0:
     {
-      sprintf(fmt, "%03.0f", _shrd->speedCurrent);
-      tft_util_draw_number(&tft, fmt, COLUMN2, LINE_1Y, TFT_WHITE, TFT_BLACK, 5, BIG_FONT_SIZE);
+      sprintf(fmt, "%02.0f", _shrd->speedCurrent);
+      tft_util_draw_number(&tft, fmt, COLUMN5, LINE_3Y, TFT_WHITE, TFT_BLACK, 5, BIG_FONT_SIZE);
 
       speed = speed + 2.2;
       if (speed > 150)
         speed = 0;
       break;
     }
-
     case 1:
     {
-      sprintf(fmt, "%03.0f", _shrd->speedMax);
-      tft_util_draw_number(&tft, fmt, COLUMN4, LINE_1Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE);
+      sprintf(fmt, "%02.0f", _shrd->speedMax);
+      tft_util_draw_number(&tft, fmt, COLUMN8, LINE_3Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
 
     case 2:
     {
       sprintf(fmt, "%01.0f", (float)_shrd->modeOrder);
-      tft_util_draw_number(&tft, fmt, COLUMN4, LINE_2Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
+      tft_util_draw_number(&tft, fmt, COLUMN1, LINE_1Y, TFT_WHITE, TFT_BLACK, 5, MEDIUM_FONT_SIZE);
       break;
     }
-
+      /*
     case 3:
     {
       sprintf(fmt, "%02.0f", _shrd->currentTemperature);
@@ -231,24 +290,24 @@ void tftUpdateData(uint32_t i_loop)
     case 4:
     {
       sprintf(fmt, "%02.0f", _shrd->currentHumidity);
-      tft_util_draw_number(&tft, fmt, COLUMN5, LINE_5Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
+      tft_util_draw_number(&tft, fmt, COLUMN5, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
-
+*/
     case 5:
     {
       double power = (_shrd->currentActual / 1000.0 * _shrd->voltageFilterMean / 1000.0);
       if (power < 0)
         power = 0;
       sprintf(fmt, "%05.0f", power);
-      tft_util_draw_number(&tft, fmt, COLUMN1, LINE_5Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
+      tft_util_draw_number(&tft, fmt, COLUMN2, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE);
       break;
     }
 
     case 6:
     {
       timeToString().toCharArray(fmt, 9);
-      tft_util_draw_number(&tft, fmt, COLUMN3, LINE_3Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
+      tft_util_draw_number(&tft, fmt, COLUMN6, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE);
       break;
     }
 
@@ -256,7 +315,7 @@ void tftUpdateData(uint32_t i_loop)
     {
       float voltage = _shrd->voltageFilterMean / 1000.0;
       sprintf(fmt, "%s", Dfmt2_1(voltage));
-      tft_util_draw_number(&tft, fmt, COLUMN5, LINE_2Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
+      tft_util_draw_number(&tft, fmt, COLUMN4, LINE_2Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
 
@@ -264,10 +323,10 @@ void tftUpdateData(uint32_t i_loop)
     {
       float distance = _shrd->distanceTrip / 10000.0;
       sprintf(fmt, "%s", Dfmt2_1(distance));
-      tft_util_draw_number(&tft, fmt, COLUMN4, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
+      tft_util_draw_number(&tft, fmt, COLUMN9, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE);
       break;
     }
-
+      /*
     case 9:
     {
       float odo = _shrd->distanceOdo / 10;
@@ -275,7 +334,7 @@ void tftUpdateData(uint32_t i_loop)
       tft_util_draw_number(&tft, fmt, COLUMN1, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
-
+*/
     case 10:
     {
       float autonomy = 65.2;
@@ -284,10 +343,10 @@ void tftUpdateData(uint32_t i_loop)
       if (autonomy < 0)
         autonomy = 0;
       sprintf(fmt, "%03.0f", autonomy);
-      tft_util_draw_number(&tft, fmt, COLUMN5, LINE_3Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
+      tft_util_draw_number(&tft, fmt, COLUMN3, LINE_2Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
-
+      /*
     case 11:
     {
       float current = _shrd->currentActual / 1000.0;
@@ -299,14 +358,46 @@ void tftUpdateData(uint32_t i_loop)
       tft_util_draw_number(&tft, fmt, COLUMN4, LINE_5Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
-
+*/
     case 12:
     {
       float bat_min = _settings->getS3F().Battery_min_voltage / 10.0;
       float bat_max = _settings->getS3F().Battery_max_voltage / 10.0;
       float batteryPercent = (1 / ((bat_max - bat_min) / ((_shrd->voltageFilterMean / 1000.0) - bat_min)) * 100);
-      drawBatteryJauge(&tft, batteryPercent);
+      drawBatteryJauge(&tft, batteryPercent, COLUMN7 * SCALE_FACTOR_X, LINE_2Y * SCALE_FACTOR_Y, 4 * SCALE_FACTOR_Y, 25 * SCALE_FACTOR_Y, 17);
       break;
+    }
+
+    case 13:
+    {
+
+      // draw interface - indicators
+#if (TFT_MODEL == 2) // 3.5"
+      tft.setFreeFont(FONT_FORCED_SQUARE10pt7b);
+#else
+      tft.setFreeFont(FONT_FORCED_SQUARE9pt7b);
+#endif
+      tft.setTextDatum(TC_DATUM);
+
+      int i = 0;
+      tft.setTextColor(_settings->pasEnabled ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+      tft.drawString(txt_pas, COLUMN0, LINE_3Y + i, GFXFF);
+
+      i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
+      tft.setTextColor(_shrd->brakePressedStatus ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+      tft.drawString(txt_brk, COLUMN0, LINE_3Y + i, GFXFF);
+
+      i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
+      tft.setTextColor(ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+      tft.drawString(txt_temp, COLUMN0, LINE_3Y + i, GFXFF);
+
+      i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
+      tft.setTextColor(ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+      tft.drawString(txt_hr, COLUMN0, LINE_3Y + i, GFXFF);
+
+      i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
+      tft.setTextColor(ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+      tft.drawString(txt_err, COLUMN0, LINE_3Y + i, GFXFF);
     }
     }
   }

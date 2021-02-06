@@ -128,6 +128,10 @@ public:
     uint8_t Throttle_output_min;
     uint8_t Throttle_output_max;
     uint8_t Throttle_output_curve;
+    uint8_t Pas_enabled;
+    uint8_t Display_brightness;
+    uint8_t Abs_enabled;
+
   } __attribute__((packed));
 #pragma pack(pop)
 

@@ -310,15 +310,14 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
   Serial.print("V");
   */
 
-
 #if DEBUG_DISPLAY_MINIMO_MOD_POWER
-    Serial.print("blh->bleLockStatus = ");
-    Serial.print(blh->bleLockStatus);
-    Serial.print(" / shrd->speedLimiter = ");
-    Serial.print(shrd->speedLimiter);
-    Serial.print(" / shrd->Speed_limiter_max_speed = ");
-    Serial.print(settings->getS1F().Speed_limiter_max_speed);
-    Serial.println("%");
+  Serial.print("blh->bleLockStatus = ");
+  Serial.print(blh->bleLockStatus);
+  Serial.print(" / shrd->speedLimiter = ");
+  Serial.print(shrd->speedLimiter);
+  Serial.print(" / shrd->Speed_limiter_max_speed = ");
+  Serial.print(settings->getS1F().Speed_limiter_max_speed);
+  Serial.println("%");
 #endif
 
   // lock escooter by reducing power to 5%
@@ -379,6 +378,22 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
   }
 
   return newPower;
+}
+
+uint8_t MinimoUart::modifyPas(char var, char data_buffer[])
+{
+
+#if MINIMO_SIMULATED_DISPLAY
+  shrd->pasEnabled = _settings->pasEnabled;
+#else
+  shrd->pasEnabled = (var - data_buffer[3]) >> 1 & 0x01;
+#if DEBUG_DISPLAY_MINIMO_MOD_PAS
+  Serial.printf("var = %02x / (var - data_buffer[3]) = %02x / blh->pasEnable = %d\n", var, (var - data_buffer[3]), shrd->pasEnabled);
+#endif
+#endif
+
+
+  return var;
 }
 
 uint8_t MinimoUart::getBrakeFromDisplay(char var, char data_buffer[])
@@ -821,6 +836,20 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
       {
 
         var = modifyMode(var, data_buffer_ori);
+        isModified_LcdToCntrl = 1;
+      }
+
+      if (*i == 5)
+      {
+
+        var = modifyMode(var, data_buffer_ori);
+        isModified_LcdToCntrl = 1;
+      }
+
+      if (*i == 5)
+      {
+
+        var = modifyPas(var, data_buffer_ori);
         isModified_LcdToCntrl = 1;
       }
 

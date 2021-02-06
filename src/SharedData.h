@@ -15,9 +15,9 @@ typedef enum
 
 typedef enum
 {
-    OTA_OFF,        // NORMAL MODE
-    OTA_IDE,    // IDE OTA MODE
-    OTA_SERVER  // OTA CLOUD - SERVER MODE
+    OTA_OFF,   // NORMAL MODE
+    OTA_IDE,   // IDE OTA MODE
+    OTA_SERVER // OTA CLOUD - SERVER MODE
 } OTAmode;
 
 class SharedData
@@ -38,9 +38,9 @@ public:
     double speedMax = 0.0;
     double speedOld = 0;
 
-    uint32_t distanceTrip = 0; // this TRIP can be reset from/for display // 1 unit = 0.1m ? 
+    uint32_t distanceTrip = 0;       // this TRIP can be reset from/for display // 1 unit = 0.1m ?
     uint32_t distanceTripForOdo = 0; // this TRIP should never be reset
-    uint32_t distanceOdo = 0;  // 1 unit = 100m
+    uint32_t distanceOdo = 0;        // 1 unit = 100m
     uint32_t distanceOdoBoot = 0;
     uint32_t distanceOdoInFlash = 0;
     uint32_t distancePrevTime = 0;
@@ -64,10 +64,10 @@ public:
 
     uint8_t brakePressedStatus = 0; // is brake pressed
     uint8_t brakePressedStatusOld = 0;
-    int8_t brakeSentOrder = -1;  // brake force order sent to controller
-    int8_t brakeSentOrderOld = -1; 
+    int8_t brakeSentOrder = -1; // brake force order sent to controller
+    int8_t brakeSentOrderOld = -1;
     int8_t brakeSentOrderFromBLE = -1; // brake force order from LCD
-    uint8_t brakeDisplay = 0;   // brake force order sent from escooter display
+    uint8_t brakeDisplay = 0;          // brake force order sent from escooter display
     int8_t brakeDisplayOld = -1;
 
     uint8_t brakeFordidenHighVoltage = 0;
@@ -95,6 +95,8 @@ public:
     //int32_t currentRawFilterMean = 0;
     int32_t currentActual = 0; // in milliamps
     uint8_t currentSensorPresent = 1;
+
+    uint8_t pasEnabled = 0;
 
     MyActions button1ClickStatus = ACTION_OFF;
     uint32_t button1LpDuration = 0;
