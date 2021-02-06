@@ -41,7 +41,7 @@ public:
   } tElectric_Brake_Type;
 
   typedef enum LIST_Throttle_curve
-  {    
+  {
     LIST_Throttle_curve_type_0 = 0,
     LIST_Throttle_curve_type_1,
     LIST_Throttle_curve_type_2,
@@ -131,6 +131,8 @@ public:
     uint8_t Pas_enabled;
     uint8_t Display_brightness;
     uint8_t Abs_enabled;
+    uint8_t Temperature_warning;
+    uint8_t Humidity_warning;
   } __attribute__((packed));
 #pragma pack(pop)
 

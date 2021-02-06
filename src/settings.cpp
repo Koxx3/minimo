@@ -2,7 +2,6 @@
 #include "settings.h"
 #include "prefs_storage.h"
 
-
 #define BLE_PIN_CODE 147258
 
 Settings::Settings()
@@ -165,6 +164,10 @@ void Settings::displaySettings6()
   Serial.println(settings6.fields.Abs_enabled);
   Serial.print("// Display_brightness : ");
   Serial.println(settings6.fields.Display_brightness);
+  Serial.print("// Temperature_warning : ");
+  Serial.println(settings6.fields.Temperature_warning);
+  Serial.print("// Humidity_warning : ");
+  Serial.println(settings6.fields.Humidity_warning);
 }
 
 void Settings::displaySettings()
@@ -181,4 +184,5 @@ void Settings::init()
 {
   Serial.print("Settings::init : ");
   settings3.fields.Bluetooth_pin_code = BLE_PIN_CODE;
+  settings6.fields.Display_brightness = 100;
 }

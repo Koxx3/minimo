@@ -131,8 +131,8 @@ void tftSetupBacklight()
 
 void tftBacklightFull()
 {
-
-  ledcWrite(0, 1023);
+  uint16_t brigtness = map(_settings->getS6F().Display_brightness, 0, 100, 0, 1023);
+  ledcWrite(0, brigtness);
 }
 
 void tftBacklightLow()
@@ -388,16 +388,23 @@ void tftUpdateData(uint32_t i_loop)
       tft.drawString(txt_brk, COLUMN0, LINE_3Y + i, GFXFF);
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
-      tft.setTextColor(ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+      tft.setTextColor(_shrd->currentTemperature > _settings->getS6F().Temperature_warning ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
       tft.drawString(txt_temp, COLUMN0, LINE_3Y + i, GFXFF);
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
-      tft.setTextColor(ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+      tft.setTextColor(_shrd->currentHumidity > _settings->getS6F().Humidity_warning ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
       tft.drawString(txt_hr, COLUMN0, LINE_3Y + i, GFXFF);
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
       tft.setTextColor(ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
       tft.drawString(txt_err, COLUMN0, LINE_3Y + i, GFXFF);
+
+      break;
+    }
+    case 14:
+    {
+      tftBacklightFull();
+      break;
     }
     }
   }
