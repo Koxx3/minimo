@@ -454,7 +454,7 @@ void setup()
   Serial.begin(BAUD_RATE_CONSOLE);
 
   Serial.printf("\n\nfirmware : type = %s / version : %d\n", FIRMWARE_TYPE, FIRMWARE_VERSION);
-  Serial.print(PSTR("\nsetup --- begin -> "));
+  Serial.print(PSTR("\nsetup --- begin :"));
 
   shrd.timeLastNotifyBle = millis();
 
@@ -462,17 +462,34 @@ void setup()
   setupSerial();
 
 #if HAS_I2C
-  Serial.print(PSTR("   I2C... "));
+  Serial.print(PSTR("   I2C..."));
   setupI2C();
 
-  Serial.print(PSTR("   DAC... "));
+  Serial.print(PSTR("   DAC..."));
   setupDac();
 
-  Serial.print(PSTR("   SHT3... "));
+  Serial.print(PSTR("   SHT3..."));
   setupShtc3();
 #endif
 
-  Serial.println(PSTR("   prefs... "));
+  Serial.print(PSTR("   pins..."));
+  setupPins();
+
+  Serial.print(PSTR("   buttons..."));
+  setupButtons();
+
+#if TFT_ENABLED
+  Serial.print(PSTR("   TFT... "));
+  tftSetup(&shrd, &settings);
+#endif
+
+  // force BLE lock mode
+  blh.setBleLock(false);
+
+  Serial.print(PSTR("   init data with settings... "));
+  initDataWithSettings();
+
+  Serial.println(PSTR("\n   prefs... "));
   prefs.setSettings(&settings);
   prefs.setSharedData(&shrd);
   prefs.restoreBleLockForced(&(blh.bleLockForced));
@@ -493,28 +510,6 @@ void setup()
   blh.setSettings(&settings);
   blh.setSharedData(&shrd);
 
-  Serial.println(PSTR("   pins ..."));
-  setupPins();
-
-  Serial.println(PSTR("   buttons ..."));
-  setupButtons();
-
-#if TFT_ENABLED
-  Serial.println(PSTR("   TFT ..."));
-  tftSetup(&shrd, &settings);
-#endif
-
-  // force BLE lock mode
-  blh.setBleLock(false);
-
-  Serial.println(PSTR("   init data with settings ..."));
-  initDataWithSettings();
-
-#if ENABLE_WATCHDOG
-  Serial.println(PSTR("   watchdog ..."));
-  setupWatchdog();
-#endif
-
   setupVoltage();
   setupBattery();
   setupAutonomy();
@@ -530,8 +525,13 @@ void setup()
       1);              // Core
 #endif
 
-  // End off setup
-  Serial.println("setup --- end");
+#if ENABLE_WATCHDOG
+  Serial.println(PSTR("Watchdog enabled"));
+  setupWatchdog();
+#endif 
+  // End of setup
+  Serial.println("setup --- end\n");
+
 }
 
 void notifyBleLogFrame(int mode, char data_buffer[], byte checksum)

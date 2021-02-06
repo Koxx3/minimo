@@ -521,16 +521,16 @@ void BluetoothHandler::setSettings(Settings *data)
             }
             else
             {
-                const char *uuid = pCharacteristic->getUUID().toString().data();
-                Serial.println("BLH - Write : unknown " + (String)(uuid));
+                const String uuid = pCharacteristic->getUUID().toString().c_str();
+                Serial.println("BLH - Write : unknown " + uuid);
             }
         }
 
         void onRead(BLECharacteristic *pCharacteristic)
         {
 
-            const char *uuid = pCharacteristic->getUUID().toString().data();
-            Serial.println("onRead : " + (String)(uuid));
+            const String uuid = pCharacteristic->getUUID().toString().c_str();
+            Serial.println("onRead : " + uuid);
 
             if (pCharacteristic->getUUID().toString() == FIRMWARE_CHARACTERISTIC_UUID)
             {
