@@ -72,7 +72,7 @@ void preferences::restoreBrakeMinPressure()
   Serial.print("restore restoreBrakeMinPressure value : ");
   Serial.println(shrd->brakeMinPressureRaw);
 
-  if (shrd->brakeMinPressureRaw == -1)                                          //A REVOIR. TJR NECESSAIRE AVEC PREFS ?
+  if (shrd->brakeMinPressureRaw == -1)
     shrd->brakeMinPressureRaw = ANALOG_BRAKE_MIN_VALUE;
 }
 
@@ -115,11 +115,9 @@ void preferences::saveOdo()
 }
 
 void preferences::restoreOdo()
-{
-  
-
+{ 
   prefs.begin(APP_STORAGE, false);
-  shrd->distanceOdo = prefs.getUInt("distanceOdo", 0xffffffff);
+  shrd->distanceOdo = prefs.getUInt("distanceOdo", 0);
   prefs.end();
 
   shrd->distanceOdoInFlash = shrd->distanceOdo;
@@ -128,29 +126,16 @@ void preferences::restoreOdo()
   Serial.print("restore restoreOdo value : ");
   Serial.println(shrd->distanceOdo);
 
-  if (shrd->distanceOdo == 0xffffffff)
-  {
-    shrd->distanceOdo = 0;
-    shrd->distanceOdoBoot = 0;
-    shrd->distanceOdoInFlash = 0;
-    saveOdo();
-    Serial.print("==> ODO init at 0");
-  }
 }
 
 void preferences::saveBatteryCalib()
 {
-
-  uint32_t time = millis();
-
   prefs.begin(APP_STORAGE, false);
-  prefs.putFloat ("batteryMaxVoltageCalibUser", shrd->batteryMaxVoltageCalibUser);
-  prefs.putFloat("batteryMaxVoltageCalibRaw", shrd->batteryMaxVoltageCalibRaw);
-  prefs.putFloat("batteryMinVoltageCalibUser", shrd->batteryMinVoltageCalibUser);
-  prefs.putFloat("batteryMinVoltageCalibRaw", shrd->batteryMinVoltageCalibRaw);
+  prefs.putFloat ("bMaxVoltCalibUser", shrd->batteryMaxVoltageCalibUser);
+  prefs.putUInt("bMaxVoltCalibRaw", shrd->batteryMaxVoltageCalibRaw);
+  prefs.putFloat("bMinVoltCalibUser", shrd->batteryMinVoltageCalibUser);
+  prefs.putUInt("bMinVoltCalibRaw", shrd->batteryMinVoltageCalibRaw);
   prefs.end();
-
-  Serial.println(millis() - time);
 
   Serial.println("save BatteryCalib value : ");
   Serial.print("  batteryMaxVoltageCalibUser : ");
@@ -166,10 +151,10 @@ void preferences::saveBatteryCalib()
 void preferences::restoreBatteryCalib()
 {
   prefs.begin(APP_STORAGE, false);
-  shrd->batteryMaxVoltageCalibUser = prefs.getFloat("batteryMaxVoltageCalibUser");
-  shrd->batteryMaxVoltageCalibRaw = prefs.getFloat("batteryMaxVoltageCalibRaw");
-  shrd->batteryMinVoltageCalibUser = prefs.getFloat("batteryMinVoltageCalibUser");
-  shrd->batteryMinVoltageCalibRaw = prefs.getFloat("batteryMinVoltageCalibRaw");
+  shrd->batteryMaxVoltageCalibUser = prefs.getFloat("bMaxVoltCalibUser", 66.20);
+  shrd->batteryMaxVoltageCalibRaw = prefs.getUInt("bMaxVoltCalibRaw", 2970);
+  shrd->batteryMinVoltageCalibUser = prefs.getFloat("bMinVoltCalibUser", 0.0);
+  shrd->batteryMinVoltageCalibRaw = prefs.getUInt("bMinVoltCalibRaw", 0);
   prefs.end();
 
   Serial.println("restore BatteryCalib value : ");
@@ -205,7 +190,6 @@ boolean preferences::restoreSettings()
   prefs.getBytes(SETTINGS5, settings->settings5.buffer, prefs.getBytesLength(SETTINGS5));
   prefs.getBytes(SETTINGS6, settings->settings6.buffer, prefs.getBytesLength(SETTINGS6));
   prefs.end();
-
   if (settings->settings1.buffer[0] == 0xff || settings->settings1.buffer[1] == 0xff)
     return false;
 

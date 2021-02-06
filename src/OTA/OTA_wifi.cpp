@@ -9,8 +9,6 @@
 #include <ArduinoOTA.h>
 #include "ArduinoJson.h"
 
-#include <WiFiMulti.h>
-
 #include "OTA/esp32fota.h"
 #include <WiFiClientSecure.h>
 #include "Controllers/ControllerType.h"

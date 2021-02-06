@@ -128,14 +128,13 @@ public:
     uint8_t Throttle_output_min;
     uint8_t Throttle_output_max;
     uint8_t Throttle_output_curve;
-
   } __attribute__((packed));
 #pragma pack(pop)
 
   union settings_bt1
   {
     struct field_s1 fields;
-    unsigned char buffer[sizeof(struct field_s1)];
+    unsigned char buffer[sizeof(struct field_s1)] = {0xFF}; //Permet de détecter un ESP vierge par mise du buffer[0] à 0xFF)
   };
 
   union settings_bt2
@@ -165,7 +164,7 @@ public:
   union settings_bt6
   {
     struct field_s6 fields;
-    unsigned char buffer[sizeof(struct field_s6)];
+    unsigned char buffer[sizeof(struct field_s6)] = {0xFF}; //Empêche une div by zéro en mettant buffer[0] à 0xFF
   };
 
   union settings_bt1 settings1;

@@ -452,27 +452,27 @@ void setup()
 
   // Initialize the Serial (use only in setup codes)
   Serial.begin(BAUD_RATE_CONSOLE);
-  Serial.println(PSTR("\n\nsetup --- begin"));
 
-  Serial.printf("firmware : type = %s / version : %d\n", FIRMWARE_TYPE, FIRMWARE_VERSION);
+  Serial.printf("\n\nfirmware : type = %s / version : %d\n", FIRMWARE_TYPE, FIRMWARE_VERSION);
+  Serial.print(PSTR("\nsetup --- begin -> "));
 
   shrd.timeLastNotifyBle = millis();
 
-  Serial.println(PSTR("   serial ..."));
+  Serial.print(PSTR("   serial... "));
   setupSerial();
 
 #if HAS_I2C
-  Serial.println(PSTR("   i2c ..."));
+  Serial.print(PSTR("   I2C... "));
   setupI2C();
 
-  Serial.println(PSTR("   dac ..."));
+  Serial.print(PSTR("   DAC... "));
   setupDac();
 
-  Serial.println(PSTR("   shtc3 ..."));
+  Serial.print(PSTR("   SHT3... "));
   setupShtc3();
 #endif
 
-  Serial.println(PSTR("   prefs ..."));
+  Serial.println(PSTR("   prefs... "));
   prefs.setSettings(&settings);
   prefs.setSharedData(&shrd);
   prefs.restoreBleLockForced(&(blh.bleLockForced));
