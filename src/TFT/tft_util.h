@@ -3,7 +3,7 @@
 
 #include <TFT_eSPI.h>
 
-#define ILI_DIGIT_DARK_DISABLED 0x3186  // 90 - too much : 0x5ACB // 70 : 0x4228 // 50 : 0x3186
+#define ILI_DIGIT_DARK_DISABLED TFT_WHITE // 0x3186  // 90 - too much : 0x5ACB // 70 : 0x4228 // 50 : 0x3186
 #define ILI_DIGIT_DARK_DIGIT TFT_BLACK
 
 #if (TFT_MODEL == 1) // 2.4"

@@ -16,6 +16,7 @@
 #include "FORCED_SQUARE10pt7b.h"
 #include "FORCED_SQUARE12pt7b.h"
 #include "FORCED_SQUARE14pt7b.h"
+#include "FORCED_SQUARE18pt7b.h"
 
 #include "TFT/smart_splash.h"
 
@@ -30,6 +31,7 @@
 #define FONT_FORCED_SQUARE10pt7b &FORCED_SQUARE10pt7b
 #define FONT_FORCED_SQUARE12pt7b &FORCED_SQUARE12pt7b
 #define FONT_FORCED_SQUARE14pt7b &FORCED_SQUARE14pt7b
+#define FONT_FORCED_SQUARE18pt7b &FORCED_SQUARE18pt7b
 
 #define SEP_LINE 2 * SCALE_FACTOR_X
 #define UNIT_LEFT_MARGIN 5 * SCALE_FACTOR_X
@@ -41,13 +43,13 @@
 
 #define LINE_1Y 9 * SCALE_FACTOR_Y
 #define LINE_2Y 23 * SCALE_FACTOR_Y
-#define LINE_2Y_UNIT (LINE_2Y + 27) * SCALE_FACTOR_Y
+#define LINE_2Y_UNIT LINE_2Y + (27 * SCALE_FACTOR_Y)
 #define LINE_3Y 79 * SCALE_FACTOR_Y
-#define LINE_3Y_UNIT1 (LINE_3Y + 95) * SCALE_FACTOR_Y // Km/m speed
-#define LINE_3Y_UNIT2 (LINE_3Y + 26) * SCALE_FACTOR_Y // speed max
-#define LINE_3Y_UNIT3 (LINE_3Y + 15) * SCALE_FACTOR_Y // Km/h speed max
+#define LINE_3Y_UNIT1 LINE_3Y + (95 * SCALE_FACTOR_Y) // Km/m speed
+#define LINE_3Y_UNIT2 LINE_3Y + (26 * SCALE_FACTOR_Y) // speed max
+#define LINE_3Y_UNIT3 LINE_3Y + (15 * SCALE_FACTOR_Y) // Km/h speed max
 #define LINE_4Y 210 * SCALE_FACTOR_Y
-#define LINE_4Y_UNIT (LINE_4Y + 22) * SCALE_FACTOR_Y
+#define LINE_4Y_UNIT LINE_4Y + (22 * SCALE_FACTOR_Y)
 
 // separation lines
 // for left indicators
@@ -68,23 +70,28 @@
 
 #define SPACE_INDICATORS_Y 19
 
-#if (TFT_MODEL == 1)                 // 2.4"
-#define COLUMN0 24 * SCALE_FACTOR_X  // 78 for 3.5
-#define COLUMN1 39 * SCALE_FACTOR_X  // 78 for 3.5
-#define COLUMN2 82 * SCALE_FACTOR_X  // 120 for 3.5
-#define COLUMN3 118 * SCALE_FACTOR_X // 120 for 3.5
-#define COLUMN4 219 * SCALE_FACTOR_X // 192 for 3.5
-#define COLUMN5 225 * SCALE_FACTOR_X // 307 for 3.5
-#define COLUMN6 215 * SCALE_FACTOR_X // 307 for 3.5
-#define COLUMN7 247 * SCALE_FACTOR_X // 307 for 3.5
-#define COLUMN8 279 * SCALE_FACTOR_X // 307 for 3.5
-#define COLUMN9 292 * SCALE_FACTOR_X // 307 for 3.5
-#else                                // 3.5"
-#define COLUMN1 80 * SCALE_FACTOR_X  // 78 for 3.5
-#define COLUMN2 115 * SCALE_FACTOR_X // 120 for 3.5
-#define COLUMN3 115 * SCALE_FACTOR_X // 120 for 3.5
-#define COLUMN4 200 * SCALE_FACTOR_X // 192 for 3.5
-#define COLUMN5 307 * SCALE_FACTOR_X // 307 for 3.5
+#if (TFT_MODEL == 1) // 2.4"
+#define COLUMN0 24 * SCALE_FACTOR_X
+#define COLUMN1 39 * SCALE_FACTOR_X
+#define COLUMN2 82 * SCALE_FACTOR_X
+#define COLUMN3 118 * SCALE_FACTOR_X
+#define COLUMN4 219 * SCALE_FACTOR_X
+#define COLUMN5 225 * SCALE_FACTOR_X
+#define COLUMN6 215 * SCALE_FACTOR_X
+#define COLUMN7 247 * SCALE_FACTOR_X
+#define COLUMN8 279 * SCALE_FACTOR_X
+#define COLUMN9 292 * SCALE_FACTOR_X
+#else // 3.5"
+#define COLUMN0 24 * SCALE_FACTOR_X
+#define COLUMN1 39 * SCALE_FACTOR_X
+#define COLUMN2 82 * SCALE_FACTOR_X
+#define COLUMN3 118 * SCALE_FACTOR_X
+#define COLUMN4 219 * SCALE_FACTOR_X
+#define COLUMN5 225 * SCALE_FACTOR_X
+#define COLUMN6 215 * SCALE_FACTOR_X
+#define COLUMN7 247 * SCALE_FACTOR_X
+#define COLUMN8 279 * SCALE_FACTOR_X
+#define COLUMN9 292 * SCALE_FACTOR_X
 #endif
 
 #define LINE_TEXT_OFFSET 6
@@ -118,6 +125,12 @@ const char *txt_km = "Km";
 const char *txt_max = "Max";
 const char *txt_w = "W";
 const char *txt_v = "V";
+
+uint8_t oldShrdPasEnabled = 255;
+uint8_t oldShrdBrakePressedStatus = 255;
+uint8_t oldShrdCurrentTemperature = 255;
+uint8_t oldShrdCurrentHumidity = 255;
+uint8_t oldError = 255;
 
 void tftSetupBacklight()
 {
@@ -236,7 +249,7 @@ void tftUpdateData(uint32_t i_loop)
     tft.drawString(txt_km, COLUMN9 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF);
 
 #if (TFT_MODEL == 2) // 3.5"
-    tft.setFreeFont(FONT_FORCED_SQUARE10pt7b);
+    tft.setFreeFont(FONT_FORCED_SQUARE18pt7b);
 #else
     tft.setFreeFont(FONT_FORCED_SQUARE14pt7b);
 #endif
@@ -373,27 +386,45 @@ void tftUpdateData(uint32_t i_loop)
 
       // draw interface - indicators
 #if (TFT_MODEL == 2) // 3.5"
-      tft.setFreeFont(FONT_FORCED_SQUARE10pt7b);
+      tft.setFreeFont(FONT_FORCED_SQUARE12pt7b);
 #else
       tft.setFreeFont(FONT_FORCED_SQUARE9pt7b);
 #endif
       tft.setTextDatum(TC_DATUM);
 
       int i = 0;
-      tft.setTextColor(_shrd->pasEnabled ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
-      tft.drawString(txt_pas, COLUMN0, LINE_3Y + i, GFXFF);
+      if (oldShrdPasEnabled != _shrd->pasEnabled)
+      {
+        tft.setTextColor(_shrd->pasEnabled ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.drawString(txt_pas, COLUMN0, LINE_3Y + i, GFXFF);
+        oldShrdPasEnabled = _shrd->pasEnabled;
+      }
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
-      tft.setTextColor(_shrd->brakePressedStatus ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
-      tft.drawString(txt_brk, COLUMN0, LINE_3Y + i, GFXFF);
+      if (oldShrdBrakePressedStatus != _shrd->brakePressedStatus)
+      {
+        tft.setTextColor(_shrd->brakePressedStatus ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.drawString(txt_brk, COLUMN0, LINE_3Y + i, GFXFF);
+        oldShrdBrakePressedStatus = _shrd->brakePressedStatus;
+      }
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
-      tft.setTextColor(_shrd->currentTemperature > _settings->getS6F().Temperature_warning ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
-      tft.drawString(txt_temp, COLUMN0, LINE_3Y + i, GFXFF);
+      uint8_t currentTemperatureStatus = (_shrd->currentTemperature > _settings->getS6F().Temperature_warning);
+      if (oldShrdCurrentTemperature != currentTemperatureStatus)
+      {
+        tft.setTextColor(currentTemperatureStatus ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.drawString(txt_temp, COLUMN0, LINE_3Y + i, GFXFF);
+        oldShrdCurrentTemperature = currentTemperatureStatus;
+      }
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
-      tft.setTextColor(_shrd->currentHumidity > _settings->getS6F().Humidity_warning ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
-      tft.drawString(txt_hr, COLUMN0, LINE_3Y + i, GFXFF);
+      uint8_t currentHumidityStatus = (_shrd->currentHumidity > _settings->getS6F().Humidity_warning);
+      if (oldShrdCurrentHumidity != currentHumidityStatus)
+      {
+        tft.setTextColor(currentHumidityStatus ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.drawString(txt_hr, COLUMN0, LINE_3Y + i, GFXFF);
+        oldShrdCurrentHumidity = currentHumidityStatus;
+      }
 
       boolean error = _shrd->errorThrottle ||
                       _shrd->errorBrake ||
@@ -402,8 +433,12 @@ void tftUpdateData(uint32_t i_loop)
                       _shrd->errorSerialContrlDataFeedback;
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
-      tft.setTextColor(error ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
-      tft.drawString(txt_err, COLUMN0, LINE_3Y + i, GFXFF);
+      if (oldError != error)
+      {
+        tft.setTextColor(error ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.drawString(txt_err, COLUMN0, LINE_3Y + i, GFXFF);
+        oldError = error;
+      }
 
       break;
     }
