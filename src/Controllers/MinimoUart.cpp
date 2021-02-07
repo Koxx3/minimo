@@ -760,7 +760,7 @@ uint8_t MinimoUart::modifySpeed(char var, char data_buffer[], uint8_t byte)
 //////------------------------------------
 ////// Serial link functions
 
-bool MinimoUart::getSerialStatusFromContrl()
+bool MinimoUart::getSerialStatusOkFromContrl()
 {
   if (timeLastValidFrameFromCntrl + 500 > millis())
   {
@@ -769,7 +769,7 @@ bool MinimoUart::getSerialStatusFromContrl()
   return false;
 }
 
-bool MinimoUart::getSerialStatusFromLcd()
+bool MinimoUart::getSerialStatusOkFromLcd()
 {
   if (timeLastValidFrameFromLcd + 500 > millis())
   {

@@ -1657,8 +1657,8 @@ void loop()
   minomoCntrl.processMinimotorsSerial(i_loop, false);
 
   // get serial link status ... both directions
-  shrd.errorSerialFromContrl = !minomoCntrl.getSerialStatusFromContrl();
-  shrd.errorSerialFromDisplay = !minomoCntrl.getSerialStatusFromLcd();
+  shrd.errorSerialFromContrl = !minomoCntrl.getSerialStatusOkFromContrl();
+  shrd.errorSerialFromDisplay = !minomoCntrl.getSerialStatusOkFromLcd();
 #elif CONTROLLER_TYPE == CONTROLLER_VESC
   if (i_loop % 10 == 1)
   {
