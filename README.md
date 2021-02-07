@@ -145,6 +145,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Nitro Boost ON/OFF
         - [✅] Aux ON/OFF       
         - [ ] Switch modes 1/2/3 or 2/3   
+        - [ ] Settings access
         - [ ] Mode Z ON/OFF
     - [✅] Disable electric brake with full battery
     - [✅] Manual calibration for analog brake
@@ -152,8 +153,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Use brake switch as startup for speed limiter
     - [✅] LCD Speed adjustment
     - [✅] Exponential acceleration curve
+    - [✅] PAS switch
     - [IN PROGRESS 🔄] Automatic ECO mode on low battery 
-    - [ ] PAS switch
     - [ ] Dynamic BLE debug infos
     - [ ] Configurable current loop regulation
     - [ ] Customize mode Z with different power / max speed
