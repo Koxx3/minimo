@@ -26,7 +26,7 @@ uint8_t Battery::level(uint32_t voltage)
 	{
 		return 100;
 	}
-	//Jo's percentage V6
+	//Jo's percentage V6.1
 	else
 	{
 		float voltByCell = (voltage / nbcells);
@@ -36,14 +36,14 @@ uint8_t Battery::level(uint32_t voltage)
 	
 		if (newPercent == OldPercent || currentMillis < 5000)
 		{
-			return newPercent; // dans les 5 secondes après le startup, la tension se stabilise et on n'a pas baisé la batterie donc on prends la valeur "crue"
+			return newPercent; // dans les 5 secondes après le startup, la tension se stabilise et on n'a pas tiré sur la batterie donc on prends la valeur "crue"
 		}
-		if (OldPercent == 0)
+		else if (OldPercent == 0)
 		{
-			OldPercent = newPercent; // Après les 5 secondes, old est pas initialisé (si pas cette ligne on retombe à 0 %)
+			OldPercent = newPercent; // Après les 5 secondes, old doit être initialisé 
 		}
-		else if (currentMillis - OldMillis > 20000)
-		{ // toutes les 20 sec, on abaisse ou remonte le % si jamais la tension à varié. Basé sur le fait qu'on ne peut pas cramer plus d'1% de batt en 20 sec.
+		else if (currentMillis - OldMillis > 60000)
+		{ // toutes les 60 sec, on abaisse ou remonte le % si jamais la tension à varié. Basé sur le fait qu'on ne peut pas cramer plus d'1% de batt en 60 sec dans une utilisation normale.
 			OldMillis = currentMillis;
 			if (newPercent > OldPercent)
 				OldPercent++;
@@ -53,5 +53,5 @@ uint8_t Battery::level(uint32_t voltage)
 
 		return OldPercent;
 	}
-	//Jo's percentage V6
+	//Jo's percentage V6.1
 }
