@@ -85,7 +85,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [N PROGRESS 🔄] Error codes processing
         - [✅] Undervoltage
         - [ ] Controller error
-        - [ ] Trottle error
+        - [ ] Throttle included in display error
 
 - [✅] VESC
     - [✅] Read serial link
