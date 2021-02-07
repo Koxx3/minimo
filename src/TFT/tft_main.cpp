@@ -429,8 +429,8 @@ void tftUpdateData(uint32_t i_loop)
 
       boolean error = _shrd->errorThrottle ||
                       _shrd->errorBrake ||
-                      _shrd->errorSerialDisplayToContrl ||
-                      _shrd->errorSerialContrlToDisplay ||
+                      _shrd->errorSerialFromDisplay ||
+                      _shrd->errorSerialFromContrl ||
                       _shrd->errorSerialContrlDataFeedback;
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);

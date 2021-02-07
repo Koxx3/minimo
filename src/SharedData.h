@@ -107,8 +107,8 @@ public:
 
     boolean errorThrottle = false;
     boolean errorBrake = false;
-    boolean errorSerialDisplayToContrl = false;
-    boolean errorSerialContrlToDisplay = false;
+    boolean errorSerialFromDisplay = false;
+    boolean errorSerialFromContrl = false;
     boolean errorSerialContrlDataFeedback = false;
 };
 

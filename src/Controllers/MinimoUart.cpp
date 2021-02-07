@@ -386,16 +386,15 @@ uint8_t MinimoUart::modifyPas(char var, char data_buffer[])
 #if MINIMO_SIMULATED_DISPLAY
   shrd->pasEnabled = settings->getS6F().Pas_enabled;
   if (shrd->pasEnabled)
-  var = var | 0x02;
+    var = var | 0x02;
   else
-  var = var & 0xfd;
+    var = var & 0xfd;
 #else
   shrd->pasEnabled = (var >> 1) & 0x01;
 #endif
 
-
 #if DEBUG_DISPLAY_MINIMO_MOD_PAS
-  Serial.printf("var = %02x / shrd->pasEnable = %d\n", var,  shrd->pasEnabled);
+  Serial.printf("var = %02x / shrd->pasEnable = %d\n", var, shrd->pasEnabled);
 #endif
   return var;
 }
@@ -761,6 +760,24 @@ uint8_t MinimoUart::modifySpeed(char var, char data_buffer[], uint8_t byte)
 //////------------------------------------
 ////// Serial link functions
 
+bool MinimoUart::getSerialStatusFromContrl()
+{
+  if (timeLastValidFrameFromCntrl + 500 > millis())
+  {
+    return true;
+  }
+  return false;
+}
+
+bool MinimoUart::getSerialStatusFromLcd()
+{
+  if (timeLastValidFrameFromLcd + 500 > millis())
+  {
+    return true;
+  }
+  return false;
+}
+
 void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSerLcd, int serialMode, char *data_buffer_ori, char *data_buffer_mod)
 {
 
@@ -1072,6 +1089,18 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
           blh->notifyBleLogs(log);
 
           begin_LcdToCntrl = 1;
+        }
+      }
+      else
+      {
+
+        if (serialMode == MODE_CNTRL_TO_LCD)
+        {
+          timeLastValidFrameFromCntrl = millis();
+        }
+        else
+        {
+          timeLastValidFrameFromLcd = millis();
         }
       }
 

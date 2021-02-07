@@ -79,6 +79,9 @@ public:
     uint8_t modifyEco(char var, char data_buffer[]);
     uint8_t modifyPas(char var, char data_buffer[]);
 
+    bool getSerialStatusOkFromContrl();
+    bool getSerialStatusOkFromLcd();
+
     void readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSerLcd, int serialMode, char *data_buffer_ori, char *data_buffer_mod);
     void processMinimotorsSerial(uint32_t i_loop, boolean simulatedDisplay);
 
@@ -100,6 +103,9 @@ private:
 
     int i_LcdRcv = 0;
     int i_CntrlRcv = 0;
+
+    uint32_t timeLastValidFrameFromCntrl = 0;
+    uint32_t timeLastValidFrameFromLcd = 0;
 
     char data_buffer_lcd_mod[DATA_BUFFER_SIZE];
     char data_buffer_cntrl_mod[DATA_BUFFER_SIZE];
