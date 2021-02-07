@@ -68,7 +68,7 @@ public:
     uint8_t modifyModeOld(char var, char data_buffer[]);
     uint8_t getMode(char var, char data_buffer[]);
     uint8_t modifyMode(char var, char data_buffer[]);
-    uint8_t getBrakeFromDisplay(char var, char data_buffer[]);
+    uint8_t getBrakeFromCntrlFrame(char var, char data_buffer[]);
     void displayDecodedFrame(int mode, char data_buffer[], byte checksum);
     double getSpeed();
     uint8_t modifyAccel(char var, char data_buffer[]);
@@ -81,6 +81,8 @@ public:
 
     bool getSerialStatusOkFromContrl();
     bool getSerialStatusOkFromLcd();
+    bool getContrlStatusOk();
+    bool isContrlInError(char var, char data_buffer[]);
 
     void readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSerLcd, int serialMode, char *data_buffer_ori, char *data_buffer_mod);
     void processMinimotorsSerial(uint32_t i_loop, boolean simulatedDisplay);
@@ -106,6 +108,8 @@ private:
 
     uint32_t timeLastValidFrameFromCntrl = 0;
     uint32_t timeLastValidFrameFromLcd = 0;
+
+    bool cntrlInError = false;
 
     char data_buffer_lcd_mod[DATA_BUFFER_SIZE];
     char data_buffer_cntrl_mod[DATA_BUFFER_SIZE];

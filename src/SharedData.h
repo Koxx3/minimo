@@ -109,7 +109,7 @@ public:
     boolean errorBrake = false;
     boolean errorSerialFromDisplay = false;
     boolean errorSerialFromContrl = false;
-    boolean errorSerialContrlDataFeedback = false;
+    boolean errorContrl = false;
 };
 
 #endif

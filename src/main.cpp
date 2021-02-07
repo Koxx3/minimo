@@ -1659,6 +1659,7 @@ void loop()
   // get serial link status ... both directions
   shrd.errorSerialFromContrl = !minomoCntrl.getSerialStatusOkFromContrl();
   shrd.errorSerialFromDisplay = !minomoCntrl.getSerialStatusOkFromLcd();
+  shrd.errorContrl = !minomoCntrl.getContrlStatusOk();
 #elif CONTROLLER_TYPE == CONTROLLER_VESC
   if (i_loop % 10 == 1)
   {

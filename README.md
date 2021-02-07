@@ -82,7 +82,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Read/write serial link CNTRL_TO_LCD
     - [✅] Decode speed/mode/brake/regulator from serial link
     - [✅] Frame error detection
-    - [ ] Error codes processing
+    - [✅] Error codes processing
 
 - [✅] VESC
     - [✅] Read serial link

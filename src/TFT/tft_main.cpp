@@ -431,7 +431,7 @@ void tftUpdateData(uint32_t i_loop)
                       _shrd->errorBrake ||
                       _shrd->errorSerialFromDisplay ||
                       _shrd->errorSerialFromContrl ||
-                      _shrd->errorSerialContrlDataFeedback;
+                      _shrd->errorContrl;
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
       if (oldError != error)

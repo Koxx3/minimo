@@ -399,7 +399,16 @@ uint8_t MinimoUart::modifyPas(char var, char data_buffer[])
   return var;
 }
 
-uint8_t MinimoUart::getBrakeFromDisplay(char var, char data_buffer[])
+bool MinimoUart::isContrlInError(char var, char data_buffer[])
+{
+
+  uint8_t byte4 = (data_buffer[4] - data_buffer[3]);
+  uint8_t byte5 = (data_buffer[5] - data_buffer[3]);
+
+  return !((byte4 == 0xf8) && (byte5 == 0xf8));
+}
+
+uint8_t MinimoUart::getBrakeFromCntrlFrame(char var, char data_buffer[])
 {
 
   uint8_t brake = (var - data_buffer[3]) & 0x20;
@@ -417,7 +426,6 @@ uint8_t MinimoUart::getBrakeFromDisplay(char var, char data_buffer[])
 #endif
 
     // notify bluetooth
-    //blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
     blh->notifyCommandsFeedback();
   }
   else if ((brakePressedStatusFromControllerNew == 0) && (shrd->brakePressedStatusOld == 1))
@@ -454,7 +462,6 @@ uint8_t MinimoUart::getBrakeFromDisplay(char var, char data_buffer[])
 #endif
 
     // notify bluetooth
-    //blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
     blh->notifyCommandsFeedback();
   }
 
@@ -531,7 +538,6 @@ uint8_t MinimoUart::modifyBrakeFromDisplay(char var, char data_buffer[])
         }
 
         // notify bluetooth
-        //blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
         blh->notifyCommandsFeedback();
       }
       else if (shrd->brakeFordidenHighVoltage == 1)
@@ -564,7 +570,6 @@ uint8_t MinimoUart::modifyBrakeFromDisplay(char var, char data_buffer[])
       if (shrd->brakeSentOrder != shrd->brakeSentOrderOld)
       {
         // notify bluetooth
-        //blh->notifyBreakeSentOrder(shrd->brakeSentOrder, shrd->brakePressedStatus, shrd->brakeFordidenHighVoltage);
         blh->notifyCommandsFeedback();
       }
 
@@ -619,7 +624,6 @@ uint8_t MinimoUart::modifyEco(char var, char data_buffer[])
     shrd->ecoLcdOld = shrd->ecoLcd;
 
     // notify bluetooth
-    //    blh->notifyEcoOrder(shrd->ecoOrder);
     blh->notifyCommandsFeedback();
   }
 
@@ -648,7 +652,6 @@ uint8_t MinimoUart::modifyAccel(char var, char data_buffer[])
     shrd->accelLcdOld = shrd->accelLcd;
 
     // notify bluetooth
-    //blh->notifyAccelOrder(shrd->accelOrder);
     blh->notifyCommandsFeedback();
 
     /*
@@ -776,6 +779,11 @@ bool MinimoUart::getSerialStatusOkFromLcd()
     return true;
   }
   return false;
+}
+
+bool MinimoUart::getContrlStatusOk()
+{
+  return cntrlInError;
 }
 
 void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSerLcd, int serialMode, char *data_buffer_ori, char *data_buffer_mod)
@@ -919,8 +927,13 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
       {
         if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_cntrl)
         {
-          getBrakeFromDisplay(var, data_buffer_ori);
+          getBrakeFromCntrlFrame(var, data_buffer_ori);
         }
+      }
+
+      if (*i == 5)
+      {
+        cntrlInError = isContrlInError(var, data_buffer_ori);
       }
 
       if (*i == 6)
