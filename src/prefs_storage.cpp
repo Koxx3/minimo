@@ -56,7 +56,7 @@ void preferences::restoreBleLockForced(int8_t *bleLockForced)
 void preferences::saveBrakeMinPressure()
 {
   prefs.begin(APP_STORAGE, false);
-  prefs.putInt("brakeMinPressureRaw", shrd->brakeMinPressureRaw);
+  prefs.putInt("brkMinPressRaw", shrd->brakeMinPressureRaw);
   prefs.end();
 
   Serial.print("save saveBrakeMinPressure value : ");
@@ -66,7 +66,7 @@ void preferences::saveBrakeMinPressure()
 void preferences::restoreBrakeMinPressure()
 {
   prefs.begin(APP_STORAGE, false);
-  shrd->brakeMinPressureRaw = prefs.getInt("brakeMinPressureRaw", 900);
+  shrd->brakeMinPressureRaw = prefs.getInt("brkMinPressRaw", 900);
   prefs.end();
 
   Serial.print("restore restoreBrakeMinPressure value : ");
@@ -79,7 +79,7 @@ void preferences::restoreBrakeMinPressure()
 void preferences::saveBrakeMaxPressure()
 {
   prefs.begin(APP_STORAGE, false);
-  prefs.putInt("brakeMaxPressureRaw", shrd->brakeMaxPressureRaw);
+  prefs.putInt("brkMaxPressRaw", shrd->brakeMaxPressureRaw);
   prefs.end();
 
   Serial.print("save saveBrakeMaxPressure value : ");
@@ -89,7 +89,7 @@ void preferences::saveBrakeMaxPressure()
 void preferences::restoreBrakeMaxPressure()
 {
   prefs.begin(APP_STORAGE, false);
-  shrd->brakeMaxPressureRaw = prefs.getInt("brakeMaxPressureRaw", 2000);
+  shrd->brakeMaxPressureRaw = prefs.getInt("brkMaxPressRaw", 2000);
   prefs.end();
 
   Serial.print("restore restoreBrakeMaxPressure value : ");
@@ -131,10 +131,10 @@ void preferences::restoreOdo()
 void preferences::saveBatteryCalib()
 {
   prefs.begin(APP_STORAGE, false);
-  prefs.putFloat ("bMaxVoltCalibUser", shrd->batteryMaxVoltageCalibUser);
-  prefs.putUInt("bMaxVoltCalibRaw", shrd->batteryMaxVoltageCalibRaw);
-  prefs.putFloat("bMinVoltCalibUser", shrd->batteryMinVoltageCalibUser);
-  prefs.putUInt("bMinVoltCalibRaw", shrd->batteryMinVoltageCalibRaw);
+  prefs.putFloat ("bMaxCalibUser", shrd->batteryMaxVoltageCalibUser);
+  prefs.putUInt("bMaxCalibRaw", shrd->batteryMaxVoltageCalibRaw);
+  prefs.putFloat("bMinCalibUser", shrd->batteryMinVoltageCalibUser);
+  prefs.putUInt("bMinCalibRaw", shrd->batteryMinVoltageCalibRaw);
   prefs.end();
 
   Serial.println("save BatteryCalib value : ");
@@ -151,10 +151,10 @@ void preferences::saveBatteryCalib()
 void preferences::restoreBatteryCalib()
 {
   prefs.begin(APP_STORAGE, false);
-  shrd->batteryMaxVoltageCalibUser = prefs.getFloat("bMaxVoltCalibUser", 66.20);
-  shrd->batteryMaxVoltageCalibRaw = prefs.getUInt("bMaxVoltCalibRaw", 2970);
-  shrd->batteryMinVoltageCalibUser = prefs.getFloat("bMinVoltCalibUser", 0.0);
-  shrd->batteryMinVoltageCalibRaw = prefs.getUInt("bMinVoltCalibRaw", 0);
+  shrd->batteryMaxVoltageCalibUser = prefs.getFloat("bMaxCalibUser", 66.20);
+  shrd->batteryMaxVoltageCalibRaw = prefs.getUInt("bMaxCalibRaw", 2970);
+  shrd->batteryMinVoltageCalibUser = prefs.getFloat("bMinCalibUser", 0.0);
+  shrd->batteryMinVoltageCalibRaw = prefs.getUInt("bMinCalibRaw", 0);
   prefs.end();
 
   Serial.println("restore BatteryCalib value : ");

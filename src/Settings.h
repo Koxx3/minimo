@@ -81,7 +81,7 @@ public:
     int8_t Electric_brake_type;
     int8_t dummy1;
     int8_t dummy2;
-    char Beacon_Mac_Address[17];
+    char Beacon_Mac_Address[17+1];    // \0 at end of @MAC
 
   } __attribute__((packed));
 #pragma pack(pop)
