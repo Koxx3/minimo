@@ -82,7 +82,10 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Read/write serial link CNTRL_TO_LCD
     - [✅] Decode speed/mode/brake/regulator from serial link
     - [✅] Frame error detection
-    - [✅] Error codes processing
+    - [N PROGRESS 🔄] Error codes processing
+        - [✅] Undervoltage
+        - [ ] Controller error
+        - [ ] Trottle error
 
 - [✅] VESC
     - [✅] Read serial link
@@ -181,6 +184,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Average speed
         - [✅] Autonomy
         - [IN TEST 🔄] Brake forbiden
+        - [ ] Errors
     - [✅] Auto-launch app with NFC tag
     - [✅] Parameters custom settings
     - [✅] Data logging
