@@ -321,7 +321,7 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
 #endif
 
   // lock escooter by reducing power to 5%
-  if (blh->bleLockStatus == true)
+  if (shrd->isLocked == true)
   {
     // REMINDER : never put bellow 5
     newPower = 5;

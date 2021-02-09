@@ -22,7 +22,6 @@
 #include <Wire.h>
 #include <Adafruit_MCP4725.h>
 #include "SHTC3/SparkFun_SHTC3.h"
-
 #include "esp32-hal-uart.h"
 
 #include "BLE/BluetoothHandler.h"
@@ -30,6 +29,7 @@
 #include "filters/MedianFilter.h"
 #include "DHT/dht_nonblocking.h"
 #include "TFT/tft_main.h"
+#include "TFT/tft_settings_menu.h"
 #include "Battery/Battery.h"
 #include "tools/utils.h"
 
@@ -45,15 +45,19 @@
 // SMART CONFIGURATION
 #ifdef BUILD_CONTROLLER_MINIMOTORS
 #define CONTROLLER_TYPE CONTROLLER_MINIMOTORS
+MinimoUart minomoCntrl;
 #endif
 #ifdef BUILD_CONTROLLER_VESC
 #define CONTROLLER_TYPE CONTROLLER_VESC
+VescUart vescCntrl;
 #endif
 #ifdef BUILD_CONTROLLER_KELLY
 #define CONTROLLER_TYPE CONTROLLER_KELLY
+KellyUart kellyCntrl;
 #endif
 #ifdef BUILD_CONTROLLER_SMART_ESC
 #define CONTROLLER_TYPE CONTROLLER_SMART_ESC
+SmartEsc smartEscCntrl;
 #endif
 
 #ifndef TFT_ENABLED
@@ -165,11 +169,6 @@ char bleLog[50] = "";
 HardwareSerial hwSerCntrl(1);
 HardwareSerial hwSerLcd(2);
 
-VescUart vescCntrl;
-MinimoUart minomoCntrl;
-KellyUart kellyCntrl;
-SmartEsc smartEscCntrl;
-
 DHT_nonblocking dht_sensor(PIN_IN_OUT_DHT, DHT_TYPE_22);
 
 OneButton button1(PIN_IN_BUTTON1, true, true);
@@ -204,6 +203,9 @@ MedianFilter throttleFilterInit(10 /* 20 */, 900);
 Settings settings;
 BluetoothHandler blh;
 preferences prefs;
+
+bool inSettingsMenu = false;
+bool oldInSettingsMenu = false;
 
 //////------------------------------------
 //////------------------------------------
@@ -418,22 +420,51 @@ void disableWatchdog()
 
 void taskUpdateTFT(void *parameter)
 {
-  int i = -1;
+  int i = -2;
+
+  // infinite loop
   for (;;)
-  { // infinite loop
+  {
+    oldInSettingsMenu = inSettingsMenu;
+    inSettingsMenu = settings_menu_enabled();
+    //Serial.println("oldInSettingsMenu = " + (String)oldInSettingsMenu + " / inSettingsMenu = " + (String)inSettingsMenu);
 
-    //Serial.println(">>>>> update TFT");
-
-    tftUpdateData(i);
-    // Pause the task again for 50ms
-    //vTaskDelay(10 / portTICK_PERIOD_MS);
-    i++;
-
-    if (i >= 20)
+    // not currently in settings menu
+    if (!inSettingsMenu)
     {
-      i = 0;
-      vTaskDelay(200);
+
+      // was in settings menu
+      if (oldInSettingsMenu)
+      {
+        // force main display reset
+        i = -1;
+      }
+      else
+      {
+        tftUpdateData(i);
+        i++;
+
+        if (i >= 20)
+        {
+          i = 0;
+          vTaskDelay(200);
+        }
+      }
     }
+    else
+    {
+      // entering in settings menu
+      if (!oldInSettingsMenu)
+      {
+        Serial.println("settings_menu_setup");
+        settings_menu_setup();
+      }
+      settings_menu_loop();
+      vTaskDelay(10);
+    }
+
+    // test
+    //vTaskDelay(200);
   }
 }
 
@@ -669,7 +700,7 @@ void getBrakeFromAnalog()
 #if DEBUG_DISPLAY_ANALOG_BRAKE
       Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE");
 #endif
-
+      /*
       char print_buffer[500];
       sprintf(print_buffer, "brake ANALOG_BRAKE_MIN_ERR_VALUE / f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d",
               brakeFilterMean,
@@ -678,11 +709,11 @@ void getBrakeFromAnalog()
               shrd.brakeSentOrder,
               shrd.brakeSentOrderOld,
               shrd.brakePressedStatus);
+      Serial.println(print_buffer);
 
+*/
       // too fast for BLE !!!
       //blh.notifyBleLogs(print_buffer);
-
-      Serial.println(print_buffer);
 
       shrd.errorBrake = true;
 
@@ -957,6 +988,7 @@ bool isElectricBrakeForbiden()
   return (shrd.batteryLevel > settings.getS1F().Electric_brake_disabled_percent_limit);
 }
 
+#if (CONTROLLER_TYPE == CONTROLLER_VESC)
 void processVescSerial()
 {
 
@@ -1019,7 +1051,9 @@ void processVescSerial()
 */
   vescCntrl.setDuty(duty);
 }
+#endif
 
+#if (CONTROLLER_TYPE == CONTROLLER_KELLY)
 void processKellySerial1()
 {
 
@@ -1055,7 +1089,9 @@ void processKellySerial2()
 
   shrd.speedCurrent = speedCompute;
 }
+#endif
 
+#if (CONTROLLER_TYPE == CONTROLLER_SMART_ESC)
 void processSmartEscSerial()
 {
 
@@ -1077,6 +1113,7 @@ void processSmartEscSerial()
 
   shrd.brakePressedStatusOld = shrd.brakePressedStatus;
 }
+#endif
 
 uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
 {
@@ -1152,6 +1189,11 @@ void processButton1Click()
     shrd.button1ClickStatus = ACTION_OFF;
   }
 
+  if (inSettingsMenu)
+  {
+    settings_menu_btn_click(0, 1);
+  }
+
   processAuxEvent(1, false);
   processSpeedLimiterEvent(1, false);
   processLockEvent(1, false);
@@ -1173,6 +1215,11 @@ void processButton1LpStart()
   char print_buffer[500];
   sprintf(print_buffer, "processButton1LpStart : %d", shrd.button1LpDuration);
   blh.notifyBleLogs(print_buffer);
+
+  if (inSettingsMenu)
+  {
+    settings_menu_btn_click(1, 1);
+  }
 }
 
 void processButton1LpDuring()
@@ -1231,6 +1278,11 @@ void processButton2Click()
     shrd.button2ClickStatus = ACTION_OFF;
   }
 
+  if (inSettingsMenu)
+  {
+    settings_menu_btn_click(0, 2);
+  }
+
   processAuxEvent(2, false);
   processSpeedLimiterEvent(2, false);
   processLockEvent(2, false);
@@ -1249,6 +1301,11 @@ void processButton2LpStart()
   Serial.print("processButton2LpStart : ");
   Serial.println(shrd.button2LpDuration);
 
+  if (inSettingsMenu)
+  {
+    settings_menu_btn_click(1, 2);
+  }
+
   char print_buffer[500];
   sprintf(print_buffer, "processButton2LpStart : %d", shrd.button2LpDuration);
   blh.notifyBleLogs(print_buffer);
@@ -1260,7 +1317,7 @@ void processButton2LpDuring()
 
   if ((shrd.button2LpDuration > settings.getS3F().Button_long_press_duration * 1000) && (!shrd.button2LpProcessed))
   {
-
+    /*
     char print_buffer[500];
     sprintf(print_buffer, "processButton2LpDuring : %d ==> process", shrd.button2LpDuration);
     blh.notifyBleLogs(print_buffer);
@@ -1268,7 +1325,15 @@ void processButton2LpDuring()
     processAuxEvent(2, true);
     processSpeedLimiterEvent(2, true);
     processLockEvent(2, true);
+*/
+
     shrd.button2LpProcessed = true;
+
+    // Enter settings panel
+    if (!inSettingsMenu)
+    {
+      settings_menu_enter_settings();
+    }
   }
 }
 

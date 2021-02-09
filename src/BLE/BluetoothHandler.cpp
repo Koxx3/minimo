@@ -73,7 +73,7 @@ BLECharacteristic *BluetoothHandler::pCharacteristicSettings6;
 // firmware services
 BLECharacteristic *BluetoothHandler::pCharacteristicFirmware;
 
-int8_t BluetoothHandler::bleLockStatus;
+//int8_t BluetoothHandler::bleLockStatus;
 int8_t BluetoothHandler::bleBeaconVisible;
 int8_t BluetoothHandler::bleBeaconRSSI;
 int8_t BluetoothHandler::bleLockForced;
@@ -109,13 +109,13 @@ void BluetoothHandler::setSettings(Settings *data)
             {
                 if (settings->getS1F().Bluetooth_lock_mode == 1)
                 {
-                    bleLockStatus = false;
+                    shrd->isLocked = false;
                     Serial.println(" ==> device connected ==> UNLOCK decision");
                     Serial.println("-------------------------------------");
                 }
                 if (settings->getS1F().Bluetooth_lock_mode == 2)
                 {
-                    bleLockStatus = false;
+                    shrd->isLocked = false;
                     Serial.println(" ==> device connected ==> UNLOCK decision");
                     Serial.println("-------------------------------------");
                 }
@@ -135,7 +135,7 @@ void BluetoothHandler::setSettings(Settings *data)
             {
                 if (settings->getS1F().Bluetooth_lock_mode == 1)
                 {
-                    bleLockStatus = true;
+                    shrd->isLocked = true;
                     Serial.println(" ==> device disconnected ==> LOCK decision");
                     Serial.println("-------------------------------------");
                 }
@@ -143,7 +143,7 @@ void BluetoothHandler::setSettings(Settings *data)
                 {
                     if (!bleBeaconVisible)
                     {
-                        bleLockStatus = true;
+                        shrd->isLocked = true;
                         Serial.println(" ==> device disconnected / Beacon not visible ==> LOCK decision");
                         Serial.println("-------------------------------------");
                     }
@@ -478,7 +478,7 @@ void BluetoothHandler::setSettings(Settings *data)
                 Serial.print("BLH - Write bleLockForced : ");
                 Serial.println(print_buffer);
 
-                bleLockStatus = bleLockForced;
+                shrd->isLocked = bleLockForced;
 
                 notifyBleLock();
                 saveBleLockForced();
@@ -586,7 +586,7 @@ void BluetoothHandler::setSettings(Settings *data)
                 // pCharacteristicBtlockStatus->setValue((uint8_t *)&value, 4);
 
                 char print_buffer[500];
-                sprintf(print_buffer, "%02x", bleLockStatus);
+                sprintf(print_buffer, "%02x", shrd->isLocked);
                 Serial.print("BLH - Read bleLock : ");
                 Serial.println(print_buffer);
             }
@@ -902,7 +902,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
         {
             if ((!bleBeaconVisible) && (deviceStatus != BLE_STATUS_DISCONNECTED))
             {
-                bleLockStatus = 1;
+                shrd->isLocked = 1;
 
 #if DEBUG_DISPLAY_BLE_SCAN
                 Serial.println(" ==> Beacon not visible // smartphone not connected ==> LOCK decision");
@@ -912,7 +912,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
             }
             else if ((!bleBeaconVisible) && (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED))
             {
-                bleLockStatus = 0;
+                shrd->isLocked = 0;
 
 #if DEBUG_DISPLAY_BLE_SCAN
                 Serial.println(" ==> Beacon visible // smartphone connected ==> UNLOCK decision");
@@ -931,7 +931,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
         {
             if (!bleBeaconVisible)
             {
-                bleLockStatus = 1;
+                shrd->isLocked = 1;
 
 #if DEBUG_DISPLAY_BLE_SCAN
                 Serial.println(" ==> Beacon not visible ==> LOCK decision");
@@ -940,7 +940,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
             }
             else if (bleBeaconVisible)
             {
-                bleLockStatus = 0;
+                shrd->isLocked = 0;
 
 #if DEBUG_DISPLAY_BLE_SCAN
                 Serial.println(" ==> Beacon visible ==> UNLOCK decision");
@@ -1148,7 +1148,7 @@ void BluetoothHandler::notifyBleLock()
     if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         byte value[4];
-        value[0] = bleLockStatus;
+        value[0] = shrd->isLocked;
         value[1] = bleBeaconVisible;
         value[2] = bleBeaconRSSI;
         value[3] = bleLockForced;
@@ -1181,7 +1181,7 @@ void BluetoothHandler::setBleLock(bool force)
 
     // update lock status
     if (bleLockForced == 1)
-        bleLockStatus = 1;
+        shrd->isLocked = 1;
 }
 
 void BluetoothHandler::processBLE()

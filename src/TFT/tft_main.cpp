@@ -5,18 +5,19 @@
 #include "TFT/tft_main.h"
 #include "TFT/tft_util.h"
 #include "TFT/text_screen.h"
-#include "TFT/color_jauge.h"
+#include "TFT/tft_color_jauge.h"
 
 #include "SharedData.h"
 #include "Settings.h"
-#include "FORCED_SQUARE6pt7b.h"
-#include "FORCED_SQUARE7pt7b.h"
-#include "FORCED_SQUARE8pt7b.h"
-#include "FORCED_SQUARE9pt7b.h"
-#include "FORCED_SQUARE10pt7b.h"
-#include "FORCED_SQUARE12pt7b.h"
-#include "FORCED_SQUARE14pt7b.h"
-#include "FORCED_SQUARE18pt7b.h"
+
+#include "TFT/fonts/FORCED_SQUARE6pt7b.h"
+#include "TFT/fonts/FORCED_SQUARE7pt7b.h"
+#include "TFT/fonts/FORCED_SQUARE8pt7b.h"
+#include "TFT/fonts/FORCED_SQUARE9pt7b.h"
+#include "TFT/fonts/FORCED_SQUARE10pt7b.h"
+#include "TFT/fonts/FORCED_SQUARE12pt7b.h"
+#include "TFT/fonts/FORCED_SQUARE14pt7b.h"
+#include "TFT/fonts/FORCED_SQUARE18pt7b.h"
 
 #include "TFT/smart_splash.h"
 
@@ -80,9 +81,7 @@
 #define LINE_POINT6X 70 * SCALE_FACTOR_X
 #define LINE_POINT6Y LINE_POINT4Y
 
-
-
-#define SPACE_INDICATORS_Y 19
+#define SPACE_INDICATORS_Y 16
 
 #define COLUMN0 24 * SCALE_FACTOR_X
 #define COLUMN1 39 * SCALE_FACTOR_X
@@ -115,6 +114,7 @@ const char *txt_temp = "TMP";
 const char *txt_pas = "PAS";
 const char *txt_volts = "VOLTS";
 const char *txt_err = "ERR";
+const char *txt_lck = "LCK";
 const char *txt_auton = "AUTON";
 const char *txt_time = "TIME";
 const char *txt_trip = "TRIP";
@@ -132,6 +132,7 @@ uint8_t oldShrdBrakePressedStatus = 255;
 uint8_t oldShrdCurrentTemperature = 255;
 uint8_t oldShrdCurrentHumidity = 255;
 uint8_t oldError = 255;
+uint8_t oldShrdIsLocked = 255;
 
 void tftSetupBacklight()
 {
@@ -192,9 +193,10 @@ void tftUpdateData(uint32_t i_loop)
 {
   char fmt[10];
 
-  // -1 / show splash screen and init fix datas after
-  if (i_loop == -1)
+  // -2 / show splash screen
+  if (i_loop == -2)
   {
+    Serial.print("step -2");
 
     // init TFT
     tft.begin();
@@ -213,8 +215,22 @@ void tftUpdateData(uint32_t i_loop)
     tft.pushImage((TFT_HEIGHT - smart_splash_logoWidth) / 2, (TFT_WIDTH - smart_splash_logoHeight) / 2, smart_splash_logoWidth, smart_splash_logoHeight, smart_splash);
 
     delay(3000);
-    tft.fillScreen(TFT_BLACK);
 #endif
+  }
+  else
+      // init fix datas after
+      if (i_loop == -1)
+  {
+
+    // reset indicators status
+    oldShrdPasEnabled = 255;
+    oldShrdBrakePressedStatus = 255;
+    oldShrdCurrentTemperature = 255;
+    oldShrdCurrentHumidity = 255;
+    oldError = 255;
+    oldShrdIsLocked = 255;
+
+    tft.fillScreen(TFT_BLACK);
 
     // init TFT settings
     tft.setTextSize(1);
@@ -384,13 +400,13 @@ void tftUpdateData(uint32_t i_loop)
 
     case 13:
     {
-
       // draw interface - indicators
 #if (TFT_MODEL == 2) // 3.5"
       tft.setFreeFont(FONT_FORCED_SQUARE12pt7b);
 #else
       tft.setFreeFont(FONT_FORCED_SQUARE9pt7b);
 #endif
+
       tft.setTextDatum(TC_DATUM);
 
       int i = 0;
@@ -439,6 +455,14 @@ void tftUpdateData(uint32_t i_loop)
         tft.setTextColor(error ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
         tft.drawString(txt_err, COLUMN0, LINE_3Y + i, GFXFF);
         oldError = error;
+      }
+
+      i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
+      if (oldShrdIsLocked != _shrd->isLocked)
+      {
+        tft.setTextColor(_shrd->isLocked ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.drawString(txt_lck, COLUMN0, LINE_3Y + i, GFXFF);
+        oldShrdIsLocked = _shrd->isLocked;
       }
 
       break;

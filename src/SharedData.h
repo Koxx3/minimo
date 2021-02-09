@@ -62,6 +62,8 @@ public:
 
     uint8_t auxOrder = 0;
 
+    uint8_t isLocked = 0;
+
     uint8_t brakePressedStatus = 0; // is brake pressed
     uint8_t brakePressedStatusOld = 0;
     int8_t brakeSentOrder = -1; // brake force order sent to controller
