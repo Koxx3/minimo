@@ -93,6 +93,8 @@ SharedData *BluetoothHandler::shrd;
 uint32_t bleBeaconInvisibleCount = 0;
 uint32_t errCounter = 0;
 
+String firmwareString;
+
 BluetoothHandler::BluetoothHandler()
 {
 }
@@ -575,15 +577,10 @@ void BluetoothHandler::setSettings(Settings *data)
 
             if (pCharacteristic->getUUID().toString() == FIRMWARE_CHARACTERISTIC_UUID)
             {
-                String finalString;
-                String firmwareVersion = (String)FIRMWARE_VERSION;
-                String firmwareType = (String)FIRMWARE_TYPE;
-                firmwareType.replace("smartcontroller_", "");
-                firmwareType.replace("smartdisplay_", "");
-                finalString = firmwareType + " " + firmwareVersion;
-                pCharacteristicFirmware->setValue(finalString.c_str());
+
+                pCharacteristicFirmware->setValue((uint8_t *)firmwareString.c_str(), firmwareString.length());
                 Serial.print("BLH - Read firmware : ");
-                Serial.println(finalString.c_str());
+                Serial.println(firmwareString.c_str());
             }
             else if (pCharacteristic->getUUID().toString() == MEASUREMENTS_CHARACTERISTIC_UUID)
             {
@@ -664,6 +661,13 @@ void BluetoothHandler::setSettings(Settings *data)
 
     // Init settings
     settings = data;
+
+    // Set firmware string
+    String firmwareVersion = (String)FIRMWARE_VERSION;
+    String firmwareType = (String)FIRMWARE_TYPE;
+    firmwareType.replace("smartcontroller_", "");
+    firmwareType.replace("smartdisplay_", "");
+    firmwareString = firmwareType + " " + firmwareVersion;
 
     // Create the BLE Device
     uint8_t base_mac_addr[6] = {0};
@@ -746,7 +750,7 @@ void BluetoothHandler::setSettings(Settings *data)
 
     pCharacteristicFirmware = pServiceFirmware->createCharacteristic(
         FIRMWARE_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::READ_AUTHEN);
+        NIMBLE_PROPERTY::READ);
 
     //-------------------
     // services settings
