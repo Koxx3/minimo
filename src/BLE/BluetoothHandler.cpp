@@ -893,7 +893,7 @@ void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
     bleBeaconVisible = newBleBeaconVisible;
 
 #if DEBUG_DISPLAY_BLE_SCAN
-    Serial.printf("BLH - bleLockForced = %d / settings->getS1F().Bluetooth_lock_mode = %d / bleBeaconVisible = %d / deviceConnected = %d \n", bleLockForced, settings->getS1F().Bluetooth_lock_mode, bleBeaconVisible, deviceConnected);
+    Serial.printf("BLH - bleLockForced = %d / settings->getS1F().Bluetooth_lock_mode = %d / bleBeaconVisible = %d / deviceStatus = %d \n", bleLockForced, settings->getS1F().Bluetooth_lock_mode, bleBeaconVisible, deviceStatus);
 #endif
 
     if (bleLockForced <= 0)
