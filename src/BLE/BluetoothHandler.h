@@ -5,10 +5,10 @@
 #define _BluetoothHandler_h
 
 #include "Arduino.h"
-#include <BLEDevice.h>
-#include <BLEServer.h>
-#include <BLEUtils.h>
-#include <BLE2902.h>
+#include <NimBLEDevice.h>
+#include <NimBLEServer.h>
+#include <NimBLEUtils.h>
+//#include <NimBLE2902.h>
 #include "Settings.h"
 #include "SharedData.h"
 #include "prefs_storage.h"

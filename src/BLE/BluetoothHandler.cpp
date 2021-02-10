@@ -1,8 +1,13 @@
 #include <Arduino.h>
-#include <BLEDevice.h>
-#include <BLEServer.h>
-#include <BLEUtils.h>
-#include <BLE2902.h>
+#include <NimBLEDevice.h>
+#include <NimBLEServer.h>
+#include <NimBLEUtils.h>
+#include "NimBLEEddystoneURL.h"
+#include "NimBLEEddystoneTLM.h"
+#include "NimBLEBeacon.h"
+//#include <NimBLE2902.h>
+
+#include <WiFi.h>
 #include "BluetoothHandler.h"
 #include "SharedData.h"
 #include "main.h"
@@ -48,30 +53,30 @@
 
 #define BEACON_SCAN_PERIOD_IN_SECONDS 10
 
-BLEScan *BluetoothHandler::pBLEScan;
-BLEServer *BluetoothHandler::pServer;
-BLESecurity *BluetoothHandler::pSecurity;
+NimBLEScan *BluetoothHandler::pBLEScan;
+NimBLEServer *BluetoothHandler::pServer;
+NimBLESecurity *BluetoothHandler::pSecurity;
 
 // Main services
-BLECharacteristic *BluetoothHandler::pCharacteristicMeasurements;
-BLECharacteristic *BluetoothHandler::pCharacteristicBtlockStatus;
-BLECharacteristic *BluetoothHandler::pCharacteristicCalibOrder;
-BLECharacteristic *BluetoothHandler::pCharacteristicOtaSwitch;
-BLECharacteristic *BluetoothHandler::pCharacteristicLogs;
-BLECharacteristic *BluetoothHandler::pCharacteristicDistanceRst;
-BLECharacteristic *BluetoothHandler::pCharacteristicKeepAlive;
-BLECharacteristic *BluetoothHandler::pCharacteristicCommands;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicMeasurements;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicBtlockStatus;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicCalibOrder;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicOtaSwitch;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicLogs;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicDistanceRst;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicKeepAlive;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicCommands;
 
 // Settings services
-BLECharacteristic *BluetoothHandler::pCharacteristicSettings1;
-BLECharacteristic *BluetoothHandler::pCharacteristicSettings2;
-BLECharacteristic *BluetoothHandler::pCharacteristicSettings3;
-BLECharacteristic *BluetoothHandler::pCharacteristicSettings4;
-BLECharacteristic *BluetoothHandler::pCharacteristicSettings5;
-BLECharacteristic *BluetoothHandler::pCharacteristicSettings6;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings1;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings2;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings3;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings4;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings5;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings6;
 
 // firmware services
-BLECharacteristic *BluetoothHandler::pCharacteristicFirmware;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicFirmware;
 
 //int8_t BluetoothHandler::bleLockStatus;
 int8_t BluetoothHandler::bleBeaconVisible;
@@ -95,9 +100,7 @@ BluetoothHandler::BluetoothHandler()
 void BluetoothHandler::setSettings(Settings *data)
 {
 
-    Serial.println("BLH - init");
-
-    class BLEServerCallback : public BLEServerCallbacks
+    class BLEServerCallback : public NimBLEServerCallbacks
     {
         void onConnect(BLEServer *pServer)
         {
@@ -154,14 +157,20 @@ void BluetoothHandler::setSettings(Settings *data)
 
     class BLEAdvertisedDeviceCallback : public BLEAdvertisedDeviceCallbacks
     {
-        void onResult(BLEAdvertisedDevice advertisedDevice)
+        void onResult(BLEAdvertisedDevice *advertisedDevice)
         {
-            //Serial.print("BLH - BLE Advertised Device found: ");
-            //Serial.println(advertisedDevice.toString().c_str());
+            /*
+            Serial.print("BLH - BLE Advertised Device found: ");
+                Serial.println(advertisedDevice.toString().c_str());
+*/
+
+            Serial.print("BLH - BLE device name: ");
+            Serial.println(advertisedDevice->getName().c_str());
+            Serial.println("");
         } // onResult
     };    // MyAdvertisedDeviceCallbacks
 
-    class BLESecurityCallback : public BLESecurityCallbacks
+    class BLESecurityCallback : public NimBLESecurityCallbacks
     {
 
         bool onConfirmPIN(uint32_t pin)
@@ -207,11 +216,44 @@ void BluetoothHandler::setSettings(Settings *data)
                 deviceStatus = BLE_STATUS_DISCONNECTED;
             }
         }
+
+        void onAuthenticationComplete(ble_gap_conn_desc *desc)
+        {
+
+            if (!desc->sec_state.encrypted)
+            {
+                Serial.println("onAuthenticationComplete : Encrypt connection failed - disconnecting");
+                /** Find the client with the connection handle provided in desc */
+                NimBLEDevice::getClientByID(desc->conn_handle)->disconnect();
+                deviceStatus = BLE_STATUS_DISCONNECTED;
+            }
+            else
+            {
+                Serial.println("onAuthenticationComplete : success");
+                deviceStatus = BLE_STATUS_CONNECTED_AND_AUTHENTIFIED;
+            }
+
+            /*
+            if (cmpl.success)
+            {
+                uint16_t length;
+                esp_ble_gap_get_whitelist_size(&length);
+                Serial.println("onAuthenticationComplete : success");
+                deviceStatus = BLE_STATUS_CONNECTED_AND_AUTHENTIFIED;
+            }
+            else
+            {
+                Serial.print("BLH - onAuthenticationComplete : hummm ... failed / reason : ");
+                Serial.println(cmpl.fail_reason);
+
+            }
+            */
+        }
     };
 
-    class BLECharacteristicCallback : public BLECharacteristicCallbacks
+    class BLECharacteristicCallback : public NimBLECharacteristicCallbacks
     {
-        void onWrite(BLECharacteristic *pCharacteristic)
+        void onWrite(NimBLECharacteristic *pCharacteristic)
         {
 
             //const char *uuid = pCharacteristic->getUUID().toString().data();
@@ -377,7 +419,6 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 // update BLE PIN code
                 pSecurity->setStaticPIN(settings->getS3F().Bluetooth_pin_code);
-
             }
             else if (pCharacteristic->getUUID().toString() == SETTINGS6_CHARACTERISTIC_UUID)
             {
@@ -405,7 +446,7 @@ void BluetoothHandler::setSettings(Settings *data)
                 Serial.println("");
 
                 settings->displaySettings6();
-                
+
                 saveSettings();
             }
             else if (pCharacteristic->getUUID().toString() == CALIB_ORDER_CHARACTERISTIC_UUID)
@@ -526,7 +567,7 @@ void BluetoothHandler::setSettings(Settings *data)
             }
         }
 
-        void onRead(BLECharacteristic *pCharacteristic)
+        void onRead(NimBLECharacteristic *pCharacteristic)
         {
 
             const String uuid = pCharacteristic->getUUID().toString().c_str();
@@ -537,7 +578,8 @@ void BluetoothHandler::setSettings(Settings *data)
                 String finalString;
                 String firmwareVersion = (String)FIRMWARE_VERSION;
                 String firmwareType = (String)FIRMWARE_TYPE;
-                firmwareType.replace("smartcontroller_smartdisplay_", "");
+                firmwareType.replace("smartcontroller_", "");
+                firmwareType.replace("smartdisplay_", "");
                 finalString = firmwareType + " " + firmwareVersion;
                 pCharacteristicFirmware->setValue(finalString.c_str());
                 Serial.print("BLH - Read firmware : ");
@@ -552,7 +594,7 @@ void BluetoothHandler::setSettings(Settings *data)
             else if (pCharacteristic->getUUID().toString() == COMMANDS_CHARACTERISTIC_UUID)
             {
                 int nb_bytes = setCommandsDataPacket();
-                Serial.print("BLH - Read commands : nb bytes");
+                Serial.print("BLH - Read commands : nb bytes = ");
                 Serial.println(nb_bytes);
             }
             else
@@ -604,31 +646,43 @@ void BluetoothHandler::setSettings(Settings *data)
                 // reset connexion if too many errors
                 if (errCounter > 1000)
                 {
-                    pServer->disconnect(pServer->getConnId());
+                    // TODO !!!!!!!!!!!!!
+                    //pServer->disconnect(0, 0);
+                    //desc->conn_handle
+                    //std::list<NimBLEClient> list = NimBLEDevice::getClientList();
+                    uint8_t clientId = 0;
+
+                    // TODO : fix this with real client ID
+                    NimBLEDevice::getClientByID(clientId)->disconnect();
                     errCounter = 0;
                 }
             }
         }
     };
 
+    Serial.println("BLH - init");
+
     // Init settings
     settings = data;
 
     // Create the BLE Device
-    BLEDevice::init("SmartCntrl");
-    String smartCntrlNameComp1 = BLEDevice::getAddress().toString().substr(12, 2).c_str();
-    String smartCntrlNameComp2 = BLEDevice::getAddress().toString().substr(15, 2).c_str();
-    String smartCntrlFullName = "SmartCntrl-" + smartCntrlNameComp1 + smartCntrlNameComp2;
-    Serial.print("BLH - adress = ");
-    Serial.println(BLEDevice::getAddress().toString().c_str());
-    Serial.print("BLH - name = ");
-    Serial.println(smartCntrlFullName);
-    esp_ble_gap_set_device_name(smartCntrlFullName.c_str());
-    BLEDevice::setMTU(BLE_MTU);
+    uint8_t base_mac_addr[6] = {0};
+    char bleName[20];
+    esp_efuse_mac_get_default(base_mac_addr);
+    sprintf(bleName, "Smart-%x",
+            base_mac_addr[5]);
+    Serial.println("BLH - name : " + (String)bleName);
+    NimBLEDevice::init(bleName);
+
+    NimBLEDevice::setMTU(BLE_MTU);
+    NimBLEDevice::setPower(ESP_PWR_LVL_P9);
 
     /////
-    BLEDevice::setEncryptionLevel(ESP_BLE_SEC_ENCRYPT);
-    BLEDevice::setSecurityCallbacks(new BLESecurityCallback());
+    NimBLEDevice::setSecurityAuth(true, true, true);
+    NimBLEDevice::setSecurityPasskey(147258);
+    NimBLEDevice::setSecurityIOCap(BLE_HS_IO_DISPLAY_ONLY);
+    //NimBLEDevice::setEncryptionLevel(ESP_BLE_SEC_ENCRYPT);
+    NimBLEDevice::setSecurityCallbacks(new BLESecurityCallback());
     /////
 
     int mtu = BLEDevice::getMTU();
@@ -651,99 +705,81 @@ void BluetoothHandler::setSettings(Settings *data)
 
     pCharacteristicMeasurements = pServiceMain->createCharacteristic(
         MEASUREMENTS_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_READ);
+        NIMBLE_PROPERTY::NOTIFY |
+            NIMBLE_PROPERTY::READ_AUTHEN);
 
     pCharacteristicBtlockStatus = pServiceMain->createCharacteristic(
         BTLOCK_STATUS_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
+        NIMBLE_PROPERTY::NOTIFY |
+            NIMBLE_PROPERTY::WRITE_AUTHEN |
+            NIMBLE_PROPERTY::READ_AUTHEN);
 
     pCharacteristicCalibOrder = pServiceMain->createCharacteristic(
         CALIB_ORDER_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE);
+        NIMBLE_PROPERTY::WRITE_AUTHEN);
 
     pCharacteristicOtaSwitch = pServiceMain->createCharacteristic(
         SWITCH_TO_OTA_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE);
+        NIMBLE_PROPERTY::WRITE_AUTHEN);
 
     pCharacteristicLogs = pServiceMain->createCharacteristic(
         LOGS_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_NOTIFY);
+        NIMBLE_PROPERTY::NOTIFY |
+            NIMBLE_PROPERTY::WRITE_AUTHEN);
 
     pCharacteristicDistanceRst = pServiceMain->createCharacteristic(
         DISTANCE_RST_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE);
+        NIMBLE_PROPERTY::WRITE_AUTHEN);
 
     pCharacteristicKeepAlive = pServiceMain->createCharacteristic(
         KEEP_ALIVE_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE);
+        NIMBLE_PROPERTY::WRITE_AUTHEN);
 
     pCharacteristicCommands = pServiceMain->createCharacteristic(
         COMMANDS_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
+        NIMBLE_PROPERTY::NOTIFY |
+            NIMBLE_PROPERTY::WRITE_AUTHEN |
+            NIMBLE_PROPERTY::READ_AUTHEN);
 
     //-------------------
     // services firmware
 
     pCharacteristicFirmware = pServiceFirmware->createCharacteristic(
         FIRMWARE_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_READ);
+        NIMBLE_PROPERTY::READ_AUTHEN);
 
     //-------------------
     // services settings
 
     pCharacteristicSettings1 = pServiceSettings->createCharacteristic(
         SETTINGS1_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
+        NIMBLE_PROPERTY::WRITE_AUTHEN |
+            NIMBLE_PROPERTY::READ_AUTHEN);
 
     pCharacteristicSettings2 = pServiceSettings->createCharacteristic(
         SETTINGS2_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
+        NIMBLE_PROPERTY::WRITE_AUTHEN |
+            NIMBLE_PROPERTY::READ_AUTHEN);
 
     pCharacteristicSettings3 = pServiceSettings->createCharacteristic(
         SETTINGS3_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
+        NIMBLE_PROPERTY::WRITE_AUTHEN |
+            NIMBLE_PROPERTY::READ_AUTHEN);
 
     pCharacteristicSettings4 = pServiceSettings->createCharacteristic(
         SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
+        NIMBLE_PROPERTY::WRITE_AUTHEN |
+            NIMBLE_PROPERTY::READ_AUTHEN);
 
     pCharacteristicSettings5 = pServiceSettings->createCharacteristic(
         SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
+        NIMBLE_PROPERTY::WRITE_AUTHEN |
+            NIMBLE_PROPERTY::READ_AUTHEN);
 
     pCharacteristicSettings6 = pServiceSettings->createCharacteristic(
         SETTINGS6_CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_READ);
-
-    //////////////
-    pCharacteristicMeasurements->addDescriptor(new BLE2902());
-    pCharacteristicBtlockStatus->addDescriptor(new BLE2902());
-    pCharacteristicCalibOrder->addDescriptor(new BLE2902());
-    pCharacteristicOtaSwitch->addDescriptor(new BLE2902());
-    pCharacteristicLogs->addDescriptor(new BLE2902());
-    pCharacteristicDistanceRst->addDescriptor(new BLE2902());
-    pCharacteristicKeepAlive->addDescriptor(new BLE2902());
-    pCharacteristicCommands->addDescriptor(new BLE2902());
-
-    pCharacteristicSettings1->addDescriptor(new BLE2902());
-    pCharacteristicSettings2->addDescriptor(new BLE2902());
-    pCharacteristicSettings3->addDescriptor(new BLE2902());
-    pCharacteristicSettings4->addDescriptor(new BLE2902());
-    pCharacteristicSettings5->addDescriptor(new BLE2902());
-    pCharacteristicSettings6->addDescriptor(new BLE2902());
-
-    pCharacteristicFirmware->addDescriptor(new BLE2902());
+        NIMBLE_PROPERTY::WRITE_AUTHEN |
+            NIMBLE_PROPERTY::READ_AUTHEN);
 
     //////////////
     pCharacteristicMeasurements->setCallbacks(new BLECharacteristicCallback());
@@ -791,13 +827,23 @@ void BluetoothHandler::setSettings(Settings *data)
     pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND);
 
     // Start scanning
+    /*
     pBLEScan = BLEDevice::getScan();
     pBLEScan->setAdvertisedDeviceCallbacks(new BLEAdvertisedDeviceCallback());
     pBLEScan->setActiveScan(true);
     pBLEScan->start(BEACON_SCAN_PERIOD_IN_SECONDS, &bleOnScanResults, false);
+    */
+
+    pBLEScan = BLEDevice::getScan(); //create new scan
+    //pBLEScan->setAdvertisedDeviceCallbacks(new BLEAdvertisedDeviceCallback());
+    pBLEScan->setActiveScan(true); //active scan uses more power, but get results faster
+    pBLEScan->setInterval(100);
+    pBLEScan->setWindow(99); // less or equal setInterval value
+    pBLEScan->start(BEACON_SCAN_PERIOD_IN_SECONDS, &bleOnScanResults, false);
+    Serial.println("BLH - init end");
 }
 
-void BluetoothHandler::bleOnScanResults(BLEScanResults scanResults)
+void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
 {
 
 #if DEBUG_DISPLAY_BLE_SCAN
@@ -1004,7 +1050,6 @@ uint8_t BluetoothHandler::setCommandsDataPacket()
 {
     //Serial.println("setCommandsDataPacket");
 
-
     int32_t ind = 0;
 
     if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
@@ -1027,9 +1072,11 @@ uint8_t BluetoothHandler::setCommandsDataPacket()
 
         pCharacteristicCommands->setValue((uint8_t *)&txValue[0], ind);
 
-
         //buffer_display("setCommandsDataPacket : ", txValue, ind);
-
+    }
+    else
+    {
+        Serial.println("deviceStatus = " + (String)deviceStatus);
     }
     return ind;
 }
