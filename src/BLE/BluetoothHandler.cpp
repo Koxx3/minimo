@@ -5,7 +5,6 @@
 #include "NimBLEEddystoneURL.h"
 #include "NimBLEEddystoneTLM.h"
 #include "NimBLEBeacon.h"
-//#include <NimBLE2902.h>
 
 #include <WiFi.h>
 #include "BluetoothHandler.h"
@@ -161,16 +160,11 @@ void BluetoothHandler::setSettings(Settings *data)
     {
         void onResult(BLEAdvertisedDevice *advertisedDevice)
         {
-            /*
-            Serial.print("BLH - BLE Advertised Device found: ");
-                Serial.println(advertisedDevice.toString().c_str());
-*/
-
             Serial.print("BLH - BLE device name: ");
             Serial.println(advertisedDevice->getName().c_str());
             Serial.println("");
-        } // onResult
-    };    // MyAdvertisedDeviceCallbacks
+        }
+    };
 
     class BLESecurityCallback : public NimBLESecurityCallbacks
     {
@@ -234,22 +228,6 @@ void BluetoothHandler::setSettings(Settings *data)
                 Serial.println("onAuthenticationComplete : success");
                 deviceStatus = BLE_STATUS_CONNECTED_AND_AUTHENTIFIED;
             }
-
-            /*
-            if (cmpl.success)
-            {
-                uint16_t length;
-                esp_ble_gap_get_whitelist_size(&length);
-                Serial.println("onAuthenticationComplete : success");
-                deviceStatus = BLE_STATUS_CONNECTED_AND_AUTHENTIFIED;
-            }
-            else
-            {
-                Serial.print("BLH - onAuthenticationComplete : hummm ... failed / reason : ");
-                Serial.println(cmpl.fail_reason);
-
-            }
-            */
         }
     };
 
@@ -261,19 +239,6 @@ void BluetoothHandler::setSettings(Settings *data)
             //const char *uuid = pCharacteristic->getUUID().toString().data();
             //Serial.println("onWrite : " + (String)(uuid));
 
-            /* if (pCharacteristic->getUUID().toString() == BRAKE_STATUS_CHARACTERISTIC_UUID)
-            {
-                std::string rxValue = pCharacteristic->getValue();
-                shrd->brakeSentOrder = rxValue[0];
-                shrd->brakeSentOrderFromBLE = rxValue[0];
-
-                char print_buffer[500];
-                sprintf(print_buffer, "%02x", shrd->brakeSentOrder);
-                Serial.print("BLH - Write brakeSentOrder : ");
-                Serial.println(print_buffer);
-            }
-            else 
-            */
             if (pCharacteristic->getUUID().toString() == SETTINGS1_CHARACTERISTIC_UUID)
             {
                 std::string rxValue = pCharacteristic->getValue();
@@ -594,35 +559,10 @@ void BluetoothHandler::setSettings(Settings *data)
                 Serial.print("BLH - Read commands : nb bytes = ");
                 Serial.println(nb_bytes);
             }
-            else
-                /*
-             if (pCharacteristic->getUUID().toString() == BRAKE_STATUS_CHARACTERISTIC_UUID)
-            {
-
-                byte value[3];
-                value[0] = shrd->brakeSentOrder;
-                value[1] = shrd->brakePressedStatus;
-                value[2] = shrd->brakeFordidenHighVoltage;
-                pCharacteristicBrakeSentOrder->setValue((uint8_t *)&value, 3);
-
-                char print_buffer[500];
-                sprintf(print_buffer, "%02x", shrd->brakeSentOrder);
-                Serial.print("BLH - Read breakeSentOrder : ");
-                Serial.println(print_buffer);
-            }
-            else 
-            */
-                if (pCharacteristic->getUUID().toString() == BTLOCK_STATUS_CHARACTERISTIC_UUID)
+            else if (pCharacteristic->getUUID().toString() == BTLOCK_STATUS_CHARACTERISTIC_UUID)
             {
 
                 notifyBleLock();
-
-                // byte value[4];
-                // value[0] = bleLockStatus;
-                // value[1] = bleBeaconVisible;
-                // value[2] = bleBeaconRSSI;
-                // value[3] = bleLockForced;
-                // pCharacteristicBtlockStatus->setValue((uint8_t *)&value, 4);
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", shrd->isLocked);
@@ -831,16 +771,8 @@ void BluetoothHandler::setSettings(Settings *data)
     pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND);
 
     // Start scanning
-    /*
-    pBLEScan = BLEDevice::getScan();
-    pBLEScan->setAdvertisedDeviceCallbacks(new BLEAdvertisedDeviceCallback());
-    pBLEScan->setActiveScan(true);
-    pBLEScan->start(BEACON_SCAN_PERIOD_IN_SECONDS, &bleOnScanResults, false);
-    */
-
     pBLEScan = BLEDevice::getScan(); //create new scan
-    //pBLEScan->setAdvertisedDeviceCallbacks(new BLEAdvertisedDeviceCallback());
-    pBLEScan->setActiveScan(true); //active scan uses more power, but get results faster
+    pBLEScan->setActiveScan(true);   //active scan uses more power, but get results faster
     pBLEScan->setInterval(100);
     pBLEScan->setWindow(99); // less or equal setInterval value
     pBLEScan->start(BEACON_SCAN_PERIOD_IN_SECONDS, &bleOnScanResults, false);
