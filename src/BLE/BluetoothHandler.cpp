@@ -1107,22 +1107,6 @@ void BluetoothHandler::notifyBleLogs(char *txt)
     }
 }
 
-/*
-void BluetoothHandler::notifyBreakeSentOrder(uint8_t order, uint8_t isPressed, uint8_t brakeFordidenHighVoltage)
-{
-
-    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
-    {
-        byte value[3];
-        value[0] = order;
-        value[1] = isPressed;
-        value[2] = brakeFordidenHighVoltage;
-        pCharacteristicBrakeSentOrder->setValue((uint8_t *)&value, 3);
-        pCharacteristicBrakeSentOrder->notify();
-    }
-}
-*/
-
 void BluetoothHandler::notifyBleLock()
 {
 
