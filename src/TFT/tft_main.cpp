@@ -108,8 +108,6 @@ TFT_eSPI tft = TFT_eSPI();
 SharedData *_shrd;
 Settings *_settings;
 
-float speed = 10.0;
-
 const char *txt_temp = "TMP";
 const char *txt_pas = "PAS";
 const char *txt_volts = "VOLTS";
@@ -288,12 +286,11 @@ void tftUpdateData(uint32_t i_loop)
     {
     case 0:
     {
-      sprintf(fmt, "%02.0f", _shrd->speedCurrent);
+      int speed = _shrd->speedCurrent;
+      if (speed > 199)
+        speed = 199;
+      sprintf(fmt, "%3d", (int)speed);
       tft_util_draw_number(&tft, fmt, COLUMN5, LINE_3Y, TFT_WHITE, TFT_BLACK, 5, BIG_FONT_SIZE);
-
-      speed = speed + 2.2;
-      if (speed > 150)
-        speed = 0;
       break;
     }
     case 1:
