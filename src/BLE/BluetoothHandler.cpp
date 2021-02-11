@@ -124,10 +124,6 @@ void BluetoothHandler::setSettings(Settings *data)
                     Serial.println("-------------------------------------");
                 }
             }
-
-            // notify commands feedback
-            // notify of current modes / values (for value not uptate by LCD)
-            notifyCommandsFeedback();
         };
 
         void onDisconnect(BLEServer *pServer)
@@ -203,6 +199,10 @@ void BluetoothHandler::setSettings(Settings *data)
                 esp_ble_gap_get_whitelist_size(&length);
                 Serial.println("onAuthenticationComplete : success");
                 deviceStatus = BLE_STATUS_CONNECTED_AND_AUTHENTIFIED;
+
+                // notify commands feedback
+                // notify of current modes / values (for value not uptate by LCD)
+                notifyCommandsFeedback();
             }
             else
             {
@@ -655,33 +655,41 @@ void BluetoothHandler::setSettings(Settings *data)
     pCharacteristicBtlockStatus = pServiceMain->createCharacteristic(
         BTLOCK_STATUS_CHARACTERISTIC_UUID,
         NIMBLE_PROPERTY::NOTIFY |
+            NIMBLE_PROPERTY::WRITE_NR |
             NIMBLE_PROPERTY::WRITE_AUTHEN |
             NIMBLE_PROPERTY::READ_AUTHEN);
 
     pCharacteristicCalibOrder = pServiceMain->createCharacteristic(
         CALIB_ORDER_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_AUTHEN);
+        NIMBLE_PROPERTY::WRITE_NR |
+            NIMBLE_PROPERTY::WRITE_AUTHEN);
 
     pCharacteristicOtaSwitch = pServiceMain->createCharacteristic(
         SWITCH_TO_OTA_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_AUTHEN);
+        NIMBLE_PROPERTY::WRITE_NR |
+            NIMBLE_PROPERTY::WRITE_AUTHEN);
 
     pCharacteristicLogs = pServiceMain->createCharacteristic(
         LOGS_CHARACTERISTIC_UUID,
         NIMBLE_PROPERTY::NOTIFY |
+            NIMBLE_PROPERTY::WRITE_NR |
             NIMBLE_PROPERTY::WRITE_AUTHEN);
 
     pCharacteristicDistanceRst = pServiceMain->createCharacteristic(
         DISTANCE_RST_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_AUTHEN);
+        NIMBLE_PROPERTY::WRITE_NR |
+            NIMBLE_PROPERTY::WRITE_AUTHEN);
 
     pCharacteristicKeepAlive = pServiceMain->createCharacteristic(
         KEEP_ALIVE_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_AUTHEN);
+        NIMBLE_PROPERTY::WRITE_NR |
+            NIMBLE_PROPERTY::WRITE_AUTHEN);
 
     pCharacteristicCommands = pServiceMain->createCharacteristic(
         COMMANDS_CHARACTERISTIC_UUID,
         NIMBLE_PROPERTY::NOTIFY |
+            NIMBLE_PROPERTY::READ |
+            NIMBLE_PROPERTY::WRITE_NR |
             NIMBLE_PROPERTY::WRITE_AUTHEN |
             NIMBLE_PROPERTY::READ_AUTHEN);
 
@@ -697,32 +705,38 @@ void BluetoothHandler::setSettings(Settings *data)
 
     pCharacteristicSettings1 = pServiceSettings->createCharacteristic(
         SETTINGS1_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_AUTHEN |
+        NIMBLE_PROPERTY::WRITE_NR |
+            NIMBLE_PROPERTY::WRITE_AUTHEN |
             NIMBLE_PROPERTY::READ_AUTHEN);
 
     pCharacteristicSettings2 = pServiceSettings->createCharacteristic(
         SETTINGS2_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_AUTHEN |
+        NIMBLE_PROPERTY::WRITE_NR |
+            NIMBLE_PROPERTY::WRITE_AUTHEN |
             NIMBLE_PROPERTY::READ_AUTHEN);
 
     pCharacteristicSettings3 = pServiceSettings->createCharacteristic(
         SETTINGS3_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_AUTHEN |
+        NIMBLE_PROPERTY::WRITE_NR |
+            NIMBLE_PROPERTY::WRITE_AUTHEN |
             NIMBLE_PROPERTY::READ_AUTHEN);
 
     pCharacteristicSettings4 = pServiceSettings->createCharacteristic(
         SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_AUTHEN |
+        NIMBLE_PROPERTY::WRITE_NR |
+            NIMBLE_PROPERTY::WRITE_AUTHEN |
             NIMBLE_PROPERTY::READ_AUTHEN);
 
     pCharacteristicSettings5 = pServiceSettings->createCharacteristic(
         SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_AUTHEN |
+        NIMBLE_PROPERTY::WRITE_NR |
+            NIMBLE_PROPERTY::WRITE_AUTHEN |
             NIMBLE_PROPERTY::READ_AUTHEN);
 
     pCharacteristicSettings6 = pServiceSettings->createCharacteristic(
         SETTINGS6_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_AUTHEN |
+        NIMBLE_PROPERTY::WRITE_NR |
+            NIMBLE_PROPERTY::WRITE_AUTHEN |
             NIMBLE_PROPERTY::READ_AUTHEN);
 
     //////////////
@@ -984,7 +998,7 @@ uint8_t BluetoothHandler::setMeasurementsDataPacket()
 
 uint8_t BluetoothHandler::setCommandsDataPacket()
 {
-    //Serial.println("setCommandsDataPacket");
+    Serial.println("setCommandsDataPacket");
 
     int32_t ind = 0;
 
@@ -1004,11 +1018,12 @@ uint8_t BluetoothHandler::setCommandsDataPacket()
         buffer_append_uint8(txValue, fastUpdate, &ind);
 
         // copy values
-        shrd->brakeSentOrderFromBLE = shrd->brakeSentOrder;
+        // ???
+        //shrd->brakeSentOrderFromBLE = shrd->brakeSentOrder;
 
         pCharacteristicCommands->setValue((uint8_t *)&txValue[0], ind);
 
-        //buffer_display("setCommandsDataPacket : ", txValue, ind);
+        buffer_display("setCommandsDataPacket : ", txValue, ind);
     }
     else
     {
@@ -1039,7 +1054,7 @@ void BluetoothHandler::getCommandsDataPacket(uint8_t *rxValue)
 
 void BluetoothHandler::notifyCommandsFeedback()
 {
-    //Serial.println("notifyCommandsFeedback");
+    Serial.println("notifyCommandsFeedback");
 
     if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
