@@ -119,6 +119,7 @@ const char *txt_trip = "TRIP";
 const char *txt_hr = "HR";
 const char *txt_power = "POWER";
 const char *txt_brk = "BRK";
+const char *txt_aux = "AUX";
 const char *txt_kmh = "Km/h";
 const char *txt_km = "Km";
 const char *txt_max = "Max";
@@ -131,6 +132,7 @@ uint8_t oldShrdCurrentTemperature = 255;
 uint8_t oldShrdCurrentHumidity = 255;
 uint8_t oldError = 255;
 uint8_t oldShrdIsLocked = 255;
+uint8_t oldAuxOrder = 255;
 
 void tftSetupBacklight()
 {
@@ -227,6 +229,7 @@ void tftUpdateData(uint32_t i_loop)
     oldShrdCurrentHumidity = 255;
     oldError = 255;
     oldShrdIsLocked = 255;
+    oldAuxOrder = 255;
 
     tft.fillScreen(TFT_BLACK);
 
@@ -406,7 +409,7 @@ void tftUpdateData(uint32_t i_loop)
 
       tft.setTextDatum(TC_DATUM);
 
-      int i = 0;
+      int i = -10 * SCALE_FACTOR_Y;
       if (oldShrdPasEnabled != _shrd->pasEnabled)
       {
         tft.setTextColor(_shrd->pasEnabled ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
@@ -420,6 +423,14 @@ void tftUpdateData(uint32_t i_loop)
         tft.setTextColor(_shrd->brakePressedStatus ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
         tft.drawString(txt_brk, COLUMN0, LINE_3Y + i, GFXFF);
         oldShrdBrakePressedStatus = _shrd->brakePressedStatus;
+      }
+
+      i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
+      if (oldAuxOrder != _shrd->auxOrder)
+      {
+        tft.setTextColor(_shrd->auxOrder ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.drawString(txt_aux, COLUMN0, LINE_3Y + i, GFXFF);
+        oldAuxOrder = _shrd->auxOrder;
       }
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
