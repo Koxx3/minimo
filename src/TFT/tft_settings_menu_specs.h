@@ -65,7 +65,10 @@ char buf1[]="Test";
 double dummy = 0.0;
 
 MENU(moreInfos,"More informations",doNothing,noEvent,noStyle
-  ,altFIELD(decPlaces<1>::menuField, dummy, "Dummy","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle)
+  ,altFIELD(decPlaces<1>::menuField, dummy, "ODO","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle)
+  ,altFIELD(decPlaces<1>::menuField, dummy, "Temperature","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle)
+  ,altFIELD(decPlaces<1>::menuField, dummy, "Humidity","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle)
+  ,altFIELD(decPlaces<1>::menuField, dummy, "Errors","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle)
   ,EXIT("< Back")
 );
 
