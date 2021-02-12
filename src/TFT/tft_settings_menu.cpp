@@ -32,18 +32,6 @@ you when you have improved the sketch. You can mail me at j [dot] maathuis [at] 
 
 #include <TFT_eSPI.h>
 
-/*
-#ifndef TFT_DISPOFF
-#define TFT_DISPOFF 0x28
-#endif
-
-#ifndef TFT_SLPIN
-#define TFT_SLPIN 0x10
-#endif
-
-#define TFT_BL 4 // Display backlight control pin
-*/
-
 #include "tft_settings_menu.h"
 #include "tft_settings_menu_specs.h"
 
@@ -68,7 +56,7 @@ you when you have improved the sketch. You can mail me at j [dot] maathuis [at] 
 
 using namespace Menu;
 
-extern TFT_eSPI tft; // = TFT_eSPI(); // Define TFT_eSPI object with the size of the screen: 135 pixels width and 240 pixels height. We will rotate it later a quarter clockwise.
+extern TFT_eSPI tft;
 
 result doAlert(eventMask e, prompt &item);
 
@@ -82,15 +70,7 @@ idx_t serialTops[MAX_DEPTH] = {0};
 #define fontW 10
 #define fontH 26
 
-/*
-		void setCursor(idx_t x, idx_t y, idx_t panelNr = 0) override
-		{
-			const panel p = panels[panelNr];
-			gfx.setCursor((p.x + x) * resX + 6, (p.y + y) * resY + fontMarginY + 17);
-		}
-*/
-
-const panel panels[] MEMMODE = {{0, 0, GFX_WIDTH / fontW, GFX_HEIGHT / fontH}, {240, 0, GFX_WIDTH, GFX_HEIGHT / fontH}};
+const panel panels[] MEMMODE = {{0, 0, GFX_WIDTH / fontW, GFX_HEIGHT / fontH}};
 navNode *nodes[sizeof(panels) / sizeof(panel)]; //navNodes to store navigation status
 panelsList pList(panels, nodes, 1);             //a list of panels and nodes
 idx_t eSpiTops[MAX_DEPTH] = {0};
@@ -99,8 +79,6 @@ menuOut *constMEM outputs[] MEMMODE = {&eSpiOut};              //list of output 
 outputsList out(outputs, sizeof(outputs) / sizeof(menuOut *)); //outputs list controller
 
 NAVROOT(nav, mainMenu, MAX_DEPTH, serial, out);
-
-unsigned long idleTimestamp = millis();
 
 bool isInMenu = false;
 
@@ -112,13 +90,22 @@ bool settings_menu_enabled()
 void settings_menu_btn_click(uint8_t pressType, uint8_t btnNum)
 {
   if ((btnNum == 1) && (pressType == 0))
+  {
     nav.doNav(upCmd);
+  }
   if ((btnNum == 2) && (pressType == 0))
+  {
     nav.doNav(downCmd);
+  }
   if ((btnNum == 1) && (pressType == 1))
+  {
     nav.doNav(enterCmd);
+  }
   if ((btnNum == 2) && (pressType == 1))
-    nav.doNav(escCmd);
+  {
+    if (nav.level > 0)
+      nav.doNav(escCmd);
+  }
 }
 
 void settings_menu_setup()
@@ -127,6 +114,7 @@ void settings_menu_setup()
 
   //nav.idleTask = idle; //point a function to be used when menu is suspended
   nav.canExit = true;
+  nav.idleOff();
 
   //mainMenu[1].disable();
   //outGfx.usePreview=true;//reserve one panel for preview?
