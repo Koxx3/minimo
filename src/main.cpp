@@ -1510,17 +1510,6 @@ void loop()
   }
 #endif
 
-  /* test display
-  if (i_loop % 200 == 0)
-  {
-    computeDistance(100);
-  }
-  */
-
-#if TFT_ENABLED
-//tftUpdateData(i_loop);
-#endif
-
   // Give a time for ESP
   delay(1);
   //delayMicroseconds(1000);
@@ -1543,15 +1532,6 @@ void loop()
 #endif
 
   i_loop++;
-
-  /* crash test 1
-  *((volatile int*)NULL) = 42;
-*/
-
-  /* crash test 2
-  int test = 5 / 0;
-  Serial.println(test);
-*/
 
 #if ENABLE_WATCHDOG
   resetWatchdog();
