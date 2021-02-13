@@ -1,9 +1,7 @@
 //////////////////////////////////////////
 // TODO : current loop
 // TODO : LCD error indicators
-// TODO : mode Z button/settings
 // TODO : auto mode shift on low battery
-// TODO : exponential throttle
 // TODO : reduce SHTC3 read time - brake read function in 2 parts
 // BUG : original regulator perturbation
 // BUG : mode Z / android
@@ -16,14 +14,14 @@
 #include "main.h"
 #include "Settings.h"
 #include "SharedData.h"
+#include "pinout.h"
 #include "debug.h"
-#include "OneButton.h"
 #include "prefs_storage.h"
 #include <Wire.h>
 #include <Adafruit_MCP4725.h>
 #include "SHTC3/SparkFun_SHTC3.h"
 #include "esp32-hal-uart.h"
-
+#include "Buttons/Buttons.h"
 #include "BLE/BluetoothHandler.h"
 #include "OTA/OTA_wifi.h"
 #include "filters/MedianFilter.h"
@@ -71,58 +69,6 @@ SmartEsc smartEscCntrl;
 #define VOLTAGE_EXT_READ 1
 #define BRAKE_ANALOG_EXT_READ 1
 
-// PINOUT
-#define PCB_V132
-
-#ifdef PCB_V130
-#define HAS_I2C 0
-#define PIN_SERIAL_ESP_TO_LCD 26
-#define PIN_SERIAL_ESP_TO_CNTRL 27
-#define PIN_SERIAL_LCD_TO_ESP 25
-#define PIN_SERIAL_CNTRL_TO_ESP 14
-#define PIN_OUT_RELAY 16
-#define PIN_IN_VOLTAGE 32
-#define PIN_IN_CURRENT 35
-#define PIN_IN_BUTTON1 22
-#define PIN_IN_BUTTON2 15 // PB was TX
-#define PIN_OUT_LED_BUTTON1 3
-#define PIN_OUT_LED_BUTTON2 21
-#define PIN_OUT_BRAKE 13
-#define PIN_IN_OUT_DHT 12
-#define PIN_IN_ABRAKE 34
-#define PIN_IN_ATHROTTLE 39
-#define PIN_OUT_BACKLIGHT 5
-#endif
-
-#ifdef PCB_V132
-#define HAS_I2C 1
-// LEFT
-#define PIN_IN_CURRENT 36          // ok >> need calibration
-#define PIN_IN_ATHROTTLE 39        // ~ok >>> missing voltage divider & filter capa
-#define PIN_IN_ABRAKE 34           // ok
-#define PIN_IN_VOLTAGE 35          // ok
-#define PIN_I2C_SDA 32             // ok
-#define PIN_I2C_SCL 33             // ok
-#define PIN_SERIAL_LCD_TO_ESP 25   // ok
-#define PIN_SERIAL_ESP_TO_LCD 26   // ok
-#define PIN_SERIAL_ESP_TO_CNTRL 27 // ok
-#define PIN_SERIAL_CNTRL_TO_ESP 14 // ok
-#define PIN_IN_OUT_DHT 12          // ok
-#define PIN_OUT_BRAKE 13           // ok
-// RIGHT
-#define PIN_SPI_MOSI 23        // use in LCD  // ok
-#define PIN_IN_BUTTON1 22      // ok
-#define PIN_OUT_LED_BUTTON2 21 // ok
-#define PIN_FREE 19            // ok
-#define PIN_SPI_CLK 18         // use in LCD  // ok
-#define PIN_SPI_BKL 5          // use in LCD  // ok
-#define PIN_SPI_RST 17         // use in LCD  // ok
-#define PIN_OUT_RELAY 16       // ok with voltages >> to test with SSR
-#define PIN_OUT_LED_BUTTON1 4  // ok
-#define PIN_SPI_DC 2           // use in LCD // ok
-#define PIN_IN_BUTTON2 15      // ok
-#endif
-
 // I2C
 #define I2C_FREQ 1000000
 
@@ -138,9 +84,6 @@ SmartEsc smartEscCntrl;
 #define NB_CURRENT_FILTER_DATA 20
 #define NB_CURRENT_FILTER_CALIB_DATA 20
 #define NB_VOLTAGE_FILTER_DATA 10
-
-// BUTTONS
-#define BUTTON_LONG_PRESS_TICK 300
 
 // distance
 #define SPEED_TO_DISTANCE_CORRECTION_FACTOR 1.05
@@ -171,9 +114,6 @@ HardwareSerial hwSerLcd(2);
 
 DHT_nonblocking dht_sensor(PIN_IN_OUT_DHT, DHT_TYPE_22);
 
-OneButton button1(PIN_IN_BUTTON1, true, true);
-OneButton button2(PIN_IN_BUTTON2, true, true);
-
 TwoWire I2Cone = TwoWire(0);
 Adafruit_MCP4725 dac;
 SHTC3 mySHTC3;
@@ -200,12 +140,11 @@ MedianFilter brakeFilter(10 /* 20 */, 900);
 //MedianFilter brakeMaxFilterInit(NB_BRAKE_CALIB_DATA, 900);
 MedianFilter throttleFilterInit(10 /* 20 */, 900);
 
+Buttons btns;
+
 Settings settings;
 BluetoothHandler blh;
 preferences prefs;
-
-bool inSettingsMenu = false;
-bool oldInSettingsMenu = false;
 
 //////------------------------------------
 //////------------------------------------
@@ -374,24 +313,6 @@ void initDataWithSettings()
   shrd.speedLimiter = (settings.getS1F().Speed_limiter_at_startup == 1);
 }
 
-void setupButtons()
-{
-
-  button1.attachClick(processButton1Click);
-  button1.attachLongPressStart(processButton1LpStart);
-  button1.attachDuringLongPress(processButton1LpDuring);
-  button1.attachLongPressStop(processButton1LpStop);
-  button1.setDebounceTicks(50);
-  button1.setPressTicks(BUTTON_LONG_PRESS_TICK);
-
-  button2.attachClick(processButton2Click);
-  button2.attachLongPressStart(processButton2LpStart);
-  button2.attachDuringLongPress(processButton2LpDuring);
-  button2.attachLongPressStop(processButton2LpStop);
-  button2.setDebounceTicks(50);
-  button2.setPressTicks(BUTTON_LONG_PRESS_TICK);
-}
-
 #if ENABLE_WATCHDOG
 void IRAM_ATTR triggerWatchdog()
 {
@@ -425,16 +346,16 @@ void taskUpdateTFT(void *parameter)
   // infinite loop
   for (;;)
   {
-    oldInSettingsMenu = inSettingsMenu;
-    inSettingsMenu = settings_menu_enabled();
+    shrd.oldInSettingsMenu = shrd.inSettingsMenu;
+    shrd.inSettingsMenu = settings_menu_enabled();
     //Serial.println("oldInSettingsMenu = " + (String)oldInSettingsMenu + " / inSettingsMenu = " + (String)inSettingsMenu);
 
     // not currently in settings menu
-    if (!inSettingsMenu)
+    if (!shrd.inSettingsMenu)
     {
 
       // was in settings menu
-      if (oldInSettingsMenu)
+      if (shrd.oldInSettingsMenu)
       {
         // force main display reset
         i = -1;
@@ -454,7 +375,7 @@ void taskUpdateTFT(void *parameter)
     else
     {
       // entering in settings menu
-      if (!oldInSettingsMenu)
+      if (!shrd.oldInSettingsMenu)
       {
         Serial.println("settings_menu_setup");
         settings_menu_setup();
@@ -505,7 +426,7 @@ void setup()
   setupPins();
 
   Serial.print(PSTR("   buttons..."));
-  setupButtons();
+  btns.setup(&shrd, &blh, &settings);
 
 #if TFT_ENABLED
   Serial.print(PSTR("   TFT... "));
@@ -1178,324 +1099,6 @@ uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
   return shrd.brakeSentOrder;
 }
 
-void processButton1Click()
-{
-  if (shrd.button1ClickStatus == ACTION_OFF)
-  {
-    shrd.button1ClickStatus = ACTION_ON;
-  }
-  else
-  {
-    shrd.button1ClickStatus = ACTION_OFF;
-  }
-
-  if (inSettingsMenu)
-  {
-    settings_menu_btn_click(0, 1);
-  }
-
-  processAuxEvent(1, false);
-  processSpeedLimiterEvent(1, false);
-  processLockEvent(1, false);
-  processModeEvent(1, false);
-
-  Serial.print("processButton1Click : ");
-  Serial.println(shrd.button1ClickStatus);
-
-  char print_buffer[500];
-  sprintf(print_buffer, "processButton1Click : %d", shrd.button1ClickStatus);
-  blh.notifyBleLogs(print_buffer);
-}
-
-void processButton1LpStart()
-{
-  shrd.button1LpDuration = button1.getPressedTicks();
-  Serial.print("processButton1LpStart : ");
-  Serial.println(shrd.button1LpDuration);
-
-  char print_buffer[500];
-  sprintf(print_buffer, "processButton1LpStart : %d", shrd.button1LpDuration);
-  blh.notifyBleLogs(print_buffer);
-
-  if (inSettingsMenu)
-  {
-    settings_menu_btn_click(1, 1);
-  }
-}
-
-void processButton1LpDuring()
-{
-  shrd.button1LpDuration = button1.getPressedTicks();
-
-  if ((shrd.button1LpDuration > settings.getS3F().Button_long_press_duration * 1000) && (!shrd.button1LpProcessed))
-  {
-
-    char print_buffer[500];
-    sprintf(print_buffer, "processButton1LpDuring : %d =>> process", shrd.button1LpDuration);
-    blh.notifyBleLogs(print_buffer);
-
-    processAuxEvent(1, true);
-    processSpeedLimiterEvent(1, true);
-    processLockEvent(1, true);
-    processModeEvent(1, true);
-    shrd.button1LpProcessed = true;
-  }
-}
-
-void processButton1LpStop()
-{
-  Serial.print("processButton1LpStop : ");
-  Serial.println(shrd.button1LpDuration);
-
-  char print_buffer[500];
-  sprintf(print_buffer, "processButton1LpStop : %d", shrd.button1LpDuration);
-  blh.notifyBleLogs(print_buffer);
-
-  shrd.button1LpProcessed = false;
-  shrd.button1LpDuration = 0;
-}
-
-void processButton1()
-{
-  if (shrd.button1ClickStatus == ACTION_ON)
-  {
-    digitalWrite(PIN_OUT_LED_BUTTON1, HIGH);
-  }
-  else if (shrd.button1ClickStatus == ACTION_OFF)
-  {
-    digitalWrite(PIN_OUT_LED_BUTTON1, LOW);
-  }
-}
-
-////////////////////////////////////////////
-
-void processButton2Click()
-{
-  if (shrd.button2ClickStatus == ACTION_OFF)
-  {
-    shrd.button2ClickStatus = ACTION_ON;
-  }
-  else
-  {
-    shrd.button2ClickStatus = ACTION_OFF;
-  }
-
-  if (inSettingsMenu)
-  {
-    settings_menu_btn_click(0, 2);
-  }
-
-  processAuxEvent(2, false);
-  processSpeedLimiterEvent(2, false);
-  processLockEvent(2, false);
-  processModeEvent(2, false);
-
-  Serial.print("processButton2Click : ");
-  Serial.println(shrd.button2ClickStatus);
-
-  char print_buffer[500];
-  sprintf(print_buffer, "processButton2Click : %d", shrd.button2ClickStatus);
-  blh.notifyBleLogs(print_buffer);
-}
-
-void processButton2LpStart()
-{
-  shrd.button2LpDuration = button2.getPressedTicks();
-  Serial.print("processButton2LpStart : ");
-  Serial.println(shrd.button2LpDuration);
-
-  if (inSettingsMenu)
-  {
-    settings_menu_btn_click(1, 2);
-  }
-
-  char print_buffer[500];
-  sprintf(print_buffer, "processButton2LpStart : %d", shrd.button2LpDuration);
-  blh.notifyBleLogs(print_buffer);
-}
-
-void processButton2LpDuring()
-{
-  shrd.button2LpDuration = button2.getPressedTicks();
-
-  if ((shrd.button2LpDuration > settings.getS3F().Button_long_press_duration * 1000) && (!shrd.button2LpProcessed))
-  {
-    /*
-    char print_buffer[500];
-    sprintf(print_buffer, "processButton2LpDuring : %d ==> process", shrd.button2LpDuration);
-    blh.notifyBleLogs(print_buffer);
-
-    processAuxEvent(2, true);
-    processSpeedLimiterEvent(2, true);
-    processLockEvent(2, true);
-    processModeEvent(2, true);
-*/
-    shrd.button2LpProcessed = true;
-
-    // Enter settings panel
-    if (!inSettingsMenu)
-    {
-      settings_menu_enter_settings();
-    }
-  }
-}
-
-void processButton2LpStop()
-{
-  Serial.print("processButton2LpStop : ");
-  Serial.println(shrd.button2LpDuration);
-
-  char print_buffer[500];
-  sprintf(print_buffer, "processButton2LpStop : %d", shrd.button2LpDuration);
-  blh.notifyBleLogs(print_buffer);
-
-  shrd.button2LpProcessed = false;
-  shrd.button2LpDuration = 0;
-}
-
-void processButton2()
-{
-  if (shrd.button2ClickStatus == ACTION_ON)
-  {
-    digitalWrite(PIN_OUT_LED_BUTTON2, HIGH);
-  }
-  else if (shrd.button2ClickStatus == ACTION_OFF)
-  {
-    digitalWrite(PIN_OUT_LED_BUTTON2, LOW);
-  }
-}
-//////////////////////////
-
-void processAuxEvent(uint8_t buttonId, bool isLongPress)
-{
-
-  // process AUX order -- button 1
-  if (((buttonId == 1) && (!isLongPress) && (settings.getS3F().Button_1_short_press_action == settings.LIST_Button_press_action_Aux_on_off)) ||
-      ((buttonId == 1) && (isLongPress) && (settings.getS3F().Button_1_long_press_action == settings.LIST_Button_press_action_Aux_on_off)) ||
-      ((buttonId == 2) && (!isLongPress) && (settings.getS3F().Button_2_short_press_action == settings.LIST_Button_press_action_Aux_on_off)) ||
-      ((buttonId == 2) && (isLongPress) && (settings.getS3F().Button_2_long_press_action == settings.LIST_Button_press_action_Aux_on_off)))
-  {
-    if (shrd.auxOrder == 0)
-    {
-      shrd.auxOrder = 1;
-    }
-    else
-    {
-      shrd.auxOrder = 0;
-    }
-    //    blh.notifyAuxOrder(shrd.auxOrder);
-    blh.notifyCommandsFeedback();
-
-    Serial.print("processAuxEvent => ok / ");
-    Serial.println(shrd.auxOrder);
-
-    char print_buffer[500];
-    sprintf(print_buffer, "processAuxEvent : %d", shrd.auxOrder);
-    blh.notifyBleLogs(print_buffer);
-  }
-}
-
-void processSpeedLimiterEvent(uint8_t buttonId, bool isLongPress)
-{
-
-  // process SpeedLimiter
-  if (((buttonId == 1) && (!isLongPress) && (settings.getS3F().Button_1_short_press_action == settings.LIST_Button_press_action_Startup_speed_limitation_on_off)) ||
-      ((buttonId == 1) && (isLongPress) && (settings.getS3F().Button_1_long_press_action == settings.LIST_Button_press_action_Startup_speed_limitation_on_off)) ||
-      ((buttonId == 2) && (!isLongPress) && (settings.getS3F().Button_2_short_press_action == settings.LIST_Button_press_action_Startup_speed_limitation_on_off)) ||
-      ((buttonId == 2) && (isLongPress) && (settings.getS3F().Button_2_long_press_action == settings.LIST_Button_press_action_Startup_speed_limitation_on_off)))
-  {
-    if (shrd.speedLimiter == 0)
-    {
-      shrd.speedLimiter = 1;
-    }
-    else
-    {
-      shrd.speedLimiter = 0;
-    }
-    //blh.notifySpeedLimiterStatus(shrd.speedLimiter);
-    blh.notifyCommandsFeedback();
-
-    Serial.print("notifySpeedLimiterStatus => ok / ");
-    Serial.println(shrd.speedLimiter);
-
-    char print_buffer[500];
-    sprintf(print_buffer, "notifySpeedLimiterStatus : %d", shrd.speedLimiter);
-    blh.notifyBleLogs(print_buffer);
-  }
-}
-
-void processLockEvent(uint8_t buttonId, bool isLongPress)
-{
-
-  // process SpeedLimiter
-  if (((buttonId == 1) && (!isLongPress) && (settings.getS3F().Button_1_short_press_action == settings.LIST_Button_press_action_Anti_theft_manual_lock_on)) ||
-      ((buttonId == 1) && (isLongPress) && (settings.getS3F().Button_1_long_press_action == settings.LIST_Button_press_action_Anti_theft_manual_lock_on)) ||
-      ((buttonId == 2) && (!isLongPress) && (settings.getS3F().Button_2_short_press_action == settings.LIST_Button_press_action_Anti_theft_manual_lock_on)) ||
-      ((buttonId == 2) && (isLongPress) && (settings.getS3F().Button_2_long_press_action == settings.LIST_Button_press_action_Anti_theft_manual_lock_on)))
-  {
-    blh.setBleLock(true);
-    blh.notifyBleLock();
-
-    Serial.println("processLockEvent => ok / ON");
-
-    char print_buffer[500];
-    sprintf(print_buffer, "processLockEvent");
-    blh.notifyBleLogs(print_buffer);
-  }
-}
-
-void processModeEvent(uint8_t buttonId, bool isLongPress)
-{
-
-  // process mode switch 1/2/3
-  if (((buttonId == 1) && (!isLongPress) && (settings.getS3F().Button_1_short_press_action == settings.LIST_Button_press_action_Mode_switch_1_2_3)) ||
-      ((buttonId == 1) && (isLongPress) && (settings.getS3F().Button_1_long_press_action == settings.LIST_Button_press_action_Mode_switch_1_2_3)) ||
-      ((buttonId == 2) && (!isLongPress) && (settings.getS3F().Button_2_short_press_action == settings.LIST_Button_press_action_Mode_switch_1_2_3)) ||
-      ((buttonId == 2) && (isLongPress) && (settings.getS3F().Button_2_long_press_action == settings.LIST_Button_press_action_Mode_switch_1_2_3)))
-  {
-    if (shrd.modeOrder == 1)
-      shrd.modeOrder = 2;
-    else if (shrd.modeOrder == 2)
-      shrd.modeOrder = 3;
-    else if (shrd.modeOrder == 3)
-      shrd.modeOrder = 1;
-
-    blh.notifyCommandsFeedback();
-
-    Serial.println("processModeEvent => new mode = " + (String)shrd.modeOrder);
-  }
-
-  // process mode switch 2/3
-  if (((buttonId == 1) && (!isLongPress) && (settings.getS3F().Button_1_short_press_action == settings.LIST_Button_press_action_Mode_switch_2_3)) ||
-      ((buttonId == 1) && (isLongPress) && (settings.getS3F().Button_1_long_press_action == settings.LIST_Button_press_action_Mode_switch_2_3)) ||
-      ((buttonId == 2) && (!isLongPress) && (settings.getS3F().Button_2_short_press_action == settings.LIST_Button_press_action_Mode_switch_2_3)) ||
-      ((buttonId == 2) && (isLongPress) && (settings.getS3F().Button_2_long_press_action == settings.LIST_Button_press_action_Mode_switch_2_3)))
-  {
-    if (shrd.modeOrder == 1)
-      shrd.modeOrder = 2;
-    else if (shrd.modeOrder == 2)
-      shrd.modeOrder = 3;
-    else if (shrd.modeOrder == 3)
-      shrd.modeOrder = 2;
-
-    blh.notifyCommandsFeedback();
-
-    Serial.println("processModeEvent => new mode = " + (String)shrd.modeOrder);
-  }
-}
-
-void processRelay()
-{
-  if (shrd.auxOrder == 1)
-  {
-    digitalWrite(PIN_OUT_RELAY, 1);
-  }
-  else
-  {
-    digitalWrite(PIN_OUT_RELAY, 0);
-  }
-}
-
 void processDHT()
 {
   static unsigned long measurement_timestamp = millis();
@@ -1717,6 +1320,18 @@ void processCurrent()
   }
 }
 
+void processRelay()
+{
+    if (shrd.auxOrder == 1)
+    {
+        digitalWrite(PIN_OUT_RELAY, 1);
+    }
+    else
+    {
+        digitalWrite(PIN_OUT_RELAY, 0);
+    }
+}
+
 //////------------------------------------
 //////------------------------------------
 ////// Main loop
@@ -1831,17 +1446,7 @@ void loop()
 
   blh.processBLE();
 
-  button1.tick();
-  button2.tick();
-  processButton1();
-#if DEBUG_DISPLAY_BUTTON1
-  displayButton1();
-#endif
-
-  processButton2();
-#if DEBUG_DISPLAY_BUTTON2
-  displayButton2();
-#endif
+  btns.processTicks();
 
   processRelay();
 

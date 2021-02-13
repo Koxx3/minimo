@@ -9,6 +9,7 @@
 
 #include "SharedData.h"
 #include "Settings.h"
+#include "pinout.h"
 
 #include "TFT/fonts/FORCED_SQUARE6pt7b.h"
 #include "TFT/fonts/FORCED_SQUARE7pt7b.h"
@@ -96,12 +97,6 @@
 
 #define LINE_TEXT_OFFSET 6
 
-#define PIN_SPI_CS -1  // goes to TFT CS -- not used
-#define PIN_SPI_DC 2   // goes to TFT DC
-#define PIN_SPI_RST 17 // goes to TFT RESET
-
-#define PIN_OUT_BACKLIGHT 5
-
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
 TFT_eSPI tft = TFT_eSPI();
 
@@ -137,10 +132,10 @@ uint8_t oldAuxOrder = 255;
 void tftSetupBacklight()
 {
 
-  pinMode(PIN_OUT_BACKLIGHT, OUTPUT);
-  digitalWrite(PIN_OUT_BACKLIGHT, 1);
+  pinMode(PIN_SPI_BKL, OUTPUT);
+  digitalWrite(PIN_SPI_BKL, 1);
   ledcSetup(0, 1000, 10);
-  ledcAttachPin(PIN_OUT_BACKLIGHT, 0);
+  ledcAttachPin(PIN_SPI_BKL, 0);
   ledcWrite(0, 0);
 }
 

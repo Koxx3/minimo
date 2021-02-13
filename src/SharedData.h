@@ -107,6 +107,10 @@ public:
     boolean button1LpProcessed = false;
     boolean button2LpProcessed = false;
 
+    // TFT settings menu status
+    bool inSettingsMenu = false;
+    bool oldInSettingsMenu = false;
+
     boolean errorThrottle = false;
     boolean errorBrake = false;
     boolean errorSerialFromDisplay = false;

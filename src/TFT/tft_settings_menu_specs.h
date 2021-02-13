@@ -7,7 +7,6 @@
 ////////// NEVER REFORMAT //////////
 
 #ifndef _Settings_menu_specs_h
-
 #define _Settings_menu_specs_h
 
 #include <menu.h>
