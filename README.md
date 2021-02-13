@@ -141,15 +141,14 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Current measure manual calibration
     - [✅] Speed limiter at startup
     - [✅] Configurable speed limit
-    - [ ] Remote physical button
+    - [✅] Remote physical button
         - [✅] Speed limiter ON/OFF
         - [✅] Lock ON      
         - [✅] Nitro Boost continuous
         - [✅] Nitro Boost ON/OFF
         - [✅] Aux ON/OFF       
-        - [ ] Switch modes 1/2/3 or 2/3   
-        - [ ] Settings access
-        - [ ] Mode Z ON/OFF
+        - [✅] Switch modes 1/2/3 or 2/3   
+        - [✅] Settings access
     - [✅] Disable electric brake with full battery
     - [✅] Manual calibration for analog brake
     - [✅] Manual calibration for voltage
@@ -160,7 +159,6 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [IN PROGRESS 🔄] Automatic ECO mode on low battery 
     - [ ] Dynamic BLE debug infos
     - [ ] Configurable current loop regulation
-    - [ ] Customize mode Z with different power / max speed
     - [ ] Wifi connexion for dashboard display and settings
     - [ ] Advanced diagnosis (serial errors, throtle errors ...)
 
