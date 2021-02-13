@@ -115,6 +115,7 @@ void settings_menu_setup()
   //nav.idleTask = idle; //point a function to be used when menu is suspended
   nav.canExit = true;
   nav.idleOff();
+  nav.inputBurst = 0;
 
   //mainMenu[1].disable();
   //outGfx.usePreview=true;//reserve one panel for preview?

@@ -18,7 +18,7 @@
 extern bool isInMenu;
 
 int thottleRegen=0;
-TOGGLE(thottleRegen,setThottleRegen,"  Throttle signal regeneration: ",doNothing,noEvent,noStyle//,doExit,enterEvent,noStyle
+TOGGLE(thottleRegen,setThottleRegen,"  Throttle signal regeneration: ",doNothing,noEvent,noStyle
   ,VALUE("On",1,doNothing,noEvent)
   ,VALUE("Off",0,doNothing,noEvent)
 );
@@ -117,9 +117,7 @@ MENU(bluetooth,"  Bluetooth",doNothing,noEvent,noStyle
   ,EXIT("< Back")
 );
 
-MENU(softwareUpdates,"  Sotfware upddates (Wifi)",doNothing,noEvent,noStyle
-  //,EDIT("  Wifi SSID",buf1,hexNr,doNothing,noEvent,noStyle)
-  //,EDIT("  Wifi password",buf1,hexNr,doNothing,noEvent,noStyle)
+MENU(softwareUpdates,"  Software upddates (Wifi)",doNothing,noEvent,noStyle
   ,OP("  Wifi settings needs to be set with bluetooth, sorry !", doNothing, noEvent)
   ,OP("  OTA update through PlatformIO", resetBlePinCode, enterEvent)
   ,OP("  OTA update through Github server", resetBlePinCode, enterEvent)

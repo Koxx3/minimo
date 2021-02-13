@@ -32,6 +32,7 @@ void processVoltage();
 void processSpeedLimiterEvent(uint8_t, bool);
 void processLockEvent(uint8_t, bool);
 void processAuxEvent(uint8_t, bool);
+void processModeEvent(uint8_t, bool);
 
 void resetPid();
 

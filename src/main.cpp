@@ -1197,6 +1197,7 @@ void processButton1Click()
   processAuxEvent(1, false);
   processSpeedLimiterEvent(1, false);
   processLockEvent(1, false);
+  processModeEvent(1, false);
 
   Serial.print("processButton1Click : ");
   Serial.println(shrd.button1ClickStatus);
@@ -1236,6 +1237,7 @@ void processButton1LpDuring()
     processAuxEvent(1, true);
     processSpeedLimiterEvent(1, true);
     processLockEvent(1, true);
+    processModeEvent(1, true);
     shrd.button1LpProcessed = true;
   }
 }
@@ -1286,6 +1288,7 @@ void processButton2Click()
   processAuxEvent(2, false);
   processSpeedLimiterEvent(2, false);
   processLockEvent(2, false);
+  processModeEvent(2, false);
 
   Serial.print("processButton2Click : ");
   Serial.println(shrd.button2ClickStatus);
@@ -1325,8 +1328,8 @@ void processButton2LpDuring()
     processAuxEvent(2, true);
     processSpeedLimiterEvent(2, true);
     processLockEvent(2, true);
+    processModeEvent(2, true);
 */
-
     shrd.button2LpProcessed = true;
 
     // Enter settings panel
@@ -1438,6 +1441,46 @@ void processLockEvent(uint8_t buttonId, bool isLongPress)
     char print_buffer[500];
     sprintf(print_buffer, "processLockEvent");
     blh.notifyBleLogs(print_buffer);
+  }
+}
+
+void processModeEvent(uint8_t buttonId, bool isLongPress)
+{
+
+  // process mode switch 1/2/3
+  if (((buttonId == 1) && (!isLongPress) && (settings.getS3F().Button_1_short_press_action == settings.LIST_Button_press_action_Mode_switch_1_2_3)) ||
+      ((buttonId == 1) && (isLongPress) && (settings.getS3F().Button_1_long_press_action == settings.LIST_Button_press_action_Mode_switch_1_2_3)) ||
+      ((buttonId == 2) && (!isLongPress) && (settings.getS3F().Button_2_short_press_action == settings.LIST_Button_press_action_Mode_switch_1_2_3)) ||
+      ((buttonId == 2) && (isLongPress) && (settings.getS3F().Button_2_long_press_action == settings.LIST_Button_press_action_Mode_switch_1_2_3)))
+  {
+    if (shrd.modeOrder == 1)
+      shrd.modeOrder = 2;
+    else if (shrd.modeOrder == 2)
+      shrd.modeOrder = 3;
+    else if (shrd.modeOrder == 3)
+      shrd.modeOrder = 1;
+
+    blh.notifyCommandsFeedback();
+
+    Serial.println("processModeEvent => new mode = " + (String)shrd.modeOrder);
+  }
+
+  // process mode switch 2/3
+  if (((buttonId == 1) && (!isLongPress) && (settings.getS3F().Button_1_short_press_action == settings.LIST_Button_press_action_Mode_switch_2_3)) ||
+      ((buttonId == 1) && (isLongPress) && (settings.getS3F().Button_1_long_press_action == settings.LIST_Button_press_action_Mode_switch_2_3)) ||
+      ((buttonId == 2) && (!isLongPress) && (settings.getS3F().Button_2_short_press_action == settings.LIST_Button_press_action_Mode_switch_2_3)) ||
+      ((buttonId == 2) && (isLongPress) && (settings.getS3F().Button_2_long_press_action == settings.LIST_Button_press_action_Mode_switch_2_3)))
+  {
+    if (shrd.modeOrder == 1)
+      shrd.modeOrder = 2;
+    else if (shrd.modeOrder == 2)
+      shrd.modeOrder = 3;
+    else if (shrd.modeOrder == 3)
+      shrd.modeOrder = 2;
+
+    blh.notifyCommandsFeedback();
+
+    Serial.println("processModeEvent => new mode = " + (String)shrd.modeOrder);
   }
 }
 
