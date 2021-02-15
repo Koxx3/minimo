@@ -1,5 +1,11 @@
 #include "Buttons/buttons.h"
 #include "TFT/tft_settings_menu.h"
+#include <jled.h>
+
+#define SINGLE_LED 0
+
+#define SHORT_BREATHE_DURATION 600
+#define LONG_BREATHE_DURATION 1000
 
 OneButton button1(PIN_IN_BUTTON1, true, true);
 OneButton button2(PIN_IN_BUTTON2, true, true);
@@ -7,6 +13,10 @@ OneButton button2(PIN_IN_BUTTON2, true, true);
 Settings *Buttons::settings;
 SharedData *Buttons::shrd;
 BluetoothHandler *Buttons::blh;
+
+#if ENABLE_LED
+auto led1 = JLed(jled::Esp32Hal(PIN_OUT_LED_BUTTON1, 7)).MaxBrightness(255).LowActive();
+#endif
 
 Buttons::Buttons()
 {
@@ -32,22 +42,35 @@ void Buttons::setup(SharedData *shrd_p, BluetoothHandler *blh_p, Settings *setti
     button2.attachLongPressStop(processButton2LpStop);
     button2.setDebounceTicks(50);
     button2.setPressTicks(BUTTON_LONG_PRESS_TICK);
+
+#if ENABLE_LED
+    led1.Stop();
+#endif
 }
 
 void Buttons::processButton1Click()
 {
-    if (shrd->button1ClickStatus == ACTION_OFF)
-    {
-        shrd->button1ClickStatus = ACTION_ON;
-    }
-    else
-    {
-        shrd->button1ClickStatus = ACTION_OFF;
-    }
 
     if (shrd->inSettingsMenu)
     {
         settings_menu_btn_click(0, 1);
+    }
+    else
+    {
+        if (shrd->button1ClickStatus == ACTION_OFF)
+        {
+            shrd->button1ClickStatus = ACTION_ON;
+#if ENABLE_LED
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(2);
+#endif
+        }
+        else
+        {
+            shrd->button1ClickStatus = ACTION_OFF;
+#if ENABLE_LED
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(1);
+#endif
+        }
     }
 
     processAuxEvent(1, false);
@@ -95,6 +118,10 @@ void Buttons::processButton1LpDuring()
         processLockEvent(1, true);
         processModeEvent(1, true);
         shrd->button1LpProcessed = true;
+
+#if ENABLE_LED
+        led1.Breathe(LONG_BREATHE_DURATION).Repeat(4);
+#endif
     }
 }
 
@@ -111,34 +138,31 @@ void Buttons::processButton1LpStop()
     shrd->button1LpDuration = 0;
 }
 
-void Buttons::processButton1()
-{
-    if (shrd->button1ClickStatus == ACTION_ON)
-    {
-        digitalWrite(PIN_OUT_LED_BUTTON1, HIGH);
-    }
-    else if (shrd->button1ClickStatus == ACTION_OFF)
-    {
-        digitalWrite(PIN_OUT_LED_BUTTON1, LOW);
-    }
-}
-
 ////////////////////////////////////////////
 
 void Buttons::processButton2Click()
 {
-    if (shrd->button2ClickStatus == ACTION_OFF)
-    {
-        shrd->button2ClickStatus = ACTION_ON;
-    }
-    else
-    {
-        shrd->button2ClickStatus = ACTION_OFF;
-    }
 
     if (shrd->inSettingsMenu)
     {
         settings_menu_btn_click(0, 2);
+    }
+    else
+    {
+        if (shrd->button2ClickStatus == ACTION_OFF)
+        {
+            shrd->button2ClickStatus = ACTION_ON;
+#if ENABLE_LED
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(2);
+#endif
+        }
+        else
+        {
+            shrd->button2ClickStatus = ACTION_OFF;
+#if ENABLE_LED
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(1);
+#endif
+        }
     }
 
     processAuxEvent(2, false);
@@ -188,6 +212,9 @@ void Buttons::processButton2LpDuring()
         processModeEvent(2, true);
         */
 
+#if ENABLE_LED
+        led1.Breathe(SHORT_BREATHE_DURATION).Repeat(5);
+#endif
         shrd->button2LpProcessed = true;
 
         // Enter settings panel
@@ -211,17 +238,6 @@ void Buttons::processButton2LpStop()
     shrd->button2LpDuration = 0;
 }
 
-void Buttons::processButton2()
-{
-    if (shrd->button2ClickStatus == ACTION_ON)
-    {
-        digitalWrite(PIN_OUT_LED_BUTTON2, HIGH);
-    }
-    else if (shrd->button2ClickStatus == ACTION_OFF)
-    {
-        digitalWrite(PIN_OUT_LED_BUTTON2, LOW);
-    }
-}
 //////////////////////////
 
 void Buttons::processAuxEvent(uint8_t buttonId, bool isLongPress)
@@ -347,6 +363,7 @@ void Buttons::processTicks()
     button1.tick();
     button2.tick();
 
+    /*
     processButton1();
 #if DEBUG_DISPLAY_BUTTON1
     displayButton1();
@@ -356,4 +373,19 @@ void Buttons::processTicks()
 #if DEBUG_DISPLAY_BUTTON2
     displayButton2();
 #endif
+*/
+
+    /*
+    extern uint32_t i_loop;
+    uint32_t timeBefore = micros();
+    */
+
+    //led1.Update();
+
+    /*
+    if (i_loop % 10 == 6)
+    {
+     Serial.println("led update = " + (String)(micros() - timeBefore));
+    }
+    */
 }

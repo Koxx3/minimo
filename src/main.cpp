@@ -792,23 +792,24 @@ void getThrottleFromAnalog()
   // ignore out of range datas ... and notify
   if (throttleAnalogValue < settings.getS6F().Throttle_input_min * 0.66 * 0.75)
   {
+    /*
     char print_buffer[500];
     sprintf(print_buffer, "throttle : value too low / throttleAnalogValue : %d / throttleFilterInit.getMean() : %d",
             throttleAnalogValue,
             throttleFilterInit.getMean());
     //blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
-
+*/
     shrd.errorThrottle = true;
 
     return;
   }
 
   // ignore out of range datas ... and notify
-  if (throttleAnalogValue < settings.getS6F().Throttle_input_max * 0.66 * 1.25)
+  if (throttleAnalogValue > settings.getS6F().Throttle_input_max * 0.66 * 1.25)
   {
     char print_buffer[500];
-    sprintf(print_buffer, "throttle : value too low / throttleAnalogValue : %d / throttleFilterInit.getMean() : %d",
+    sprintf(print_buffer, "throttle : value too high / throttleAnalogValue : %d / throttleFilterInit.getMean() : %d",
             throttleAnalogValue,
             throttleFilterInit.getMean());
     //blh.notifyBleLogs(print_buffer);
