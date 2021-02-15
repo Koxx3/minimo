@@ -112,14 +112,18 @@ MENU(displaySettings,"  Display",doNothing,noEvent,noStyle
 );
 
 MENU(bluetooth,"  Bluetooth",doNothing,noEvent,noStyle
+  ,altFIELD(decPlaces<1>::menuField, dummy, "  Beacon RSSI","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle)
+  ,altFIELD(decPlaces<1>::menuField, dummy, "  Beacon MAC address","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle)
   ,OP("  Reset PIN code to 147258",resetBlePinCode,enterEvent)
   ,EXIT("< Back")
 );
 
-MENU(softwareUpdates,"  Software upddates (Wifi)",doNothing,noEvent,noStyle
-  ,OP("  Wifi settings needs to be set with bluetooth, sorry !", doNothing, noEvent)
-  ,OP("  OTA update through PlatformIO", resetBlePinCode, enterEvent)
-  ,OP("  OTA update through Github server", resetBlePinCode, enterEvent)
+MENU(firmware,"  Firmware",doNothing,noEvent,noStyle
+  ,OP("  Type", doNothing, noEvent)
+  ,OP("  Version", doNothing, noEvent)
+  ,OP("  Configure wifi to prepare OTA", doNothing, noEvent)
+  ,OP("  OTA update through PlatformIO", doNothing, noEvent)
+  ,OP("  OTA update through Github server", doNothing, noEvent)
   ,EXIT("< Back")
 );
 
@@ -132,7 +136,7 @@ MENU(mainMenu,"  Main menu",doNothing,noEvent,wrapStyle
   ,SUBMENU(electricThrottle)
   ,SUBMENU(displaySettings)
   ,SUBMENU(bluetooth)
-  ,SUBMENU(softwareUpdates)
+  ,SUBMENU(firmware)
   ,OP("< Discard & exit", discard_exit,enterEvent)
   ,OP("< Save & exit", save_exit,enterEvent)
 );
