@@ -18,7 +18,7 @@
 #include "debug.h"
 #include "prefs_storage.h"
 #include <Wire.h>
-#include <Adafruit_MCP4725.h>
+#include <MCP4725/Adafruit_MCP4725.h>
 #include "SHTC3/SparkFun_SHTC3.h"
 #include "esp32-hal-uart.h"
 #include "Buttons/Buttons.h"
@@ -56,10 +56,6 @@ KellyUart kellyCntrl;
 #ifdef BUILD_CONTROLLER_SMART_ESC
 #define CONTROLLER_TYPE CONTROLLER_SMART_ESC
 SmartEsc smartEscCntrl;
-#endif
-
-#ifndef TFT_ENABLED
-#define TFT_ENABLED 0
 #endif
 
 #define MINIMO_PWM_BRAKE 0
@@ -186,7 +182,7 @@ void setupDac()
   // page 22
 
   dac.begin(0x60, &I2Cone);
-  dac.setVoltage(0, false);
+  dac.setVoltage(0, true);
 }
 
 void setupShtc3()
@@ -359,6 +355,8 @@ void taskUpdateTFT(void *parameter)
       {
         // force main display reset
         i = -1;
+
+        btns.setSlowButtonBehavior(false);
       }
       else
       {
@@ -378,10 +376,11 @@ void taskUpdateTFT(void *parameter)
       if (!shrd.oldInSettingsMenu)
       {
         Serial.println("settings_menu_setup");
+        btns.setSlowButtonBehavior(true);
         settings_menu_setup();
       }
       settings_menu_loop();
-      vTaskDelay(10);
+      vTaskDelay(100);
     }
 
     // test
@@ -604,8 +603,7 @@ void getBrakeFromAnalog()
     {
       shrd.speedLimiter = 0;
 
-      //      blh.notifySpeedLimiterStatus(shrd.speedLimiter);
-      blh.notifyCommandsFeedback();
+      // blh.notifyCommandsFeedback();
 
       Serial.print("notifySpeedLimiterStatus => disabled by brake / ");
       Serial.println(shrd.speedLimiter);
@@ -790,23 +788,23 @@ void getThrottleFromAnalog()
   throttleFilterInit.in(throttleAnalogValue);
 
   // ignore out of range datas ... and notify
-  if (throttleAnalogValue < settings.getS6F().Throttle_input_min * 0.66 * 0.75)
+  if (throttleAnalogValue < settings.getS6F().Throttle_input_min * 50 * 0.66 * 0.75)
   {
-    /*
+
     char print_buffer[500];
     sprintf(print_buffer, "throttle : value too low / throttleAnalogValue : %d / throttleFilterInit.getMean() : %d",
             throttleAnalogValue,
             throttleFilterInit.getMean());
     //blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
-*/
+
     shrd.errorThrottle = true;
 
     return;
   }
 
   // ignore out of range datas ... and notify
-  if (throttleAnalogValue > settings.getS6F().Throttle_input_max * 0.66 * 1.25)
+  if (throttleAnalogValue > settings.getS6F().Throttle_input_max * 50 * 0.66 * 1.25)
   {
     char print_buffer[500];
     sprintf(print_buffer, "throttle : value too high / throttleAnalogValue : %d / throttleFilterInit.getMean() : %d",
@@ -858,7 +856,7 @@ void processThrottleOutput()
   // compute DAC output
   uint32_t throttleOutDac = throttleOutMilliv / (ANALOG_TO_VOLTS_5V * 1000);
 
-  dac.setVoltage(throttleOutDac, false);
+  dac.setVoltage(throttleOutDac, false, I2C_FREQ);
 
 #if DEBUG_DISPLAY_THROTTLE
   char print_buffer[500];
@@ -1323,14 +1321,14 @@ void processCurrent()
 
 void processRelay()
 {
-    if (shrd.auxOrder == 1)
-    {
-        digitalWrite(PIN_OUT_RELAY, 1);
-    }
-    else
-    {
-        digitalWrite(PIN_OUT_RELAY, 0);
-    }
+  if (shrd.auxOrder == 1)
+  {
+    digitalWrite(PIN_OUT_RELAY, 1);
+  }
+  else
+  {
+    digitalWrite(PIN_OUT_RELAY, 0);
+  }
 }
 
 //////------------------------------------
@@ -1445,10 +1443,6 @@ void loop()
 
 #endif
 
-  blh.processBLE();
-
-  btns.processTicks();
-
   processRelay();
 
 #if VOLTAGE_EXT_READ
@@ -1468,10 +1462,19 @@ void loop()
     processAutonomy();
   }
 
+  if (i_loop % 10 == 1)
+  {
+    btns.processTicks();
+  }
   if (i_loop % 10 == 2)
   {
     //displayBrake();
     getBrakeFromAnalog();
+  }
+
+  if (i_loop % 10 == 3)
+  {
+    blh.processBLE();
   }
 
 #if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
@@ -1489,16 +1492,31 @@ void loop()
   }
 #endif
 
-  if (settings.getS6F().Throttle_regeneration)
+#if HAS_I2C
+  // avoid reading throttle in settings menu
+  if ((settings.getS6F().Throttle_regeneration) && (!shrd.inSettingsMenu))
   {
+    // 1000 Hz read loop
     getThrottleFromAnalog();
-    processThrottleOutput();
+
+    // 200 Hz refresh loop
+    if ((i_loop % 10 == 7) || (i_loop % 10 == 2))
+    {
+      // uint32_t timeBefore = micros();
+      processThrottleOutput();
+      //Serial.println("led update = " + (String)(micros() - timeBefore));
+    }
   }
+#endif
 
 #if HAS_I2C && TEMPERATURE_INT_READ
   if (i_loop % 100 == 8)
   {
-    mySHTC3.update(); // Call "update()" to command a measurement, wait for measurement to complete, and update the RH and T members of the object
+    mySHTC3.requestDatas(); // Call "update()" to command a measurement, wait for measurement to complete, and update the RH and T members of the object
+  }
+  if (i_loop % 100 == 16)
+  {
+    mySHTC3.readDatas();
 #if DEBUG_DISPLAY_SHTC3
     Serial.print(mySHTC3.toPercent()); // "toPercent" returns the percent humidity as a floating point number
     Serial.print("% / ");
@@ -1526,7 +1544,7 @@ void loop()
 
 #if DEBUG_TIMELOOP_MS
   Serial.print("> ");
-  Serial.print(millis() - timeLoop - 1);
+  Serial.print(millis() - timeLoop);
   Serial.print(" / i_loop : ");
   Serial.println(i_loop);
   timeLoop = millis();

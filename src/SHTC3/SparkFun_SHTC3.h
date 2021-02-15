@@ -93,6 +93,8 @@ public:
 	SHTC3_MeasurementModes_TypeDef getMode(void);
 
 	SHTC3_Status_TypeDef update(); // Tells the sensor to take a measurement and updates the member variables of the object
+	SHTC3_Status_TypeDef requestDatas();
+	SHTC3_Status_TypeDef readDatas();
 
 	SHTC3_Status_TypeDef checkCRC(uint16_t packet, uint8_t cs); // Checks CRC values
 };

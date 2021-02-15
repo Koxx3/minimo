@@ -3,6 +3,7 @@
 #include <jled.h>
 
 #define SINGLE_LED 0
+#define ENABLE_LED 1
 
 #define SHORT_BREATHE_DURATION 600
 #define LONG_BREATHE_DURATION 1000
@@ -15,7 +16,7 @@ SharedData *Buttons::shrd;
 BluetoothHandler *Buttons::blh;
 
 #if ENABLE_LED
-auto led1 = JLed(jled::Esp32Hal(PIN_OUT_LED_BUTTON1, 7)).MaxBrightness(255).LowActive();
+auto led1 = JLed(jled::Esp32Hal(PIN_OUT_LED_BUTTON1, 2)).MaxBrightness(255).LowActive();
 #endif
 
 Buttons::Buttons()
@@ -60,23 +61,17 @@ void Buttons::processButton1Click()
         if (shrd->button1ClickStatus == ACTION_OFF)
         {
             shrd->button1ClickStatus = ACTION_ON;
-#if ENABLE_LED
-            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(2);
-#endif
         }
         else
         {
             shrd->button1ClickStatus = ACTION_OFF;
-#if ENABLE_LED
-            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(1);
-#endif
         }
-    }
 
-    processAuxEvent(1, false);
-    processSpeedLimiterEvent(1, false);
-    processLockEvent(1, false);
-    processModeEvent(1, false);
+        processAuxEvent(1, false);
+        processSpeedLimiterEvent(1, false);
+        processLockEvent(1, false);
+        processModeEvent(1, false);
+    }
 
     Serial.print("processButton1Click : ");
     Serial.println(shrd->button1ClickStatus);
@@ -100,13 +95,17 @@ void Buttons::processButton1LpStart()
     {
         settings_menu_btn_click(1, 1);
     }
+    else
+    {
+        processNitroEvent(1, ACTION_ON);
+    }
 }
 
 void Buttons::processButton1LpDuring()
 {
     shrd->button1LpDuration = button1.getPressedTicks();
 
-    if ((shrd->button1LpDuration > settings->getS3F().Button_long_press_duration * 1000) && (!shrd->button1LpProcessed))
+    if ((shrd->button1LpDuration > settings->getS3F().Button_long_press_duration * 1000) && (!shrd->button1LpProcessed) && (!shrd->inSettingsMenu))
     {
 
         char print_buffer[500];
@@ -118,10 +117,6 @@ void Buttons::processButton1LpDuring()
         processLockEvent(1, true);
         processModeEvent(1, true);
         shrd->button1LpProcessed = true;
-
-#if ENABLE_LED
-        led1.Breathe(LONG_BREATHE_DURATION).Repeat(4);
-#endif
     }
 }
 
@@ -136,6 +131,8 @@ void Buttons::processButton1LpStop()
 
     shrd->button1LpProcessed = false;
     shrd->button1LpDuration = 0;
+
+    processNitroEvent(1, ACTION_OFF);
 }
 
 ////////////////////////////////////////////
@@ -152,23 +149,17 @@ void Buttons::processButton2Click()
         if (shrd->button2ClickStatus == ACTION_OFF)
         {
             shrd->button2ClickStatus = ACTION_ON;
-#if ENABLE_LED
-            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(2);
-#endif
         }
         else
         {
             shrd->button2ClickStatus = ACTION_OFF;
-#if ENABLE_LED
-            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(1);
-#endif
         }
-    }
 
-    processAuxEvent(2, false);
-    processSpeedLimiterEvent(2, false);
-    processLockEvent(2, false);
-    processModeEvent(2, false);
+        processAuxEvent(2, false);
+        processSpeedLimiterEvent(2, false);
+        processLockEvent(2, false);
+        processModeEvent(2, false);
+    }
 
     Serial.print("processButton2Click : ");
     Serial.println(shrd->button2ClickStatus);
@@ -212,16 +203,15 @@ void Buttons::processButton2LpDuring()
         processModeEvent(2, true);
         */
 
-#if ENABLE_LED
-        led1.Breathe(SHORT_BREATHE_DURATION).Repeat(5);
-#endif
         shrd->button2LpProcessed = true;
 
         // Enter settings panel
+#if TFT_ENABLED
         if (!shrd->inSettingsMenu)
         {
             settings_menu_enter_settings();
         }
+#endif
     }
 }
 
@@ -240,6 +230,33 @@ void Buttons::processButton2LpStop()
 
 //////////////////////////
 
+void Buttons::processNitroEvent(uint8_t buttonId, uint8_t action)
+{
+
+    // process AUX order -- button 1
+    if ((buttonId == 1) && (settings->getS3F().Button_1_long_press_action == settings->LIST_Button_press_action_Nitro_boost_cont))
+    {
+        if (action == ACTION_ON)
+        {
+            led1.Breathe(SHORT_BREATHE_DURATION).Forever();
+            Serial.println("processNitroEvent => ok / ACTION_ON");
+
+            char print_buffer[500];
+            sprintf(print_buffer, "processNitroEvent : %d", shrd->auxOrder);
+            blh->notifyBleLogs(print_buffer);
+        }
+        else
+        {
+            led1.Breathe(SHORT_BREATHE_DURATION).Stop();
+            Serial.println("processNitroEvent => ok / ACTION_OFF");
+
+            char print_buffer[500];
+            sprintf(print_buffer, "processNitroEvent : %d", shrd->auxOrder);
+            blh->notifyBleLogs(print_buffer);
+        }
+    }
+}
+
 void Buttons::processAuxEvent(uint8_t buttonId, bool isLongPress)
 {
 
@@ -252,12 +269,13 @@ void Buttons::processAuxEvent(uint8_t buttonId, bool isLongPress)
         if (shrd->auxOrder == 0)
         {
             shrd->auxOrder = 1;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(2);
         }
         else
         {
             shrd->auxOrder = 0;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(1);
         }
-        //    blh->notifyAuxOrder(shrd->auxOrder);
         blh->notifyCommandsFeedback();
 
         Serial.print("processAuxEvent => ok / ");
@@ -281,10 +299,12 @@ void Buttons::processSpeedLimiterEvent(uint8_t buttonId, bool isLongPress)
         if (shrd->speedLimiter == 0)
         {
             shrd->speedLimiter = 1;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(2);
         }
         else
         {
             shrd->speedLimiter = 0;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(1);
         }
         //blh->notifySpeedLimiterStatus(shrd->speedLimiter);
         blh->notifyCommandsFeedback();
@@ -310,6 +330,8 @@ void Buttons::processLockEvent(uint8_t buttonId, bool isLongPress)
         blh->setBleLock(true);
         blh->notifyBleLock();
 
+        led1.Breathe(SHORT_BREATHE_DURATION).Forever();
+
         Serial.println("processLockEvent => ok / ON");
 
         char print_buffer[500];
@@ -328,11 +350,20 @@ void Buttons::processModeEvent(uint8_t buttonId, bool isLongPress)
         ((buttonId == 2) && (isLongPress) && (settings->getS3F().Button_2_long_press_action == settings->LIST_Button_press_action_Mode_switch_1_2_3)))
     {
         if (shrd->modeOrder == 1)
+        {
             shrd->modeOrder = 2;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(2);
+        }
         else if (shrd->modeOrder == 2)
+        {
             shrd->modeOrder = 3;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(3);
+        }
         else if (shrd->modeOrder == 3)
+        {
             shrd->modeOrder = 1;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(1);
+        }
 
         blh->notifyCommandsFeedback();
 
@@ -345,16 +376,39 @@ void Buttons::processModeEvent(uint8_t buttonId, bool isLongPress)
         ((buttonId == 2) && (!isLongPress) && (settings->getS3F().Button_2_short_press_action == settings->LIST_Button_press_action_Mode_switch_2_3)) ||
         ((buttonId == 2) && (isLongPress) && (settings->getS3F().Button_2_long_press_action == settings->LIST_Button_press_action_Mode_switch_2_3)))
     {
-        if (shrd->modeOrder == 1)
+        if ((shrd->modeOrder == 1) || (shrd->modeOrder == 3))
+        {
+
             shrd->modeOrder = 2;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(2);
+        }
         else if (shrd->modeOrder == 2)
+        {
             shrd->modeOrder = 3;
-        else if (shrd->modeOrder == 3)
-            shrd->modeOrder = 2;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(3);
+        }
 
         blh->notifyCommandsFeedback();
 
         Serial.println("processModeEvent => new mode = " + (String)shrd->modeOrder);
+    }
+}
+
+void Buttons::setSlowButtonBehavior(bool slow)
+{
+    if (slow)
+    {
+        button1.setDebounceTicks(170);
+        button2.setDebounceTicks(170);
+        button1.setPressTicks(BUTTON_LONG_PRESS_TICK * 2);
+        button2.setPressTicks(BUTTON_LONG_PRESS_TICK * 2);
+    }
+    else
+    {
+        button1.setDebounceTicks(50);
+        button2.setDebounceTicks(50);
+        button1.setPressTicks(BUTTON_LONG_PRESS_TICK);
+        button2.setPressTicks(BUTTON_LONG_PRESS_TICK);
     }
 }
 
@@ -380,7 +434,7 @@ void Buttons::processTicks()
     uint32_t timeBefore = micros();
     */
 
-    //led1.Update();
+    led1.Update();
 
     /*
     if (i_loop % 10 == 6)

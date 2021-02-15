@@ -110,12 +110,14 @@ void settings_menu_btn_click(uint8_t pressType, uint8_t btnNum)
 
 void settings_menu_setup()
 {
+  isInMenu = true;
+
   //options=&myOptions;//can customize options
 
   //nav.idleTask = idle; //point a function to be used when menu is suspended
   nav.canExit = true;
-  nav.idleOff();
-  nav.inputBurst = 0;
+  //nav.idleOff();
+  nav.inputBurst = 1;
 
   //mainMenu[1].disable();
   //outGfx.usePreview=true;//reserve one panel for preview?
@@ -129,7 +131,6 @@ void settings_menu_setup()
 
   eSpiOut.fontMarginY = 18;
 
-  isInMenu = true;
 }
 
 void settings_menu_loop()

@@ -19,6 +19,7 @@ public:
     Buttons();
     static void setup(SharedData *shrd_p, BluetoothHandler *blh_p, Settings *settings_p);
     static void processTicks();
+    static void setSlowButtonBehavior(bool slow);
 
 private:
     static SharedData *shrd;
@@ -41,5 +42,7 @@ private:
     static void processSpeedLimiterEvent(uint8_t buttonId, bool isLongPress);
     static void processLockEvent(uint8_t buttonId, bool isLongPress);
     static void processModeEvent(uint8_t buttonId, bool isLongPress);
+    static void processNitroEvent(uint8_t buttonId, uint8_t action);
+
 };
 #endif

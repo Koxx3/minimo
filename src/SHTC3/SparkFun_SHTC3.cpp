@@ -279,6 +279,21 @@ SHTC3_Status_TypeDef SHTC3::update()
 {
 	SHTC3_Status_TypeDef retval = SHTC3_Status_Nominal;
 
+	retval = startProcess();
+	if (retval != SHTC3_Status_Nominal)
+	{
+		return abortUpdate(retval, __FILE__, __LINE__);
+	}
+
+	// retval = wake();										// Always send wake() to be sure the sensor will respond
+	// if(retval != SHTC3_Status_Nominal){ return abortUpdate(retval, __FILE__, __LINE__); }
+
+	retval = sendCommand(_mode); // Send the appropriate command - Note: incorrect commands are excluded by the 'setMode' command and _mode is a protected variable
+	if (retval != SHTC3_Status_Nominal)
+	{
+		return abortUpdate(retval, __FILE__, __LINE__);
+	}
+		
 	const uint8_t numBytesRequest = 6;
 	uint8_t numBytesRx = 0;
 
@@ -289,6 +304,97 @@ SHTC3_Status_TypeDef SHTC3::update()
 	uint8_t Thb = 0x00;
 	uint8_t Tlb = 0x00;
 	uint8_t Tcs = 0x00;
+
+	switch (_mode) // Handle the two different ways of waiting for a measurement (polling or clock stretching)
+	{
+	case SHTC3_CMD_CSE_RHF_NPM:
+	case SHTC3_CMD_CSE_RHF_LPM:
+	case SHTC3_CMD_CSE_TF_NPM:
+	case SHTC3_CMD_CSE_TF_LPM:	   // Address+read will yield an ACK and then clock stretching will occur
+		numBytesRx = _wire->requestFrom(SHTC3_ADDR_7BIT, numBytesRequest);
+		break;
+
+	case SHTC3_CMD_CSD_RHF_NPM:
+	case SHTC3_CMD_CSD_RHF_LPM:
+	case SHTC3_CMD_CSD_TF_NPM:
+	case SHTC3_CMD_CSD_TF_LPM: // These modes not yet supported (polling - need to figure out how to repeatedly send just address+read and look for ACK)
+	default:
+		return abortUpdate(SHTC3_Status_Error, __FILE__, __LINE__); // You really should never get to this code because setMode disallows non-approved values of _mode (type SHTC3_MeasurementModes_TypeDef)
+		break;
+	}
+
+	// Now handle the received data
+	if (numBytesRx != numBytesRequest)
+	{
+		return abortUpdate(SHTC3_Status_Error, __FILE__, __LINE__);
+	} // Hopefully we got the right number of bytes
+
+	switch (_mode) // Switch for the order of the returned results
+	{
+	case SHTC3_CMD_CSE_RHF_NPM:
+	case SHTC3_CMD_CSE_RHF_LPM:
+	case SHTC3_CMD_CSD_RHF_NPM:
+	case SHTC3_CMD_CSD_RHF_LPM:
+		// RH First
+		RHhb = _wire->read();
+		RHlb = _wire->read();
+		RHcs = _wire->read();
+
+		Thb = _wire->read();
+		Tlb = _wire->read();
+		Tcs = _wire->read();
+		break;
+
+	case SHTC3_CMD_CSE_TF_NPM:
+	case SHTC3_CMD_CSE_TF_LPM:
+	case SHTC3_CMD_CSD_TF_NPM:
+	case SHTC3_CMD_CSD_TF_LPM:
+		// T First
+		Thb = _wire->read();
+		Tlb = _wire->read();
+		Tcs = _wire->read();
+
+		RHhb = _wire->read();
+		RHlb = _wire->read();
+		RHcs = _wire->read();
+		break;
+
+	default:
+		return abortUpdate(SHTC3_Status_Error, __FILE__, __LINE__); // Again, you should never experience this section of code
+		break;
+	}
+
+	// Update values
+	RH = ((uint16_t)RHhb << 8) | ((uint16_t)RHlb << 0);
+	T = ((uint16_t)Thb << 8) | ((uint16_t)Tlb << 0);
+
+	passRHcrc = false;
+	passTcrc = false;
+
+	if (checkCRC(RH, RHcs) == SHTC3_Status_Nominal)
+	{
+		passRHcrc = true;
+	}
+	if (checkCRC(T, Tcs) == SHTC3_Status_Nominal)
+	{
+		passTcrc = true;
+	}
+
+	// retval = sleep();
+	// if(retval != SHTC3_Status_Nominal){ return exitOp(retval, __FILE__, __LINE__); }
+
+	retval = endProcess(); // We are about to return to user-land
+	if (retval != SHTC3_Status_Nominal)
+	{
+		return exitOp(retval, __FILE__, __LINE__);
+	}
+
+	return exitOp(retval, __FILE__, __LINE__);
+}
+
+SHTC3_Status_TypeDef SHTC3::requestDatas()
+{
+	SHTC3_Status_TypeDef retval = SHTC3_Status_Nominal;
 
 	retval = startProcess();
 	if (retval != SHTC3_Status_Nominal)
@@ -304,6 +410,25 @@ SHTC3_Status_TypeDef SHTC3::update()
 	{
 		return abortUpdate(retval, __FILE__, __LINE__);
 	}
+
+	return retval;
+}
+
+SHTC3_Status_TypeDef SHTC3::readDatas()
+{
+	
+	SHTC3_Status_TypeDef retval = SHTC3_Status_Nominal;
+	
+	const uint8_t numBytesRequest = 6;
+	uint8_t numBytesRx = 0;
+
+	uint8_t RHhb = 0x00;
+	uint8_t RHlb = 0x00;
+	uint8_t RHcs = 0x00;
+
+	uint8_t Thb = 0x00;
+	uint8_t Tlb = 0x00;
+	uint8_t Tcs = 0x00;
 
 	switch (_mode) // Handle the two different ways of waiting for a measurement (polling or clock stretching)
 	{
