@@ -619,7 +619,6 @@ void getBrakeFromAnalog()
 #if DEBUG_DISPLAY_ANALOG_BRAKE
       Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE");
 #endif
-      /*
       char print_buffer[500];
       sprintf(print_buffer, "brake ANALOG_BRAKE_MIN_ERR_VALUE / f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d",
               brakeFilterMean,
@@ -630,7 +629,6 @@ void getBrakeFromAnalog()
               shrd.brakePressedStatus);
       Serial.println(print_buffer);
 
-*/
       // too fast for BLE !!!
       //blh.notifyBleLogs(print_buffer);
 

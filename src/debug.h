@@ -7,7 +7,7 @@
 #define DEBUG_BLE_DISPLAY_FRAME                     0
 
 // Serial general debugs
-#define DEBUG_TIMELOOP_MS                          0
+#define DEBUG_TIMELOOP_MS                           0
 #define DEBUG_TIMELOOP_NS                           0
 #define DEBUG_DISPLAY_BLE_SCAN                      0
 #define DEBUG_DISPLAY_BLE_NOTIFY                    0
