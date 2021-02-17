@@ -90,7 +90,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 - [✅] VESC
     - [✅] Read serial link
     - [✅] Decode datas : speed, voltage, current
-    - [✅] Send duty
+    - [✅] Send current orders
+    - [✅] Set speed 1/2/3 modes 
     - [ ] Error codes processing
 
 - [✅] Kelly
