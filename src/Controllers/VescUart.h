@@ -6,7 +6,13 @@
 #include "tools/buffer.h"
 #include "tools/crc.h"
 
+#include "SharedData.h"
+#include "Settings.h"
+#include "BLE/BluetoothHandler.h"
+
 #define BAUD_RATE_VESC 115200
+
+#define VESC_SPEED_RPM_FACTOR 14.1
 
 class VescUart
 {
@@ -40,6 +46,10 @@ class VescUart
 		bool lowerButton; // valLowerButton
 	};
 
+	static SharedData *shrd;
+	static BluetoothHandler *blh;
+	static Settings *settings;
+
 public:
 	/**
 		 * @brief      Class constructor
@@ -51,6 +61,8 @@ public:
 
 	/** Variable to hold nunchuck values */
 	nunchuckPackage nunchuck;
+
+	void setup(SharedData *shrd_p, BluetoothHandler *blh_p, Settings *settings_p);
 
 	/**
 		 * @brief      Set the serial port for uart communication
@@ -125,6 +137,8 @@ public:
 		 */
 	bool readVescValues(void);
 
+	void setModeMaxSpeed(uint8_t);
+	bool requestMotorConfig(void);
 
 private:
 	/** Variable to hold the reference to the Serial object to use for UART */

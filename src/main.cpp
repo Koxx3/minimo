@@ -12,30 +12,30 @@
 ////// Inludes
 
 #include "main.h"
+#include "BLE/BluetoothHandler.h"
+#include "Battery/Battery.h"
+#include "Buttons/Buttons.h"
+#include "DHT/dht_nonblocking.h"
+#include "OTA/OTA_wifi.h"
+#include "SHTC3/SparkFun_SHTC3.h"
 #include "Settings.h"
 #include "SharedData.h"
-#include "pinout.h"
-#include "debug.h"
-#include "prefs_storage.h"
-#include <Wire.h>
-#include <MCP4725/Adafruit_MCP4725.h>
-#include "SHTC3/SparkFun_SHTC3.h"
-#include "esp32-hal-uart.h"
-#include "Buttons/Buttons.h"
-#include "BLE/BluetoothHandler.h"
-#include "OTA/OTA_wifi.h"
-#include "filters/MedianFilter.h"
-#include "DHT/dht_nonblocking.h"
 #include "TFT/tft_main.h"
 #include "TFT/tft_settings_menu.h"
-#include "Battery/Battery.h"
+#include "debug.h"
+#include "esp32-hal-uart.h"
+#include "filters/MedianFilter.h"
+#include "pinout.h"
+#include "prefs_storage.h"
 #include "tools/utils.h"
+#include <MCP4725/Adafruit_MCP4725.h>
+#include <Wire.h>
 
-#include "Controllers/VescUart.h"
+#include "Controllers/ControllerType.h"
 #include "Controllers/KellyUart.h"
 #include "Controllers/MinimoUart.h"
 #include "Controllers/SmartEsc.h"
-#include "Controllers/ControllerType.h"
+#include "Controllers/VescUart.h"
 
 //////------------------------------------
 ////// Defines
@@ -134,7 +134,7 @@ MedianFilter currentRawFilter(NB_CURRENT_FILTER_DATA, 1830);
 MedianFilter currentRawFilterInit(NB_CURRENT_FILTER_CALIB_DATA, 1830);
 MedianFilter brakeFilter(10 /* 20 */, 900);
 //MedianFilter brakeMaxFilterInit(NB_BRAKE_CALIB_DATA, 900);
-MedianFilter throttleFilterInit(10 /* 20 */, 900);
+MedianFilter throttleFilter(10 /* 20 */, 900);
 
 Buttons btns;
 
@@ -221,9 +221,11 @@ void setupSerial()
 #elif CONTROLLER_TYPE == CONTROLLER_VESC
   hwSerCntrl.begin(BAUD_RATE_VESC, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
   vescCntrl.setSerialPort(&hwSerCntrl);
-  //vescCntrl.setDebugPort(&Serial);
+  vescCntrl.setup(&shrd, &blh, &settings);
 
-  hwSerCntrl.setUartIrqIdleTrigger(1);
+  vescCntrl.requestMotorConfig();
+
+  //vescCntrl.setDebugPort(&Serial);
 
 #elif CONTROLLER_TYPE == CONTROLLER_KELLY
 
@@ -783,16 +785,16 @@ void getThrottleFromAnalog()
 
   throttleAnalogValue = analogRead(PIN_IN_ATHROTTLE);
   shrd.throttleAnalogValue = throttleAnalogValue;
-  throttleFilterInit.in(throttleAnalogValue);
+  throttleFilter.in(throttleAnalogValue);
 
   // ignore out of range datas ... and notify
   if (throttleAnalogValue < settings.getS6F().Throttle_input_min * 50 * 0.66 * 0.75)
   {
 
     char print_buffer[500];
-    sprintf(print_buffer, "throttle : value too low / throttleAnalogValue : %d / throttleFilterInit.getMean() : %d",
+    sprintf(print_buffer, "throttle : value too low / throttleAnalogValue : %d / throttleFilter.getMean() : %d",
             throttleAnalogValue,
-            throttleFilterInit.getMean());
+            throttleFilter.getMean());
     //blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
 
@@ -805,9 +807,9 @@ void getThrottleFromAnalog()
   if (throttleAnalogValue > settings.getS6F().Throttle_input_max * 50 * 0.66 * 1.25)
   {
     char print_buffer[500];
-    sprintf(print_buffer, "throttle : value too high / throttleAnalogValue : %d / throttleFilterInit.getMean() : %d",
+    sprintf(print_buffer, "throttle : value too high / throttleAnalogValue : %d / throttleFilter.getMean() : %d",
             throttleAnalogValue,
-            throttleFilterInit.getMean());
+            throttleFilter.getMean());
     //blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
 
@@ -821,9 +823,9 @@ void getThrottleFromAnalog()
   }
 }
 
-void processThrottleOutput()
+void processThrottleOutput(bool outputToDAC)
 {
-  uint32_t filteredThrottleIn = throttleFilterInit.getMeanWithoutExtremes(2);
+  uint32_t filteredThrottleIn = throttleFilter.getMeanWithoutExtremes(2);
   uint32_t throttleInMillv = filteredThrottleIn * ANALOG_TO_VOLTS_5V * 1000;
 
   uint32_t tInMin = settings.getS6F().Throttle_input_min * 50;
@@ -849,12 +851,22 @@ void processThrottleOutput()
     throttlePercent = (exp(throttlePercent / 100.0 * 4) - 1) / (exp(4) - 1) * 100;
 
   // map to output millivolts
-  uint32_t throttleOutMilliv = map(throttlePercent, 0, 100, 0, rangeOutilliv) + tOutMin;
+  if (outputToDAC)
+  {
+    uint32_t throttleOutMilliv = map(throttlePercent, 0, 100, 0, rangeOutilliv) + tOutMin;
 
-  // compute DAC output
-  uint32_t throttleOutDac = throttleOutMilliv / (ANALOG_TO_VOLTS_5V * 1000);
+    // compute DAC output
+    uint32_t throttleOutDac = throttleOutMilliv / (ANALOG_TO_VOLTS_5V * 1000);
 
-  dac.setVoltage(throttleOutDac, false, I2C_FREQ);
+    dac.setVoltage(throttleOutDac, false, I2C_FREQ);
+  }
+  else
+  {
+#if (CONTROLLER_TYPE == CONTROLLER_VESC)
+    //vescCntrl.setDuty(throttlePercent / 100.0);
+    vescCntrl.setCurrent(throttlePercent / 5.0);
+#endif
+  }
 
 #if DEBUG_DISPLAY_THROTTLE
   char print_buffer[500];
@@ -912,11 +924,12 @@ void processVescSerial()
 
   String command;
 
+  // synchronous
+  vescCntrl.setModeMaxSpeed(shrd.modeOrder);
+
   if (vescCntrl.readVescValues())
   {
     /*
-    Serial.print("rpm : ");
-    Serial.print(vescCntrl.data.rpm);
     Serial.print(" / tachometerAbs : ");
     Serial.print(vescCntrl.data.tachometerAbs);
     Serial.print(" / tachometer : ");
@@ -927,47 +940,22 @@ void processVescSerial()
     Serial.print(vescCntrl.data.avgInputCurrent);
     */
 
-    float speedCompute = vescCntrl.data.rpm * (settings.getS1F().Wheel_size / 10.0) / settings.getS1F().Motor_pole_number / 120.0;
-    if (speedCompute < 0)
-      speedCompute = 0;
-    if (speedCompute > 999)
-      speedCompute = 999;
+    int32_t rpm = vescCntrl.data.rpm;
+    if (rpm < 0)
+      rpm = 0;
+    float speedCompute = ErpmToKmh2(&settings, rpm);
+    float rpmCompute = KmhToErpm2(&settings, speedCompute);
+    // Serial.println("rpm = " + (String) rpm + " / speedCompute = " + (String) speedCompute + " / rpmCompute = " + rpmCompute);
 
     if (speedCompute > shrd.speedMax)
       shrd.speedMax = speedCompute;
 
     shrd.speedCurrent = speedCompute;
-
-    /*
-    Serial.print(" / speedCompute : ");
-    Serial.println(speedCompute);
-    Serial.println(vescCntrl.data.inpVoltage);
-    Serial.println(vescCntrl.data.ampHours);
-    */
-
     shrd.voltageFilterMean = vescCntrl.data.inpVoltage * 1000;
     shrd.currentActual = vescCntrl.data.avgInputCurrent * 1000;
+
+    computeDistance(speedCompute);
   }
-
-  /*
-  Serial.print("throttleAnalogValue : ");
-  Serial.println(throttleAnalogValue);
-*/
-
-  if (throttleAnalogValue < 900)
-    throttleAnalogValue = 0;
-
-  float duty = (throttleAnalogValue - 900) / 2000.0;
-
-  if (duty > 1)
-    duty = 1.0;
-  if (duty < 0)
-    duty = 0.0;
-  /*
-  Serial.print("duty : ");
-  Serial.println(duty);
-*/
-  vescCntrl.setDuty(duty);
 }
 #endif
 
@@ -1500,9 +1488,13 @@ void loop()
     // 200 Hz refresh loop
     if ((i_loop % 10 == 7) || (i_loop % 10 == 2))
     {
+#if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
       // uint32_t timeBefore = micros();
-      processThrottleOutput();
+      processThrottleOutput(true);
       //Serial.println("led update = " + (String)(micros() - timeBefore));
+#else
+      processThrottleOutput(false);
+#endif
     }
   }
 #endif

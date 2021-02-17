@@ -362,11 +362,8 @@ void tftUpdateData(uint32_t i_loop)
 */
     case 10:
     {
-      float autonomy = 65.2;
-      if (autonomy > 999)
-        autonomy = 999;
-      if (autonomy < 0)
-        autonomy = 0;
+      float autonomy = _shrd->autonomyLeft;
+      autonomy = constrain(autonomy, 0, 999);
       sprintf(fmt, "%03.0f", autonomy);
       tft_util_draw_number(&tft, fmt, COLUMN3, LINE_2Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
@@ -389,7 +386,7 @@ void tftUpdateData(uint32_t i_loop)
       float bat_min = _settings->getS3F().Battery_min_voltage / 10.0;
       float bat_max = _settings->getS3F().Battery_max_voltage / 10.0;
       float batteryPercent = (1 / ((bat_max - bat_min) / ((_shrd->voltageFilterMean / 1000.0) - bat_min)) * 100);
-      drawBatteryJauge(&tft, batteryPercent, COLUMN7 * SCALE_FACTOR_X, LINE_2Y * SCALE_FACTOR_Y, 4 * SCALE_FACTOR_Y, 25 * SCALE_FACTOR_Y, 17);
+      drawBatteryJauge(&tft, batteryPercent, COLUMN7, LINE_2Y , 4 * SCALE_FACTOR_Y, 16 * SCALE_FACTOR_Y, 20);
       break;
     }
 

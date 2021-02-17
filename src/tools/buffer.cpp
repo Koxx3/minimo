@@ -101,6 +101,25 @@ void buffer_append_float32(uint8_t *buffer, float number, float scale, int32_t *
 	buffer_append_int32(buffer, (int32_t)(number * scale), index);
 }
 
+void buffer_append_float32_auto(uint8_t* buffer, float number, int32_t *index) {
+	int e = 0;
+	float sig = frexpf(number, &e);
+	float sig_abs = fabsf(sig);
+	uint32_t sig_i = 0;
+
+	if (sig_abs >= 0.5) {
+		sig_i = (uint32_t)((sig_abs - 0.5f) * 2.0f * 8388608.0f);
+		e += 126;
+	}
+
+	uint32_t res = ((e & 0xFF) << 23) | (sig_i & 0x7FFFFF);
+	if (sig < 0) {
+		res |= 1U << 31;
+	}
+
+	buffer_append_uint32(buffer, res, index);
+}
+
 int8_t buffer_get_int8(const uint8_t *buffer, int32_t *index)
 {
 	int8_t res = ((uint8_t)buffer[*index]);
@@ -175,6 +194,26 @@ float buffer_get_float16(const uint8_t *buffer, float scale, int32_t *index)
 float buffer_get_float32(const uint8_t *buffer, float scale, int32_t *index)
 {
 	return (float)buffer_get_int32(buffer, index) / scale;
+}
+
+float buffer_get_float32_auto(const uint8_t *buffer, int32_t *index) {
+	uint32_t res = buffer_get_uint32(buffer, index);
+
+	int e = (res >> 23) & 0xFF;
+	uint32_t sig_i = res & 0x7FFFFF;
+	bool neg = res & (1U << 31);
+
+	float sig = 0.0;
+	if (e != 0 || sig_i != 0) {
+		sig = (float)sig_i / (8388608.0 * 2.0) + 0.5;
+		e -= 126;
+	}
+
+	if (neg) {
+		sig = -sig;
+	}
+
+	return ldexpf(sig, e);
 }
 
 bool buffer_get_bool(const uint8_t *buffer, int32_t *index)
