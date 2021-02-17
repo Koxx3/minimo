@@ -83,10 +83,10 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Decode speed/mode/brake/regulator from serial link
     - [✅] Frame error detection
     - [N PROGRESS 🔄] Error codes processing
-        - [✅] Undervoltage
-        - [ ] Controller error
-        - [ ] Throttle included in display error
-
+        - [✅] Controller under voltage error
+        - [✅] Throttle voltage
+        - [✅] Brake voltage
+        - [ ] Controller other error
 - [✅] VESC
     - [✅] Read serial link
     - [✅] Decode datas : speed, voltage, current
