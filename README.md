@@ -157,6 +157,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] LCD Speed adjustment
     - [✅] Exponential acceleration curve
     - [✅] PAS switch
+    - [✅] Custom acceleration curves (linear/expo)
     - [IN PROGRESS 🔄] Automatic ECO mode on low battery 
     - [ ] Dynamic BLE debug infos
     - [ ] Wifi connexion for dashboard display and settings
@@ -194,7 +195,6 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 - [ ] iPhone application 🍏
     - [ ] A kind developper to do this part ? 😇
 
-- [ ] Custom acceleration curve ==> not possible with current hardware
 
 ## Produce your own board
 - [Here](/documents/MAKE_IT.md)
