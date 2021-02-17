@@ -1,11 +1,12 @@
 //////////////////////////////////////////
-// TODO : current loop
+
+// TODO : SmartDisplay : add default settings 
+// BUG : SmartDisplay : PAS not working !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 // TODO : LCD error indicators
 // TODO : auto mode shift on low battery
 // TODO : reduce SHTC3 read time - brake read function in 2 parts
-// BUG : original regulator perturbation
-// BUG : mode Z / android
-// BUG : push button make brake analog read wrong
+// BUG : Minimo - original regulator perturbation
 //////////////////////////////////////////
 
 //////------------------------------------
