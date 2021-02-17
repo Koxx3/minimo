@@ -159,7 +159,6 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] PAS switch
     - [IN PROGRESS 🔄] Automatic ECO mode on low battery 
     - [ ] Dynamic BLE debug infos
-    - [ ] Configurable current loop regulation
     - [ ] Wifi connexion for dashboard display and settings
     - [ ] Advanced diagnosis (serial errors, throtle errors ...)
 
