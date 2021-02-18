@@ -75,6 +75,7 @@ public:
     uint8_t modifySpeed(char var, char data_buffer[], uint8_t byte);
     uint8_t modifyPower(char var, char data_buffer[]);
     uint8_t modifyBrakeFromDisplay(char var, char data_buffer[]);
+    uint8_t modifyBrakeFromAnalog(char var, char data_buffer[]);
     uint8_t modifyEco(char var, char data_buffer[]);
     uint8_t modifyPas(char var, char data_buffer[]);
 

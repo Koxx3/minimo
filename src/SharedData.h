@@ -33,6 +33,7 @@ public:
     float currentTemperature = 0.0;
 
     uint8_t speedLimiter = 1;
+    uint8_t speedLimiterOld = -1;
 
     double speedCurrent = 0.0;
     double speedMax = 0.0;
@@ -71,14 +72,17 @@ public:
     int8_t brakeSentOrderFromBLE = -1; // brake force order from LCD
     uint8_t brakeDisplay = 0;          // brake force order sent from escooter display
     int8_t brakeDisplayOld = -1;
+    float brakePercent = 0.0;
 
     uint8_t brakeFordidenHighVoltage = 0;
 
     int32_t brakeMaxPressureRaw = -1;
     int32_t brakeMinPressureRaw = -1;
     uint32_t brakeAnalogValue = 0;
+    uint32_t brakeFilterMeanErr = 0;
 
     uint32_t throttleAnalogValue = 0;
+    float throttlePercent = 0.0;
 
     uint32_t brakeMaxCalibOrder = 1;
 

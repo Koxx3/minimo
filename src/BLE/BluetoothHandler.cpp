@@ -1,22 +1,22 @@
+#include "NimBLEBeacon.h"
+#include "NimBLEEddystoneTLM.h"
+#include "NimBLEEddystoneURL.h"
 #include <Arduino.h>
 #include <NimBLEDevice.h>
 #include <NimBLEServer.h>
 #include <NimBLEUtils.h>
-#include "NimBLEEddystoneURL.h"
-#include "NimBLEEddystoneTLM.h"
-#include "NimBLEBeacon.h"
 
-#include <WiFi.h>
 #include "BluetoothHandler.h"
+#include "OTA/OTA_wifi.h"
 #include "SharedData.h"
-#include "main.h"
 #include "debug.h"
-#include "esp_gap_ble_api.h"
-#include "esp_gatts_api.h"
 #include "esp_bt_defs.h"
 #include "esp_bt_main.h"
-#include "OTA/OTA_wifi.h"
+#include "esp_gap_ble_api.h"
+#include "esp_gatts_api.h"
+#include "main.h"
 #include "tools/buffer.h"
+#include <WiFi.h>
 
 // See the following for generating UUIDs: https://www.uuidgenerator.net/
 #define SERVICE_MAIN_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
@@ -1040,6 +1040,9 @@ void BluetoothHandler::getCommandsDataPacket(uint8_t *rxValue)
 
     shrd->modeOrder = buffer_get_uint8(rxValue, &ind);
     shrd->speedLimiter = buffer_get_uint8(rxValue, &ind);
+
+    Serial.println("getCommandsDataPacket - speedLimiter = " + (String)shrd->speedLimiter);
+
     shrd->ecoOrder = buffer_get_uint8(rxValue, &ind);
     shrd->accelOrder = buffer_get_uint8(rxValue, &ind);
     shrd->auxOrder = buffer_get_uint8(rxValue, &ind);

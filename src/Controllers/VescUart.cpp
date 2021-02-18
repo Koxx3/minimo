@@ -1,6 +1,7 @@
-#include <stdint.h>
 #include "VescUart.h"
+#include "VescConfgenerator.h"
 #include "tools/utils.h"
+#include <stdint.h>
 
 mc_configuration mcconf;
 
@@ -300,6 +301,20 @@ bool VescUart::processReadPacket(uint8_t *message)
 		return true;
 	}
 
+	case COMM_GET_MCCONF:
+	{
+
+		Serial.println("COMM_GET_MCCONF -- received");
+
+		//confgenerator_deserialize_mcconf(message, &mcconf);
+		Serial.println("l_max_erpm = " + (String)mcconf.l_max_erpm);
+		Serial.println("l_temp_fet_end = " + (String)mcconf.l_temp_fet_end);
+		Serial.println("l_in_current_max = " + (String)mcconf.l_in_current_max);
+		Serial.println("l_current_max = " + (String)mcconf.l_current_max);
+
+		return true;
+	}
+
 	default:
 	{
 		Serial.println("UNKNONW -- received");
@@ -368,7 +383,7 @@ bool VescUart::readVescValues(void)
 	}
 }
 
-bool VescUart::requestMotorConfig(void)
+bool VescUart::requestMotorConfigTemp(void)
 {
 
 	uint8_t command[1] = {COMM_GET_MCCONF_TEMP};
@@ -377,6 +392,33 @@ bool VescUart::requestMotorConfig(void)
 	if (debugPort != NULL)
 	{
 		debugPort->println("Command: COMM_GET_MCCONF_TEMP");
+	}
+
+	packSendPayload(command, 1);
+
+	int lenPayload = receiveUartMessage(payload);
+
+	if (lenPayload > 2)
+	{
+		bool read = processReadPacket(payload); //returns true if sucessful
+
+		return read;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool VescUart::requestMotorConfig(void)
+{
+
+	uint8_t command[1] = {COMM_GET_MCCONF};
+	uint8_t payload[256];
+
+	if (debugPort != NULL)
+	{
+		debugPort->println("Command: COMM_GET_MCCONF");
 	}
 
 	packSendPayload(command, 1);
@@ -435,13 +477,13 @@ void VescUart::setNunchuckValues()
 	packSendPayload(payload, 11);
 }
 
-void VescUart::setModeMaxSpeed(uint8_t modeOrder)
+void VescUart::setMaxSpeed(uint8_t modeOrder)
 {
 
 	int32_t index = 0;
 	uint8_t payload[55];
 
-	if (old_modeOrder != modeOrder)
+	if ((old_modeOrder != modeOrder) || (shrd->speedLimiter != shrd->speedLimiterOld))
 	{
 		if (modeOrder == 1)
 		{
@@ -455,7 +497,14 @@ void VescUart::setModeMaxSpeed(uint8_t modeOrder)
 		{
 			mcconf.l_max_erpm = 1000000;
 		}
-//		Serial.println("mode = " + (String)modeOrder + " / KmhToErpm2(1) = " + (String)KmhToErpm2(settings, 1) + " / l_max_erpm = " + (String)mcconf.l_max_erpm);
+		//		Serial.println("mode = " + (String)modeOrder + " / KmhToErpm2(1) = " + (String)KmhToErpm2(settings, 1) + " / l_max_erpm = " + (String)mcconf.l_max_erpm);
+
+		// override speed mode if speed limit is enabled
+		if ((shrd->speedLimiter) && (mcconf.l_max_erpm > KmhToErpm2(settings, settings->getS1F().Speed_limiter_max_speed + 0.5)))
+		{
+			mcconf.l_max_erpm = KmhToErpm2(settings, settings->getS1F().Speed_limiter_max_speed + 0.5);
+		}
+		shrd->speedLimiterOld = shrd->speedLimiter;
 
 		old_modeOrder = modeOrder;
 

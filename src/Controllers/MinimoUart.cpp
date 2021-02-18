@@ -611,6 +611,70 @@ uint8_t MinimoUart::modifyBrakeFromDisplay(char var, char data_buffer[])
   return shrd->brakeSentOrder;
 }
 
+
+
+uint8_t MinimoUart::modifyBrakeFromAnalog(char var, char data_buffer[])
+{
+
+  //*********************************
+  // shrd->brakeSentOrder = var;
+  // BUG TO FIX ???
+#if DEBUG_BRAKE_SENT_ORDER
+  Serial.println("modifyBrakeFromLCD - 1 - modifyBrakeFromAnalog : " + (String)shrd->brakeSentOrder);
+#endif
+
+  shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value;
+#if DEBUG_BRAKE_SENT_ORDER
+  Serial.println("modifyBrakeFromLCD - 2 - modifyBrakeFromAnalog : " + (String)shrd->brakeSentOrder);
+#endif
+
+  if (settings->getS1F().Electric_brake_progressive_mode == 1)
+  {
+
+    uint32_t step = 0;
+    uint32_t diff = 0;
+    uint32_t diffStep = 0;
+
+    if (settings->getS1F().Electric_brake_max_value - settings->getS1F().Electric_brake_min_value > 0)
+    {
+      step = (shrd->brakeMaxPressureRaw - shrd->brakeMinPressureRaw) / (settings->getS1F().Electric_brake_max_value - settings->getS1F().Electric_brake_min_value);
+
+      if (shrd->brakeFilterMeanErr > shrd->brakeMinPressureRaw)
+      {
+
+        diff = shrd->brakeFilterMeanErr - shrd->brakeMinPressureRaw;
+        diffStep = diff / step;
+#if DEBUG_BRAKE_SENT_ORDER
+        Serial.println("modifyBrakeFromLCD - 3 - modifyBrakeFromAnalog : " + (String)shrd->brakeSentOrder);
+#endif
+
+        shrd->brakeSentOrder = diffStep + settings->getS1F().Electric_brake_min_value;
+#if DEBUG_BRAKE_SENT_ORDER
+        Serial.println("modifyBrakeFromLCD - 4 - modifyBrakeFromAnalog : " + (String)shrd->brakeSentOrder);
+#endif
+      }
+    }
+
+#if DEBUG_DISPLAY_ANALOG_BRAKE
+
+    char print_buffer[500];
+    sprintf(print_buffer, "brakeFilter : %d / brakePercent : %d / brakeSentOrder : %d  / brakeSentOrderOld : %d / shrd->brakeStatus : %d / step : %d ",
+            shrd->brakeFilterMeanErr,
+            shrd->brakePercent,
+            shrd->brakeSentOrder,
+            shrd->brakeSentOrderOld,
+            shrd->brakePressedStatus,
+            step);
+    blh->notifyBleLogs(print_buffer);
+
+    Serial.println(print_buffer);
+
+#endif
+  }
+
+  return shrd->brakeSentOrder;
+}
+
 uint8_t MinimoUart::modifyEco(char var, char data_buffer[])
 {
 

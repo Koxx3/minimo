@@ -137,8 +137,10 @@ public:
 		 */
 	bool readVescValues(void);
 
-	void setModeMaxSpeed(uint8_t);
+	void setMaxSpeed(uint8_t);
+	bool requestMotorConfigTemp(void);
 	bool requestMotorConfig(void);
+	
 
 private:
 	/** Variable to hold the reference to the Serial object to use for UART */

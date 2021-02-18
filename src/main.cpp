@@ -1,6 +1,6 @@
 //////////////////////////////////////////
 
-// TODO : SmartDisplay : add default settings 
+// TODO : SmartDisplay : add default settings
 // BUG : SmartDisplay : PAS not working !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 // TODO : LCD error indicators
@@ -59,7 +59,6 @@ KellyUart kellyCntrl;
 SmartEsc smartEscCntrl;
 #endif
 
-#define MINIMO_PWM_BRAKE 0
 #define DEBUG_ESP_HTTP_UPDATE 1
 #define TEMPERATURE_EXT_READ 0
 #define TEMPERATURE_INT_READ 1
@@ -73,7 +72,8 @@ SmartEsc smartEscCntrl;
 #define BAUD_RATE_CONSOLE 921600
 
 // ADC
-#define ANALOG_TO_VOLTS_5V 0.0012207 // 4096 = 5V
+#define ANALOG_TO_VOLTS_5V 0.0012207         // 4096 = 5V
+#define ANALOG_TO_VOLTS_3_3V 0.0008056640625 // 4096 = 3.3V
 #define ANALOG_TO_VOLTS_A 0.0213
 #define ANALOG_TO_VOLTS_B 5.4225
 #define ANALOG_TO_CURRENT 35
@@ -125,7 +125,6 @@ uint16_t voltageRaw = 0;
 uint32_t voltageInMilliVolts = 0;
 Battery batt = Battery(36000, 54000);
 
-uint16_t brakeAnalogValue = 0;
 uint16_t throttleAnalogValue = 0;
 
 MedianFilter voltageFilter(NB_VOLTAGE_FILTER_DATA, 2000);
@@ -161,12 +160,6 @@ void setupPins()
   pinMode(PIN_OUT_LED_BUTTON2, OUTPUT);
   pinMode(PIN_IN_ABRAKE, INPUT);
   pinMode(PIN_IN_ATHROTTLE, INPUT);
-
-#if MINIMO_PWM_BRAKE
-  ledcAttachPin(PIN_OUT_BRAKE, 1);
-  ledcSetup(1, 9, 8);
-  ledcWrite(1, 0);
-#endif
 }
 
 #if HAS_I2C
@@ -224,7 +217,10 @@ void setupSerial()
   vescCntrl.setSerialPort(&hwSerCntrl);
   vescCntrl.setup(&shrd, &blh, &settings);
 
-  vescCntrl.requestMotorConfig();
+  //  vescCntrl.setDebugPort(&Serial);
+  vescCntrl.requestMotorConfigTemp();
+  //  vescCntrl.requestMotorConfig();
+  //  vescCntrl.setDebugPort(NULL);
 
   //vescCntrl.setDebugPort(&Serial);
 
@@ -307,9 +303,10 @@ void saveSettings()
   prefs.saveSettings();
 }
 
-void initDataWithSettings()
+void initSharedDataWithSettings()
 {
   shrd.speedLimiter = (settings.getS1F().Speed_limiter_at_startup == 1);
+  Serial.println("initSharedDataWithSettings - speedLimiter = " + (String)shrd.speedLimiter);
 }
 
 #if ENABLE_WATCHDOG
@@ -398,50 +395,48 @@ void setup()
   esp_bt_sleep_disable();
   esp_ble_scan_dupilcate_list_flush();
 
-#if TFT_ENABLED
-  tftSetupBacklight();
-#endif
-
   // Initialize the Serial (use only in setup codes)
   Serial.begin(BAUD_RATE_CONSOLE);
 
   Serial.printf("\n\nfirmware : type = %s / version : %d\n", FIRMWARE_TYPE, FIRMWARE_VERSION);
-  Serial.print(PSTR("\nsetup --- begin :"));
+  Serial.println("\nsetup --- begin :");
+
+#if TFT_ENABLED
+  Serial.println("   TFT backligth... ");
+  tftSetupBacklight();
+#endif
 
   shrd.timeLastNotifyBle = millis();
 
-  Serial.print(PSTR("   serial... "));
+  Serial.println("   serial... ");
   setupSerial();
 
 #if HAS_I2C
-  Serial.print(PSTR("   I2C..."));
+  Serial.println("   I2C...");
   setupI2C();
 
-  Serial.print(PSTR("   DAC..."));
+  Serial.println("   DAC...");
   setupDac();
 
-  Serial.print(PSTR("   SHT3..."));
+  Serial.println("   SHT3...");
   setupShtc3();
 #endif
 
-  Serial.print(PSTR("   pins..."));
+  Serial.println("   pins...");
   setupPins();
 
-  Serial.print(PSTR("   buttons..."));
+  Serial.println("   buttons...");
   btns.setup(&shrd, &blh, &settings);
 
 #if TFT_ENABLED
-  Serial.print(PSTR("   TFT... "));
+  Serial.println("   TFT... ");
   tftSetup(&shrd, &settings);
 #endif
 
   // force BLE lock mode
   blh.setBleLock(false);
 
-  Serial.print(PSTR("   init data with settings... "));
-  initDataWithSettings();
-
-  Serial.println(PSTR("\n   prefs... "));
+  Serial.println("   prefs... ");
   prefs.setSettings(&settings);
   prefs.setSharedData(&shrd);
   prefs.restoreBleLockForced(&(blh.bleLockForced));
@@ -450,7 +445,7 @@ void setup()
   prefs.restoreOdo();
   prefs.restoreBatteryCalib();
 
-  Serial.println(PSTR("   settings ..."));
+  Serial.println("   settings ...");
   bool settingsStatusOk = prefs.restoreSettings();
   if (!settingsStatusOk)
   {
@@ -458,7 +453,10 @@ void setup()
   }
   settings.displaySettings();
 
-  Serial.println(PSTR("   BLE ..."));
+  Serial.println("   init data with settings... ");
+  initSharedDataWithSettings();
+
+  Serial.println("   BLE ...");
   blh.setSettings(&settings);
   blh.setSharedData(&shrd);
 
@@ -592,41 +590,39 @@ void computeDistance(float speed)
 void getBrakeFromAnalog()
 {
 
-  brakeAnalogValue = analogRead(PIN_IN_ABRAKE);
-  shrd.brakeAnalogValue = brakeAnalogValue;
+  shrd.brakeAnalogValue = analogRead(PIN_IN_ABRAKE);
 
   if (settings.getS2F().Electric_brake_type == settings.LIST_Electric_brake_type_smart_analog)
   {
-
-    int brakeFilterMean = brakeFilter.getMean();
-    int brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
+    shrd.brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
 
     // if brake is pressed at startup, disable speed limiter
-    if ((brakeFilterMeanErr > shrd.brakeMaxPressureRaw - ANALOG_BRAKE_MIN_OFFSET) && (i_loop < 100))
+    if ((shrd.brakeFilterMeanErr > shrd.brakeMaxPressureRaw - ANALOG_BRAKE_MIN_OFFSET) && (i_loop < 100))
     {
       shrd.speedLimiter = 0;
+
+      Serial.println("getBrakeFromAnalog - speedLimiter = " + (String)shrd.speedLimiter);
 
       // blh.notifyCommandsFeedback();
 
       Serial.print("notifySpeedLimiterStatus => disabled by brake / ");
       Serial.println(shrd.speedLimiter);
 
-      shrd.errorBrake = true;
+      shrd.errorBrake = false;
 
       return;
     }
 
     // ignore out of range datas ... and notify
-    else if (brakeAnalogValue < ANALOG_BRAKE_MIN_ERR_VALUE)
+    else if (shrd.brakeAnalogValue < ANALOG_BRAKE_MIN_ERR_VALUE)
     {
 #if DEBUG_DISPLAY_ANALOG_BRAKE
       Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE");
 #endif
       char print_buffer[500];
-      sprintf(print_buffer, "brake ANALOG_BRAKE_MIN_ERR_VALUE / f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d",
-              brakeFilterMean,
-              brakeFilterMeanErr,
-              brakeAnalogValue,
+      sprintf(print_buffer, "brake ANALOG_BRAKE_MIN_ERR_VALUE / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d",
+              shrd.brakeFilterMeanErr,
+              shrd.brakeAnalogValue,
               shrd.brakeSentOrder,
               shrd.brakeSentOrderOld,
               shrd.brakePressedStatus);
@@ -645,15 +641,14 @@ void getBrakeFromAnalog()
     }
 
     // ignore out of range datas ... and notify
-    if (brakeAnalogValue > ANALOG_BRAKE_MAX_ERR_VALUE)
+    if (shrd.brakeAnalogValue > ANALOG_BRAKE_MAX_ERR_VALUE)
     {
 #if DEBUG_DISPLAY_ANALOG_BRAKE
       Serial.println("brake ANALOG_BRAKE_MAX_ERR_VALUE");
       char print_buffer[500];
-      sprintf(print_buffer, "brake ANALOG_BRAKE_MAX_ERR_VALUE / f1 : %d / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d",
-              brakeFilterMean,
-              brakeFilterMeanErr,
-              brakeAnalogValue,
+      sprintf(print_buffer, "brake ANALOG_BRAKE_MAX_ERR_VALUE / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d",
+              shrd.brakeFilterMeanErr,
+              shrd.brakeAnalogValue,
               shrd.brakeSentOrder,
               shrd.brakeSentOrderOld,
               shrd.brakePressedStatus);
@@ -666,32 +661,26 @@ void getBrakeFromAnalog()
       return;
     }
 
-    if (brakeAnalogValue > shrd.brakeMaxPressureRaw)
-      brakeAnalogValue = shrd.brakeMaxPressureRaw;
+    if (shrd.brakeAnalogValue > shrd.brakeMaxPressureRaw)
+      shrd.brakeAnalogValue = shrd.brakeMaxPressureRaw;
 
-    brakeFilter.in(brakeAnalogValue);
+    brakeFilter.in(shrd.brakeAnalogValue);
 
     if (settings.getS1F().Electric_brake_progressive_mode == 1)
     {
-      brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
-      brakeFilterMean = brakeFilter.getMean();
+      shrd.brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
+
+      // calculate pressure percentage
+      float brakePercent = map(shrd.brakeFilterMeanErr, shrd.brakeMinPressureRaw + ANALOG_BRAKE_MIN_OFFSET, shrd.brakeMaxPressureRaw, 0, 100);
+      shrd.brakePercent = constrain(brakePercent, 0, 100);
+
+      // Serial.println("brakePercent = " + (String)shrd.brakePercent);
 
       // alarm controler from braking
-      if ((brakeFilterMeanErr > shrd.brakeMinPressureRaw + ANALOG_BRAKE_MIN_OFFSET) && (!shrd.brakeFordidenHighVoltage))
+      if ((shrd.brakePercent > 0) && (!shrd.brakeFordidenHighVoltage))
       {
 
-#if MINIMO_PWM_BRAKE
-        int32_t brakePwm = brakeAnalogValue - shrd.brakeMinPressureRaw;
-        if (brakePwm < 0)
-          brakePwm = 0;
-        brakePwm = brakePwm / (((float)shrd.brakeMaxPressureRaw - shrd.brakeMinPressureRaw) / 200);
-        if (brakePwm > 200)
-          brakePwm = 200;
-        ledcWrite(1, brakePwm + 55);
-        //Serial.printf("brake pwm = %d\n", brakePwm);
-#else
         digitalWrite(PIN_OUT_BRAKE, 1);
-#endif
 
         if (shrd.brakePressedStatus == 0)
         {
@@ -707,11 +696,7 @@ void getBrakeFromAnalog()
       }
       else
       {
-#if MINIMO_PWM_BRAKE
-        ledcWrite(1, 0);
-#else
         digitalWrite(PIN_OUT_BRAKE, 0);
-#endif
 
         if (shrd.brakePressedStatus == 1)
         {
@@ -729,7 +714,6 @@ void getBrakeFromAnalog()
       // notify brake LCD value
       if ((shrd.brakeSentOrder != shrd.brakeSentOrderOld) || (shrd.brakePressedStatus != shrd.brakePressedStatusOld))
       {
-        //        blh.notifyBreakeSentOrder(shrd.brakeSentOrder, shrd.brakePressedStatus, shrd.brakeFordidenHighVoltage);
         blh.notifyCommandsFeedback();
 
 #if DEBUG_DISPLAY_ANALOG_BRAKE
@@ -738,11 +722,10 @@ void getBrakeFromAnalog()
 #endif
 
         char print_buffer[500];
-        sprintf(print_buffer, ">> brakeNotify = f1 : %d / f2 : %d / brakeMinPressureRaw : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d / forbid : %d",
-                brakeFilterMean,
-                brakeFilterMeanErr,
+        sprintf(print_buffer, ">> brakeNotify = f2 : %d / brakeMinPressureRaw : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d / init : %d / forbid : %d",
+                shrd.brakeFilterMeanErr,
                 shrd.brakeMinPressureRaw,
-                brakeAnalogValue,
+                shrd.brakeAnalogValue,
                 shrd.brakeSentOrder,
                 shrd.brakeSentOrderOld,
                 shrd.brakePressedStatus,
@@ -824,18 +807,15 @@ void getThrottleFromAnalog()
   }
 }
 
-void processThrottleOutput(bool outputToDAC)
+void processDacOutput()
 {
   uint32_t filteredThrottleIn = throttleFilter.getMeanWithoutExtremes(2);
   uint32_t throttleInMillv = filteredThrottleIn * ANALOG_TO_VOLTS_5V * 1000;
 
   uint32_t tInMin = settings.getS6F().Throttle_input_min * 50;
   uint32_t tInMax = settings.getS6F().Throttle_input_max * 50;
-  uint32_t tOutMin = settings.getS6F().Throttle_output_min * 50;
-  uint32_t tOutMax = settings.getS6F().Throttle_output_max * 50;
 
   uint32_t rangeInMilliv = tInMax - tInMin;
-  uint32_t rangeOutilliv = tOutMax - tOutMin;
 
   // map to percent range
   float throttlePercent = map(throttleInMillv - tInMin, 0, rangeInMilliv, 0, 100);
@@ -851,35 +831,65 @@ void processThrottleOutput(bool outputToDAC)
   else if (settings.getS6F().Throttle_output_curve == settings.LIST_Throttle_curve_type_4)
     throttlePercent = (exp(throttlePercent / 100.0 * 4) - 1) / (exp(4) - 1) * 100;
 
+  shrd.throttlePercent = throttlePercent;
+
+  shrd.pasEnabled = settings.getS6F().Pas_enabled;
+
   // map to output millivolts
-  if (outputToDAC)
+  uint32_t dacOutput = 0;
+  uint32_t outputMilliv = 0;
+  uint32_t minBrakeVoltage = 0;
+#if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
+
+  uint32_t tOutMin = settings.getS6F().Throttle_output_min * 50;
+  uint32_t tOutMax = settings.getS6F().Throttle_output_max * 50;
+
+  throttleOutMilliv = map(throttlePercent, 0, 100, tOutMin, tOutMax);
+
+  // compute DAC output
+  dacOutput = throttleOutMilliv / (ANALOG_TO_VOLTS_5V * 1000);
+#elif CONTROLLER_TYPE == CONTROLLER_VESC
+  if (shrd.brakePercent > 1)
   {
-    uint32_t throttleOutMilliv = map(throttlePercent, 0, 100, 0, rangeOutilliv) + tOutMin;
-
-    // compute DAC output
-    uint32_t throttleOutDac = throttleOutMilliv / (ANALOG_TO_VOLTS_5V * 1000);
-
-    dac.setVoltage(throttleOutDac, false, I2C_FREQ);
+    minBrakeVoltage = map(settings.getS1F().Electric_brake_max_value, 0, 5, 3300 / 2, 0);
+    outputMilliv = map(shrd.brakePercent * 16, 100 * 16, 0, minBrakeVoltage, 3300 / 2);
   }
   else
   {
-#if (CONTROLLER_TYPE == CONTROLLER_VESC)
-    //vescCntrl.setDuty(throttlePercent / 100.0);
-    vescCntrl.setCurrent(throttlePercent / 5.0);
-#endif
+    if (shrd.isLocked) // if locked... 0 current target
+    {
+      outputMilliv = 3300 / 2;
+    }
+    else if (((shrd.pasEnabled) && (shrd.speedCurrent > 1)) || (!shrd.pasEnabled)) // normal condition
+    {
+      outputMilliv = map(throttlePercent * 16, 0, 100 * 16, 3300 / 2, 3300);
+    }
+    else // souldn't occur
+    {
+      outputMilliv = 3300 / 2;
+    }
   }
+
+  // compute DAC output
+  dacOutput = outputMilliv / (ANALOG_TO_VOLTS_3_3V * 1000);
+#endif
+
+  dacOutput = constrain(dacOutput, 0, 4095);
+  dac.setVoltage(dacOutput, false, I2C_FREQ);
 
 #if DEBUG_DISPLAY_THROTTLE
   char print_buffer[500];
-  sprintf(print_buffer, "filteredThrottleIn : %d / throttleInMillv : %d / tInMin : %d / tInMax : %d / rangeInMilliv : %d / throttlePercent = %2.2f / throttleOutMilliv = %d / throttleOutDac = %d",
+  sprintf(print_buffer, "filteredThrottleIn : %d / throttleInMillv : %d / tInMin : %d / tInMax : %d / rangeInMilliv : %d / throttlePercent = %2.2f / brakePercent = %2.2f / minBrakeVoltage = %d / outputMilliv = %d / dacOutput = %d",
           filteredThrottleIn,
           throttleInMillv,
           tInMin,
           tInMax,
           rangeInMilliv,
-          throttlePercent,
-          throttleOutMilliv,
-          throttleOutDac);
+          shrd.throttlePercent,
+          shrd.brakePercent,
+          minBrakeVoltage,
+          outputMilliv,
+          dacOutput);
   Serial.println(print_buffer);
 #endif
 }
@@ -923,10 +933,11 @@ bool isElectricBrakeForbiden()
 void processVescSerial()
 {
 
-  String command;
+  // simulate brake force from 0 to 5 for smartphone feedback
+  shrd.brakeSentOrder = map(shrd.brakePercent, 0, 100, 0, settings.getS1F().Electric_brake_max_value);
 
-  // synchronous
-  vescCntrl.setModeMaxSpeed(shrd.modeOrder);
+  // synchronous - set mode 1/2/3
+  vescCntrl.setMaxSpeed(shrd.modeOrder);
 
   if (vescCntrl.readVescValues())
   {
@@ -945,7 +956,6 @@ void processVescSerial()
     if (rpm < 0)
       rpm = 0;
     float speedCompute = ErpmToKmh2(&settings, rpm);
-    float rpmCompute = KmhToErpm2(&settings, speedCompute);
     // Serial.println("rpm = " + (String) rpm + " / speedCompute = " + (String) speedCompute + " / rpmCompute = " + rpmCompute);
 
     if (speedCompute > shrd.speedMax)
@@ -954,6 +964,7 @@ void processVescSerial()
     shrd.speedCurrent = speedCompute;
     shrd.voltageFilterMean = vescCntrl.data.inpVoltage * 1000;
     shrd.currentActual = vescCntrl.data.avgInputCurrent * 1000;
+    shrd.currentTemperature = vescCntrl.data.tempMosfet;
 
     computeDistance(speedCompute);
   }
@@ -1022,69 +1033,6 @@ void processSmartEscSerial()
 }
 #endif
 
-uint8_t modifyBrakeFromAnalog(char var, char data_buffer[])
-{
-
-  //*********************************
-  // shrd.brakeSentOrder = var;
-  // BUG TO FIX ???
-#if DEBUG_BRAKE_SENT_ORDER
-  Serial.println("modifyBrakeFromLCD - 1 - modifyBrakeFromAnalog : " + (String)shrd.brakeSentOrder);
-#endif
-
-  shrd.brakeSentOrder = settings.getS1F().Electric_brake_min_value;
-#if DEBUG_BRAKE_SENT_ORDER
-  Serial.println("modifyBrakeFromLCD - 2 - modifyBrakeFromAnalog : " + (String)shrd.brakeSentOrder);
-#endif
-
-  if (settings.getS1F().Electric_brake_progressive_mode == 1)
-  {
-
-    uint32_t step = 0;
-    uint32_t diff = 0;
-    uint32_t diffStep = 0;
-
-    if (settings.getS1F().Electric_brake_max_value - settings.getS1F().Electric_brake_min_value > 0)
-    {
-      step = (shrd.brakeMaxPressureRaw - shrd.brakeMinPressureRaw) / (settings.getS1F().Electric_brake_max_value - settings.getS1F().Electric_brake_min_value);
-
-      int brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
-      if (brakeFilterMeanErr > shrd.brakeMinPressureRaw)
-      {
-
-        diff = brakeFilterMeanErr - shrd.brakeMinPressureRaw;
-        diffStep = diff / step;
-#if DEBUG_BRAKE_SENT_ORDER
-        Serial.println("modifyBrakeFromLCD - 3 - modifyBrakeFromAnalog : " + (String)shrd.brakeSentOrder);
-#endif
-
-        shrd.brakeSentOrder = diffStep + settings.getS1F().Electric_brake_min_value;
-#if DEBUG_BRAKE_SENT_ORDER
-        Serial.println("modifyBrakeFromLCD - 4 - modifyBrakeFromAnalog : " + (String)shrd.brakeSentOrder);
-#endif
-      }
-    }
-
-#if DEBUG_DISPLAY_ANALOG_BRAKE
-
-    char print_buffer[500];
-    sprintf(print_buffer, "brakeFilter : %d / brakeAnalogValue : %d / brakeSentOrder : %d  / brakeSentOrderOld : %d / shrd.brakeStatus : %d / step : %d ",
-            brakeFilter.getMean(),
-            brakeAnalogValue,
-            shrd.brakeSentOrder,
-            shrd.brakeSentOrderOld,
-            shrd.brakePressedStatus,
-            step);
-    blh.notifyBleLogs(print_buffer);
-
-    Serial.println(print_buffer);
-
-#endif
-  }
-
-  return shrd.brakeSentOrder;
-}
-
 void processDHT()
 {
   static unsigned long measurement_timestamp = millis();
@@ -1111,6 +1059,31 @@ void processDHT()
       shrd.currentTemperature = temperature;
       shrd.currentHumidity = humidity;
     }
+  }
+}
+
+void processSHTC3(bool requestRead)
+{
+
+  if (requestRead)
+  {
+    mySHTC3.requestDatas(); // Call "update()" to command a measurement, wait for measurement to complete, and update the RH and T members of the object
+  }
+  else
+  {
+    mySHTC3.readDatas();
+#if DEBUG_DISPLAY_SHTC3
+    Serial.print(mySHTC3.toPercent()); // "toPercent" returns the percent humidity as a floating point number
+    Serial.print("% / ");
+    Serial.print("T = ");
+    Serial.print(mySHTC3.toDegC()); // "toDegF" and "toDegC" return the temperature as a flaoting point number in deg F and deg C respectively
+    Serial.print(" deg C\n");
+#endif
+
+#if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
+    shrd.currentTemperature = mySHTC3.toDegC();
+#endif
+    shrd.currentHumidity = mySHTC3.toPercent();
   }
 }
 
@@ -1377,9 +1350,8 @@ void loop()
     vescCntrl.requestVescValues();
   }
 
-  if (i_loop % 10 == 9)
+  if (i_loop % 100 == 90)
   {
-    //Serial.println(">>>>>>>>>>> processVescSerial");
     processVescSerial();
   }
 #elif CONTROLLER_TYPE == CONTROLLER_KELLY
@@ -1489,13 +1461,9 @@ void loop()
     // 200 Hz refresh loop
     if ((i_loop % 10 == 7) || (i_loop % 10 == 2))
     {
-#if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
       // uint32_t timeBefore = micros();
-      processThrottleOutput(true);
+      processDacOutput();
       //Serial.println("led update = " + (String)(micros() - timeBefore));
-#else
-      processThrottleOutput(false);
-#endif
     }
   }
 #endif
@@ -1503,20 +1471,11 @@ void loop()
 #if HAS_I2C && TEMPERATURE_INT_READ
   if (i_loop % 100 == 8)
   {
-    mySHTC3.requestDatas(); // Call "update()" to command a measurement, wait for measurement to complete, and update the RH and T members of the object
+    processSHTC3(true);
   }
   if (i_loop % 100 == 16)
   {
-    mySHTC3.readDatas();
-#if DEBUG_DISPLAY_SHTC3
-    Serial.print(mySHTC3.toPercent()); // "toPercent" returns the percent humidity as a floating point number
-    Serial.print("% / ");
-    Serial.print("T = ");
-    Serial.print(mySHTC3.toDegC()); // "toDegF" and "toDegC" return the temperature as a flaoting point number in deg F and deg C respectively
-    Serial.print(" deg C\n");
-#endif
-    shrd.currentTemperature = mySHTC3.toDegC();
-    shrd.currentHumidity = mySHTC3.toPercent();
+    processSHTC3(false);
   }
 #endif
 
