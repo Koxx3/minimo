@@ -39,7 +39,8 @@ public:
   {
     LIST_Electric_brake_type_cntrl = 0,
     LIST_Electric_brake_type_smart_digital,
-    LIST_Electric_brake_type_smart_analog
+    LIST_Electric_brake_type_smart_analog, 
+    LIST_Electric_brake_type_smart_digital_and_throttle
   } tElectric_Brake_Type;
 
   typedef enum LIST_Throttle_curve

@@ -15,6 +15,7 @@
 #define DEBUG_DISPLAY_MODE                          0
 #define DEBUG_DISPLAY_DIGITAL_BRAKE                 0
 #define DEBUG_DISPLAY_ANALOG_BRAKE                  1
+#define DEBUG_DISPLAY_DAC_OUTPUT                    1
 #define DEBUG_DISPLAY_THROTTLE                      0
 #define DEBUG_DISPLAY_ECO                           0
 #define DEBUG_DISPLAY_ACCEL                         0

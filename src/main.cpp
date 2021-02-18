@@ -829,6 +829,57 @@ void getBrakeFromAnalog()
       notifyBrakeWithBle();
     }
   }
+  else if (settings.getS2F().Electric_brake_type == settings.LIST_Electric_brake_type_smart_digital_and_throttle)
+  {
+
+    shrd.brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
+
+    //Serial.println("getBrakeFromAnalog - digital - shrd.brakeFilterMeanErr = " + (String)shrd.brakeFilterMeanErr + " / shrd.brakeAnalogValue = " + (String)shrd.brakeAnalogValue);
+
+    // if brake is pressed at startup, disable speed limiter
+    if ((shrd.brakeFilterMeanErr > ANALOG_BRAKE_DIGITIAL_MIN_OFFSET) && (i_loop < 100))
+    {
+      shrd.speedLimiter = 0;
+
+      Serial.println("getBrakeFromAnalog - speedLimiter = " + (String)shrd.speedLimiter);
+
+      Serial.print("notifySpeedLimiterStatus => disabled by brake / ");
+      Serial.println(shrd.speedLimiter);
+
+      shrd.errorBrake = false;
+
+      return;
+    }
+
+    brakeFilter.in(shrd.brakeAnalogValue);
+
+    if (settings.getS1F().Electric_brake_progressive_mode == 1)
+    {
+      shrd.brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
+
+      if (shrd.brakeFilterMeanErr > ANALOG_BRAKE_DIGITIAL_MIN_OFFSET)
+      {
+
+        // calculate pressure percentage
+        shrd.brakePercent = shrd.throttlePercent;
+
+        // Serial.println("nbSteps = " + (String)nbSteps + " / fullBrakeDuration = " + (String)fullBrakeDuration + " / brakePercent = " + (String)shrd.brakePercent +
+        // " / millis() = " + (String)millis() + " / brakeDigitalTimeStart = " + (String)shrd.brakeDigitalTimeStart);
+      }
+      else if ((shrd.brakeFilterMeanErr < ANALOG_BRAKE_DIGITIAL_MIN_OFFSET) && (shrd.brakeDigitalTimeStart != 0xffffffff))
+      {
+        shrd.brakePercent = 0;
+      }
+
+      // Serial.println("brakePercent = " + (String)shrd.brakePercent);
+
+      // alarm controler from braking throught IO output
+      changeBrakeIOState();
+
+      // notify brake LCD value
+      notifyBrakeWithBle();
+    }
+  }
 }
 
 void getThrottleFromAnalog()
@@ -952,7 +1003,7 @@ void processDacOutput()
   dacOutput = constrain(dacOutput, 0, 4095);
   dac.setVoltage(dacOutput, false, I2C_FREQ);
 
-#if DEBUG_DISPLAY_THROTTLE
+#if DEBUG_DISPLAY_DAC_OUTPUT
   char print_buffer[500];
   sprintf(print_buffer, "filteredThrottleIn : %d / throttleInMillv : %d / tInMin : %d / tInMax : %d / rangeInMilliv : %d / throttlePercent = %2.2f / brakePercent = %2.2f / minBrakeVoltage = %d / outputMilliv = %d / dacOutput = %d",
           filteredThrottleIn,
