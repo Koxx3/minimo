@@ -2,23 +2,23 @@
 
 #include <TFT_eSPI.h>
 
-#include "TFT/tft_main.h"
-#include "TFT/tft_util.h"
 #include "TFT/text_screen.h"
 #include "TFT/tft_color_jauge.h"
+#include "TFT/tft_main.h"
+#include "TFT/tft_util.h"
 
-#include "SharedData.h"
 #include "Settings.h"
+#include "SharedData.h"
 #include "pinout.h"
 
-#include "TFT/fonts/FORCED_SQUARE6pt7b.h"
-#include "TFT/fonts/FORCED_SQUARE7pt7b.h"
-#include "TFT/fonts/FORCED_SQUARE8pt7b.h"
-#include "TFT/fonts/FORCED_SQUARE9pt7b.h"
 #include "TFT/fonts/FORCED_SQUARE10pt7b.h"
 #include "TFT/fonts/FORCED_SQUARE12pt7b.h"
 #include "TFT/fonts/FORCED_SQUARE14pt7b.h"
 #include "TFT/fonts/FORCED_SQUARE18pt7b.h"
+#include "TFT/fonts/FORCED_SQUARE6pt7b.h"
+#include "TFT/fonts/FORCED_SQUARE7pt7b.h"
+#include "TFT/fonts/FORCED_SQUARE8pt7b.h"
+#include "TFT/fonts/FORCED_SQUARE9pt7b.h"
 
 #include "TFT/smart_splash.h"
 
@@ -100,8 +100,9 @@
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
 TFT_eSPI tft = TFT_eSPI();
 
-SharedData *_shrd;
-Settings *_settings;
+// TODO : clean this...
+extern SharedData shrd;
+extern Settings settings;
 
 const char *txt_temp = "TMP";
 const char *txt_pas = "PAS";
@@ -141,7 +142,7 @@ void tftSetupBacklight()
 
 void tftBacklightFull()
 {
-  uint16_t brigtness = map(_settings->getS6F().Display_brightness, 0, 100, 0, 1023);
+  uint16_t brigtness = map(settings.getS6F().Display_brightness, 0, 100, 0, 1023);
   ledcWrite(0, brigtness);
 }
 
@@ -151,11 +152,11 @@ void tftBacklightLow()
   ledcWrite(0, 0);
 }
 
-void tftSetup(SharedData *shrd, Settings *settings)
+void tftSetup(SharedData *shrd_p, Settings *settings_p)
 {
 
-  _shrd = shrd;
-  _settings = settings;
+  //shrd = shrd_p;
+  //settings = settings_p;
 
   // dim screen for init
   tftBacklightLow();
@@ -284,7 +285,7 @@ void tftUpdateData(uint32_t i_loop)
     {
     case 0:
     {
-      int speed = _shrd->speedCurrent;
+      int speed = shrd.speedCurrent;
       if (speed > 199)
         speed = 199;
       sprintf(fmt, "%3d", (int)speed);
@@ -293,37 +294,36 @@ void tftUpdateData(uint32_t i_loop)
     }
     case 1:
     {
-      sprintf(fmt, "%02.0f", _shrd->speedMax);
+      sprintf(fmt, "%02.0f", shrd.speedMax);
       tft_util_draw_number(&tft, fmt, COLUMN8, LINE_3Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
 
     case 2:
     {
-      sprintf(fmt, "%01.0f", (float)_shrd->modeOrder);
+      sprintf(fmt, "%01.0f", (float)shrd.modeOrder);
       tft_util_draw_number(&tft, fmt, COLUMN1, LINE_1Y, TFT_WHITE, TFT_BLACK, 5, MEDIUM_FONT_SIZE);
       break;
     }
       /*
     case 3:
     {
-      sprintf(fmt, "%02.0f", _shrd->currentTemperature);
+      sprintf(fmt, "%02.0f", shrd.currentTemperature);
       tft_util_draw_number(&tft, fmt, COLUMN5, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
 
     case 4:
     {
-      sprintf(fmt, "%02.0f", _shrd->currentHumidity);
+      sprintf(fmt, "%02.0f", shrd.currentHumidity);
       tft_util_draw_number(&tft, fmt, COLUMN5, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
 */
     case 5:
     {
-      double power = (_shrd->currentActual / 1000.0 * _shrd->voltageFilterMean / 1000.0);
-      if (power < 0)
-        power = 0;
+      int32_t power = (shrd.currentActual * shrd.voltageActual) / 1000000;
+      power = constrain(power, 0, 65535);
       sprintf(fmt, "%05.0f", power);
       tft_util_draw_number(&tft, fmt, COLUMN2, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE);
       break;
@@ -338,7 +338,7 @@ void tftUpdateData(uint32_t i_loop)
 
     case 7:
     {
-      float voltage = _shrd->voltageFilterMean / 1000.0;
+      float voltage = shrd.voltageFilterMean / 1000.0;
       sprintf(fmt, "%s", Dfmt2_1(voltage));
       tft_util_draw_number(&tft, fmt, COLUMN4, LINE_2Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
@@ -346,7 +346,7 @@ void tftUpdateData(uint32_t i_loop)
 
     case 8:
     {
-      float distance = _shrd->distanceTrip / 10000.0;
+      float distance = shrd.distanceTrip / 10000.0;
       sprintf(fmt, "%s", Dfmt2_1(distance));
       tft_util_draw_number(&tft, fmt, COLUMN9, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE);
       break;
@@ -354,7 +354,7 @@ void tftUpdateData(uint32_t i_loop)
       /*
     case 9:
     {
-      float odo = _shrd->distanceOdo / 10;
+      float odo = shrd.distanceOdo / 10;
       sprintf(fmt, "%05.0f", (odo));
       tft_util_draw_number(&tft, fmt, COLUMN1, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
@@ -362,7 +362,7 @@ void tftUpdateData(uint32_t i_loop)
 */
     case 10:
     {
-      float autonomy = _shrd->autonomyLeft;
+      float autonomy = shrd.autonomyLeft;
       autonomy = constrain(autonomy, 0, 999);
       sprintf(fmt, "%03.0f", autonomy);
       tft_util_draw_number(&tft, fmt, COLUMN3, LINE_2Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
@@ -371,7 +371,7 @@ void tftUpdateData(uint32_t i_loop)
       /*
     case 11:
     {
-      float current = _shrd->currentActual / 1000.0;
+      float current = shrd.currentActual / 1000.0;
       if (current > 99)
         current = 99;
       if (current < 0)
@@ -383,10 +383,10 @@ void tftUpdateData(uint32_t i_loop)
 */
     case 12:
     {
-      float bat_min = _settings->getS3F().Battery_min_voltage / 10.0;
-      float bat_max = _settings->getS3F().Battery_max_voltage / 10.0;
-      float batteryPercent = (1 / ((bat_max - bat_min) / ((_shrd->voltageFilterMean / 1000.0) - bat_min)) * 100);
-      drawBatteryJauge(&tft, batteryPercent, COLUMN7, LINE_2Y , 4 * SCALE_FACTOR_Y, 16 * SCALE_FACTOR_Y, 20);
+      float bat_min = settings.getS3F().Battery_min_voltage / 10.0;
+      float bat_max = settings.getS3F().Battery_max_voltage / 10.0;
+      float batteryPercent = (1 / ((bat_max - bat_min) / ((shrd.voltageFilterMean / 1000.0) - bat_min)) * 100);
+      drawBatteryJauge(&tft, batteryPercent, COLUMN7, LINE_2Y, 4 * SCALE_FACTOR_Y, 16 * SCALE_FACTOR_Y, 20);
       break;
     }
 
@@ -402,31 +402,31 @@ void tftUpdateData(uint32_t i_loop)
       tft.setTextDatum(TC_DATUM);
 
       int i = -10 * SCALE_FACTOR_Y;
-      if (oldShrdPasEnabled != _shrd->pasEnabled)
+      if (oldShrdPasEnabled != shrd.pasEnabled)
       {
-        tft.setTextColor(_shrd->pasEnabled ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.setTextColor(shrd.pasEnabled ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
         tft.drawString(txt_pas, COLUMN0, LINE_3Y + i, GFXFF);
-        oldShrdPasEnabled = _shrd->pasEnabled;
+        oldShrdPasEnabled = shrd.pasEnabled;
       }
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
-      if (oldShrdBrakePressedStatus != _shrd->brakePressedStatus)
+      if (oldShrdBrakePressedStatus != shrd.brakePressedStatus)
       {
-        tft.setTextColor(_shrd->brakePressedStatus ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.setTextColor(shrd.brakePressedStatus ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
         tft.drawString(txt_brk, COLUMN0, LINE_3Y + i, GFXFF);
-        oldShrdBrakePressedStatus = _shrd->brakePressedStatus;
+        oldShrdBrakePressedStatus = shrd.brakePressedStatus;
       }
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
-      if (oldAuxOrder != _shrd->auxOrder)
+      if (oldAuxOrder != shrd.auxOrder)
       {
-        tft.setTextColor(_shrd->auxOrder ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.setTextColor(shrd.auxOrder ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
         tft.drawString(txt_aux, COLUMN0, LINE_3Y + i, GFXFF);
-        oldAuxOrder = _shrd->auxOrder;
+        oldAuxOrder = shrd.auxOrder;
       }
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
-      uint8_t currentTemperatureStatus = (_shrd->currentTemperature > _settings->getS6F().Temperature_warning);
+      uint8_t currentTemperatureStatus = (shrd.currentTemperature > settings.getS6F().Temperature_warning);
       if (oldShrdCurrentTemperature != currentTemperatureStatus)
       {
         tft.setTextColor(currentTemperatureStatus ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
@@ -435,7 +435,7 @@ void tftUpdateData(uint32_t i_loop)
       }
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
-      uint8_t currentHumidityStatus = (_shrd->currentHumidity > _settings->getS6F().Humidity_warning);
+      uint8_t currentHumidityStatus = (shrd.currentHumidity > settings.getS6F().Humidity_warning);
       if (oldShrdCurrentHumidity != currentHumidityStatus)
       {
         tft.setTextColor(currentHumidityStatus ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
@@ -443,11 +443,11 @@ void tftUpdateData(uint32_t i_loop)
         oldShrdCurrentHumidity = currentHumidityStatus;
       }
 
-      boolean error = _shrd->errorThrottle ||
-                      _shrd->errorBrake ||
-                      _shrd->errorSerialFromDisplay ||
-                      _shrd->errorSerialFromContrl ||
-                      _shrd->errorContrl;
+      boolean error = shrd.errorThrottle ||
+                      shrd.errorBrake ||
+                      shrd.errorSerialFromDisplay ||
+                      shrd.errorSerialFromContrl ||
+                      shrd.errorContrl;
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
       if (oldError != error)
@@ -458,11 +458,11 @@ void tftUpdateData(uint32_t i_loop)
       }
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
-      if (oldShrdIsLocked != _shrd->isLocked)
+      if (oldShrdIsLocked != shrd.isLocked)
       {
-        tft.setTextColor(_shrd->isLocked ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.setTextColor(shrd.isLocked ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
         tft.drawString(txt_lck, COLUMN0, LINE_3Y + i, GFXFF);
-        oldShrdIsLocked = _shrd->isLocked;
+        oldShrdIsLocked = shrd.isLocked;
       }
 
       break;

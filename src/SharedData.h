@@ -80,6 +80,7 @@ public:
     int32_t brakeMinPressureRaw = -1;
     uint32_t brakeAnalogValue = 0;
     uint32_t brakeFilterMeanErr = 0;
+    int32_t brakeDigitalTimeStart = 0xffffffff;
 
     uint32_t throttleAnalogValue = 0;
     float throttlePercent = 0.0;
