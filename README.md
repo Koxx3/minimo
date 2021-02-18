@@ -91,8 +91,18 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Read serial link
     - [✅] Decode datas : speed, voltage, current
     - [✅] Send current orders
-    - [✅] Set speed 1/2/3 modes 
+    - [✅] Set speed 1/2/3 modes
+    - [✅] Electric brake
+    - [✅] Electric brake max power setting
+    - [✅] PAS
+    - [✅] Lock
+    - [✅] Speed computing
+    - [✅] Temperature feedback
+    - [ ] Power processing / display
+    - [ ] Brake power feedback
     - [ ] Error codes processing
+      - [ ] Temperature alarm
+      - [ ] Other errors
 
 - [✅] Kelly
     - [✅] Read serial link
