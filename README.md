@@ -92,16 +92,17 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Decode datas : speed, voltage, current
     - [✅] Send current orders
     - [✅] Set speed 1/2/3 modes
-    - [✅] Electric brake
     - [✅] Electric brake max power setting
     - [✅] PAS
-    - [✅] Lock
+    - [✅] Lock (anti-theft or manual)
     - [✅] Speed computing
     - [✅] Temperature feedback
     - [✅] Brake power smartphone feedback
     - [✅] Speed limiter
-    - [ ] Brake forbiden
-    - [ ] Power processing / display
+    - [✅] Power processing / display
+    - [✅] Brake forbiden on high voltage
+    - [✅] Electric analog brake processing
+    - [✅] Electric digital brake processing
     - [ ] Error codes processing
       - [ ] Temperature alarm
       - [ ] Other errors
