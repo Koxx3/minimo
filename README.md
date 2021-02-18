@@ -100,10 +100,9 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Brake power smartphone feedback
     - [✅] Speed limiter
     - [✅] Power processing / display
+    - [✅] Brake forbiden on high voltage
     - [✅] Electric analog brake processing
-    - [ ] Electric digital brake processing
-    - [ ] Brake forbiden on high voltage
-    - [ ] Dynamic max acceleration setting
+    - [✅] Electric digital brake processing
     - [ ] Error codes processing
       - [ ] Temperature alarm
       - [ ] Other errors
