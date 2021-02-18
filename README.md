@@ -98,9 +98,10 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Lock
     - [✅] Speed computing
     - [✅] Temperature feedback
+    - [✅] Brake power smartphone feedback
+    - [✅] Speed limiter
     - [ ] Brake forbiden
     - [ ] Power processing / display
-    - [ ] Brake power feedback
     - [ ] Error codes processing
       - [ ] Temperature alarm
       - [ ] Other errors
