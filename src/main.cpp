@@ -861,12 +861,12 @@ void getBrakeFromAnalog()
       {
 
         // calculate pressure percentage
-        shrd.brakePercent = shrd.throttlePercent;
+        shrd.brakePercent = constrain(shrd.throttlePercent + 10, 10, 100);
 
         // Serial.println("nbSteps = " + (String)nbSteps + " / fullBrakeDuration = " + (String)fullBrakeDuration + " / brakePercent = " + (String)shrd.brakePercent +
         // " / millis() = " + (String)millis() + " / brakeDigitalTimeStart = " + (String)shrd.brakeDigitalTimeStart);
       }
-      else if ((shrd.brakeFilterMeanErr < ANALOG_BRAKE_DIGITIAL_MIN_OFFSET) && (shrd.brakeDigitalTimeStart != 0xffffffff))
+      else if (shrd.brakeFilterMeanErr < ANALOG_BRAKE_DIGITIAL_MIN_OFFSET)
       {
         shrd.brakePercent = 0;
       }
@@ -1005,13 +1005,15 @@ void processDacOutput()
 
 #if DEBUG_DISPLAY_DAC_OUTPUT
   char print_buffer[500];
-  sprintf(print_buffer, "filteredThrottleIn : %d / throttleInMillv : %d / tInMin : %d / tInMax : %d / rangeInMilliv : %d / throttlePercent = %2.2f / brakePercent = %2.2f / minBrakeVoltage = %d / outputMilliv = %d / dacOutput = %d",
+  sprintf(print_buffer, "filteredThrottleIn : %d / tInMillv : %d / tInMin : %d / tInMax : %d / rangeInMilliv : %d / tPercent = %2.2f / bAnalogValue = %d / bFilterMeanErr = %d / bPercent = %2.2f / minBrakeVoltage = %d / outputMilliv = %d / dacOutput = %d",
           filteredThrottleIn,
           throttleInMillv,
           tInMin,
           tInMax,
           rangeInMilliv,
           shrd.throttlePercent,
+          shrd.brakeAnalogValue,
+          shrd.brakeFilterMeanErr,
           shrd.brakePercent,
           minBrakeVoltage,
           outputMilliv,
