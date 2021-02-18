@@ -103,6 +103,9 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Brake forbiden on high voltage
     - [✅] Electric analog brake processing
     - [✅] Electric digital brake processing
+    - [ ] Dual VESC
+      - [ ] Change speed limits
+      - [ ] Get infos
     - [ ] Error codes processing
       - [ ] Temperature alarm
       - [ ] Other errors
