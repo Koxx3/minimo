@@ -114,7 +114,10 @@ int VescUart::receiveUartMessage(uint8_t *payloadReceived)
 	}
 	if (messageRead == false && debugPort != NULL)
 	{
-		debugPort->println("Timeout");
+		if (debugPort != NULL)
+		{
+			debugPort->println("Timeout");
+		}
 	}
 
 	bool unpacked = false;

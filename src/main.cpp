@@ -73,7 +73,6 @@ SmartEsc smartEscCntrl;
 
 // ADC
 #define ANALOG_TO_VOLTS_5V 0.0012207         // 4096 = 5V
-#define ANALOG_TO_VOLTS_3_3V 0.0008056640625 // 4096 = 3.3V
 #define ANALOG_TO_VOLTS_A 0.0213
 #define ANALOG_TO_VOLTS_B 5.4225
 #define ANALOG_TO_CURRENT 35
@@ -217,12 +216,12 @@ void setupSerial()
   vescCntrl.setSerialPort(&hwSerCntrl);
   vescCntrl.setup(&shrd, &blh, &settings);
 
-  //  vescCntrl.setDebugPort(&Serial);
+#if DEBUG_DISPLAY_VESC_FRAME
+  vescCntrl.setDebugPort(&Serial);
+#endif  
   vescCntrl.requestMotorConfigTemp();
   //  vescCntrl.requestMotorConfig();
-  //  vescCntrl.setDebugPort(NULL);
-
-  //vescCntrl.setDebugPort(&Serial);
+  //vescCntrl.setDebugPort(NULL);
 
 #elif CONTROLLER_TYPE == CONTROLLER_KELLY
 
@@ -997,7 +996,7 @@ void processDacOutput()
   }
 
   // compute DAC output
-  dacOutput = outputMilliv / (ANALOG_TO_VOLTS_3_3V * 1000);
+  dacOutput = outputMilliv / (ANALOG_TO_VOLTS_5V * 1000);
 #endif
 
   dacOutput = constrain(dacOutput, 0, 4095);
