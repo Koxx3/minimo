@@ -135,7 +135,7 @@ public:
 		 *
 		 * @return     True if successfull otherwise false
 		 */
-	bool readVescValues(void);
+	bool readVescSerialFeedback(void);
 
 	void setMaxSpeed(uint8_t);
 	bool requestMotorConfigTemp(void);

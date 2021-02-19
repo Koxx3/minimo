@@ -57,16 +57,19 @@ int VescUart::receiveUartMessage(uint8_t *payloadReceived)
 
 	while (millis() < timeout && messageRead == false)
 	{
-
 		while (serialPort->available())
 		{
+			uint8_t byte = serialPort->read();
 
-			messageReceived[counter++] = serialPort->read();
-
-			/*
-			Serial.print("messageReceived : ");
-			Serial.println(messageReceived[counter]);
-*/
+			if (counter < sizeof(messageReceived))
+			{
+				messageReceived[counter++] = byte;
+				//Serial.print(".");
+			}
+			else
+			{
+				//Serial.printf("received more than buffer size : %02x\n", byte);
+			}
 
 			if (counter == 2)
 			{
@@ -114,10 +117,7 @@ int VescUart::receiveUartMessage(uint8_t *payloadReceived)
 	}
 	if (messageRead == false && debugPort != NULL)
 	{
-		if (debugPort != NULL)
-		{
-			debugPort->println("Timeout");
-		}
+		debugPort->println("Timeout");
 	}
 
 	bool unpacked = false;
@@ -125,6 +125,8 @@ int VescUart::receiveUartMessage(uint8_t *payloadReceived)
 	if (messageRead)
 	{
 		unpacked = unpackPayload(messageReceived, endMessage, payloadReceived);
+
+		//Serial.println();
 	}
 
 	if (unpacked)
@@ -294,7 +296,7 @@ bool VescUart::processReadPacket(uint8_t *message)
 		Serial.println("l_in_current_min = " + (String)mcconf.l_in_current_min);
 		mcconf.l_in_current_max = buffer_get_float32_auto(message, &ind);
 		Serial.println("l_in_current_max = " + (String)mcconf.l_in_current_max);
-		mcconf.si_motor_poles = buffer_get_float32_auto(message, &ind);
+		mcconf.si_motor_poles = buffer_get_uint8(message, &ind);
 		Serial.println("si_motor_poles = " + (String)mcconf.si_motor_poles);
 		mcconf.si_gear_ratio = buffer_get_float32_auto(message, &ind);
 		Serial.println("si_gear_ratio = " + (String)mcconf.si_gear_ratio);
@@ -369,7 +371,7 @@ bool VescUart::requestVescValues(void)
 	return true;
 }
 
-bool VescUart::readVescValues(void)
+bool VescUart::readVescSerialFeedback(void)
 {
 	uint8_t payload[256];
 	int lenPayload = receiveUartMessage(payload);
@@ -531,10 +533,11 @@ void VescUart::setMaxSpeed(uint8_t modeOrder)
 		// Setup config needed for speed calculation
 		payload[index++] = (uint8_t)mcconf.si_motor_poles;
 		buffer_append_float32_auto(payload, mcconf.si_gear_ratio, &index);
-		buffer_append_float32_auto(payload, 0 /*mcconf.si_wheel_diameter*/, &index);
+		buffer_append_float32_auto(payload, mcconf.si_wheel_diameter, &index);
 
 		packSendPayload(payload, sizeof(payload));
 	}
+	
 }
 
 void VescUart::setCurrent(float current)

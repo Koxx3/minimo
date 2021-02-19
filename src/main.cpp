@@ -72,7 +72,7 @@ SmartEsc smartEscCntrl;
 #define BAUD_RATE_CONSOLE 921600
 
 // ADC
-#define ANALOG_TO_VOLTS_5V 0.0012207         // 4096 = 5V
+#define ANALOG_TO_VOLTS_5V 0.0012207 // 4096 = 5V
 #define ANALOG_TO_VOLTS_A 0.0213
 #define ANALOG_TO_VOLTS_B 5.4225
 #define ANALOG_TO_CURRENT 35
@@ -218,8 +218,7 @@ void setupSerial()
 
 #if DEBUG_DISPLAY_VESC_FRAME
   vescCntrl.setDebugPort(&Serial);
-#endif  
-  vescCntrl.requestMotorConfigTemp();
+#endif
   //  vescCntrl.requestMotorConfig();
   //vescCntrl.setDebugPort(NULL);
 
@@ -891,14 +890,14 @@ void getThrottleFromAnalog()
   // ignore out of range datas ... and notify
   if (throttleAnalogValue < settings.getS6F().Throttle_input_min * 50 * 0.66 * 0.75)
   {
-
+    /*
     char print_buffer[500];
     sprintf(print_buffer, "throttle : value too low / throttleAnalogValue : %d / throttleFilter.getMean() : %d",
             throttleAnalogValue,
             throttleFilter.getMean());
     //blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
-
+*/
     shrd.errorThrottle = true;
 
     return;
@@ -1063,7 +1062,7 @@ void processVescSerial()
   // synchronous - set mode 1/2/3
   vescCntrl.setMaxSpeed(shrd.modeOrder);
 
-  if (vescCntrl.readVescValues())
+  if (vescCntrl.readVescSerialFeedback())
   {
 
     int32_t rpm = vescCntrl.data.rpm;
@@ -1460,14 +1459,21 @@ void loop()
   shrd.errorSerialFromDisplay = !minomoCntrl.getSerialStatusOkFromLcd();
   shrd.errorContrl = !minomoCntrl.getContrlStatusOk();
 #elif CONTROLLER_TYPE == CONTROLLER_VESC
-  if (i_loop % 10 == 1)
+  if (i_loop % 100 == 1)
   {
     //Serial.println(">>>>>>>>>>> readVescValues");
 
-    vescCntrl.requestVescValues();
+    if (i_loop < 100)
+    {
+      vescCntrl.requestMotorConfigTemp();
+    }
+    else
+    {
+      vescCntrl.requestVescValues();
+    }
   }
 
-  if (i_loop % 100 == 90)
+  if (i_loop % 100 == 51)
   {
     processVescSerial();
   }
