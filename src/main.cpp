@@ -952,20 +952,17 @@ void processDacOutput()
 
   shrd.pasEnabled = settings.getS6F().Pas_enabled;
 
-  // map to output millivolts
   uint32_t dacOutput = 0;
   uint32_t outputMilliv = 0;
-  uint32_t minBrakeVoltage = 0;
 #if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
 
   uint32_t tOutMin = settings.getS6F().Throttle_output_min * 50;
   uint32_t tOutMax = settings.getS6F().Throttle_output_max * 50;
 
-  throttleOutMilliv = map(throttlePercent, 0, 100, tOutMin, tOutMax);
+  outputMilliv = map(throttlePercent, 0, 100, tOutMin, tOutMax);
 
-  // compute DAC output
-  dacOutput = throttleOutMilliv / (ANALOG_TO_VOLTS_5V * 1000);
 #elif CONTROLLER_TYPE == CONTROLLER_VESC
+  uint32_t minBrakeVoltage = 0;
   if (shrd.brakePercent > 1)
   {
     // if brake is forbiden simply cut power
@@ -995,10 +992,10 @@ void processDacOutput()
     }
   }
 
-  // compute DAC output
-  dacOutput = outputMilliv / (ANALOG_TO_VOLTS_5V * 1000);
 #endif
 
+  // compute DAC output
+  dacOutput = outputMilliv / (ANALOG_TO_VOLTS_5V * 1000);
   dacOutput = constrain(dacOutput, 0, 4095);
   dac.setVoltage(dacOutput, false, I2C_FREQ);
 
