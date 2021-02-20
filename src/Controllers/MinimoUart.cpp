@@ -4,10 +4,6 @@
 #include "debug.h"
 #include "tools/utils.h"
 
-#ifndef MINIMO_SIMULATED_DISPLAY
-#define MINIMO_SIMULATED_DISPLAY 0
-#endif
-
 char simulatedFrameFromLcd[] = {0xaa, 0x4, 0x45, 0x0, 0x0, 0x6e, 0x0, 0x64, 0x0, 0x80, 0x2, 0x2, 0x0, 0x0, 0x61};
 uint8_t iMsgLcdToCntrl = 0;
 
@@ -212,18 +208,17 @@ uint8_t MinimoUart::modifyMode(char var, char data_buffer[])
   uint32_t byteDiff = (var - data_buffer[2]);
   uint8_t modeLcd = (byteDiff & 0x03) + 1;
 
+#ifndef MINIMO_SIMULATED_DISPLAY
   // override Smartphone mode with LCD mode
-  if (MINIMO_SIMULATED_DISPLAY == 0)
+  if (shrd->modeLcdOld != modeLcd)
   {
-    if (shrd->modeLcdOld != modeLcd)
-    {
-      shrd->modeOrder = modeLcd;
-      shrd->modeLcdOld = modeLcd;
+    shrd->modeOrder = modeLcd;
+    shrd->modeLcdOld = modeLcd;
 
-      // notify bluetooth
-      blh->notifyCommandsFeedback();
-    }
+    // notify bluetooth
+    blh->notifyCommandsFeedback();
   }
+#endif
 
   /*
   #if DEBUG_DISPLAY_NITRO
@@ -610,8 +605,6 @@ uint8_t MinimoUart::modifyBrakeFromDisplay(char var, char data_buffer[])
 
   return shrd->brakeSentOrder;
 }
-
-
 
 uint8_t MinimoUart::modifyBrakeFromAnalog(char var, char data_buffer[])
 {
