@@ -617,8 +617,10 @@ uint8_t MinimoUart::modifyBrakeFromAnalog(char var, char data_buffer[])
 uint8_t MinimoUart::modifyEco(char var, char data_buffer[])
 {
 
-  shrd->ecoLcd = var;
-  var = shrd->ecoOrder;
+  if (MINIMO_SIMULATED_DISPLAY == 0)
+    shrd->ecoLcd = var;
+  else
+    var = shrd->ecoOrder;
 
   // override Smartphone mode with LCD mode
   if (shrd->ecoLcd != shrd->ecoLcdOld)
@@ -645,8 +647,10 @@ uint8_t MinimoUart::modifyEco(char var, char data_buffer[])
 uint8_t MinimoUart::modifyAccel(char var, char data_buffer[])
 {
 
-  shrd->accelLcd = var;
-  var = shrd->accelOrder;
+  if (MINIMO_SIMULATED_DISPLAY == 0)
+    shrd->accelOrder = var;
+  else
+    var = shrd->accelOrder;
 
   // override Smartphone mode with LCD mode
   if (shrd->accelLcd != shrd->accelLcdOld)

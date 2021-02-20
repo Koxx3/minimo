@@ -62,12 +62,12 @@ void Settings::displaySettings1()
 {
   Serial.print("// Beacon_range : ");
   Serial.println(settings1.fields.Beacon_range);
-  Serial.print("// Mode_Z_Power_limitation : ");
-  Serial.println(settings1.fields.Mode_Z_Power_limitation);
-  Serial.print("// Mode_Z_Eco_mode : ");
-  Serial.println(settings1.fields.Mode_Z_Eco_mode);
-  Serial.print("// Mode_Z_Acceleration : ");
-  Serial.println(settings1.fields.Mode_Z_Acceleration);
+  Serial.print("// Default_mode : ");
+  Serial.println(settings1.fields.Default_mode);
+  Serial.print("// Default_eco : ");
+  Serial.println(settings1.fields.Default_eco);
+  Serial.print("// Default_accel : ");
+  Serial.println(settings1.fields.Default_accel);
   Serial.print("// Electric_brake_progressive_mode : ");
   Serial.println(settings1.fields.Electric_brake_progressive_mode);
   Serial.print("// Electric_brake_min_value : ");

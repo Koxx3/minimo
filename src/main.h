@@ -35,7 +35,6 @@ bool isElectricBrakeForbiden();
 
 void disableWatchdog();
 
-void saveMode();
 void saveBleLockForced();
 void restoreBleLockForced();
 void saveBrakeMinPressure();

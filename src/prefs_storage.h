@@ -26,7 +26,6 @@ public:
 
     void displaySettings1();
 
-    void saveMode();
     void saveBleLockForced();
     void saveBrakeMaxPressure();
     void saveBrakeMinPressure();

@@ -56,9 +56,9 @@ public:
   struct field_s1
   {
     int8_t Beacon_range;
-    uint8_t Mode_Z_Power_limitation;
-    uint8_t Mode_Z_Eco_mode;
-    uint8_t Mode_Z_Acceleration;
+    uint8_t Default_mode;
+    uint8_t Default_eco;
+    uint8_t Default_accel;
     uint8_t Electric_brake_progressive_mode;
     uint8_t Electric_brake_min_value;
     uint8_t Electric_brake_max_value;
@@ -83,7 +83,6 @@ public:
   {
     int8_t Electric_brake_type;
     int8_t dummy1;
-    int8_t dummy2;
     char Beacon_Mac_Address[17+1];    // \0 at end of @MAC
 
   } __attribute__((packed));

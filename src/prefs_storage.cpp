@@ -30,32 +30,11 @@ void preferences::setSharedData(SharedData *data)
 
 void preferences::restore()
 {
-  restoreMode();
   restoreBleLockForced();
   restoreBrakeMinPressure();
   restoreBrakeMaxPressure();
   restoreOdo();
   restoreBatteryCalib();
-}
-
-void preferences::saveMode()
-{
-  prefs.begin(APP_STORAGE, false);
-  prefs.putInt(PREF_mode, shrd->modeOrder);
-  prefs.end();
-
-  Serial.print("save mode value : ");
-  Serial.println(shrd->modeOrder);
-}
-
-void preferences::restoreMode()
-{
-  prefs.begin(APP_STORAGE, false);
-  shrd->modeOrder = prefs.getInt(PREF_mode, 3);
-  prefs.end();
-
-  Serial.print("restore mode value : ");
-  Serial.println(shrd->modeOrder);
 }
 
 void preferences::saveBleLockForced()

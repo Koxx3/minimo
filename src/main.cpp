@@ -296,15 +296,13 @@ void saveSettings()
 {
   prefs.saveSettings();
 }
-void saveMode()
-{
-  prefs.saveMode();
-}
-
 void initSharedDataWithSettings()
 {
   shrd.speedLimiter = (settings.getS1F().Speed_limiter_at_startup == 1);
   shrd.pasEnabled = (settings.getS6F().Pas_enabled == 1);
+  shrd.modeOrder = settings.getS1F().Default_mode;
+  shrd.ecoOrder = settings.getS1F().Default_eco;
+  shrd.accelOrder = settings.getS1F().Default_accel;
 }
 
 #if ENABLE_WATCHDOG
