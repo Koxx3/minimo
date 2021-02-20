@@ -19,23 +19,20 @@ public:
 
     void init();
     
-    void test();
-
     void setSettings(Settings *);
     void setSharedData(SharedData *);
+    
+    void restore();
 
     void displaySettings1();
 
-    void saveBleLockForced(int8_t *bleLockForced);
-    void restoreBleLockForced(int8_t *bleLockForced);
+    void saveMode();
+    void saveBleLockForced();
     void saveBrakeMaxPressure();
     void saveBrakeMinPressure();
-    void restoreBrakeMaxPressure();
-    void restoreBrakeMinPressure();
     void saveOdo();
-    void restoreOdo();
     void saveBatteryCalib();
-    void restoreBatteryCalib();
+
     void saveSettings();
     boolean restoreSettings();
 
@@ -43,6 +40,14 @@ private:
     SharedData *shrd;
     Settings *settings;
     Preferences prefs;
+
+    void restoreMode();
+    void restoreBleLockForced();
+    void restoreBrakeMaxPressure();
+    void restoreBrakeMinPressure();
+    void restoreOdo();
+    void restoreBatteryCalib();
+
 };
 
 #endif

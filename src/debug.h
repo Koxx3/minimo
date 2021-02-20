@@ -5,6 +5,8 @@
 #define DEBUG_BLE_DISPLAY_VOLTAGE                   0
 #define DEBUG_BLE_DISPLAY_ANALOG_BRAKE              0
 #define DEBUG_BLE_DISPLAY_FRAME                     0
+#define DEBUG_BLE_DISPLAY_VOLTAGE_TOO_HIGH          0
+#define DEBUG_BLE_DISPLAY_COMMANDSFEEDBACK          0
 
 // Serial general debugs
 #define DEBUG_TIMELOOP_MS                           0
@@ -31,10 +33,7 @@
 #define DEBUG_DISPLAY_DISTANCE                      0
 #define DEBUG_DISPLAY_AUTONOMY                      0
 #define DEBUG_DISPLAY_SHTC3                         0
-#define DEBUG_BLE_DISPLAY_VOLTAGE_TOO_HIGH          0
-
-#define DEBUG_BRAKE_SENT_ORDER                      0
-
+#define DEBUG_DISPLAY_BRAKE_SENT_ORDER              0
 
 // Serial frame deconding debugs
 #define DEBUG_DISPLAY_FRAME_LCD_TO_CNTRL            0

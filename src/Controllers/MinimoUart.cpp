@@ -118,68 +118,6 @@ void MinimoUart::displayDecodedFrame(int mode, char data_buffer[], byte checksum
 //////------------------------------------
 ////// Data processing functions
 
-void MinimoUart::displayMode(char data_buffer[])
-{
-
-  uint32_t byteDiff = (data_buffer[5] - data_buffer[2]);
-  uint8_t modeLcd = byteDiff & 0x03;
-  uint8_t modeLcd2 = (byteDiff >> 2) & 0x1;
-  uint8_t modeLcd3 = (byteDiff >> 3) & 0x1;
-  uint8_t modeLcd4 = (byteDiff >> 4) & 0x1;
-  uint8_t modeLcd5 = (byteDiff >> 5) & 0x1;
-  uint8_t modeLcd6 = (byteDiff >> 6) & 0x1;
-  uint8_t modeLcd7 = (byteDiff >> 7) & 0x1;
-
-  char print_buffer[500];
-  sprintf(print_buffer, "%02x %02x / %02x / %02x / %02x / %02x / %02x / %02x / %02x", data_buffer[2], data_buffer[5], modeLcd, modeLcd2, modeLcd3, modeLcd4, modeLcd5, modeLcd6, modeLcd7);
-
-#if DEBUG_DISPLAY_MODE
-  Serial.print("LCD mode : ");
-  Serial.print(print_buffer);
-  Serial.println("");
-#endif
-}
-
-uint8_t MinimoUart::modifyModeOld(char var, char data_buffer[])
-{
-  uint32_t byteDiff = (var - data_buffer[2]);
-  uint8_t modeLcd = byteDiff & 0x03;
-  uint8_t modeLcdMask = byteDiff & 0xfc;
-  uint8_t newmodeLcd2 = shrd->modeOrder | modeLcdMask;
-  uint32_t newmodeLcd3 = (newmodeLcd2 + data_buffer[2]) & 0xff;
-
-  char print_buffer[500];
-  /*
-  sprintf(print_buffer, "%02x %02x / %s %02x / %s %02x / %s %02x / %s %02x  / %s %02x  / %s %02x ",
-          data_buffer[2],
-          var,
-          "byteDiff",
-          byteDiff,
-          "lcd",
-          modeLcd,
-          "mask",
-          modeLcdMask,
-          "order",
-          orderMode,
-          "newmodeLcd2",
-          newmodeLcd2,
-          "newmodeLcd3",
-          newmodeLcd3);
-          */
-
-  sprintf(print_buffer, "%s %02x / %s %02x",
-          "lcd",
-          modeLcd,
-          "order",
-          shrd->modeOrder);
-
-  Serial.print("LCD mode : ");
-  Serial.print(print_buffer);
-  Serial.println("");
-
-  return newmodeLcd3;
-}
-
 uint8_t MinimoUart::getMode(char var, char data_buffer[])
 {
   uint32_t byteDiff = (var - data_buffer[2]);
@@ -208,17 +146,23 @@ uint8_t MinimoUart::modifyMode(char var, char data_buffer[])
   uint32_t byteDiff = (var - data_buffer[2]);
   uint8_t modeLcd = (byteDiff & 0x03) + 1;
 
-#ifndef MINIMO_SIMULATED_DISPLAY
-  // override Smartphone mode with LCD mode
-  if (shrd->modeLcdOld != modeLcd)
+  if (MINIMO_SIMULATED_DISPLAY == 0)
   {
-    shrd->modeOrder = modeLcd;
-    shrd->modeLcdOld = modeLcd;
+    // override Smartphone mode with LCD mode
+    if (shrd->modeLcdOld != modeLcd)
+    {
+      shrd->modeOrder = modeLcd;
+      shrd->modeLcdOld = modeLcd;
 
-    // notify bluetooth
-    blh->notifyCommandsFeedback();
-  }
+#if DEBUG_DISPLAY_MODE
+      Serial.println("MinimoUart::modifyMode 1  - modeLcd = " + (String)shrd->modeOrder + " / shrd->modeLcdOld = " + shrd->modeLcdOld);
 #endif
+      saveMode();
+
+      // notify bluetooth
+      blh->notifyCommandsFeedback();
+    }
+  }
 
   /*
   #if DEBUG_DISPLAY_NITRO
@@ -242,6 +186,12 @@ uint8_t MinimoUart::modifyMode(char var, char data_buffer[])
       shrd->modeOrderBeforeNitro = shrd->modeOrder;
     }
     shrd->modeOrder = 3;
+
+    
+#if DEBUG_DISPLAY_MODE
+      Serial.println("MinimoUart::modifyMode 2 - modeLcd = " + (String)shrd->modeOrder);
+#endif
+
     //blh->notifyModeOrder(shrd->modeOrder);
     blh->notifyCommandsFeedback();
 
@@ -255,6 +205,10 @@ uint8_t MinimoUart::modifyMode(char var, char data_buffer[])
     if (shrd->modeOrderBeforeNitro > 0)
     {
       shrd->modeOrder = shrd->modeOrderBeforeNitro;
+
+#if DEBUG_DISPLAY_MODE
+      Serial.println("MinimoUart::modifyMode 3 - modeLcd = " + (String)shrd->modeOrder);
+#endif
 
       // blh->notifyModeOrder(shrd->modeOrder);
       blh->notifyCommandsFeedback();
@@ -378,15 +332,18 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
 uint8_t MinimoUart::modifyPas(char var, char data_buffer[])
 {
 
-#if MINIMO_SIMULATED_DISPLAY
-  shrd->pasEnabled = settings->getS6F().Pas_enabled;
-  if (shrd->pasEnabled)
-    var = var | 0x02;
+  if (MINIMO_SIMULATED_DISPLAY == 0)
+  {
+    shrd->pasEnabled = settings->getS6F().Pas_enabled;
+    if (shrd->pasEnabled)
+      var = var | 0x02;
+    else
+      var = var & 0xfd;
+  }
   else
-    var = var & 0xfd;
-#else
-  shrd->pasEnabled = (var >> 1) & 0x01;
-#endif
+  {
+    shrd->pasEnabled = (var >> 1) & 0x01;
+  }
 
 #if DEBUG_DISPLAY_MINIMO_MOD_PAS
   Serial.printf("var = %02x / shrd->pasEnable = %d\n", var, shrd->pasEnabled);
@@ -859,13 +816,13 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
     ss_out = hwSerLcd;
   }
 
-  if (((MINIMO_SIMULATED_DISPLAY == 0) && (ss_in->available() > 0)) ||                                      // normal mode
-      ((MINIMO_SIMULATED_DISPLAY == 1) && (ss_in->available() > 0) && (serialMode == MODE_CNTRL_TO_LCD)) || // simulated display but read serial on controller
-      ((MINIMO_SIMULATED_DISPLAY == 1) && (serialMode == MODE_LCD_TO_CNTRL)))                               // simulated display and bypass serial data availability
+  if (((!MINIMO_SIMULATED_DISPLAY) && (ss_in->available() > 0)) ||                                     // normal mode
+      ((MINIMO_SIMULATED_DISPLAY) && (ss_in->available() > 0) && (serialMode == MODE_CNTRL_TO_LCD)) || // simulated display but read serial on controller
+      ((MINIMO_SIMULATED_DISPLAY) && (serialMode == MODE_LCD_TO_CNTRL)))                               // simulated display and bypass serial data availability
   {
 
     // use real serial data or simulated data
-    if (MINIMO_SIMULATED_DISPLAY == 1 && (serialMode == MODE_LCD_TO_CNTRL))
+    if (MINIMO_SIMULATED_DISPLAY && (serialMode == MODE_LCD_TO_CNTRL))
     {
       var = simulatedFrameFromLcd[*i];
     }
@@ -918,13 +875,6 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
 #if ALLOW_LCD_TO_CNTRL_MODIFICATIONS
     if ((!begin_LcdToCntrl) && (serialMode == MODE_LCD_TO_CNTRL))
     {
-      if (*i == 5)
-      {
-
-        var = modifyMode(var, data_buffer_ori);
-        isModified_LcdToCntrl = 1;
-      }
-
       if (*i == 5)
       {
 
@@ -1080,7 +1030,7 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
       uint8_t checksum = 0;
 
       // if simulated, compute check on moded datas and for frame checksum to bypass test
-      if ((MINIMO_SIMULATED_DISPLAY == 1) && (serialMode == MODE_LCD_TO_CNTRL))
+      if (MINIMO_SIMULATED_DISPLAY && (serialMode == MODE_LCD_TO_CNTRL))
       {
         checksum = getCheckSum(data_buffer_mod);
         data_buffer_ori[14] = checksum;
@@ -1135,9 +1085,6 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
         Serial.print("mod : ");
         displayFrame(serialMode, data_buffer_mod, checksum);
 #endif
-#if DEBUG_DISPLAY_MODE
-        displayMode(data_buffer_mod);
-#endif
       }
 
       // check comptued checksum vs original checksum to detect frames error and reset the begin detectio
@@ -1186,9 +1133,9 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
 void MinimoUart::processMinimotorsSerial(uint32_t i_loop, boolean simulatedDisplay)
 {
 
-  if ((MINIMO_SIMULATED_DISPLAY == 0) || ((i_loop % 200 >= 0) && (i_loop % 200 <= 14)))
+  if ((MINIMO_SIMULATED_DISPLAY == 1) || ((i_loop % 200 >= 0) && (i_loop % 200 <= 14)))
   {
-    if (MINIMO_SIMULATED_DISPLAY)
+    if ((MINIMO_SIMULATED_DISPLAY == 1))
     {
       if (i_loop % 200 == 0)
       {
