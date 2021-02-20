@@ -996,7 +996,7 @@ void processDacOutput()
 
 #if DEBUG_DISPLAY_DAC_OUTPUT
   char print_buffer[500];
-  sprintf(print_buffer, "filteredThrottleIn : %d / tInMillv : %d / tInMin : %d / tInMax : %d / rangeInMilliv : %d / tPercent = %2.2f / bAnalogValue = %d / bFilterMeanErr = %d / bPercent = %2.2f / minBrakeVoltage = %d / outputMilliv = %d / dacOutput = %d",
+  sprintf(print_buffer, "filteredThrottleIn : %d / tInMillv : %d / tInMin : %d / tInMax : %d / rangeInMilliv : %d / tPercent = %2.2f / bAnalogValue = %d / bFilterMeanErr = %d / bPercent = %2.2f / outputMilliv = %d / dacOutput = %d",
           filteredThrottleIn,
           throttleInMillv,
           tInMin,
@@ -1006,7 +1006,6 @@ void processDacOutput()
           shrd.brakeAnalogValue,
           shrd.brakeFilterMeanErr,
           shrd.brakePercent,
-          minBrakeVoltage,
           outputMilliv,
           dacOutput);
   Serial.println(print_buffer);

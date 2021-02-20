@@ -4,6 +4,10 @@
 #include "debug.h"
 #include "tools/utils.h"
 
+#ifndef MINIMO_SIMULATED_DISPLAY
+#define MINIMO_SIMULATED_DISPLAY 0
+#endif
+
 char simulatedFrameFromLcd[] = {0xaa, 0x4, 0x45, 0x0, 0x0, 0x6e, 0x0, 0x64, 0x0, 0x80, 0x2, 0x2, 0x0, 0x0, 0x61};
 uint8_t iMsgLcdToCntrl = 0;
 
@@ -146,17 +150,18 @@ uint8_t MinimoUart::modifyMode(char var, char data_buffer[])
   uint32_t byteDiff = (var - data_buffer[2]);
   uint8_t modeLcd = (byteDiff & 0x03) + 1;
 
-#ifndef MINIMO_SIMULATED_DISPLAY
   // override Smartphone mode with LCD mode
-  if (shrd->modeLcdOld != modeLcd)
+  if (MINIMO_SIMULATED_DISPLAY == 0)
   {
-    shrd->modeOrder = modeLcd;
-    shrd->modeLcdOld = modeLcd;
+    if (shrd->modeLcdOld != modeLcd)
+    {
+      shrd->modeOrder = modeLcd;
+      shrd->modeLcdOld = modeLcd;
 
-    // notify bluetooth
-    blh->notifyCommandsFeedback();
+      // notify bluetooth
+      blh->notifyCommandsFeedback();
+    }
   }
-#endif
 
   /*
   #if DEBUG_DISPLAY_NITRO
@@ -316,15 +321,18 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
 uint8_t MinimoUart::modifyPas(char var, char data_buffer[])
 {
 
-#if MINIMO_SIMULATED_DISPLAY
-  shrd->pasEnabled = settings->getS6F().Pas_enabled;
-  if (shrd->pasEnabled)
-    var = var | 0x02;
+  if (MINIMO_SIMULATED_DISPLAY == 1)
+  {
+    shrd->pasEnabled = settings->getS6F().Pas_enabled;
+    if (shrd->pasEnabled)
+      var = var | 0x02;
+    else
+      var = var & 0xfd;
+  }
   else
-    var = var & 0xfd;
-#else
-  shrd->pasEnabled = (var >> 1) & 0x01;
-#endif
+  {
+    shrd->pasEnabled = (var >> 1) & 0x01;
+  }
 
 #if DEBUG_DISPLAY_MINIMO_MOD_PAS
   Serial.printf("var = %02x / shrd->pasEnable = %d\n", var, shrd->pasEnabled);
@@ -1012,7 +1020,7 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
 
     ss_out->write(var);
 
-    Serial.println("readHardSerial -- step4 / serialMode = " + (String)serialMode + " / i = " + (String)*i + " / millis = " + (String)(millis() - time));
+    //Serial.println("readHardSerial -- step4 / serialMode = " + (String)serialMode + " / i = " + (String)*i + " / millis = " + (String)(millis() - time));
 
     // display
     if (*i == 14)
@@ -1130,7 +1138,7 @@ void MinimoUart::processMinimotorsSerial(uint32_t i_loop, boolean simulatedDispl
 
   if ((MINIMO_SIMULATED_DISPLAY == 0) || ((i_loop % 200 >= 0) && (i_loop % 200 <= 14)))
   {
-    if (MINIMO_SIMULATED_DISPLAY)
+    if (MINIMO_SIMULATED_DISPLAY == 1)
     {
       if (i_loop % 200 == 0)
       {
