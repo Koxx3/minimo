@@ -1,8 +1,4 @@
 //////////////////////////////////////////
-
-// TODO : SmartDisplay : add default settings or save last settings
-// BUG : SmartDisplay : PAS not working !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 // TODO : LCD error indicators
 // TODO : auto mode shift on low battery
 // TODO : reduce SHTC3 read time - brake read function in 2 parts
