@@ -118,68 +118,6 @@ void MinimoUart::displayDecodedFrame(int mode, char data_buffer[], byte checksum
 //////------------------------------------
 ////// Data processing functions
 
-void MinimoUart::displayMode(char data_buffer[])
-{
-
-  uint32_t byteDiff = (data_buffer[5] - data_buffer[2]);
-  uint8_t modeLcd = byteDiff & 0x03;
-  uint8_t modeLcd2 = (byteDiff >> 2) & 0x1;
-  uint8_t modeLcd3 = (byteDiff >> 3) & 0x1;
-  uint8_t modeLcd4 = (byteDiff >> 4) & 0x1;
-  uint8_t modeLcd5 = (byteDiff >> 5) & 0x1;
-  uint8_t modeLcd6 = (byteDiff >> 6) & 0x1;
-  uint8_t modeLcd7 = (byteDiff >> 7) & 0x1;
-
-  char print_buffer[500];
-  sprintf(print_buffer, "%02x %02x / %02x / %02x / %02x / %02x / %02x / %02x / %02x", data_buffer[2], data_buffer[5], modeLcd, modeLcd2, modeLcd3, modeLcd4, modeLcd5, modeLcd6, modeLcd7);
-
-#if DEBUG_DISPLAY_MODE
-  Serial.print("LCD mode : ");
-  Serial.print(print_buffer);
-  Serial.println("");
-#endif
-}
-
-uint8_t MinimoUart::modifyModeOld(char var, char data_buffer[])
-{
-  uint32_t byteDiff = (var - data_buffer[2]);
-  uint8_t modeLcd = byteDiff & 0x03;
-  uint8_t modeLcdMask = byteDiff & 0xfc;
-  uint8_t newmodeLcd2 = shrd->modeOrder | modeLcdMask;
-  uint32_t newmodeLcd3 = (newmodeLcd2 + data_buffer[2]) & 0xff;
-
-  char print_buffer[500];
-  /*
-  sprintf(print_buffer, "%02x %02x / %s %02x / %s %02x / %s %02x / %s %02x  / %s %02x  / %s %02x ",
-          data_buffer[2],
-          var,
-          "byteDiff",
-          byteDiff,
-          "lcd",
-          modeLcd,
-          "mask",
-          modeLcdMask,
-          "order",
-          orderMode,
-          "newmodeLcd2",
-          newmodeLcd2,
-          "newmodeLcd3",
-          newmodeLcd3);
-          */
-
-  sprintf(print_buffer, "%s %02x / %s %02x",
-          "lcd",
-          modeLcd,
-          "order",
-          shrd->modeOrder);
-
-  Serial.print("LCD mode : ");
-  Serial.print(print_buffer);
-  Serial.println("");
-
-  return newmodeLcd3;
-}
-
 uint8_t MinimoUart::getMode(char var, char data_buffer[])
 {
   uint32_t byteDiff = (var - data_buffer[2]);
@@ -1070,7 +1008,11 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
 
     data_buffer_mod[*i] = var;
 
+    uint32_t time = millis();
+
     ss_out->write(var);
+
+    Serial.println("readHardSerial -- step4 / serialMode = " + (String)serialMode + " / i = " + (String)*i + " / millis = " + (String)(millis() - time));
 
     // display
     if (*i == 14)
