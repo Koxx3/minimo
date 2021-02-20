@@ -1,6 +1,6 @@
 //////////////////////////////////////////
 
-// TODO : SmartDisplay : add default settings
+// TODO : SmartDisplay : add default settings or save last settings
 // BUG : SmartDisplay : PAS not working !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 // TODO : LCD error indicators
