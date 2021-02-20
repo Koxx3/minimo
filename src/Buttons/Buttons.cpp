@@ -1,7 +1,6 @@
 #include "Buttons/buttons.h"
 #include "TFT/tft_settings_menu.h"
 #include <jled.h>
-#include "debug.h"
 
 #define SINGLE_LED 0
 #define ENABLE_LED 1
@@ -366,10 +365,6 @@ void Buttons::processModeEvent(uint8_t buttonId, bool isLongPress)
             led1.Breathe(SHORT_BREATHE_DURATION).Repeat(1);
         }
 
-#if DEBUG_DISPLAY_MODE
-      Serial.println("Buttons::processModeEvent - modeLcd = " + (String)shrd->modeOrder);
-#endif
-
         blh->notifyCommandsFeedback();
 
         Serial.println("processModeEvent => new mode = " + (String)shrd->modeOrder);
@@ -392,10 +387,6 @@ void Buttons::processModeEvent(uint8_t buttonId, bool isLongPress)
             shrd->modeOrder = 3;
             led1.Breathe(SHORT_BREATHE_DURATION).Repeat(3);
         }
-
-#if DEBUG_DISPLAY_MODE
-      Serial.println("Buttons::processModeEvent - modeLcd = " + (String)shrd->modeOrder);
-#endif
 
         blh->notifyCommandsFeedback();
 

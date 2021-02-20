@@ -5,18 +5,23 @@
 #include <prefs_storage.h>
 #define APP_STORAGE "APP_STORAGE"
 
-// preferences
-#define PREF_bleLockForced "bleLockForced"
-#define PREF_brkMinPressRaw "brkMinPressRaw"
-#define PREF_brkMaxPressRaw "brkMaxPressRaw"
-#define PREF_distanceOdo "distanceOdo"
-#define PREF_bMaxCalibUser "bMaxCalibUser"
-#define PREF_bMaxCalibRaw "bMaxCalibRaw"
-#define PREF_bMinCalibUser "bMinCalibUser"
-#define PREF_bMinCalibRaw "bMinCalibRaw"
-#define PREF_mode "mode"
-#define PREF_accel "accel"
-#define PREF_eco "eco"
+void preferences::test()
+{
+  int8_t test = 10;
+
+  prefs.begin(APP_STORAGE, false);
+  prefs.putInt("test", test);
+  prefs.end();
+
+  Serial.printf("1 - test = %d\n", test);
+  test = 0;
+
+  prefs.begin(APP_STORAGE, false);
+  test = prefs.getInt("test");
+  prefs.end();
+
+  Serial.printf("2 - test = %d\n", test);
+}
 
 void preferences::setSettings(Settings *data)
 {
@@ -28,61 +33,30 @@ void preferences::setSharedData(SharedData *data)
   shrd = data;
 }
 
-void preferences::restore()
-{
-  restoreMode();
-  restoreBleLockForced();
-  restoreBrakeMinPressure();
-  restoreBrakeMaxPressure();
-  restoreOdo();
-  restoreBatteryCalib();
-}
-
-void preferences::saveMode()
+void preferences::saveBleLockForced(int8_t *bleLockForced)
 {
   prefs.begin(APP_STORAGE, false);
-  prefs.putInt(PREF_mode, shrd->modeOrder);
-  prefs.end();
-
-  Serial.print("save mode value : ");
-  Serial.println(shrd->modeOrder);
-}
-
-void preferences::restoreMode()
-{
-  prefs.begin(APP_STORAGE, false);
-  shrd->modeOrder = prefs.getInt(PREF_mode, 3);
-  prefs.end();
-
-  Serial.print("restore mode value : ");
-  Serial.println(shrd->modeOrder);
-}
-
-void preferences::saveBleLockForced()
-{
-  prefs.begin(APP_STORAGE, false);
-  prefs.putInt(PREF_bleLockForced, shrd->isLocked);
+  prefs.putInt("bleLockForced", *bleLockForced);
   prefs.end();
 
   Serial.print("save bleLockForced value : ");
-  Serial.println(shrd->isLocked);
+  Serial.println(*bleLockForced);
 }
 
-void preferences::restoreBleLockForced()
+void preferences::restoreBleLockForced(int8_t *bleLockForced)
 {
   prefs.begin(APP_STORAGE, false);
-  shrd->isLocked = prefs.getInt(PREF_bleLockForced, 0);
+  *bleLockForced = prefs.getInt("bleLockForced", 0);
   prefs.end();
 
   Serial.print("restore bleLockForced value : ");
-  Serial.println(shrd->isLocked);
+  Serial.println(*bleLockForced);
 }
 
 void preferences::saveBrakeMinPressure()
 {
-
   prefs.begin(APP_STORAGE, false);
-  prefs.putInt(PREF_brkMinPressRaw, shrd->brakeMinPressureRaw);
+  prefs.putInt("brkMinPressRaw", shrd->brakeMinPressureRaw);
   prefs.end();
 
   Serial.print("save saveBrakeMinPressure value : ");
@@ -92,7 +66,7 @@ void preferences::saveBrakeMinPressure()
 void preferences::restoreBrakeMinPressure()
 {
   prefs.begin(APP_STORAGE, false);
-  shrd->brakeMinPressureRaw = prefs.getInt(PREF_brkMinPressRaw, 900);
+  shrd->brakeMinPressureRaw = prefs.getInt("brkMinPressRaw", 900);
   prefs.end();
 
   Serial.print("restore restoreBrakeMinPressure value : ");
@@ -105,7 +79,7 @@ void preferences::restoreBrakeMinPressure()
 void preferences::saveBrakeMaxPressure()
 {
   prefs.begin(APP_STORAGE, false);
-  prefs.putInt(PREF_brkMaxPressRaw, shrd->brakeMaxPressureRaw);
+  prefs.putInt("brkMaxPressRaw", shrd->brakeMaxPressureRaw);
   prefs.end();
 
   Serial.print("save saveBrakeMaxPressure value : ");
@@ -115,7 +89,7 @@ void preferences::saveBrakeMaxPressure()
 void preferences::restoreBrakeMaxPressure()
 {
   prefs.begin(APP_STORAGE, false);
-  shrd->brakeMaxPressureRaw = prefs.getInt(PREF_brkMaxPressRaw, 2000);
+  shrd->brakeMaxPressureRaw = prefs.getInt("brkMaxPressRaw", 2000);
   prefs.end();
 
   Serial.print("restore restoreBrakeMaxPressure value : ");
@@ -128,8 +102,9 @@ void preferences::restoreBrakeMaxPressure()
 void preferences::saveOdo()
 {
   //uint32_t time = micros();
+
   prefs.begin(APP_STORAGE, false);
-  prefs.putUInt(PREF_distanceOdo, shrd->distanceOdo);
+  prefs.putUInt("distanceOdo", shrd->distanceOdo);
   prefs.end();
 
   //Serial.print("time write : ");
@@ -140,9 +115,9 @@ void preferences::saveOdo()
 }
 
 void preferences::restoreOdo()
-{
+{ 
   prefs.begin(APP_STORAGE, false);
-  shrd->distanceOdo = prefs.getUInt(PREF_distanceOdo, 0);
+  shrd->distanceOdo = prefs.getUInt("distanceOdo", 0);
   prefs.end();
 
   shrd->distanceOdoInFlash = shrd->distanceOdo;
@@ -150,15 +125,16 @@ void preferences::restoreOdo()
 
   Serial.print("restore restoreOdo value : ");
   Serial.println(shrd->distanceOdo);
+
 }
 
 void preferences::saveBatteryCalib()
 {
   prefs.begin(APP_STORAGE, false);
-  prefs.putFloat(PREF_bMaxCalibUser, shrd->batteryMaxVoltageCalibUser);
-  prefs.putUInt(PREF_bMaxCalibRaw, shrd->batteryMaxVoltageCalibRaw);
-  prefs.putFloat(PREF_bMinCalibUser, shrd->batteryMinVoltageCalibUser);
-  prefs.putUInt(PREF_bMinCalibRaw, shrd->batteryMinVoltageCalibRaw);
+  prefs.putFloat ("bMaxCalibUser", shrd->batteryMaxVoltageCalibUser);
+  prefs.putUInt("bMaxCalibRaw", shrd->batteryMaxVoltageCalibRaw);
+  prefs.putFloat("bMinCalibUser", shrd->batteryMinVoltageCalibUser);
+  prefs.putUInt("bMinCalibRaw", shrd->batteryMinVoltageCalibRaw);
   prefs.end();
 
   Serial.println("save BatteryCalib value : ");
@@ -175,10 +151,10 @@ void preferences::saveBatteryCalib()
 void preferences::restoreBatteryCalib()
 {
   prefs.begin(APP_STORAGE, false);
-  shrd->batteryMaxVoltageCalibUser = prefs.getFloat(PREF_bMaxCalibUser, 66.20);
-  shrd->batteryMaxVoltageCalibRaw = prefs.getUInt(PREF_bMaxCalibRaw, 2970);
-  shrd->batteryMinVoltageCalibUser = prefs.getFloat(PREF_bMinCalibUser, 0.0);
-  shrd->batteryMinVoltageCalibRaw = prefs.getUInt(PREF_bMinCalibRaw, 0);
+  shrd->batteryMaxVoltageCalibUser = prefs.getFloat("bMaxCalibUser", 66.20);
+  shrd->batteryMaxVoltageCalibRaw = prefs.getUInt("bMaxCalibRaw", 2970);
+  shrd->batteryMinVoltageCalibUser = prefs.getFloat("bMinCalibUser", 0.0);
+  shrd->batteryMinVoltageCalibRaw = prefs.getUInt("bMinCalibRaw", 0);
   prefs.end();
 
   Serial.println("restore BatteryCalib value : ");

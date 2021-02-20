@@ -274,7 +274,11 @@ void setupAutonomy()
 
 void saveBleLockForced()
 {
-  prefs.saveBleLockForced();
+  prefs.saveBleLockForced(&(blh.bleLockForced));
+}
+void restoreBleLockForced()
+{
+  prefs.restoreBleLockForced(&(blh.bleLockForced));
 }
 void saveBrakeMinPressure()
 {
@@ -295,10 +299,6 @@ void saveBatteryCalib()
 void saveSettings()
 {
   prefs.saveSettings();
-}
-void saveMode()
-{
-  prefs.saveMode();
 }
 
 void initSharedDataWithSettings()
@@ -437,7 +437,11 @@ void setup()
   Serial.println("   prefs... ");
   prefs.setSettings(&settings);
   prefs.setSharedData(&shrd);
-  prefs.restore();
+  prefs.restoreBleLockForced(&(blh.bleLockForced));
+  prefs.restoreBrakeMinPressure();
+  prefs.restoreBrakeMaxPressure();
+  prefs.restoreOdo();
+  prefs.restoreBatteryCalib();
 
   Serial.println("   settings ...");
   bool settingsStatusOk = prefs.restoreSettings();
