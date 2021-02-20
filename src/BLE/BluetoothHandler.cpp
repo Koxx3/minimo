@@ -1001,7 +1001,9 @@ uint8_t BluetoothHandler::setMeasurementsDataPacket()
 
 uint8_t BluetoothHandler::setCommandsDataPacket()
 {
+#if DEBUG_BLE_DISPLAY_COMMANDSFEEDBACK
     Serial.println("setCommandsDataPacket");
+#endif
 
     int32_t ind = 0;
 
@@ -1026,7 +1028,9 @@ uint8_t BluetoothHandler::setCommandsDataPacket()
 
         pCharacteristicCommands->setValue((uint8_t *)&txValue[0], ind);
 
+#if DEBUG_BLE_DISPLAY_COMMANDSFEEDBACK
         buffer_display("setCommandsDataPacket : ", txValue, ind);
+#endif
     }
     else
     {
@@ -1037,15 +1041,14 @@ uint8_t BluetoothHandler::setCommandsDataPacket()
 
 void BluetoothHandler::getCommandsDataPacket(uint8_t *rxValue)
 {
+#if DEBUG_BLE_DISPLAY_COMMANDSFEEDBACK
     Serial.println("getCommandsDataPacket");
+#endif
 
     int32_t ind = 0;
 
     shrd->modeOrder = buffer_get_uint8(rxValue, &ind);
     shrd->speedLimiter = buffer_get_uint8(rxValue, &ind);
-
-    Serial.println("getCommandsDataPacket - speedLimiter = " + (String)shrd->speedLimiter);
-
     shrd->ecoOrder = buffer_get_uint8(rxValue, &ind);
     shrd->accelOrder = buffer_get_uint8(rxValue, &ind);
     shrd->auxOrder = buffer_get_uint8(rxValue, &ind);
@@ -1055,12 +1058,20 @@ void BluetoothHandler::getCommandsDataPacket(uint8_t *rxValue)
     buffer_get_uint8(rxValue, &ind); /*shrd->brakeFordidenHighVoltage*/
     fastUpdate = buffer_get_uint8(rxValue, &ind);
 
+
+#if DEBUG_BLE_DISPLAY_COMMANDSFEEDBACK
+    Serial.println("getCommandsDataPacket - modeLcd = " + (String)shrd->modeOrder);
+    Serial.println("getCommandsDataPacket - speedLimiter = " + (String)shrd->speedLimiter);
+    Serial.println("getCommandsDataPacket - ecoOrder = " + (String)shrd->ecoOrder);
     buffer_display("getCommandsDataPacket : ", rxValue, ind);
+#endif
 }
 
 void BluetoothHandler::notifyCommandsFeedback()
 {
+#if DEBUG_BLE_DISPLAY_COMMANDSFEEDBACK
     Serial.println("notifyCommandsFeedback");
+#endif 
 
     if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {

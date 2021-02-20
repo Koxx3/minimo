@@ -274,11 +274,7 @@ void setupAutonomy()
 
 void saveBleLockForced()
 {
-  prefs.saveBleLockForced(&(blh.bleLockForced));
-}
-void restoreBleLockForced()
-{
-  prefs.restoreBleLockForced(&(blh.bleLockForced));
+  prefs.saveBleLockForced();
 }
 void saveBrakeMinPressure()
 {
@@ -300,11 +296,13 @@ void saveSettings()
 {
   prefs.saveSettings();
 }
-
 void initSharedDataWithSettings()
 {
   shrd.speedLimiter = (settings.getS1F().Speed_limiter_at_startup == 1);
   shrd.pasEnabled = (settings.getS6F().Pas_enabled == 1);
+  shrd.modeOrder = settings.getS1F().Default_mode;
+  shrd.ecoOrder = settings.getS1F().Default_eco;
+  shrd.accelOrder = settings.getS1F().Default_accel;
 }
 
 #if ENABLE_WATCHDOG
@@ -437,11 +435,7 @@ void setup()
   Serial.println("   prefs... ");
   prefs.setSettings(&settings);
   prefs.setSharedData(&shrd);
-  prefs.restoreBleLockForced(&(blh.bleLockForced));
-  prefs.restoreBrakeMinPressure();
-  prefs.restoreBrakeMaxPressure();
-  prefs.restoreOdo();
-  prefs.restoreBatteryCalib();
+  prefs.restore();
 
   Serial.println("   settings ...");
   bool settingsStatusOk = prefs.restoreSettings();
@@ -1000,7 +994,7 @@ void processDacOutput()
 
 #if DEBUG_DISPLAY_DAC_OUTPUT
   char print_buffer[500];
-  sprintf(print_buffer, "filteredThrottleIn : %d / tInMillv : %d / tInMin : %d / tInMax : %d / rangeInMilliv : %d / tPercent = %2.2f / bAnalogValue = %d / bFilterMeanErr = %d / bPercent = %2.2f / minBrakeVoltage = %d / outputMilliv = %d / dacOutput = %d",
+  sprintf(print_buffer, "filteredThrottleIn : %d / tInMillv : %d / tInMin : %d / tInMax : %d / rangeInMilliv : %d / tPercent = %2.2f / bAnalogValue = %d / bFilterMeanErr = %d / bPercent = %2.2f / outputMilliv = %d / dacOutput = %d",
           filteredThrottleIn,
           throttleInMillv,
           tInMin,
@@ -1010,7 +1004,6 @@ void processDacOutput()
           shrd.brakeAnalogValue,
           shrd.brakeFilterMeanErr,
           shrd.brakePercent,
-          minBrakeVoltage,
           outputMilliv,
           dacOutput);
   Serial.println(print_buffer);

@@ -63,7 +63,6 @@ public:
 
     uint8_t getCheckSum(char *string);
     void displayFrame(int mode, char data_buffer[], byte checksum);
-    void displayMode(char data_buffer[]);
     uint8_t modifyModeOld(char var, char data_buffer[]);
     uint8_t getMode(char var, char data_buffer[]);
     uint8_t modifyMode(char var, char data_buffer[]);
