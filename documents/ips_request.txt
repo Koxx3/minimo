@@ -1,0 +1,15 @@
+Hello !
+
+do you have a screen with those specs :
+- ST7796 or ST7796s
+- 3.5" (or 4")
+- SPI interface -- VERY IMPORTANT
+- IPS / all view angles
+- no PCB, just FPC
+- if possible, no touch screen
+- for outdoor usage (more than 300cd/m²)
+
+and I need a datasheet please.
+
+Regards,
+F.
