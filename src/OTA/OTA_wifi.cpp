@@ -13,6 +13,8 @@
 #include <WiFiClientSecure.h>
 #include "Controllers/ControllerType.h"
 
+#define OTA_HOSTNAME "SmartElec_OTA"
+
 char *github_root_ca = (char*)
     "-----BEGIN CERTIFICATE-----\n"
     "MIIDxTCCAq2gAwIBAgIQAqxcJmoLQJuPC3nyrkYldzANBgkqhkiG9w0BAQUFADBsMQswCQYDVQQG\n"
@@ -120,15 +122,19 @@ void OTA_server_run(char *ssid, char *password)
 void OTA_ide_setup(char *wifi_ssid, char *wifi_pwd)
 {
   OTA_ide_init = true;
+
   WiFi.mode(WIFI_STA);
   WiFi.begin(wifi_ssid, wifi_pwd);
+  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE); // required to set hostname properly
+  WiFi.setHostname(OTA_HOSTNAME);
+  ArduinoOTA.setHostname(OTA_HOSTNAME);
+
   while (WiFi.waitForConnectResult() != WL_CONNECTED)
   {
     Serial.println("Connection Failed! Rebooting...");
     delay(5000);
     ESP.restart();
   }
-  ArduinoOTA.setHostname("SmartContro_OTA");
   ArduinoOTA.onStart([]() {
     String type;
     if (ArduinoOTA.getCommand() == U_FLASH)
@@ -162,6 +168,8 @@ void OTA_ide_setup(char *wifi_ssid, char *wifi_pwd)
   Serial.println("Ready");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+  Serial.print("Hostname: ");
+  Serial.println(WiFi.getHostname());
 }
 
 void OTA_ide_loop(char *wifi_ssid, char *wifi_pwd)
