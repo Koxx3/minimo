@@ -1060,7 +1060,7 @@ void BluetoothHandler::getCommandsDataPacket(uint8_t *rxValue)
 
 
 #if DEBUG_BLE_DISPLAY_COMMANDSFEEDBACK
-    Serial.println("getCommandsDataPacket - modeLcd = " + (String)shrd->modeOrder);
+    Serial.println("getCommandsDataPacket - modeOrder = " + (String)shrd->modeOrder);
     Serial.println("getCommandsDataPacket - speedLimiter = " + (String)shrd->speedLimiter);
     Serial.println("getCommandsDataPacket - ecoOrder = " + (String)shrd->ecoOrder);
     buffer_display("getCommandsDataPacket : ", rxValue, ind);

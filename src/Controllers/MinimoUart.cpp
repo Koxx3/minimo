@@ -122,6 +122,7 @@ void MinimoUart::displayDecodedFrame(int mode, char data_buffer[], byte checksum
 //////------------------------------------
 ////// Data processing functions
 
+/*
 uint8_t MinimoUart::getMode(char var, char data_buffer[])
 {
   uint32_t byteDiff = (var - data_buffer[2]);
@@ -142,6 +143,7 @@ uint8_t MinimoUart::getMode(char var, char data_buffer[])
 
   return modeLcd;
 }
+*/
 
 uint8_t MinimoUart::modifyMode(char var, char data_buffer[])
 {
@@ -155,11 +157,22 @@ uint8_t MinimoUart::modifyMode(char var, char data_buffer[])
   {
     if (shrd->modeLcdOld != modeLcd)
     {
+
+#if DEBUG_DISPLAY_MODE
+      Serial.println("LCD mode : modeOrder = " + (String)shrd->modeLcdOld + " / modeLcd = " + (String)modeLcd + " ==> new mode set to modeLcd");
+#endif
+
       shrd->modeOrder = modeLcd;
       shrd->modeLcdOld = modeLcd;
 
       // notify bluetooth
       blh->notifyCommandsFeedback();
+    }
+    else
+    {
+#if DEBUG_DISPLAY_MODE
+      Serial.println("LCD mode : modeOrder = " + (String)shrd->modeLcdOld + " / modeLcd = " + (String)modeLcd + " ==> no mod");
+#endif
     }
   }
 
@@ -875,13 +888,6 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
         isModified_LcdToCntrl = 1;
       }
 
-      if (*i == 5)
-      {
-
-        var = modifyMode(var, data_buffer_ori);
-        isModified_LcdToCntrl = 1;
-      }
-
       if (*i == 6)
       {
 
@@ -1088,9 +1094,6 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
         displayFrame(serialMode, data_buffer_ori, checksum);
         Serial.print("mod : ");
         displayFrame(serialMode, data_buffer_mod, checksum);
-#endif
-#if DEBUG_DISPLAY_MODE
-        displayMode(data_buffer_mod);
 #endif
       }
 
