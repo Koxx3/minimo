@@ -1,0 +1,8 @@
+{
+    "type": "smartcontroller_minimo",
+    "version": "14",
+    "host": "raw.githubusercontent.com",
+    "port": "443",
+    "bin": "/Koxx3/SmartController_SmartDisplay_ESP32/master/ota_updates/smartcontroller_minimo/firmware_v14.bin",
+    "date": "2021-02-21 22:12:44.234407"
+}
