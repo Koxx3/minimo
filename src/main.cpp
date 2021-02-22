@@ -1425,7 +1425,7 @@ void loop()
     // select & launch requested OTA mode
     if (shrd.inOtaMode == OTA_SERVER)
     {
-      OTA_server_run(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd);
+      OTA_server_run(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd, shrd.inOtaModeVersion);
     }
     else if (shrd.inOtaMode == OTA_IDE)
     {

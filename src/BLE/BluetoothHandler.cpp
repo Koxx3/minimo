@@ -497,6 +497,8 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 std::string rxValue = pCharacteristic->getValue();
                 shrd->inOtaMode = rxValue[0]; // Enable http OTA mode
+                shrd->inOtaModeVersion = (rxValue[1]) | (rxValue[2] << 8);
+                Serial.println("inOtaModeVersion = " + (String)shrd->inOtaModeVersion);
             }
             else
                 /* if (pCharacteristic->getUUID().toString() == FAST_UPDATE_CHARACTERISTIC_UUID)

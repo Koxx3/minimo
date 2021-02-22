@@ -429,14 +429,14 @@ bool secureEsp32FOTA::execHTTPSCheck()
 
     clientForOta.stop();
 
-    if (description->version > _firwmareVersion && description->type == _firwmareType)
-    {
-        locationOfFirmware = description->host;
-        _bin = description->bin;
-        return true;
-    }
+    //if (description->version > _firwmareVersion && description->type == _firwmareType)
+    //{
+    locationOfFirmware = description->host;
+    _bin = description->bin;
+    return true;
+    //}
 
-    return false;
+    //return false;
 }
 
 /*

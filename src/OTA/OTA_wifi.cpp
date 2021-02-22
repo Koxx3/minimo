@@ -45,7 +45,7 @@ static boolean OTA_ide_init = false;
 WiFiClientSecure clientForOta;
 secureEsp32FOTA secureEsp32FOTA((String)FIRMWARE_TYPE, FIRMWARE_VERSION);
 
-void OTA_server_run(char *ssid, char *password)
+void OTA_server_run(char *ssid, char *password, uint16_t version)
 {
   Serial.println("------------- OTA Server -------------");
 
@@ -101,20 +101,20 @@ void OTA_server_run(char *ssid, char *password)
   Serial.println(WiFi.localIP());
 
   secureEsp32FOTA._host = "raw.githubusercontent.com";
-  secureEsp32FOTA._descriptionOfFirmwareURL = "/Koxx3/SmartController_SmartDisplay_ESP32/master/ota_updates/" + (String)FIRMWARE_TYPE + "/firmware.json";
+  secureEsp32FOTA._descriptionOfFirmwareURL = "/Koxx3/SmartController_SmartDisplay_ESP32/master/ota_updates/" + (String)FIRMWARE_TYPE + "/firmware_v" + version + ".json";
   secureEsp32FOTA._certificate = github_root_ca;
   secureEsp32FOTA.clientForOta = clientForOta;
 
   bool shouldExecuteFirmwareUpdate = secureEsp32FOTA.execHTTPSCheck();
-  if (shouldExecuteFirmwareUpdate)
-  {
-    Serial.println("Firmware update available!");
+  //if (shouldExecuteFirmwareUpdate)
+  //{
+    Serial.println("Firmware update to version : " + (String)version);
     secureEsp32FOTA.executeOTA();
-  }
-  else
-  {
-    Serial.println("No firmware update available...");
-  }
+  //}
+  //else
+  //{
+  //  Serial.println("No firmware update available...");
+ // }
   ESP.restart();
 }
 

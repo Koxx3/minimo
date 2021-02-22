@@ -28,6 +28,7 @@ public:
     uint32_t timeLastNotifyBle = 0;
 
     uint8_t inOtaMode = OTA_OFF;
+    uint16_t inOtaModeVersion = 0;
 
     float currentHumidity = 0.0;
     float currentTemperature = 0.0;
