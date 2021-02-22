@@ -1164,17 +1164,3 @@ void MinimoUart::processMinimotorsSerial(uint32_t i_loop, boolean simulatedDispl
   readHardSerial(MODE_CNTRL_TO_LCD, &i_CntrlRcv, hwSerCntrl, hwSerLcd, MODE_CNTRL_TO_LCD, data_buffer_cntrl_ori, data_buffer_cntrl_mod);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
