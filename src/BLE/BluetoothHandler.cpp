@@ -607,8 +607,8 @@ void BluetoothHandler::setSettings(Settings *data)
     // Set firmware string
     String firmwareVersion = (String)FIRMWARE_VERSION;
     String firmwareType = (String)FIRMWARE_TYPE;
-    firmwareType.replace("smartcontroller_", "");
-    firmwareType.replace("smartdisplay_", "");
+    firmwareType.replace("smartcontroller_", "sc_");
+    firmwareType.replace("smartdisplay_", "sd_");
     firmwareString = firmwareType + " " + firmwareVersion;
 
     // Create the BLE Device

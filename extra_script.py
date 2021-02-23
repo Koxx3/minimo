@@ -50,7 +50,6 @@ def after_build(source, target, env):
         payload['host'] = host
         payload['port'] = port
         payload['bin'] = bin + envName + "/" + dstFilename
-        payload['date'] = dateFile
 
         try:
             with open(dstMainPath + "firmware_v" + version + ".json", 'w') as outfile:
@@ -67,20 +66,17 @@ def after_build(source, target, env):
                     filePath = os.path.join(r, file)
                     print(filePath)
                     fileName = os.path.basename(filePath)
-                    modified = os.path.getmtime(filePath)
+                    #modificationDate = os.path.getmtime(filePath)
                     # remove file extension
                     versionNumber = os.path.splitext(fileName)[0]
                     # split with 'v"
                     versionNumber = re.split('v', versionNumber)[1]
                     
                     versionElement = {}
-                    versionElement['type'] = envName
                     versionElement['version'] = versionNumber
-                    versionElement['host'] = host
-                    versionElement['port'] = port
-                    dateFile = datetime.datetime.fromtimestamp(modified)
-                    versionElement['date'] = dateFile
-                    versionElement['bin'] = bin + envName + "/" + fileName
+                    #modificationDateStr = datetime.datetime.fromtimestamp(modificationDate)
+                    #year,month,day,hour,minute,second=time.localtime(modificationDate)[:-3]
+                    versionElement['date'] = os.stat(filePath)[-2]
                     fullPayload['versions'].append(versionElement)
 
         try:
