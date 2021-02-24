@@ -56,13 +56,21 @@ Wiring (left to right) :
 ### JST-SM cables - controller
 ![JST-SM cables - controller](/img/pcb_typon_mini5.png)
 
-Wiring (left to right) :
+Minimotors wiring (left to right) :
 - 1 - black - serial / controller to ESP
 - 2 - red - serial / ESP to controller
 - 3 - orange or blue - throttle signal
 - 4 - white - GND
 - 5 - yellow - battery feedback
 - 6 - green - battery power
+
+VESC wiring (left to right) :
+- 1 - yellow - RX ESP / TX VESC
+- 2 - white - TX ESP / RX VESC
+- 3 - red - throttle
+- 4 - black - GND
+- 5 - not connected
+- 6 - not connected
 
 ## Other components/connectors
 
