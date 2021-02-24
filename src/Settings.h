@@ -33,6 +33,8 @@ public:
     LIST_Button_press_action_Nitro_boost_on_off,
     LIST_Button_press_action_Mode_switch_1_2_3,
     LIST_Button_press_action_Mode_switch_2_3,
+    LIST_Button_press_action_Eco_switch_none_med_max,
+    LIST_Button_press_action_Eco_switch_none_med,
   } ButtonActions;
 
   typedef enum Electric_Brake_Type

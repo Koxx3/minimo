@@ -72,6 +72,7 @@ void Buttons::processButton1Click()
         processSpeedLimiterEvent(1, false);
         processLockEvent(1, false);
         processModeEvent(1, false);
+        processEcoEvent(1, false);
     }
 
     Serial.print("processButton1Click : ");
@@ -117,6 +118,7 @@ void Buttons::processButton1LpDuring()
         processSpeedLimiterEvent(1, true);
         processLockEvent(1, true);
         processModeEvent(1, true);
+        processEcoEvent(1, true);
         shrd->button1LpProcessed = true;
     }
 }
@@ -160,6 +162,7 @@ void Buttons::processButton2Click()
         processSpeedLimiterEvent(2, false);
         processLockEvent(2, false);
         processModeEvent(2, false);
+        processEcoEvent(2, false);
     }
 
     Serial.print("processButton2Click : ");
@@ -367,7 +370,7 @@ void Buttons::processModeEvent(uint8_t buttonId, bool isLongPress)
         }
 
 #if DEBUG_DISPLAY_MODE
-      Serial.println("Buttons::processModeEvent - modeLcd = " + (String)shrd->modeOrder);
+        Serial.println("Buttons::processModeEvent - modeLcd = " + (String)shrd->modeOrder);
 #endif
 
         blh->notifyCommandsFeedback();
@@ -394,12 +397,75 @@ void Buttons::processModeEvent(uint8_t buttonId, bool isLongPress)
         }
 
 #if DEBUG_DISPLAY_MODE
-      Serial.println("Buttons::processModeEvent - modeLcd = " + (String)shrd->modeOrder);
+        Serial.println("Buttons::processModeEvent - modeLcd = " + (String)shrd->modeOrder);
 #endif
 
         blh->notifyCommandsFeedback();
 
         Serial.println("processModeEvent => new mode = " + (String)shrd->modeOrder);
+    }
+}
+
+void Buttons::processEcoEvent(uint8_t buttonId, bool isLongPress)
+{
+
+    Serial.println("processEcoEvent => ecoOrder = " + (String)shrd->ecoOrder);
+
+    // process mode switch 1/2/3
+    if (((buttonId == 1) && (!isLongPress) && (settings->getS3F().Button_1_short_press_action == settings->LIST_Button_press_action_Eco_switch_none_med_max)) ||
+        ((buttonId == 1) && (isLongPress) && (settings->getS3F().Button_1_long_press_action == settings->LIST_Button_press_action_Eco_switch_none_med_max)) ||
+        ((buttonId == 2) && (!isLongPress) && (settings->getS3F().Button_2_short_press_action == settings->LIST_Button_press_action_Eco_switch_none_med_max)) ||
+        ((buttonId == 2) && (isLongPress) && (settings->getS3F().Button_2_long_press_action == settings->LIST_Button_press_action_Eco_switch_none_med_max)))
+    {
+        if (shrd->ecoOrder == 3)
+        {
+            shrd->ecoOrder = 2;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(2);
+        }
+        else if (shrd->ecoOrder == 2)
+        {
+            shrd->ecoOrder = 1;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(1);
+        }
+        else if (shrd->ecoOrder == 1)
+        {
+            shrd->ecoOrder = 3;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(3);
+        }
+
+#if DEBUG_DISPLAY_ECO
+        Serial.println("Buttons::processEcoEvent - ecoOrder = " + (String)shrd->ecoOrder);
+#endif
+
+        blh->notifyCommandsFeedback();
+
+        Serial.println("processEcoEvent => new ecoOrder = " + (String)shrd->ecoOrder);
+    }
+
+    // process mode switch 2/3
+    if (((buttonId == 1) && (!isLongPress) && (settings->getS3F().Button_1_short_press_action == settings->LIST_Button_press_action_Eco_switch_none_med)) ||
+        ((buttonId == 1) && (isLongPress) && (settings->getS3F().Button_1_long_press_action == settings->LIST_Button_press_action_Eco_switch_none_med)) ||
+        ((buttonId == 2) && (!isLongPress) && (settings->getS3F().Button_2_short_press_action == settings->LIST_Button_press_action_Eco_switch_none_med)) ||
+        ((buttonId == 2) && (isLongPress) && (settings->getS3F().Button_2_long_press_action == settings->LIST_Button_press_action_Eco_switch_none_med)))
+    {
+        if ((shrd->ecoOrder == 1) || (shrd->ecoOrder == 3))
+        {
+            shrd->ecoOrder = 2;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(2);
+        }
+        else if (shrd->ecoOrder == 2)
+        {
+            shrd->ecoOrder = 3;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(3);
+        }
+
+#if DEBUG_DISPLAY_ECO
+        Serial.println("Buttons::processEcoEvent - ecoOrder = " + (String)shrd->ecoOrder);
+#endif
+
+        blh->notifyCommandsFeedback();
+
+        Serial.println("processEcoEvent => new ecoOrder = " + (String)shrd->ecoOrder);
     }
 }
 

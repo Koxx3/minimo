@@ -43,6 +43,7 @@ private:
     static void processLockEvent(uint8_t buttonId, bool isLongPress);
     static void processModeEvent(uint8_t buttonId, bool isLongPress);
     static void processNitroEvent(uint8_t buttonId, uint8_t action);
+    static void processEcoEvent(uint8_t buttonId, bool isLongPress);
 
 };
 #endif
