@@ -45,7 +45,7 @@ You can also add the external sensors :
 ### JST-SM cables - display 
 ![JST-SM cables - display](/img/pcb_typon_mini4.png)
 
-Wiring (left to right) :
+Minimotors wiring (left to right) :
 - 1 - black - serial / ESP to LCD
 - 2 - red - serial / LCD to ESP
 - 3 - orange or blue - throttle signal
@@ -53,16 +53,32 @@ Wiring (left to right) :
 - 5 - yellow - battery feedback
 - 6 - green - battery power
 
+VESC wiring (left to right) :
+- 1 - not connected
+- 2 - not connected
+- 3 - not connected
+- 4 - not connected
+- 5 - power switch
+- 6 - power switch
+
 ### JST-SM cables - controller
 ![JST-SM cables - controller](/img/pcb_typon_mini5.png)
 
-Wiring (left to right) :
+Minimotors wiring (left to right) :
 - 1 - black - serial / controller to ESP
 - 2 - red - serial / ESP to controller
 - 3 - orange or blue - throttle signal
 - 4 - white - GND
 - 5 - yellow - battery feedback
 - 6 - green - battery power
+
+VESC wiring (left to right) :
+- 1 - yellow - RX ESP / TX VESC
+- 2 - white - TX ESP / RX VESC
+- 3 - red - throttle
+- 4 - black - GND
+- 5 - not connected
+- 6 - not connected
 
 ## Other components/connectors
 
@@ -83,10 +99,15 @@ Wiring :
 ### Brake input
 ![ESP32](/img/pcb_typon_max3.png)
 
-Wiring (right to left):
+Analog brake wiring (right to left):
 - 1 - 5V
 - 2 - GND
 - 3 - signal
+
+Digital brake wiring (right to left):
+- 1 - brake witch
+- 2 - not connected
+- 3 - brake witch
 
 ### DHT22 external temperature/humidity sensor
 ![ESP32](/img/pcb_typon_max4.png)
@@ -136,8 +157,8 @@ Wiring (left to right):
 - 2 - button 2
 - 3 - button 1
 - 4 - button 1 LED
-- 5 - button 2 LED
-- 6 - GND
+- 5 - not connected
+- 6 - not connected
 
 ### Solid State relays
 ![ESP32](/img/pcb_typon_max10.png)
