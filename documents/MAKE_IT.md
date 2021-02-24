@@ -157,8 +157,8 @@ Wiring (left to right):
 - 2 - button 2
 - 3 - button 1
 - 4 - button 1 LED
-- 5 - button 2 LED
-- 6 - GND
+- 5 - not connected
+- 6 - not connected
 
 ### Solid State relays
 ![ESP32](/img/pcb_typon_max10.png)
