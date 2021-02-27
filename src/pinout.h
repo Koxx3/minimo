@@ -42,7 +42,7 @@
 // RIGHT
 #define PIN_SPI_MOSI 23        // use in LCD  // ok
 #define PIN_IN_BUTTON1 22      // ok
-#define PIN_OUT_LED_BUTTON2 21 // ok
+#define PIN_OUT_FREE 21        // ok
 #define PIN_FREE 19            // ok
 #define PIN_SPI_CLK 18         // use in LCD  // ok
 #define PIN_SPI_BKL 5          // use in LCD  // ok

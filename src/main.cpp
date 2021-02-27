@@ -153,9 +153,10 @@ void setupPins()
   pinMode(PIN_OUT_RELAY, OUTPUT);
   pinMode(PIN_OUT_BRAKE, OUTPUT);
   pinMode(PIN_OUT_LED_BUTTON1, OUTPUT);
-  pinMode(PIN_OUT_LED_BUTTON2, OUTPUT);
   pinMode(PIN_IN_ABRAKE, INPUT);
   pinMode(PIN_IN_ATHROTTLE, INPUT);
+  pinMode(PIN_OUT_FREE, OUTPUT);
+  //digitalWrite(PIN_OUT_FREE, 0);
 }
 
 #if HAS_I2C

@@ -53,6 +53,7 @@
 #define LINE_3Y_UNIT3 LINE_3Y + (15 * SCALE_FACTOR_Y) // Km/h speed max
 #define LINE_4Y 210 * SCALE_FACTOR_Y
 #define LINE_4Y_UNIT LINE_4Y + (22 * SCALE_FACTOR_Y)
+#define NB_BATTERY_BARS 17
 #else // 3.5"
 #define LINE_1Y 9 * SCALE_FACTOR_Y
 #define LINE_2Y 23 * SCALE_FACTOR_Y
@@ -63,6 +64,7 @@
 #define LINE_3Y_UNIT3 LINE_3Y + (14 * SCALE_FACTOR_Y) // Km/h speed max
 #define LINE_4Y 210 * SCALE_FACTOR_Y
 #define LINE_4Y_UNIT LINE_4Y + (21 * SCALE_FACTOR_Y)
+#define NB_BATTERY_BARS 17
 #endif
 
 // separation lines
@@ -92,7 +94,7 @@
 #define COLUMN5 225 * SCALE_FACTOR_X
 #define COLUMN6 215 * SCALE_FACTOR_X
 #define COLUMN7 247 * SCALE_FACTOR_X
-#define COLUMN8 279 * SCALE_FACTOR_X
+#define COLUMN8 278 * SCALE_FACTOR_X //279
 #define COLUMN9 292 * SCALE_FACTOR_X
 
 #define LINE_TEXT_OFFSET 6
@@ -305,22 +307,7 @@ void tftUpdateData(uint32_t i_loop)
       tft_util_draw_number(&tft, fmt, COLUMN1, LINE_1Y, TFT_WHITE, TFT_BLACK, 5, MEDIUM_FONT_SIZE);
       break;
     }
-      /*
     case 3:
-    {
-      sprintf(fmt, "%02.0f", shrd.currentTemperature);
-      tft_util_draw_number(&tft, fmt, COLUMN5, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
-      break;
-    }
-
-    case 4:
-    {
-      sprintf(fmt, "%02.0f", shrd.currentHumidity);
-      tft_util_draw_number(&tft, fmt, COLUMN5, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
-      break;
-    }
-*/
-    case 5:
     {
       int32_t power = (shrd.currentActual * shrd.voltageActual) / 1000000;
       power = constrain(power, 0, 65535);
@@ -329,14 +316,14 @@ void tftUpdateData(uint32_t i_loop)
       break;
     }
 
-    case 6:
+    case 4:
     {
       timeToString().toCharArray(fmt, 9);
       tft_util_draw_number(&tft, fmt, COLUMN6, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE);
       break;
     }
 
-    case 7:
+    case 5:
     {
       float voltage = shrd.voltageFilterMean / 1000.0;
       sprintf(fmt, "%s", Dfmt2_1(voltage));
@@ -344,23 +331,14 @@ void tftUpdateData(uint32_t i_loop)
       break;
     }
 
-    case 8:
+    case 6:
     {
       float distance = shrd.distanceTrip / 10000.0;
       sprintf(fmt, "%s", Dfmt2_1(distance));
       tft_util_draw_number(&tft, fmt, COLUMN9, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE);
       break;
     }
-      /*
-    case 9:
-    {
-      float odo = shrd.distanceOdo / 10;
-      sprintf(fmt, "%05.0f", (odo));
-      tft_util_draw_number(&tft, fmt, COLUMN1, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
-      break;
-    }
-*/
-    case 10:
+    case 7:
     {
       float autonomy = shrd.autonomyLeft;
       autonomy = constrain(autonomy, 0, 999);
@@ -368,29 +346,16 @@ void tftUpdateData(uint32_t i_loop)
       tft_util_draw_number(&tft, fmt, COLUMN3, LINE_2Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
-      /*
-    case 11:
-    {
-      float current = shrd.currentActual / 1000.0;
-      if (current > 99)
-        current = 99;
-      if (current < 0)
-        current = 0;
-      sprintf(fmt, "%s", Dfmt2_1(current));
-      tft_util_draw_number(&tft, fmt, COLUMN4, LINE_5Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
-      break;
-    }
-*/
-    case 12:
+    case 8:
     {
       float bat_min = settings.getS3F().Battery_min_voltage / 10.0;
       float bat_max = settings.getS3F().Battery_max_voltage / 10.0;
       float batteryPercent = (1 / ((bat_max - bat_min) / ((shrd.voltageFilterMean / 1000.0) - bat_min)) * 100);
-      drawBatteryJauge(&tft, batteryPercent, COLUMN7, LINE_2Y, 4 * SCALE_FACTOR_Y, 16 * SCALE_FACTOR_Y, 20);
+      drawBatteryJauge(&tft, batteryPercent, COLUMN7, LINE_2Y, 4 * SCALE_FACTOR_X, 24 * SCALE_FACTOR_Y, NB_BATTERY_BARS);
       break;
     }
 
-    case 13:
+    case 9:
     {
       // draw interface - indicators
 #if (TFT_MODEL == 2) // 3.5"
@@ -467,7 +432,7 @@ void tftUpdateData(uint32_t i_loop)
 
       break;
     }
-    case 14:
+    case 10:
     {
       tftBacklightFull();
       break;
