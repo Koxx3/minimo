@@ -79,7 +79,7 @@ SmartEsc smartEscCntrl;
 #define NB_VOLTAGE_FILTER_DATA 10
 
 // distance
-#define SPEED_TO_DISTANCE_CORRECTION_FACTOR 1.05
+#define SPEED_TO_DISTANCE_CORRECTION_FACTOR 1
 
 #define ENABLE_WATCHDOG 1
 #define WATCHDOG_TIMEOUT 1000 // 1s // time in ms to trigger the watchdog
