@@ -980,7 +980,7 @@ uint8_t BluetoothHandler::setMeasurementsDataPacket()
 
         uint8_t txValue[20];
 
-        int32_t power = (shrd->currentActual * shrd->voltageActual) / 1000000;
+        int32_t power = ((shrd->currentActual / 1000.0) * (shrd->voltageActual / 1000.0)); // / 1000000;
         power = constrain(power, 0, 65535);
 
         buffer_append_uint8(txValue, shrd->speedCurrent, &ind);
@@ -996,7 +996,7 @@ uint8_t BluetoothHandler::setMeasurementsDataPacket()
 
         pCharacteristicMeasurements->setValue((uint8_t *)&txValue[0], ind);
 
-        //Serial.println("setMeasurementsDataPacket : sent " + (String)ind);
+        Serial.println("setMeasurementsDataPacket : power " + (String)power);
     }
     return ind;
 }

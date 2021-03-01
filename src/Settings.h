@@ -84,7 +84,7 @@ public:
   struct field_s2
   {
     int8_t Electric_brake_type;
-    int8_t dummy1;
+    int8_t Battery_max_distance;
     char Beacon_Mac_Address[17+1];    // \0 at end of @MAC
 
   } __attribute__((packed));

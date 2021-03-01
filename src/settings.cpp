@@ -104,6 +104,8 @@ void Settings::displaySettings2()
 {
   Serial.print("// Beacon_Mac_Address : ");
   Serial.println(settings2.fields.Beacon_Mac_Address);
+  Serial.print("// Battery_max_distance : ");
+  Serial.println(settings2.fields.Battery_max_distance);
   Serial.print("// Electric_brake_type : ");
   Serial.println(settings2.fields.Electric_brake_type);
 }
