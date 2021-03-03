@@ -38,7 +38,7 @@
 
 
 // Serial frame deconding debugs
-#define DEBUG_DISPLAY_FRAME_LCD_TO_CNTRL            0
+#define DEBUG_DISPLAY_FRAME_LCD_TO_CNTRL            1
 #define DEBUG_DISPLAY_MODIFIED_FRAME_LCD_TO_CNTRL   0
 #define DEBUG_DISPLAY_FRAME_CNTRL_TO_LCD            0
 #define DEBUG_DISPLAY_DECODED_FRAME_CNTRL_TO_LCD    0

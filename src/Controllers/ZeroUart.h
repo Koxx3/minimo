@@ -1,23 +1,23 @@
-#ifndef _MINIMO_h
-#define _MINIMO_h
+#ifndef _ZERO_h
+#define _ZERO_h
 
 #include <Arduino.h>
 #include "Settings.h"
 #include "SharedData.h"
 #include "BLE/BluetoothHandler.h"
 
-#define MINIMO_BAUD_RATE 1200
+#define ZERO_BAUD_RATE 1200
 
-#define MINIMO_DATA_BUFFER_SIZE 30
+#define ZERO_DATA_BUFFER_SIZE 30
 
-#define MINIMO_MODE_LCD_TO_CNTRL_START_BYTE 0xAA
-#define MINIMO_MODE_CNTRL_TO_LCD_START_BYTE 0x36
+#define ZERO_MODE_LCD_TO_CNTRL_START_BYTE 0xfb
+#define ZERO_MODE_CNTRL_TO_LCD_START_BYTE 0x36
 
 // MINIMO CONFIG
-#define MINIMO_ALLOW_LCD_TO_CNTRL_MODIFICATIONS true
-#define MINIMO_ALLOW_CNTRL_TO_LCD_MODIFICATIONS true
+#define ZERO_ALLOW_LCD_TO_CNTRL_MODIFICATIONS true
+#define ZERO_ALLOW_CNTRL_TO_LCD_MODIFICATIONS true
 
-class MinimoUart
+class ZeroUart
 {
 
     //////------------------------------------
@@ -52,7 +52,7 @@ class MinimoUart
                                 0x53, 0x54, 0x59, 0x52, 0x57, 0x58, 0x7d, 0x26, 0x7b, 0x7c, 0x81, 0x7a, 0x7f, 0x80, 0x25, 0x2e, 0x23, 0x24, 0x29, 0x22, 0x27, 0x28, 0x8d, 0x36, 0x8b, 0x8c, 0x11};
 
 public:
-    MinimoUart();
+    ZeroUart();
 
     void setSettings(Settings *);
     void setSharedData(SharedData *);
@@ -110,10 +110,10 @@ private:
 
     bool cntrlInError = false;
 
-    char data_buffer_lcd_mod[MINIMO_DATA_BUFFER_SIZE];
-    char data_buffer_cntrl_mod[MINIMO_DATA_BUFFER_SIZE];
-    char data_buffer_lcd_ori[MINIMO_DATA_BUFFER_SIZE];
-    char data_buffer_cntrl_ori[MINIMO_DATA_BUFFER_SIZE];
+    char data_buffer_lcd_mod[ZERO_DATA_BUFFER_SIZE];
+    char data_buffer_cntrl_mod[ZERO_DATA_BUFFER_SIZE];
+    char data_buffer_lcd_ori[ZERO_DATA_BUFFER_SIZE];
+    char data_buffer_cntrl_ori[ZERO_DATA_BUFFER_SIZE];
 };
 
 #endif

@@ -34,6 +34,7 @@
 #include "Controllers/MinimoUart.h"
 #include "Controllers/SmartEsc.h"
 #include "Controllers/VescUart.h"
+#include "Controllers/ZeroUart.h"
 
 //////------------------------------------
 ////// Defines
@@ -54,6 +55,10 @@ KellyUart kellyCntrl;
 #ifdef BUILD_CONTROLLER_SMART_ESC
 #define CONTROLLER_TYPE CONTROLLER_SMART_ESC
 SmartEsc smartEscCntrl;
+#endif
+#ifdef BUILD_CONTROLLER_ZERO
+#define CONTROLLER_TYPE CONTROLLER_ZERO
+ZeroUart zeroCntrl;
 #endif
 
 #define DEBUG_ESP_HTTP_UPDATE 1
@@ -199,12 +204,29 @@ void setupSerial()
   minomoCntrl.setBluetoothHandler(&blh);
 
   // minimotor controller
-  hwSerCntrl.begin(BAUD_RATE_MINIMOTORS, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
+  hwSerCntrl.begin(MINIMO_BAUD_RATE, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
   minomoCntrl.setControllerSerialPort(&hwSerCntrl);
 
   // minimotor display
-  hwSerLcd.begin(BAUD_RATE_MINIMOTORS, SERIAL_8N1, PIN_SERIAL_LCD_TO_ESP, PIN_SERIAL_ESP_TO_LCD);
+  hwSerLcd.begin(MINIMO_BAUD_RATE, SERIAL_8N1, PIN_SERIAL_LCD_TO_ESP, PIN_SERIAL_ESP_TO_LCD);
   minomoCntrl.setLcdSerialPort(&hwSerLcd);
+
+  hwSerCntrl.setUartIrqIdleTrigger(0);
+  hwSerLcd.setUartIrqIdleTrigger(0);
+
+#elif CONTROLLER_TYPE == CONTROLLER_ZERO
+
+  zeroCntrl.setSettings(&settings);
+  zeroCntrl.setSharedData(&shrd);
+  zeroCntrl.setBluetoothHandler(&blh);
+
+  // zero controller
+  hwSerCntrl.begin(ZERO_BAUD_RATE, SERIAL_8N1, PIN_SERIAL_CNTRL_TO_ESP, PIN_SERIAL_ESP_TO_CNTRL);
+  zeroCntrl.setControllerSerialPort(&hwSerCntrl);
+
+  // zero display
+  hwSerLcd.begin(ZERO_BAUD_RATE, SERIAL_8N1, PIN_SERIAL_LCD_TO_ESP, PIN_SERIAL_ESP_TO_LCD);
+  zeroCntrl.setLcdSerialPort(&hwSerLcd);
 
   hwSerCntrl.setUartIrqIdleTrigger(0);
   hwSerLcd.setUartIrqIdleTrigger(0);
