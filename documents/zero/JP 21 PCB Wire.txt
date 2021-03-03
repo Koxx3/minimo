@@ -1,0 +1,52 @@
+﻿JP 21A     
+    CONTROLLER A
+    3   4P              CONECTOR (A-B 20)                           BLANCO          HEMBRA  SL                      Freno Suave
+                                                                    NARANJA                 VCC                     
+                                                                    VERDE                                           Verde a conector Verde-Verde
+                                                                    AZUL MARINO             E5                                      XXXXXXXXXXXXXXX
+    4   2P              SINGLE-DUAL (PUENTE)                        VERDE           HEMBRA                          Verde a conector Blanco-Naranja-Verde-Azul
+                                                                    VERDE                   SD                      Lectura de voltaje del Gatillo
+    5   2P                                                          MORADO          HEMBRA  X                       Freno motor delantero (activar/desactivar)
+                                                                    MORADO          MACHO   DS                      Freno motor delantero (activar/desactivar)
+    6   2P              BOTON TIMBRE                                NARANJA         HEMBRA  VCC                     
+                                                                    NEGRO                   GND                     
+    7   2P                                                          ROJO            HEMBRA  L                       Arranque patada (activar/desactivar)
+                                                                    ROJO            MACHO   GND                     
+    8   2P              CONECTOR (A-B 22)                           BLANCO          HEMBRA  SL                      Freno Suave conector T manetas freno
+                                                                    NEGRO                   GND                     
+    9   2P                                                          GRIS            S-C     ZFQ                     Control velocidad (Limitador)
+                                                                    GRIS                    GND                     
+                                                                                
+    CONTROLLER B        
+    11  2P              LUCES                                       NARANJA         MACHO   VCC                     
+                                                                    NEGRO                   GND                     
+    12  2P                                                          MORADO          HEMBRA  X                       Freno motor trasero (activar/desactivar)
+                                                                    MORADO          MACHO   DS                      Freno motor trasero (activar/desactivar)
+    13  2P                                                          ROJO            MACHO   VCC BATERIA             VCC PRINCIPAL
+                                                                    NEGRO                   GND BATERIA             GND PRINCIPAL
+    14  5P              LCD                                         AMARILLO        HEMBRA  RX                      AMARILLO LCD        RX
+                                                                    AZUL                    E5                      AZUL LCD            TX
+                                                                    VERDE                   SD                      VERDE LCD           HE      Lectura de voltaje del Gatillo
+                                                                    NEGRO                   GND                     GND LCD NEGRO       D-
+                                                                    NARANJA                 VCC                     VCC LCD NARANJA     DMS
+    15  3P                                                          ROJO            HEMBRA  +5V                     
+                                                                    VERDE                   SD                      Lectura de voltaje del Gatillo
+                                                                    NEGRO                   GND                     
+    16  3P              LCD (solo el rojo)                          ROJO            HEMBRA  VCC BATERIA             VCC LCD ROJO        VCC
+                                                                    AMARILLO                VCC                     
+                                                                    AZUL                    PATA CENTRAL MOSFET     
+    17  3P                                                          MARRON          HEMBRA  W (FASES)               Alarma, bloqueo rueda
+                                                                    NARANJA                 VCC                     
+                                                                    AZUL                    E5                                      XXXXXXXXXXXXXXX
+    18  2P                                                          GRIS            S-C     ZFQ                     Control velocidad (Limitador)
+                                                                    GRIS                    GND                     
+    19  2P                                                          ROJO            HEMBRA  L                       Arranque patada (activar/desactivar)
+                                                                    ROJO            MACHO   GND                     
+    20  4P              CONECTOR (A-B 3)                            BLANCO          MACHO   SL                      Freno suave
+                                                                    NARANJA                 VCC                     
+                                                                    VERDE                   SD                      Lectura de voltaje del Gatillo
+                                                                    AZUL MARINO             A3                                      XXXXXXXXXXXXXXX
+    21  2P              LUZ FRENO (Step-Down necesario)             BLANCO          HEMBRA  VCC                     SL se conecta a GND cuando se aprieta la maneta, así el circuito está cerrado y se puede alimentar al Step-down o luces multivoltaje directamente
+                                                                    NARANJA                 SL                      Freno Suave
+    22  2P              CONECTOR (A-B 8)                            BLANCO          HEMBRA  SL                      Freno Suave
+                                                                    NEGRO                   GND                         

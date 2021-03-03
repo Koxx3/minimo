@@ -48,6 +48,8 @@ void Buttons::setup(SharedData *shrd_p, BluetoothHandler *blh_p, Settings *setti
 #if ENABLE_LED
     led1.Stop();
 #endif
+
+    //led1.Breathe(SHORT_BREATHE_DURATION).Forever();
 }
 
 void Buttons::processButton1Click()

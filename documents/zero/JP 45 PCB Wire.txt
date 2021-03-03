@@ -1,0 +1,47 @@
+﻿JP 45A     
+    CONTROLLER A
+        2P              FRENO (A-B 2)                               NEGRO           MACHO   GND
+                                                                    BLANCO                  SL              Freno Suave
+        2P                                                          NEGRO           MACHO   GND
+                                                                    BLANCO                  SL              Freno Suave conector T manetas freno
+        2P              ECO/TURBO (A-B 2)                           GRIS            HEMBRA  XS              Control velocidad (Limitador)
+                                                                    NEGRO                   GND
+        3P              (A-B 3)                                     AZUL            HEMBRA  F4              Recepción/envío Datos
+                            CONECTOR 2P VERDE(x)-VERDE              VERDE                   
+                                                                    NARANJA                 VCC
+        2P              SINGLE-DUAL (PUENTE)                        VERDE           HEMBRA  
+                            CONECTOR 3P AZUL-VERDE(x)-NARANJA       VERDE                   SD              Voltaje del gatillo, según se apriete más o menos
+        5P              HALL MOTOR DELANTERO                                        HEMBRA  
+                                                                    ROJO                    H+              Sensor Hall VCC
+                                                                    AMARILLO                U               Sensor Hall U
+                                                                    VERDE                   V               Sensor Hall V
+                                                                    AZUL                    W               Sensor Hall W
+                                                                    NEGRO                   GND             Sensor Hall GND
+
+    CONTROLLER B    
+        2P                                                          ROJO            HEMBRA  VCC BATERIA     VCC PRINCIPAL
+                                                                    NEGRO                   GND BATERIA     GND PRINCIPAL
+        2P              FRENO (A-B 2)                               NEGRO           HEMBRA  GND
+                                                                    BLANCO                  SL              Freno Suave
+        2P              ECO/TURBO (A-B 2)                           GRIS            MACHO   XS              Control velocidad (Limitador)
+                                                                    NEGRO                   GND
+        2P                                                          NARANJA         HEMBRA  VCC
+                                                                    BLANCO                  SL              Freno Suave
+        3P              LCD    CONECTOR 3P NARANJA(x)-ROJO-NEGRO    NARANJA         HEMBRA  VCC             VCC LCD ROJO        P+
+                                                                    NARANJA                 VCC             VCC LCD NARANJA     DMS
+                                                                    NEGRO                   GND BATERIA     GND LCD NEGRO
+        3P              ALARMA/LLAVE                                NARANJA         HEMBRA  
+                            CONECTOR 3P NARANJA(x)-NARANJA-NEGRO    ROJO                    VCC BATERIA     VCC PRINCIPAL
+                                                                    NEGRO                   GND BATERIA     GND PRINCIPAL
+        3P                                                          VERDE           HEMBRA  SD              VERDE LCD           gatillo
+                                                                    AZUL                    F4              AZUL LCD            TX
+                                                                    AMARILLO                F5              AMARILLO LCD        RX
+        3P              (A-B 3)                                     AZUL            MACHO   F4      R562
+                                                                    VERDE                   SD              
+                                                                    NARANJA                 VCC
+        5P              HALL MOTOR TRASERO                                          HEMBRA  
+                                                                    ROJO                    H+              Sensor Hall VCC
+                                                                    AMARILLO                U               Sensor Hall U
+                                                                    VERDE                   V               Sensor Hall V
+                                                                    AZUL                    W               Sensor Hall W
+                                                                    NEGRO                   GND             Sensor Hall GND
