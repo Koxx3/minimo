@@ -1140,7 +1140,7 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
   }
 }
 
-void MinimoUart::processMinimotorsSerial(uint32_t i_loop, boolean simulatedDisplay)
+void MinimoUart::processSerial(uint32_t i_loop, boolean simulatedDisplay)
 {
 
   if ((MINIMO_SIMULATED_DISPLAY == 0) || ((i_loop % 200 >= 0) && (i_loop % 200 <= 14)))

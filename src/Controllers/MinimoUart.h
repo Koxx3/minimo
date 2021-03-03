@@ -84,7 +84,7 @@ public:
     bool isContrlInError(char var, char data_buffer[]);
 
     void readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSerLcd, int serialMode, char *data_buffer_ori, char *data_buffer_mod);
-    void processMinimotorsSerial(uint32_t i_loop, boolean simulatedDisplay);
+    void processSerial(uint32_t i_loop, boolean simulatedDisplay);
 
 private:
     Stream *hwSerCntrl;

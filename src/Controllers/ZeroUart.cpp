@@ -8,8 +8,8 @@
 #define ZERO_SIMULATED_DISPLAY 0
 #endif
 
-char simulatedFrameFromLcd[] = {0xaa, 0x4, 0x45, 0x0, 0x0, 0x6e, 0x0, 0x64, 0x0, 0x80, 0x2, 0x2, 0x0, 0x0, 0x61};
-uint8_t iMsgLcdToCntrl = 0;
+char zero_simulatedFrameFromLcd[] = {0xaa, 0x4, 0x45, 0x0, 0x0, 0x6e, 0x0, 0x64, 0x0, 0x80, 0x2, 0x2, 0x0, 0x0, 0x61};
+uint8_t zero_iMsgLcdToCntrl = 0;
 
 ZeroUart::ZeroUart()
 {
@@ -225,13 +225,13 @@ uint8_t ZeroUart::modifyMode(char var, char data_buffer[])
   }
 
   if (shrd->modeOrder == 1)
-    newModeLcd = modeLcd0[(uint8_t)(data_buffer[2])];
+    newModeLcd = 0x05;
   else if (shrd->modeOrder == 2)
-    newModeLcd = modeLcd1[(uint8_t)(data_buffer[2])];
+    newModeLcd = 0x0A;
   else if (shrd->modeOrder == 3)
-    newModeLcd = modeLcd2[(uint8_t)(data_buffer[2])];
+    newModeLcd = 0x0F;
   else
-    newModeLcd = modeLcd2[(uint8_t)(data_buffer[2])];
+    newModeLcd = 0x0F;
 
   return newModeLcd;
 }
@@ -830,7 +830,7 @@ void ZeroUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSe
     // use real serial data or simulated data
     if (ZERO_SIMULATED_DISPLAY == 1 && (serialMode == MODE_LCD_TO_CNTRL))
     {
-      var = simulatedFrameFromLcd[*i];
+      var = zero_simulatedFrameFromLcd[*i];
     }
     else
     {
@@ -1140,7 +1140,7 @@ void ZeroUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSe
   }
 }
 
-void ZeroUart::processMinimotorsSerial(uint32_t i_loop, boolean simulatedDisplay)
+void ZeroUart::processSerial(uint32_t i_loop, boolean simulatedDisplay)
 {
 
   if ((ZERO_SIMULATED_DISPLAY == 0) || ((i_loop % 200 >= 0) && (i_loop % 200 <= 14)))
@@ -1149,12 +1149,12 @@ void ZeroUart::processMinimotorsSerial(uint32_t i_loop, boolean simulatedDisplay
     {
       if (i_loop % 200 == 0)
       {
-        iMsgLcdToCntrl++;
-        if (iMsgLcdToCntrl > 255)
+        zero_iMsgLcdToCntrl++;
+        if (zero_iMsgLcdToCntrl > 255)
         {
-          iMsgLcdToCntrl = 0;
+          zero_iMsgLcdToCntrl = 0;
         }
-        simulatedFrameFromLcd[2] = iMsgLcdToCntrl;
+        zero_simulatedFrameFromLcd[2] = zero_iMsgLcdToCntrl;
       }
     }
 
