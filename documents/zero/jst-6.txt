@@ -1,0 +1,6 @@
+orange1 = VCC
+blue = RX controller
+black = GND
+green = THROTTLE
+yellow = TX controller
+orange2 = VCC back from display
