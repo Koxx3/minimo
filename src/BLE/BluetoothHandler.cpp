@@ -552,8 +552,10 @@ void BluetoothHandler::setSettings(Settings *data)
             else if (pCharacteristic->getUUID().toString() == MEASUREMENTS_CHARACTERISTIC_UUID)
             {
                 int nb_bytes = setMeasurementsDataPacket();
+/*
                 Serial.print("BLH - Read measurement : nb bytes");
                 Serial.println(nb_bytes);
+                */
             }
             else if (pCharacteristic->getUUID().toString() == COMMANDS_CHARACTERISTIC_UUID)
             {
@@ -996,7 +998,7 @@ uint8_t BluetoothHandler::setMeasurementsDataPacket()
 
         pCharacteristicMeasurements->setValue((uint8_t *)&txValue[0], ind);
 
-        Serial.println("setMeasurementsDataPacket : power " + (String)power);
+        //Serial.println("setMeasurementsDataPacket : power " + (String)power);
     }
     return ind;
 }

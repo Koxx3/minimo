@@ -2,7 +2,7 @@
 #define Pinout_H_
 
 // PINOUT
-#define PCB_V132
+#define PCB_V130
 
 #ifdef PCB_V130
 #define HAS_I2C 0
@@ -16,12 +16,13 @@
 #define PIN_IN_BUTTON1 22
 #define PIN_IN_BUTTON2 15 // PB was TX
 #define PIN_OUT_LED_BUTTON1 3
-#define PIN_OUT_LED_BUTTON2 21
 #define PIN_OUT_BRAKE 13
 #define PIN_IN_OUT_DHT 12
 #define PIN_IN_ABRAKE 34
 #define PIN_IN_ATHROTTLE 39
-#define PIN_OUT_BACKLIGHT 5
+#define PIN_SPI_BKL 5          // use in LCD  // ok
+#define PIN_FREE 19            // ok
+#define PIN_OUT_FREE 21        // ok
 #endif
 
 #ifdef PCB_V132

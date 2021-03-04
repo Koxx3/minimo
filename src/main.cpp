@@ -719,6 +719,7 @@ void getBrakeFromAnalog()
 #if DEBUG_DISPLAY_ANALOG_BRAKE
       Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE");
 #endif
+/*
       char print_buffer[500];
       sprintf(print_buffer, "brake ANALOG_BRAKE_MIN_ERR_VALUE / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d",
               shrd.brakeFilterMeanErr,
@@ -727,7 +728,7 @@ void getBrakeFromAnalog()
               shrd.brakeSentOrderOld,
               shrd.brakePressedStatus);
       Serial.println(print_buffer);
-
+*/
       shrd.errorBrake = true;
 
       return;
@@ -1465,7 +1466,7 @@ void loop()
   }
 
 #if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
-  minomoCntrl.processMinimotorsSerial(i_loop, false);
+  minomoCntrl.processSerial(i_loop, false);
 
   // get serial link status ... both directions
   shrd.errorSerialFromContrl = !minomoCntrl.getSerialStatusOkFromContrl();

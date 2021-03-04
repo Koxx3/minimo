@@ -149,8 +149,15 @@ uint8_t ZeroUart::modifyMode(char var, char data_buffer[])
 {
   uint8_t newModeLcd;
 
-  uint32_t byteDiff = (var - data_buffer[2]);
-  uint8_t modeLcd = (byteDiff & 0x03) + 1;
+  uint32_t byteDiff = 0x0;
+  uint8_t modeLcd = 0;
+
+  if (var == 0x05)
+    modeLcd = 1;
+  else if (var == 0x0A)
+    modeLcd = 2;
+  else if (var == 0x0F)
+    modeLcd = 3;
 
   // override Smartphone mode with LCD mode
   if (ZERO_SIMULATED_DISPLAY == 0)
@@ -159,7 +166,7 @@ uint8_t ZeroUart::modifyMode(char var, char data_buffer[])
     {
 
 #if DEBUG_DISPLAY_MODE
-      Serial.println("LCD mode : modeOrder = " + (String)shrd->modeLcdOld + " / modeLcd = " + (String)modeLcd + " ==> new mode set to modeLcd");
+      Serial.println("LCD mode : modeLcdOld = " + (String)shrd->modeLcdOld + " / modeLcd = " + (String)modeLcd + " ==> new mode set to modeLcd" + " / modeOrder = " + (String)shrd->modeOrder);
 #endif
 
       shrd->modeOrder = modeLcd;
@@ -171,7 +178,7 @@ uint8_t ZeroUart::modifyMode(char var, char data_buffer[])
     else
     {
 #if DEBUG_DISPLAY_MODE
-      Serial.println("LCD mode : modeOrder = " + (String)shrd->modeLcdOld + " / modeLcd = " + (String)modeLcd + " ==> no mod");
+      Serial.println("LCD mode : modeLcdOld = " + (String)shrd->modeLcdOld + " / modeLcd = " + (String)modeLcd + " ==> no mod" + " / modeOrder = " + (String)shrd->modeOrder);
 #endif
     }
   }
@@ -227,11 +234,28 @@ uint8_t ZeroUart::modifyMode(char var, char data_buffer[])
   if (shrd->modeOrder == 1)
     newModeLcd = 0x05;
   else if (shrd->modeOrder == 2)
-    newModeLcd = 0x0A;
+    newModeLcd = 0x0a;
   else if (shrd->modeOrder == 3)
-    newModeLcd = 0x0F;
+    newModeLcd = 0x0f;
   else
-    newModeLcd = 0x0F;
+    newModeLcd = 0x0f;
+
+  return newModeLcd;
+}
+
+uint8_t ZeroUart::modifyMode2(char var, char data_buffer[])
+{
+
+  uint8_t newModeLcd;
+
+  if (shrd->modeOrder == 1)
+    newModeLcd = modeLcd0[(uint8_t)(data_buffer[2])];
+  else if (shrd->modeOrder == 2)
+    newModeLcd = modeLcd1[(uint8_t)(data_buffer[2])];
+  else if (shrd->modeOrder == 3)
+    newModeLcd = modeLcd2[(uint8_t)(data_buffer[2])];
+  else
+    newModeLcd = modeLcd2[(uint8_t)(data_buffer[2])];
 
   return newModeLcd;
 }
@@ -660,10 +684,23 @@ uint8_t ZeroUart::modifyEco(char var, char data_buffer[])
 uint8_t ZeroUart::modifyAccel(char var, char data_buffer[])
 {
 
+  uint8_t varLeftPart = (var & 0xf8);
+  uint8_t fixedAccelOrder;
+
+  shrd->accelLcd = 4 - (var & 0x07);
+
+  // ignore value below 0 to match minimotors accel modes (0 - 5 minimo / 0 - 4 zero)
+  if (shrd->accelLcd > 4)
+    shrd->accelLcd = 0;
+  if (shrd->accelLcd < 0)
+    shrd->accelLcd = 0;
+
+  /*
   if (ZERO_SIMULATED_DISPLAY == 0)
     shrd->accelOrder = var;
   else
     var = shrd->accelOrder;
+*/
 
   // override Smartphone mode with LCD mode
   if (shrd->accelLcd != shrd->accelLcdOld)
@@ -680,16 +717,23 @@ uint8_t ZeroUart::modifyAccel(char var, char data_buffer[])
 */
   }
 
-#if DEBUG_DISPLAY_ACCEL
-  char print_buffer[500];
-  sprintf(print_buffer, "%s %02x",
-          "Accel Status : ",
-          var);
+  if (shrd->accelOrder > 4)
+    fixedAccelOrder = 4;
+  else
+    fixedAccelOrder = shrd->accelOrder;
 
-  Serial.println(print_buffer);
+  uint8_t newValue = varLeftPart + (4 - fixedAccelOrder);
+
+#if DEBUG_DISPLAY_ACCEL
+  Serial.println("accelLcd = " + (String)shrd->accelLcd +
+                 " / accelLcdOld = " + (String)shrd->accelLcdOld +
+                 " / accelOrder = " + (String)shrd->accelOrder +
+                 " / var = " + (String)(var & 0x07) +
+                 " / newValue = " + (String)(newValue & 0x07) +
+                 " / varLeftPart = " + (String)varLeftPart);
 #endif
 
-  return var;
+  return newValue;
 }
 
 double ZeroUart::getSpeed()
@@ -769,7 +813,7 @@ uint8_t ZeroUart::modifySpeed(char var, char data_buffer[], uint8_t byte)
             (data_buffer_cntrl_ori[7] - data_buffer_cntrl_ori[3]) & 0xff,
             (data_buffer_cntrl_ori[8] - data_buffer_cntrl_ori[3]) & 0xff);
     Serial.print(print_buffer);
-    */
+*/
 
     if (byte == 0)
       return (((high + regulatorOffset) & 0xff) + data_buffer_cntrl_ori[3]) & 0xff;
@@ -878,29 +922,33 @@ void ZeroUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSe
 
     //---------------------
     // MODIFY LCD_TO_CNTRL
-#if ZERO_ALLOW_LCD_TO_CNTRL_MODIFICATIONS
+
     if ((!begin_LcdToCntrl) && (serialMode == MODE_LCD_TO_CNTRL))
     {
-      if (*i == 5)
+      if (*i == 4)
       {
 
         var = modifyMode(var, data_buffer_ori);
         isModified_LcdToCntrl = 1;
       }
+      if (*i == 5)
+      {
 
+        var = modifyMode2(var, data_buffer_ori);
+        isModified_LcdToCntrl = 1;
+      }
       if (*i == 6)
       {
 
         var = modifyPas(var, data_buffer_ori);
         isModified_LcdToCntrl = 1;
       }
-
-      if (*i == 7)
+      if (*i == 8)
       {
         var = modifyPower(var, data_buffer_ori);
         isModified_LcdToCntrl = 1;
       }
-
+      /*
       if (*i == 10)
       {
 
@@ -917,19 +965,20 @@ void ZeroUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSe
         isModified_LcdToCntrl = 1;
       }
 
+      */
+      /*
       if (*i == 11)
       {
         var = modifyEco(var, data_buffer_ori);
         isModified_LcdToCntrl = 1;
       }
-
-      if (*i == 12)
+*/
+      if (*i == 11)
       {
         var = modifyAccel(var, data_buffer_ori);
         isModified_LcdToCntrl = 1;
       }
     }
-#endif
 
     //---------------------
     // MODIFY CNTRL_TO_LCD
@@ -1163,4 +1212,3 @@ void ZeroUart::processSerial(uint32_t i_loop, boolean simulatedDisplay)
 
   readHardSerial(MODE_CNTRL_TO_LCD, &i_CntrlRcv, hwSerCntrl, hwSerLcd, MODE_CNTRL_TO_LCD, data_buffer_cntrl_ori, data_buffer_cntrl_mod);
 }
-
