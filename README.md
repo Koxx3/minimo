@@ -87,6 +87,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Throttle voltage
         - [✅] Brake voltage
         - [ ] Controller other error
+       
 - [✅] VESC
     - [✅] Read serial link
     - [✅] Decode datas : speed, voltage, current
@@ -110,6 +111,22 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
       - [ ] Temperature alarm
       - [ ] Other errors
 
+- [IN PROGRESS 🔄] Zero/Apollo
+    - [IN PROGRESS 🔄] Read serial link
+    - [ ] Decode datas : speed, voltage, current
+    - [ ] Send current orders
+    - [ ] Set speed 1/2/3 modes
+    - [ ] Electric brake max power setting
+    - [ ] PAS
+    - [ ] Lock (anti-theft or manual)
+    - [ ] Speed computing
+    - [ ] Brake power smartphone feedback
+    - [ ] Speed limiter
+    - [ ] Power processing / display
+    - [ ] Brake forbiden on high voltage
+    - [ ] Electric analog brake processing
+    - [ ] Electric digital brake processing
+    - 
 - [✅] Kelly
     - [✅] Read serial link
     - [✅] Decode datas : speed, voltage, controller temperature
