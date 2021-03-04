@@ -91,7 +91,6 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 - [✅] VESC
     - [✅] Read serial link
     - [✅] Decode datas : speed, voltage, current
-    - [✅] Send current orders
     - [✅] Set speed 1/2/3 modes
     - [✅] Electric brake max power setting
     - [✅] PAS
@@ -112,16 +111,15 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
       - [ ] Other errors
 
 - [IN PROGRESS 🔄] Zero/Apollo
-    - [IN PROGRESS 🔄] Read serial link
-    - [ ] Decode datas : speed, voltage, current
-    - [ ] Send current orders
-    - [ ] Set speed 1/2/3 modes
+    - [✅] Read serial link
+    - [✅] Decode datas : speed, mode, power, pas ...
+    - [✅] Set speed 1/2/3 modes
+    - [✅] Speed computing
+    - [✅] Speed limiter
+    - [✅] Lock (anti-theft or manual)
     - [ ] Electric brake max power setting
     - [ ] PAS
-    - [ ] Lock (anti-theft or manual)
-    - [ ] Speed computing
     - [ ] Brake power smartphone feedback
-    - [ ] Speed limiter
     - [ ] Power processing / display
     - [ ] Brake forbiden on high voltage
     - [ ] Electric analog brake processing
