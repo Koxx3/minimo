@@ -118,8 +118,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Speed limiter
     - [✅] Lock (anti-theft or manual)
     - [✅] PAS
-    - [ ] Set eco mode
-    - [ ] Set accel mode
+    - [✅] Set accel mode
     - [ ] Electric brake max power setting
     - [ ] Brake power smartphone feedback
     - [ ] Brake forbiden on high voltage
