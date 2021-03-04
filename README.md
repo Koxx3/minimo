@@ -117,10 +117,9 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Speed computing
     - [✅] Speed limiter
     - [✅] Lock (anti-theft or manual)
+    - [✅] PAS
     - [ ] Electric brake max power setting
-    - [ ] PAS
     - [ ] Brake power smartphone feedback
-    - [ ] Power processing / display
     - [ ] Brake forbiden on high voltage
     - [ ] Electric analog brake processing
     - [ ] Electric digital brake processing
