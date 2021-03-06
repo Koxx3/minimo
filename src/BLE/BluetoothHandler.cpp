@@ -1027,8 +1027,7 @@ uint8_t BluetoothHandler::setCommandsDataPacket()
         buffer_append_uint8(txValue, fastUpdate, &ind);
 
         // copy values
-        // ???
-        //shrd->brakeSentOrderFromBLE = shrd->brakeSentOrder;
+        shrd->brakeSentOrderFromBLE = shrd->brakeSentOrder;
 
         pCharacteristicCommands->setValue((uint8_t *)&txValue[0], ind);
 

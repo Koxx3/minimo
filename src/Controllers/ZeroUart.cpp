@@ -475,11 +475,13 @@ uint8_t ZeroUart::modifyBrakeFromDisplay(char var, char data_buffer[])
 
   // init from LCD brake mode
   if (shrd->brakeSentOrder == -1)
-    shrd->brakeSentOrder = var;
+    shrd->brakeSentOrder = (var >> 3) & 0x07;
 
-  shrd->brakeDisplay = var;
+  shrd->brakeDisplay = (var >> 3) & 0x07;
 
 #if DEBUG_BRAKE_SENT_ORDER
+  Serial.printf("modifyBrakeFromLCD - 2 - var : %02x\n", var);
+  Serial.println("modifyBrakeFromLCD - 2 - brakeDisplay : " + (String)shrd->brakeDisplay);
   Serial.println("modifyBrakeFromLCD - 2 - brakeSentOrder : " + (String)shrd->brakeSentOrder);
 #endif
 
@@ -539,9 +541,15 @@ uint8_t ZeroUart::modifyBrakeFromDisplay(char var, char data_buffer[])
       {
         // take value from display ... (not the best, we should get the last BLE value)
         if (shrd->brakeSentOrderFromBLE >= 0)
+        {
           shrd->brakeSentOrder = shrd->brakeSentOrderFromBLE;
+          Serial.println("modifyBrakeFromLCD - 2.1 - brakeSentOrderFromBLE : " + (String)shrd->brakeSentOrderFromBLE);
+        }
         else
-          shrd->brakeSentOrder = var;
+        {
+          shrd->brakeSentOrder = (var >> 3) & 0x07;
+          Serial.println("modifyBrakeFromLCD - 2.1 - brakeSentOrder : " + (String)shrd->brakeSentOrder);
+        }
       }
 
       // notify brake LCD value
@@ -582,11 +590,18 @@ uint8_t ZeroUart::modifyBrakeFromDisplay(char var, char data_buffer[])
 #endif
   }
 
+  // keep acceleration mode (3 first bits) ... and complete with brake force
+  int8_t newValueMask = (var & 0x07);
+
+  int8_t newValue = newValueMask | (shrd->brakeSentOrder << 3);
+
 #if DEBUG_BRAKE_SENT_ORDER
   Serial.println("modifyBrakeFromLCD - 5 - brakeSentOrder : " + (String)shrd->brakeSentOrder);
+  Serial.printf("modifyBrakeFromLCD - 5 - var = %02x / newValue = %02x / newValueMask = %02x\n", var, newValue, newValueMask);
+
 #endif
 
-  return shrd->brakeSentOrder;
+  return newValue;
 }
 
 uint8_t ZeroUart::modifyBrakeFromAnalog(char var, char data_buffer[])
@@ -948,9 +963,9 @@ void ZeroUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSe
         var = modifyPower(var, data_buffer_ori);
         isModified_LcdToCntrl = 1;
       }
-      /*
-      if (*i == 10)
+      if (*i == 11)
       {
+        var = modifyAccel(var, data_buffer_ori);
 
         if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_cntrl)
         {
@@ -964,20 +979,6 @@ void ZeroUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSe
 
         isModified_LcdToCntrl = 1;
       }
-
-      */
-      /*
-      if (*i == 11)
-      {
-        var = modifyEco(var, data_buffer_ori);
-        isModified_LcdToCntrl = 1;
-      }
-*/
-      if (*i == 11)
-      {
-        var = modifyAccel(var, data_buffer_ori);
-        isModified_LcdToCntrl = 1;
-      }
     }
 
     //---------------------
@@ -985,6 +986,7 @@ void ZeroUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSe
 
     if ((!begin_CntrlToLcd) && (serialMode == MODE_CNTRL_TO_LCD))
     {
+
       if (*i == 4)
       {
         if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_cntrl)
