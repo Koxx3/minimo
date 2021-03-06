@@ -2,9 +2,11 @@
 #define Pinout_H_
 
 // PINOUT
-#define PCB_V130
+#ifndef PCB
+#define PCB 132
+#endif
 
-#ifdef PCB_V130
+#if (PCB == 130)
 #define HAS_I2C 0
 #define PIN_SERIAL_ESP_TO_LCD 26
 #define PIN_SERIAL_ESP_TO_CNTRL 27
@@ -25,7 +27,7 @@
 #define PIN_OUT_FREE 21        // ok
 #endif
 
-#ifdef PCB_V132
+#if (PCB == 132)
 #define HAS_I2C 1
 // LEFT
 #define PIN_IN_CURRENT 36          // ok >> need calibration
