@@ -110,7 +110,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
       - [ ] Temperature alarm
       - [ ] Other errors
 
-- [IN PROGRESS 🔄] Zero/Apollo
+- [✅] Zero/Apollo
     - [✅] Read serial link
     - [✅] Decode datas : speed, mode, power, pas ...
     - [✅] Set speed 1/2/3 modes
@@ -119,11 +119,12 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Lock (anti-theft or manual)
     - [✅] PAS
     - [✅] Set accel mode
-    - [ ] Electric brake max power setting
-    - [ ] Brake power smartphone feedback
-    - [ ] Brake forbiden on high voltage
-    - [ ] Electric analog brake processing
-    - [ ] Electric digital brake processing
+    - [✅] Electric brake max power setting
+    - [✅] Brake power smartphone feedback
+    - [✅] Brake forbiden on high voltage
+    - [✅] Electric analog brake processing
+    - [✅] Electric digital brake processing
+    - [ ] Error codes processing
 
 - [✅] Kelly
     - [✅] Read serial link
