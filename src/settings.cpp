@@ -172,6 +172,10 @@ void Settings::displaySettings6()
   Serial.println(settings6.fields.Humidity_warning);
   Serial.print("// Throttle_regeneration : ");
   Serial.println(settings6.fields.Throttle_regeneration);
+  Serial.print("// Default_brake : ");
+  Serial.println(settings6.fields.Default_brake);
+  
+
   
 }
 
@@ -190,4 +194,5 @@ void Settings::init()
   Serial.print("Settings::init : ");
   settings3.fields.Bluetooth_pin_code = BLE_PIN_CODE;
   settings6.fields.Display_brightness = 100;
+  settings6.fields.Default_brake = 2; 
 }

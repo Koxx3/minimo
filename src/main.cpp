@@ -323,6 +323,8 @@ void initSharedDataWithSettings()
   shrd.modeOrder = settings.getS1F().Default_mode;
   shrd.ecoOrder = settings.getS1F().Default_eco;
   shrd.accelOrder = settings.getS1F().Default_accel;
+  shrd.brakeSentOrder = settings.getS6F().Default_brake;
+  shrd.brakeSentOrderFromBLE = settings.getS6F().Default_brake;
 }
 
 #if ENABLE_WATCHDOG

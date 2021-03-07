@@ -138,6 +138,7 @@ public:
     uint8_t Temperature_warning;
     uint8_t Humidity_warning;
     uint8_t Throttle_regeneration;
+    uint8_t Default_brake;
   } __attribute__((packed));
 #pragma pack(pop)
 
