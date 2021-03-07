@@ -719,7 +719,7 @@ void getBrakeFromAnalog()
 #if DEBUG_DISPLAY_ANALOG_BRAKE
       Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE");
 #endif
-/*
+      /*
       char print_buffer[500];
       sprintf(print_buffer, "brake ANALOG_BRAKE_MIN_ERR_VALUE / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d",
               shrd.brakeFilterMeanErr,
@@ -898,34 +898,49 @@ void getBrakeFromAnalog()
 void getThrottleFromAnalog()
 {
 
+#define TMIN_MARGIN 0.75
+#define TMAX_MARGIN 1.25
+
+  uint32_t tInMin = settings.getS6F().Throttle_input_min * 50;
+  uint32_t tInMax = settings.getS6F().Throttle_input_max * 50;
+  
+  // Read and filter ADC
   throttleAnalogValue = analogRead(PIN_IN_ATHROTTLE);
   shrd.throttleAnalogValue = throttleAnalogValue;
   throttleFilter.in(throttleAnalogValue);
 
+  // Compute throttle voltage in 0-5V range
+  uint32_t throttleInMillv = throttleAnalogValue * ANALOG_TO_VOLTS_5V * 1000;
+
   // ignore out of range datas ... and notify
-  if (throttleAnalogValue < settings.getS6F().Throttle_input_min * 50 * 0.66 * 0.75)
+  if (throttleInMillv < tInMin * TMIN_MARGIN)
   {
-    /*
     char print_buffer[500];
-    sprintf(print_buffer, "throttle : value too low / throttleAnalogValue : %d / throttleFilter.getMean() : %d",
+    sprintf(print_buffer, "throttle : value too low / tAnalogValue : %d / throttleFilter.getMean() : %d / tInMin : %d / tInMin with margin : %d",
             throttleAnalogValue,
-            throttleFilter.getMean());
-    //blh.notifyBleLogs(print_buffer);
+            throttleFilter.getMean(),
+            tInMin,
+            (uint32_t) (tInMin * TMIN_MARGIN)
+            );
+    blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
-*/
+
     shrd.errorThrottle = true;
 
     return;
   }
 
   // ignore out of range datas ... and notify
-  if (throttleAnalogValue > settings.getS6F().Throttle_input_max * 50 * 0.66 * 1.25)
+  if (throttleInMillv > tInMax * TMAX_MARGIN)
   {
     char print_buffer[500];
-    sprintf(print_buffer, "throttle : value too high / throttleAnalogValue : %d / throttleFilter.getMean() : %d",
+    sprintf(print_buffer, "throttle : value too high / tAnalogValue : %d / throttleFilter.getMean() : %d / tInMax : %d / tInMax with margin : %d",
             throttleAnalogValue,
-            throttleFilter.getMean());
-    //blh.notifyBleLogs(print_buffer);
+            throttleFilter.getMean(),
+            tInMax,
+            (uint32_t) (tInMax * TMAX_MARGIN)
+            );
+    blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
 
     shrd.errorThrottle = true;
@@ -968,14 +983,8 @@ void processDacOutput()
 
   uint32_t dacOutput = 0;
   uint32_t outputMilliv = 0;
-#if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
 
-  uint32_t tOutMin = settings.getS6F().Throttle_output_min * 50;
-  uint32_t tOutMax = settings.getS6F().Throttle_output_max * 50;
-
-  outputMilliv = map(throttlePercent, 0, 100, tOutMin, tOutMax);
-
-#elif CONTROLLER_TYPE == CONTROLLER_VESC
+#if CONTROLLER_TYPE == CONTROLLER_VESC
   uint32_t minBrakeVoltage = 0;
   if (shrd.brakePercent > 1)
   {
@@ -1005,6 +1014,23 @@ void processDacOutput()
       outputMilliv = 3300 / 2;
     }
   }
+#else
+
+  uint32_t tOutMin = settings.getS6F().Throttle_output_min * 50;
+  uint32_t tOutMax = settings.getS6F().Throttle_output_max * 50;
+
+  if (shrd.isLocked) // if locked... 0 current target
+  {
+    outputMilliv = 0;
+  }
+  else if (((shrd.pasEnabled) && (shrd.speedCurrent > 1)) || (!shrd.pasEnabled)) // normal condition
+  {
+    outputMilliv = map(throttlePercent, 0, 100, tOutMin, tOutMax);
+  }
+  else // souldn't occur
+  {
+    outputMilliv = 0;
+  }
 
 #endif
 
@@ -1027,7 +1053,11 @@ void processDacOutput()
           shrd.brakePercent,
           outputMilliv,
           dacOutput);
-  Serial.println(print_buffer);
+
+  if (millis() % 500 == 0) {
+    blh.notifyBleLogs(print_buffer);
+    Serial.println(print_buffer);
+  }
 #endif
 }
 
@@ -1396,6 +1426,8 @@ void processCurrent()
       int currentRawFilterInit2 = currentRawFilterInit.getMeanWithoutExtremes(5);
       int currentInMillamps = (currentRawFilter2 - currentRawFilterInit2) * (1000.0 / ANALOG_TO_CURRENT);
       shrd.currentActual = currentInMillamps;
+    } else {
+      shrd.currentActual = 0;
     }
 
 #if DEBUG_DISPLAY_CURRENT
