@@ -1126,7 +1126,7 @@ void processKellySerial2()
   // 532 RPM = 25 km/h
   // 1814 =
   // TODO : check calculation - if motor poles numbers
-  float speedCompute = RpmToKmh(&settings, smartEscCntrl.data.ERPM);
+  float speedCompute = RpmToKmh(&settings, kellyCntrl.data2.Mechanical_speed_in_RPM);
   if (speedCompute < 0)
     speedCompute = 0;
   if (speedCompute > 999)
