@@ -878,7 +878,7 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
 
     //---------------------
     // MODIFY LCD_TO_CNTRL
-#if MINIO_ALLOW_LCD_TO_CNTRL_MODIFICATIONS
+#if MINIMO_ALLOW_LCD_TO_CNTRL_MODIFICATIONS
     if ((!begin_LcdToCntrl) && (serialMode == MODE_LCD_TO_CNTRL))
     {
       if (*i == 5)

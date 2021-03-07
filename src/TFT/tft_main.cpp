@@ -294,6 +294,7 @@ void tftUpdateData(uint32_t i_loop)
       tft_util_draw_number(&tft, fmt, COLUMN5, LINE_3Y, TFT_WHITE, TFT_BLACK, 5, BIG_FONT_SIZE);
       break;
     }
+    
     case 1:
     {
       sprintf(fmt, "%02.0f", shrd.speedMax);
@@ -307,9 +308,10 @@ void tftUpdateData(uint32_t i_loop)
       tft_util_draw_number(&tft, fmt, COLUMN1, LINE_1Y, TFT_WHITE, TFT_BLACK, 5, MEDIUM_FONT_SIZE);
       break;
     }
+
     case 3:
     {
-      int32_t power = (shrd.currentActual * shrd.voltageActual) / 1000000;
+      int32_t power = ((shrd.currentActual / 1000.0) * (shrd.voltageActual / 1000.0));
       power = constrain(power, 0, 65535);
       sprintf(fmt, "%05.0f", power);
       tft_util_draw_number(&tft, fmt, COLUMN2, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE);
