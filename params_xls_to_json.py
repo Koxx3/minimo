@@ -21,37 +21,33 @@ i = 0
 # Iterate through each row in worksheet and fetch values into dict
 for rownum in range(1, sh.nrows):
     row_values = sh.row_values(rownum)
-#    data['id'] = int(row_values[0])
-#    data['category'] = row_values[1]
-#    data['display_name'] = row_values[2]
-    id_param = int(row_values[0])
 
     # single param
     param_param_data_sub = {}
-    param_param_data_sub[keys[0]] = id_param
+    param_param_data_sub[keys[0]] = int(row_values[0])
+    param_param_data_sub[keys[2]] = int(row_values[2])
 
-    for col_idx in range(2, sh.ncols):
-        param_param_data_sub[keys[col_idx]] = row_values[col_idx]
-
-    #param_classes_list = param_classes.items
-    #param_classes_sub_list[keys[1]]
-
-    #print ("- param_param_data_sub")
-    #print (param_param_data_sub)
+    for col_idx in range(3, sh.ncols):
+        if keys[col_idx] == "default" and row_values[keys.index("type")] != "float" and row_values[keys.index("type")] != "string" and row_values[col_idx] != "":
+            param_param_data_sub[keys[col_idx]] = int(row_values[col_idx])
+        elif keys[col_idx] == "max" and row_values[keys.index("type")] != "float" and row_values[keys.index("type")] != "string" and row_values[col_idx] != "":
+            param_param_data_sub[keys[col_idx]] = int(row_values[col_idx])
+        elif keys[col_idx] == "min" and row_values[keys.index("type")] != "float" and row_values[keys.index("type")] != "string" and row_values[col_idx] != "":
+            param_param_data_sub[keys[col_idx]] = int(row_values[col_idx])
+        elif keys[col_idx] == "fast_increment" and row_values[keys.index("type")] != "float" and row_values[keys.index("type")] != "string" and row_values[col_idx] != "":
+            param_param_data_sub[keys[col_idx]] = int(row_values[col_idx])
+        elif keys[col_idx] == "slow_increment" and row_values[keys.index("type")] != "float" and row_values[keys.index("type")] != "string" and row_values[col_idx] != "":
+            param_param_data_sub[keys[col_idx]] = int(row_values[col_idx])
+        else :
+            param_param_data_sub[keys[col_idx]] = row_values[col_idx]
 
     if row_values[1] in param_classes_sub_list:
         #print ("-- update")
         current_items = param_classes_sub_list[row_values[1]]
             
-        #print (" -- current_items ")
-        #print (current_items)
-
         array_items = []
         array_items.append(param_param_data_sub)
         merged_items = current_items + array_items
-
-        #print (" -- merged_items : ")
-        #print (merged_items)
 
         param_classes_sub_list[row_values[1]] = merged_items
     else :
@@ -59,10 +55,6 @@ for rownum in range(1, sh.nrows):
         array_items = []
         array_items.append(param_param_data_sub)
         param_classes_sub_list[row_values[1]] = array_items
-
-    #print (" --- param_classes_sub_list")
-    #print (param_classes_sub_list)
-    #print (" ---------------------------------------")
 
     
 print ("-----------")
