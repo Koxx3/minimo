@@ -25,7 +25,6 @@ for rownum in range(1, sh.nrows):
     # single param
     param_param_data_sub = {}
     param_param_data_sub[keys[0]] = int(row_values[0])
-    param_param_data_sub[keys[2]] = int(row_values[2])
 
     for col_idx in range(3, sh.ncols):
         if keys[col_idx] == "default" and row_values[keys.index("type")] != "float" and row_values[keys.index("type")] != "string" and row_values[col_idx] != "":
@@ -42,21 +41,27 @@ for rownum in range(1, sh.nrows):
             param_param_data_sub[keys[col_idx]] = row_values[col_idx]
 
     if row_values[1] in param_classes_sub_list:
-        #print ("-- update")
-        current_items = param_classes_sub_list[row_values[1]]
-            
+        print ("-- update")
+        current_items = param_classes_sub_list[row_values[1]].get("settings")
+        print (current_items)
+
         array_items = []
         array_items.append(param_param_data_sub)
         merged_items = current_items + array_items
 
-        param_classes_sub_list[row_values[1]] = merged_items
-    else :
-        #print ("-- create")
+        param_classes_sub_list[row_values[1]] = { "class_order" : int(row_values[keys.index("class_order")]), "settings" : merged_items }
+    elif (row_values[keys.index("class")]) :
+        print ("-- create")
         array_items = []
         array_items.append(param_param_data_sub)
-        param_classes_sub_list[row_values[1]] = array_items
+        param_classes_sub_list[row_values[1]] = { "class_order" : int(row_values[keys.index("class_order")]), "settings" : array_items }
+        print (param_classes_sub_list[row_values[1]])
 
-    
+temp = sorted(list(param_classes_sub_list.items()), key=lambda x: x[1]['class_order'])
+param_classes_sub_list.clear()
+param_classes_sub_list.update(temp)
+
+
 print ("-----------")
 data_list = {'parameters': param_classes_sub_list} # Added line
 

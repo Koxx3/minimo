@@ -69,21 +69,21 @@ void display_battery_minimum_voltage () {
 
 /*-------------------------------------------------------*/
 
-#define SETTINGS_BATTERY_MINIMUM_VOLTAGE_ID 4
-#define SETTINGS_BATTERY_MINIMUM_VOLTAGE_NAME "Battery minimum voltage"
+#define SETTINGS_BATTERY_MAXIMUM_VOLTAGE_ID 4
+#define SETTINGS_BATTERY_MAXIMUM_VOLTAGE_NAME "Battery maximum voltage"
 
-float battery_minimum_voltage;
+float battery_maximum_voltage;
 
-void set_battery_minimum_voltage (float value) {
-    battery_minimum_voltage = value;
+void set_battery_maximum_voltage (float value) {
+    battery_maximum_voltage = value;
 }
 
-float get_battery_minimum_voltage () {
-    return battery_minimum_voltage ;
+float get_battery_maximum_voltage () {
+    return battery_maximum_voltage ;
 }
 
-void display_battery_minimum_voltage () {
-    Serial.println("  battery_minimum_voltage = " + (String) battery_minimum_voltage);
+void display_battery_maximum_voltage () {
+    Serial.println("  battery_maximum_voltage = " + (String) battery_maximum_voltage);
 }
 
         
@@ -105,27 +105,6 @@ uint8_t get_battery_maximum_distance () {
 
 void display_battery_maximum_distance () {
     Serial.println("  battery_maximum_distance = " + (String) battery_maximum_distance);
-}
-
-        
-
-/*-------------------------------------------------------*/
-
-#define SETTINGS_TEST_ID 8
-#define SETTINGS_TEST_NAME "test"
-
-uint8_t test;
-
-void set_test (uint8_t value) {
-    test = value;
-}
-
-uint8_t get_test () {
-    return test ;
-}
-
-void display_test () {
-    Serial.println("  test = " + (String) test);
 }
         
 
@@ -177,4 +156,54 @@ uint8_t get_pas_enabled () {
 
 void display_pas_enabled () {
     Serial.println("  pas_enabled = " + (String) pas_enabled);
+}
+        
+
+        
+
+/*-------------------------------------------------------*/
+
+#define SETTINGS_BEACON_MAC_ADDRESS_ID 9
+#define SETTINGS_BEACON_MAC_ADDRESS_NAME "Beacon Mac Address"
+
+string beacon_mac_address;
+
+void set_beacon_mac_address (string value) {
+    beacon_mac_address = value;
+}
+
+string get_beacon_mac_address () {
+    return beacon_mac_address ;
+}
+
+void display_beacon_mac_address () {
+    Serial.println("  beacon_mac_address = " + (String) beacon_mac_address);
+}
+        
+
+        
+
+/*-------------------------------------------------------*/
+
+#define SETTINGS_ELECTRIC_BRAKE_TYPE_ID 8
+#define SETTINGS_ELECTRIC_BRAKE_TYPE_NAME "Electric_brake_type"
+
+uint8_t electric_brake_type;
+typedef enum LIST_Electric_brake_type {
+    LIST_Electric_brake_type_From_controller,
+    LIST_Electric_brake_type_From_smart_-_digital_brake_lever,
+    LIST_Electric_brake_type_From_smart_-_analog_brake_lever,
+    LIST_Electric_brake_type_From_smart_-_digital_brake_lever_+_throttle_(Experimental), 
+} tElectric_brake_type;
+
+void set_electric_brake_type (uint8_t value) {
+    electric_brake_type = value;
+}
+
+uint8_t get_electric_brake_type () {
+    return electric_brake_type ;
+}
+
+void display_electric_brake_type () {
+    Serial.println("  electric_brake_type = " + (String) electric_brake_type);
 }

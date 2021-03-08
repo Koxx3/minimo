@@ -3,7 +3,7 @@ from jinja2 import Template
 
 template = """{% for key, value in parameters.items() %}
     {% for key2, value2 in value.items() %}
-        {% for  item in value2 %}
+        {% for  item in value2.settings %}
 
         {% set var_name = item.display_name | lower  | replace(" ", "_") %}
 

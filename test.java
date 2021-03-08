@@ -36,15 +36,15 @@ public class SmartElecSettings2 {
     public static final String Default_acceleration_LIST_Maximum = "Maximum";
     public static final String Pas_enabled = "PAS enabled";
 
+    public static final String General = "General";
+    public static final String Beacon_mac_address = "Beacon Mac Address";
+
     public static final String Electric_brake = "Electric brake";
     public static final String Electric_brake_type = "Electric_brake_type";
     public static final String Electric_brake_type_LIST_From_controller = "From Controller";
     public static final String Electric_brake_type_LIST_From_smart__digital_brake_lever = "From Smart - Digital brake lever";
     public static final String Electric_brake_type_LIST_From_smart__analog_brake_lever = "From Smart - Analog brake lever";
     public static final String Electric_brake_type_LIST_From_smart__digital_brake_lever__throttle_experimental = "From Smart - Digital brake lever + Throttle (Experimental)";
-
-    public static final String General = "General";
-    public static final String Beacon_mac_address = "Beacon Mac Address";
 
 
     public static ArrayList<SettingsObject> initialize() {
@@ -122,16 +122,6 @@ public class SmartElecSettings2 {
             
 
 // ----------------------
-                new HeaderSettingsObject.Builder(Electric_brake)
-                        .build(),
-                new ListSettingsObject.Builder(Electric_brake_type, Electric_brake_type, Electric_brake_type_LIST_From_controller, Electric_brake_type_LIST , "save")
-                        .setUseValueAsSummary()
-                        .setNegativeBtnText("cancel")
-                        .addDivider()
-                        .build(),
-            
-
-// ----------------------
                 new HeaderSettingsObject.Builder(General)
                         .build(),            
                 new EditTextSettingsObject.Builder(Beacon_mac_address, Beacon_mac_address, aa:bb:cc:dd:ee:ff, "save")
@@ -141,6 +131,16 @@ public class SmartElecSettings2 {
                         .setRegex(^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$)
                         .setInputType(InputType.TYPE_CLASS_TEXT)
                         .setUseValueAsSummary()
+                        .build(),
+            
+
+// ----------------------
+                new HeaderSettingsObject.Builder(Electric_brake)
+                        .build(),
+                new ListSettingsObject.Builder(Electric_brake_type, Electric_brake_type, Electric_brake_type_LIST_From_controller, Electric_brake_type_LIST , "save")
+                        .setUseValueAsSummary()
+                        .setNegativeBtnText("cancel")
+                        .addDivider()
                         .build(),
             
                 new HeaderSettingsObject.Builder("")
