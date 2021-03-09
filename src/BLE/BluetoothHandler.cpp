@@ -537,6 +537,7 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
             {
                 Serial.println("BLH - Write : SETTINGS_GEN_CHARACTERISTIC_UUID");
                 std::string rxValue = pCharacteristic->getValue();
+<<<<<<< HEAD
                 uint8_t rxInt[20];
                 for (int i = 0; i < rxValue.length(); i++)
                 {
@@ -548,6 +549,14 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
 
                 Serial.println();
                 settings2->unpack_setting_packet((uint8_t*)rxInt, rxValue.length());
+=======
+                for (int i = 0; i < rxValue.length(); i++)
+                {
+                    char print_buffer[5];
+                    sprintf(print_buffer, "%02x ", rxValue[i]);
+                    Serial.print(print_buffer);
+                }
+>>>>>>> master
             }
             else
             {

@@ -1,5 +1,6 @@
 
 //////------------------------------------
+<<<<<<< HEAD
 //////------------------------------------
 //////------------------------------------
 ////// GENERATED FILE - DO NOT EDIT MANUALLY
@@ -7,12 +8,15 @@
 //////------------------------------------
 //////------------------------------------
 
+=======
+>>>>>>> master
 ////// Manage settings exchanged in BLE and stored in EEPOM
 
 #include "Arduino.h"
 #include "Settings2.h"
 #include "tools/buffer.h"
 
+<<<<<<< HEAD
 #define SETTINGS_STORAGE "SETTINGS"
 
 Settings2::Settings2()
@@ -326,17 +330,26 @@ void Settings2::unpack_setting_packet(uint8_t* packet, uint8_t length) {
 void Settings2::pack_setting_packet(uint16_t setting_id, uint8_t* packet,uint8_t* length) {
 
 }
+=======
+Settings2::Settings2()
+{
+}
+>>>>>>> master
                 
 
 /*-------------------------------------------------------*/
 
 void Settings2::set_wheel_size(float value) {
+<<<<<<< HEAD
 
     wheel_size = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putFloat(SETTINGS_WHEEL_SIZE_ID_STR, wheel_size);
     prefs.end();
+=======
+    wheel_size = value;
+>>>>>>> master
 }
 
 float Settings2::get_wheel_size() {
@@ -351,12 +364,16 @@ void Settings2::display_wheel_size() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_number_of_poles_pairs(uint8_t value) {
+<<<<<<< HEAD
 
     number_of_poles_pairs = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_NUMBER_OF_POLES_PAIRS_ID_STR, number_of_poles_pairs);
     prefs.end();
+=======
+    number_of_poles_pairs = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_number_of_poles_pairs() {
@@ -371,12 +388,16 @@ void Settings2::display_number_of_poles_pairs() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_battery_minimum_voltage(float value) {
+<<<<<<< HEAD
 
     battery_minimum_voltage = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putFloat(SETTINGS_BATTERY_MINIMUM_VOLTAGE_ID_STR, battery_minimum_voltage);
     prefs.end();
+=======
+    battery_minimum_voltage = value;
+>>>>>>> master
 }
 
 float Settings2::get_battery_minimum_voltage() {
@@ -391,12 +412,16 @@ void Settings2::display_battery_minimum_voltage() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_battery_maximum_voltage(float value) {
+<<<<<<< HEAD
 
     battery_maximum_voltage = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putFloat(SETTINGS_BATTERY_MAXIMUM_VOLTAGE_ID_STR, battery_maximum_voltage);
     prefs.end();
+=======
+    battery_maximum_voltage = value;
+>>>>>>> master
 }
 
 float Settings2::get_battery_maximum_voltage() {
@@ -411,12 +436,16 @@ void Settings2::display_battery_maximum_voltage() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_battery_maximum_distance(uint8_t value) {
+<<<<<<< HEAD
 
     battery_maximum_distance = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_BATTERY_MAXIMUM_DISTANCE_ID_STR, battery_maximum_distance);
     prefs.end();
+=======
+    battery_maximum_distance = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_battery_maximum_distance() {
@@ -431,12 +460,16 @@ void Settings2::display_battery_maximum_distance() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_speed_adjustment(int8_t value) {
+<<<<<<< HEAD
 
     speed_adjustment = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_SPEED_ADJUSTMENT_ID_STR, speed_adjustment);
     prefs.end();
+=======
+    speed_adjustment = value;
+>>>>>>> master
 }
 
 int8_t Settings2::get_speed_adjustment() {
@@ -451,12 +484,16 @@ void Settings2::display_speed_adjustment() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_display_gps_speed_instead_of_escooter_speed(uint8_t value) {
+<<<<<<< HEAD
 
     display_gps_speed_instead_of_escooter_speed = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_DISPLAY_GPS_SPEED_INSTEAD_OF_ESCOOTER_SPEED_ID_STR, display_gps_speed_instead_of_escooter_speed);
     prefs.end();
+=======
+    display_gps_speed_instead_of_escooter_speed = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_display_gps_speed_instead_of_escooter_speed() {
@@ -471,12 +508,16 @@ void Settings2::display_display_gps_speed_instead_of_escooter_speed() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_aux_relay_name(uint8_t value) {
+<<<<<<< HEAD
 
     aux_relay_name = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_AUX_RELAY_NAME_ID_STR, aux_relay_name);
     prefs.end();
+=======
+    aux_relay_name = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_aux_relay_name() {
@@ -491,12 +532,16 @@ void Settings2::display_aux_relay_name() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_default_mode_at_startup(uint8_t value) {
+<<<<<<< HEAD
 
     default_mode_at_startup = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_DEFAULT_MODE_AT_STARTUP_ID_STR, default_mode_at_startup);
     prefs.end();
+=======
+    default_mode_at_startup = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_default_mode_at_startup() {
@@ -511,12 +556,16 @@ void Settings2::display_default_mode_at_startup() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_default_eco_mode_at_startup(uint8_t value) {
+<<<<<<< HEAD
 
     default_eco_mode_at_startup = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_DEFAULT_ECO_MODE_AT_STARTUP_ID_STR, default_eco_mode_at_startup);
     prefs.end();
+=======
+    default_eco_mode_at_startup = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_default_eco_mode_at_startup() {
@@ -531,12 +580,16 @@ void Settings2::display_default_eco_mode_at_startup() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_default_acceleration(uint8_t value) {
+<<<<<<< HEAD
 
     default_acceleration = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_DEFAULT_ACCELERATION_ID_STR, default_acceleration);
     prefs.end();
+=======
+    default_acceleration = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_default_acceleration() {
@@ -551,12 +604,16 @@ void Settings2::display_default_acceleration() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_default_electric_brake_at_startup(uint8_t value) {
+<<<<<<< HEAD
 
     default_electric_brake_at_startup = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_DEFAULT_ELECTRIC_BRAKE_AT_STARTUP_ID_STR, default_electric_brake_at_startup);
     prefs.end();
+=======
+    default_electric_brake_at_startup = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_default_electric_brake_at_startup() {
@@ -571,12 +628,16 @@ void Settings2::display_default_electric_brake_at_startup() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_pas_enabled(uint8_t value) {
+<<<<<<< HEAD
 
     pas_enabled = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_PAS_ENABLED_ID_STR, pas_enabled);
     prefs.end();
+=======
+    pas_enabled = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_pas_enabled() {
@@ -591,12 +652,16 @@ void Settings2::display_pas_enabled() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_abs_enabled(uint8_t value) {
+<<<<<<< HEAD
 
     abs_enabled = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_ABS_ENABLED_ID_STR, abs_enabled);
     prefs.end();
+=======
+    abs_enabled = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_abs_enabled() {
@@ -611,12 +676,16 @@ void Settings2::display_abs_enabled() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_display_brightness(uint8_t value) {
+<<<<<<< HEAD
 
     display_brightness = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_DISPLAY_BRIGHTNESS_ID_STR, display_brightness);
     prefs.end();
+=======
+    display_brightness = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_display_brightness() {
@@ -631,12 +700,16 @@ void Settings2::display_display_brightness() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_temperature_warning(uint8_t value) {
+<<<<<<< HEAD
 
     temperature_warning = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_TEMPERATURE_WARNING_ID_STR, temperature_warning);
     prefs.end();
+=======
+    temperature_warning = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_temperature_warning() {
@@ -651,12 +724,16 @@ void Settings2::display_temperature_warning() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_humidity_warning(uint8_t value) {
+<<<<<<< HEAD
 
     humidity_warning = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_HUMIDITY_WARNING_ID_STR, humidity_warning);
     prefs.end();
+=======
+    humidity_warning = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_humidity_warning() {
@@ -671,12 +748,16 @@ void Settings2::display_humidity_warning() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_speed_limiter_at_startup(uint8_t value) {
+<<<<<<< HEAD
 
     speed_limiter_at_startup = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_SPEED_LIMITER_AT_STARTUP_ID_STR, speed_limiter_at_startup);
     prefs.end();
+=======
+    speed_limiter_at_startup = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_speed_limiter_at_startup() {
@@ -691,12 +772,16 @@ void Settings2::display_speed_limiter_at_startup() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_speed_limiter_max_speed_in_percent_of_max_speed(uint8_t value) {
+<<<<<<< HEAD
 
     speed_limiter_max_speed_in_percent_of_max_speed = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_SPEED_LIMITER_MAX_SPEED_IN_PERCENT_OF_MAX_SPEED_ID_STR, speed_limiter_max_speed_in_percent_of_max_speed);
     prefs.end();
+=======
+    speed_limiter_max_speed_in_percent_of_max_speed = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_speed_limiter_max_speed_in_percent_of_max_speed() {
@@ -711,12 +796,16 @@ void Settings2::display_speed_limiter_max_speed_in_percent_of_max_speed() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_bluetooth_lock_mode(uint8_t value) {
+<<<<<<< HEAD
 
     bluetooth_lock_mode = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_BLUETOOTH_LOCK_MODE_ID_STR, bluetooth_lock_mode);
     prefs.end();
+=======
+    bluetooth_lock_mode = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_bluetooth_lock_mode() {
@@ -731,12 +820,16 @@ void Settings2::display_bluetooth_lock_mode() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_pin_code_use_6_digits_only(uint32_t value) {
+<<<<<<< HEAD
 
     pin_code_use_6_digits_only = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_PIN_CODE_USE_6_DIGITS_ONLY_ID_STR, pin_code_use_6_digits_only);
     prefs.end();
+=======
+    pin_code_use_6_digits_only = value;
+>>>>>>> master
 }
 
 uint32_t Settings2::get_pin_code_use_6_digits_only() {
@@ -751,12 +844,16 @@ void Settings2::display_pin_code_use_6_digits_only() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_beacon_mac_address(String value) {
+<<<<<<< HEAD
 
     beacon_mac_address = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putString(SETTINGS_BEACON_MAC_ADDRESS_ID_STR, beacon_mac_address);
     prefs.end();
+=======
+    beacon_mac_address = value;
+>>>>>>> master
 }
 
 String Settings2::get_beacon_mac_address() {
@@ -771,12 +868,16 @@ void Settings2::display_beacon_mac_address() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_beacon_range(int8_t value) {
+<<<<<<< HEAD
 
     beacon_range = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_BEACON_RANGE_ID_STR, beacon_range);
     prefs.end();
+=======
+    beacon_range = value;
+>>>>>>> master
 }
 
 int8_t Settings2::get_beacon_range() {
@@ -791,12 +892,16 @@ void Settings2::display_beacon_range() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_original_display_speed_adjustment(int8_t value) {
+<<<<<<< HEAD
 
     original_display_speed_adjustment = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_ID_STR, original_display_speed_adjustment);
     prefs.end();
+=======
+    original_display_speed_adjustment = value;
+>>>>>>> master
 }
 
 int8_t Settings2::get_original_display_speed_adjustment() {
@@ -811,12 +916,16 @@ void Settings2::display_original_display_speed_adjustment() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_electric_brake_progressive_mode(uint8_t value) {
+<<<<<<< HEAD
 
     electric_brake_progressive_mode = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_ELECTRIC_BRAKE_PROGRESSIVE_MODE_ID_STR, electric_brake_progressive_mode);
     prefs.end();
+=======
+    electric_brake_progressive_mode = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_electric_brake_progressive_mode() {
@@ -831,12 +940,16 @@ void Settings2::display_electric_brake_progressive_mode() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_electric_brake_type(uint8_t value) {
+<<<<<<< HEAD
 
     electric_brake_type = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_ELECTRIC_BRAKE_TYPE_ID_STR, electric_brake_type);
     prefs.end();
+=======
+    electric_brake_type = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_electric_brake_type() {
@@ -851,12 +964,16 @@ void Settings2::display_electric_brake_type() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_electric_brake_min_value(uint8_t value) {
+<<<<<<< HEAD
 
     electric_brake_min_value = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_ELECTRIC_BRAKE_MIN_VALUE_ID_STR, electric_brake_min_value);
     prefs.end();
+=======
+    electric_brake_min_value = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_electric_brake_min_value() {
@@ -871,12 +988,16 @@ void Settings2::display_electric_brake_min_value() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_electric_brake_max_value(uint8_t value) {
+<<<<<<< HEAD
 
     electric_brake_max_value = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_ELECTRIC_BRAKE_MAX_VALUE_ID_STR, electric_brake_max_value);
     prefs.end();
+=======
+    electric_brake_max_value = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_electric_brake_max_value() {
@@ -891,12 +1012,16 @@ void Settings2::display_electric_brake_max_value() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_electric_brake_time_between_mode_shift(uint8_t value) {
+<<<<<<< HEAD
 
     electric_brake_time_between_mode_shift = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_ELECTRIC_BRAKE_TIME_BETWEEN_MODE_SHIFT_ID_STR, electric_brake_time_between_mode_shift);
     prefs.end();
+=======
+    electric_brake_time_between_mode_shift = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_electric_brake_time_between_mode_shift() {
@@ -911,12 +1036,16 @@ void Settings2::display_electric_brake_time_between_mode_shift() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_electric_brake_disabled_on_high_battery_voltage(uint8_t value) {
+<<<<<<< HEAD
 
     electric_brake_disabled_on_high_battery_voltage = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_ELECTRIC_BRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID_STR, electric_brake_disabled_on_high_battery_voltage);
     prefs.end();
+=======
+    electric_brake_disabled_on_high_battery_voltage = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_electric_brake_disabled_on_high_battery_voltage() {
@@ -931,12 +1060,16 @@ void Settings2::display_electric_brake_disabled_on_high_battery_voltage() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_electric_brake_disabled_percent_limit(uint8_t value) {
+<<<<<<< HEAD
 
     electric_brake_disabled_percent_limit = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_ELECTRIC_BRAKE_DISABLED_PERCENT_LIMIT_ID_STR, electric_brake_disabled_percent_limit);
     prefs.end();
+=======
+    electric_brake_disabled_percent_limit = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_electric_brake_disabled_percent_limit() {
@@ -951,12 +1084,16 @@ void Settings2::display_electric_brake_disabled_percent_limit() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_throttle_regeneration(uint8_t value) {
+<<<<<<< HEAD
 
     throttle_regeneration = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_THROTTLE_REGENERATION_ID_STR, throttle_regeneration);
     prefs.end();
+=======
+    throttle_regeneration = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_throttle_regeneration() {
@@ -971,12 +1108,16 @@ void Settings2::display_throttle_regeneration() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_throttle_input_min_voltage_in_millivolts(uint32_t value) {
+<<<<<<< HEAD
 
     throttle_input_min_voltage_in_millivolts = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR, throttle_input_min_voltage_in_millivolts);
     prefs.end();
+=======
+    throttle_input_min_voltage_in_millivolts = value;
+>>>>>>> master
 }
 
 uint32_t Settings2::get_throttle_input_min_voltage_in_millivolts() {
@@ -991,12 +1132,16 @@ void Settings2::display_throttle_input_min_voltage_in_millivolts() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_throttle_input_max_voltage_in_millivolts(uint32_t value) {
+<<<<<<< HEAD
 
     throttle_input_max_voltage_in_millivolts = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR, throttle_input_max_voltage_in_millivolts);
     prefs.end();
+=======
+    throttle_input_max_voltage_in_millivolts = value;
+>>>>>>> master
 }
 
 uint32_t Settings2::get_throttle_input_max_voltage_in_millivolts() {
@@ -1011,12 +1156,16 @@ void Settings2::display_throttle_input_max_voltage_in_millivolts() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_throttle_output_min_voltage_in_millivolts(uint32_t value) {
+<<<<<<< HEAD
 
     throttle_output_min_voltage_in_millivolts = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR, throttle_output_min_voltage_in_millivolts);
     prefs.end();
+=======
+    throttle_output_min_voltage_in_millivolts = value;
+>>>>>>> master
 }
 
 uint32_t Settings2::get_throttle_output_min_voltage_in_millivolts() {
@@ -1031,12 +1180,16 @@ void Settings2::display_throttle_output_min_voltage_in_millivolts() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_throttle_output_max_voltage_in_millivolts(uint32_t value) {
+<<<<<<< HEAD
 
     throttle_output_max_voltage_in_millivolts = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR, throttle_output_max_voltage_in_millivolts);
     prefs.end();
+=======
+    throttle_output_max_voltage_in_millivolts = value;
+>>>>>>> master
 }
 
 uint32_t Settings2::get_throttle_output_max_voltage_in_millivolts() {
@@ -1051,12 +1204,16 @@ void Settings2::display_throttle_output_max_voltage_in_millivolts() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_throttle_output_curve(uint8_t value) {
+<<<<<<< HEAD
 
     throttle_output_curve = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_THROTTLE_OUTPUT_CURVE_ID_STR, throttle_output_curve);
     prefs.end();
+=======
+    throttle_output_curve = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_throttle_output_curve() {
@@ -1071,12 +1228,16 @@ void Settings2::display_throttle_output_curve() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_button_1_short_press_action(uint8_t value) {
+<<<<<<< HEAD
 
     button_1_short_press_action = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_ID_STR, button_1_short_press_action);
     prefs.end();
+=======
+    button_1_short_press_action = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_button_1_short_press_action() {
@@ -1091,12 +1252,16 @@ void Settings2::display_button_1_short_press_action() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_button_1_long_press_action(uint8_t value) {
+<<<<<<< HEAD
 
     button_1_long_press_action = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_BUTTON_1_LONG_PRESS_ACTION_ID_STR, button_1_long_press_action);
     prefs.end();
+=======
+    button_1_long_press_action = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_button_1_long_press_action() {
@@ -1111,12 +1276,16 @@ void Settings2::display_button_1_long_press_action() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_button_2_short_press_action(uint8_t value) {
+<<<<<<< HEAD
 
     button_2_short_press_action = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_ID_STR, button_2_short_press_action);
     prefs.end();
+=======
+    button_2_short_press_action = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_button_2_short_press_action() {
@@ -1131,12 +1300,16 @@ void Settings2::display_button_2_short_press_action() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_button_long_press_duration(uint8_t value) {
+<<<<<<< HEAD
 
     button_long_press_duration = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_BUTTON_LONG_PRESS_DURATION_ID_STR, button_long_press_duration);
     prefs.end();
+=======
+    button_long_press_duration = value;
+>>>>>>> master
 }
 
 uint8_t Settings2::get_button_long_press_duration() {
@@ -1151,12 +1324,16 @@ void Settings2::display_button_long_press_duration() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_wifi_network_name_ssid(String value) {
+<<<<<<< HEAD
 
     wifi_network_name_ssid = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putString(SETTINGS_WIFI_NETWORK_NAME_SSID_ID_STR, wifi_network_name_ssid);
     prefs.end();
+=======
+    wifi_network_name_ssid = value;
+>>>>>>> master
 }
 
 String Settings2::get_wifi_network_name_ssid() {
@@ -1171,12 +1348,16 @@ void Settings2::display_wifi_network_name_ssid() {
 /*-------------------------------------------------------*/
 
 void Settings2::set_wifi_password(String value) {
+<<<<<<< HEAD
 
     wifi_password = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putString(SETTINGS_WIFI_PASSWORD_ID_STR, wifi_password);
     prefs.end();
+=======
+    wifi_password = value;
+>>>>>>> master
 }
 
 String Settings2::get_wifi_password() {
@@ -1186,5 +1367,8 @@ String Settings2::get_wifi_password() {
 void Settings2::display_wifi_password() {
     Serial.println("  wifi_password = " + (String) wifi_password);
 }
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> master
