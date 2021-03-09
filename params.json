@@ -108,7 +108,7 @@
           "fast_increment": "",
           "slow_increment": "",
           "regex_valid": ".*",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 0.0
         },
         {
           "id": 14,
@@ -125,11 +125,11 @@
           "fast_increment": "",
           "slow_increment": "",
           "regex_valid": ".*",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 0.0
         },
         {
           "id": 15,
-          "display_name": "Aux_relay_name",
+          "display_name": "Aux relay name",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -142,7 +142,7 @@
           "fast_increment": 1,
           "slow_increment": 1,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 0.0
         }
       ]
     },
@@ -356,7 +356,7 @@
           "fast_increment": "",
           "slow_increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 0.0
         },
         {
           "id": 9,
@@ -450,7 +450,7 @@
         },
         {
           "id": 26,
-          "display_name": "Electric_brake_type",
+          "display_name": "Type",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -467,7 +467,7 @@
         },
         {
           "id": 27,
-          "display_name": "Electric brake min value",
+          "display_name": "Min value",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -484,7 +484,7 @@
         },
         {
           "id": 28,
-          "display_name": "Electric brake max value",
+          "display_name": "Max value",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -501,7 +501,7 @@
         },
         {
           "id": 29,
-          "display_name": "Electric brake time between mode shift",
+          "display_name": "Time between mode shift",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -518,7 +518,7 @@
         },
         {
           "id": 30,
-          "display_name": "Electric brake disabled on high battery voltage",
+          "display_name": "Disabled on high battery voltage",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -535,7 +535,7 @@
         },
         {
           "id": 31,
-          "display_name": "Electric brake disabled percent limit",
+          "display_name": "Disabled percent limit",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -574,7 +574,7 @@
         },
         {
           "id": 33,
-          "display_name": "Throttle input min voltage (in millivolts)",
+          "display_name": "Input min voltage (in millivolts)",
           "display_unit": "",
           "display_hint": "",
           "type": "uint32_t",
@@ -591,7 +591,7 @@
         },
         {
           "id": 34,
-          "display_name": "Throttle input max voltage (in millivolts)",
+          "display_name": "Input max voltage (in millivolts)",
           "display_unit": "",
           "display_hint": "",
           "type": "uint32_t",
@@ -608,7 +608,7 @@
         },
         {
           "id": 35,
-          "display_name": "Throttle output min voltage (in millivolts)",
+          "display_name": "Output min voltage (in millivolts)",
           "display_unit": "",
           "display_hint": "",
           "type": "uint32_t",
@@ -625,7 +625,7 @@
         },
         {
           "id": 36,
-          "display_name": "Throttle output max voltage (in millivolts)",
+          "display_name": "Output max voltage (in millivolts)",
           "display_unit": "",
           "display_hint": "",
           "type": "uint32_t",
@@ -642,7 +642,7 @@
         },
         {
           "id": 37,
-          "display_name": "Throttle output curve",
+          "display_name": "Output curve",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",

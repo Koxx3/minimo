@@ -120,7 +120,7 @@ public:
 
     #define SETTINGS_AUX_RELAY_NAME_ID 15
     #define SETTINGS_AUX_RELAY_NAME_ID_STR "15"
-    #define SETTINGS_AUX_RELAY_NAME_NAME "Aux_relay_name"
+    #define SETTINGS_AUX_RELAY_NAME_NAME "Aux relay name"
 
     uint8_t aux_relay_name;
     typedef enum LIST_Aux_relay_name {
@@ -360,81 +360,81 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_ELECTRIC_BRAKE_TYPE_ID 26
-    #define SETTINGS_ELECTRIC_BRAKE_TYPE_ID_STR "26"
-    #define SETTINGS_ELECTRIC_BRAKE_TYPE_NAME "Electric_brake_type"
+    #define SETTINGS_TYPE_ID 26
+    #define SETTINGS_TYPE_ID_STR "26"
+    #define SETTINGS_TYPE_NAME "Type"
 
-    uint8_t electric_brake_type;
-    typedef enum LIST_Electric_brake_type {
-        LIST_Electric_brake_type_From_controller,
-        LIST_Electric_brake_type_From_smart__digital_brake_lever,
-        LIST_Electric_brake_type_From_smart__analog_brake_lever,
-        LIST_Electric_brake_type_From_smart__digital_brake_lever__throttle_experimental, 
-    } tElectric_brake_type;
+    uint8_t type;
+    typedef enum LIST_Type {
+        LIST_Type_From_controller,
+        LIST_Type_From_smart__digital_brake_lever,
+        LIST_Type_From_smart__analog_brake_lever,
+        LIST_Type_From_smart__digital_brake_lever__throttle_experimental, 
+    } tType;
 
-    void set_electric_brake_type (uint8_t value);
-    uint8_t get_electric_brake_type();
-    void display_electric_brake_type();
+    void set_type (uint8_t value);
+    uint8_t get_type();
+    void display_type();
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_ELECTRIC_BRAKE_MIN_VALUE_ID 27
-    #define SETTINGS_ELECTRIC_BRAKE_MIN_VALUE_ID_STR "27"
-    #define SETTINGS_ELECTRIC_BRAKE_MIN_VALUE_NAME "Electric brake min value"
+    #define SETTINGS_MIN_VALUE_ID 27
+    #define SETTINGS_MIN_VALUE_ID_STR "27"
+    #define SETTINGS_MIN_VALUE_NAME "Min value"
 
-    uint8_t electric_brake_min_value;
+    uint8_t min_value;
 
-    void set_electric_brake_min_value (uint8_t value);
-    uint8_t get_electric_brake_min_value();
-    void display_electric_brake_min_value();
+    void set_min_value (uint8_t value);
+    uint8_t get_min_value();
+    void display_min_value();
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_ELECTRIC_BRAKE_MAX_VALUE_ID 28
-    #define SETTINGS_ELECTRIC_BRAKE_MAX_VALUE_ID_STR "28"
-    #define SETTINGS_ELECTRIC_BRAKE_MAX_VALUE_NAME "Electric brake max value"
+    #define SETTINGS_MAX_VALUE_ID 28
+    #define SETTINGS_MAX_VALUE_ID_STR "28"
+    #define SETTINGS_MAX_VALUE_NAME "Max value"
 
-    uint8_t electric_brake_max_value;
+    uint8_t max_value;
 
-    void set_electric_brake_max_value (uint8_t value);
-    uint8_t get_electric_brake_max_value();
-    void display_electric_brake_max_value();
+    void set_max_value (uint8_t value);
+    uint8_t get_max_value();
+    void display_max_value();
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_ELECTRIC_BRAKE_TIME_BETWEEN_MODE_SHIFT_ID 29
-    #define SETTINGS_ELECTRIC_BRAKE_TIME_BETWEEN_MODE_SHIFT_ID_STR "29"
-    #define SETTINGS_ELECTRIC_BRAKE_TIME_BETWEEN_MODE_SHIFT_NAME "Electric brake time between mode shift"
+    #define SETTINGS_TIME_BETWEEN_MODE_SHIFT_ID 29
+    #define SETTINGS_TIME_BETWEEN_MODE_SHIFT_ID_STR "29"
+    #define SETTINGS_TIME_BETWEEN_MODE_SHIFT_NAME "Time between mode shift"
 
-    uint8_t electric_brake_time_between_mode_shift;
+    uint8_t time_between_mode_shift;
 
-    void set_electric_brake_time_between_mode_shift (uint8_t value);
-    uint8_t get_electric_brake_time_between_mode_shift();
-    void display_electric_brake_time_between_mode_shift();
+    void set_time_between_mode_shift (uint8_t value);
+    uint8_t get_time_between_mode_shift();
+    void display_time_between_mode_shift();
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_ELECTRIC_BRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID 30
-    #define SETTINGS_ELECTRIC_BRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID_STR "30"
-    #define SETTINGS_ELECTRIC_BRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_NAME "Electric brake disabled on high battery voltage"
+    #define SETTINGS_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID 30
+    #define SETTINGS_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID_STR "30"
+    #define SETTINGS_DISABLED_ON_HIGH_BATTERY_VOLTAGE_NAME "Disabled on high battery voltage"
 
-    uint8_t electric_brake_disabled_on_high_battery_voltage;
+    uint8_t disabled_on_high_battery_voltage;
 
-    void set_electric_brake_disabled_on_high_battery_voltage (uint8_t value);
-    uint8_t get_electric_brake_disabled_on_high_battery_voltage();
-    void display_electric_brake_disabled_on_high_battery_voltage();
+    void set_disabled_on_high_battery_voltage (uint8_t value);
+    uint8_t get_disabled_on_high_battery_voltage();
+    void display_disabled_on_high_battery_voltage();
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_ELECTRIC_BRAKE_DISABLED_PERCENT_LIMIT_ID 31
-    #define SETTINGS_ELECTRIC_BRAKE_DISABLED_PERCENT_LIMIT_ID_STR "31"
-    #define SETTINGS_ELECTRIC_BRAKE_DISABLED_PERCENT_LIMIT_NAME "Electric brake disabled percent limit"
+    #define SETTINGS_DISABLED_PERCENT_LIMIT_ID 31
+    #define SETTINGS_DISABLED_PERCENT_LIMIT_ID_STR "31"
+    #define SETTINGS_DISABLED_PERCENT_LIMIT_NAME "Disabled percent limit"
 
-    uint8_t electric_brake_disabled_percent_limit;
+    uint8_t disabled_percent_limit;
 
-    void set_electric_brake_disabled_percent_limit (uint8_t value);
-    uint8_t get_electric_brake_disabled_percent_limit();
-    void display_electric_brake_disabled_percent_limit();
+    void set_disabled_percent_limit (uint8_t value);
+    uint8_t get_disabled_percent_limit();
+    void display_disabled_percent_limit();
             
     /*-------------------------------------------------------*/
 
@@ -450,70 +450,70 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID 33
-    #define SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR "33"
-    #define SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_NAME "Throttle input min voltage (in millivolts)"
+    #define SETTINGS_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID 33
+    #define SETTINGS_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR "33"
+    #define SETTINGS_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_NAME "Input min voltage (in millivolts)"
 
-    uint32_t throttle_input_min_voltage_in_millivolts;
+    uint32_t input_min_voltage_in_millivolts;
 
-    void set_throttle_input_min_voltage_in_millivolts (uint32_t value);
-    uint32_t get_throttle_input_min_voltage_in_millivolts();
-    void display_throttle_input_min_voltage_in_millivolts();
+    void set_input_min_voltage_in_millivolts (uint32_t value);
+    uint32_t get_input_min_voltage_in_millivolts();
+    void display_input_min_voltage_in_millivolts();
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID 34
-    #define SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR "34"
-    #define SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_NAME "Throttle input max voltage (in millivolts)"
+    #define SETTINGS_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID 34
+    #define SETTINGS_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR "34"
+    #define SETTINGS_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_NAME "Input max voltage (in millivolts)"
 
-    uint32_t throttle_input_max_voltage_in_millivolts;
+    uint32_t input_max_voltage_in_millivolts;
 
-    void set_throttle_input_max_voltage_in_millivolts (uint32_t value);
-    uint32_t get_throttle_input_max_voltage_in_millivolts();
-    void display_throttle_input_max_voltage_in_millivolts();
+    void set_input_max_voltage_in_millivolts (uint32_t value);
+    uint32_t get_input_max_voltage_in_millivolts();
+    void display_input_max_voltage_in_millivolts();
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID 35
-    #define SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR "35"
-    #define SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_NAME "Throttle output min voltage (in millivolts)"
+    #define SETTINGS_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID 35
+    #define SETTINGS_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR "35"
+    #define SETTINGS_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_NAME "Output min voltage (in millivolts)"
 
-    uint32_t throttle_output_min_voltage_in_millivolts;
+    uint32_t output_min_voltage_in_millivolts;
 
-    void set_throttle_output_min_voltage_in_millivolts (uint32_t value);
-    uint32_t get_throttle_output_min_voltage_in_millivolts();
-    void display_throttle_output_min_voltage_in_millivolts();
+    void set_output_min_voltage_in_millivolts (uint32_t value);
+    uint32_t get_output_min_voltage_in_millivolts();
+    void display_output_min_voltage_in_millivolts();
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID 36
-    #define SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR "36"
-    #define SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_NAME "Throttle output max voltage (in millivolts)"
+    #define SETTINGS_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID 36
+    #define SETTINGS_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR "36"
+    #define SETTINGS_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_NAME "Output max voltage (in millivolts)"
 
-    uint32_t throttle_output_max_voltage_in_millivolts;
+    uint32_t output_max_voltage_in_millivolts;
 
-    void set_throttle_output_max_voltage_in_millivolts (uint32_t value);
-    uint32_t get_throttle_output_max_voltage_in_millivolts();
-    void display_throttle_output_max_voltage_in_millivolts();
+    void set_output_max_voltage_in_millivolts (uint32_t value);
+    uint32_t get_output_max_voltage_in_millivolts();
+    void display_output_max_voltage_in_millivolts();
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_THROTTLE_OUTPUT_CURVE_ID 37
-    #define SETTINGS_THROTTLE_OUTPUT_CURVE_ID_STR "37"
-    #define SETTINGS_THROTTLE_OUTPUT_CURVE_NAME "Throttle output curve"
+    #define SETTINGS_OUTPUT_CURVE_ID 37
+    #define SETTINGS_OUTPUT_CURVE_ID_STR "37"
+    #define SETTINGS_OUTPUT_CURVE_NAME "Output curve"
 
-    uint8_t throttle_output_curve;
-    typedef enum LIST_Throttle_output_curve {
-        LIST_Throttle_output_curve_Linear,
-        LIST_Throttle_output_curve_Exponential_1,
-        LIST_Throttle_output_curve_Exponential_2,
-        LIST_Throttle_output_curve_Exponential_3,
-        LIST_Throttle_output_curve_Exponential_4, 
-    } tThrottle_output_curve;
+    uint8_t output_curve;
+    typedef enum LIST_Output_curve {
+        LIST_Output_curve_Linear,
+        LIST_Output_curve_Exponential_1,
+        LIST_Output_curve_Exponential_2,
+        LIST_Output_curve_Exponential_3,
+        LIST_Output_curve_Exponential_4, 
+    } tOutput_curve;
 
-    void set_throttle_output_curve (uint8_t value);
-    uint8_t get_throttle_output_curve();
-    void display_throttle_output_curve();
+    void set_output_curve (uint8_t value);
+    uint8_t get_output_curve();
+    void display_output_curve();
             
     /*-------------------------------------------------------*/
 

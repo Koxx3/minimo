@@ -73,30 +73,30 @@ void Settings2::restore() {
     Serial.println("  >> original_display_speed_adjustment = " + (String)original_display_speed_adjustment);
     electric_brake_progressive_mode = prefs.getInt(SETTINGS_ELECTRIC_BRAKE_PROGRESSIVE_MODE_ID_STR, 0);
     Serial.println("  >> electric_brake_progressive_mode = " + (String)electric_brake_progressive_mode);
-    electric_brake_type = prefs.getInt(SETTINGS_ELECTRIC_BRAKE_TYPE_ID_STR, 0);
-    Serial.println("  >> electric_brake_type = " + (String)electric_brake_type);
-    electric_brake_min_value = prefs.getInt(SETTINGS_ELECTRIC_BRAKE_MIN_VALUE_ID_STR, 1);
-    Serial.println("  >> electric_brake_min_value = " + (String)electric_brake_min_value);
-    electric_brake_max_value = prefs.getInt(SETTINGS_ELECTRIC_BRAKE_MAX_VALUE_ID_STR, 5);
-    Serial.println("  >> electric_brake_max_value = " + (String)electric_brake_max_value);
-    electric_brake_time_between_mode_shift = prefs.getInt(SETTINGS_ELECTRIC_BRAKE_TIME_BETWEEN_MODE_SHIFT_ID_STR, 500);
-    Serial.println("  >> electric_brake_time_between_mode_shift = " + (String)electric_brake_time_between_mode_shift);
-    electric_brake_disabled_on_high_battery_voltage = prefs.getInt(SETTINGS_ELECTRIC_BRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID_STR, 0);
-    Serial.println("  >> electric_brake_disabled_on_high_battery_voltage = " + (String)electric_brake_disabled_on_high_battery_voltage);
-    electric_brake_disabled_percent_limit = prefs.getInt(SETTINGS_ELECTRIC_BRAKE_DISABLED_PERCENT_LIMIT_ID_STR, 100);
-    Serial.println("  >> electric_brake_disabled_percent_limit = " + (String)electric_brake_disabled_percent_limit);
+    type = prefs.getInt(SETTINGS_TYPE_ID_STR, 0);
+    Serial.println("  >> type = " + (String)type);
+    min_value = prefs.getInt(SETTINGS_MIN_VALUE_ID_STR, 1);
+    Serial.println("  >> min_value = " + (String)min_value);
+    max_value = prefs.getInt(SETTINGS_MAX_VALUE_ID_STR, 5);
+    Serial.println("  >> max_value = " + (String)max_value);
+    time_between_mode_shift = prefs.getInt(SETTINGS_TIME_BETWEEN_MODE_SHIFT_ID_STR, 500);
+    Serial.println("  >> time_between_mode_shift = " + (String)time_between_mode_shift);
+    disabled_on_high_battery_voltage = prefs.getInt(SETTINGS_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID_STR, 0);
+    Serial.println("  >> disabled_on_high_battery_voltage = " + (String)disabled_on_high_battery_voltage);
+    disabled_percent_limit = prefs.getInt(SETTINGS_DISABLED_PERCENT_LIMIT_ID_STR, 100);
+    Serial.println("  >> disabled_percent_limit = " + (String)disabled_percent_limit);
     throttle_regeneration = prefs.getInt(SETTINGS_THROTTLE_REGENERATION_ID_STR, 0);
     Serial.println("  >> throttle_regeneration = " + (String)throttle_regeneration);
-    throttle_input_min_voltage_in_millivolts = prefs.getInt(SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR, 650);
-    Serial.println("  >> throttle_input_min_voltage_in_millivolts = " + (String)throttle_input_min_voltage_in_millivolts);
-    throttle_input_max_voltage_in_millivolts = prefs.getInt(SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR, 3950);
-    Serial.println("  >> throttle_input_max_voltage_in_millivolts = " + (String)throttle_input_max_voltage_in_millivolts);
-    throttle_output_min_voltage_in_millivolts = prefs.getInt(SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR, 800);
-    Serial.println("  >> throttle_output_min_voltage_in_millivolts = " + (String)throttle_output_min_voltage_in_millivolts);
-    throttle_output_max_voltage_in_millivolts = prefs.getInt(SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR, 3350);
-    Serial.println("  >> throttle_output_max_voltage_in_millivolts = " + (String)throttle_output_max_voltage_in_millivolts);
-    throttle_output_curve = prefs.getInt(SETTINGS_THROTTLE_OUTPUT_CURVE_ID_STR, 2);
-    Serial.println("  >> throttle_output_curve = " + (String)throttle_output_curve);
+    input_min_voltage_in_millivolts = prefs.getInt(SETTINGS_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR, 650);
+    Serial.println("  >> input_min_voltage_in_millivolts = " + (String)input_min_voltage_in_millivolts);
+    input_max_voltage_in_millivolts = prefs.getInt(SETTINGS_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR, 3950);
+    Serial.println("  >> input_max_voltage_in_millivolts = " + (String)input_max_voltage_in_millivolts);
+    output_min_voltage_in_millivolts = prefs.getInt(SETTINGS_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR, 800);
+    Serial.println("  >> output_min_voltage_in_millivolts = " + (String)output_min_voltage_in_millivolts);
+    output_max_voltage_in_millivolts = prefs.getInt(SETTINGS_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR, 3350);
+    Serial.println("  >> output_max_voltage_in_millivolts = " + (String)output_max_voltage_in_millivolts);
+    output_curve = prefs.getInt(SETTINGS_OUTPUT_CURVE_ID_STR, 2);
+    Serial.println("  >> output_curve = " + (String)output_curve);
     button_1_short_press_action = prefs.getInt(SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_ID_STR, 0);
     Serial.println("  >> button_1_short_press_action = " + (String)button_1_short_press_action);
     button_1_long_press_action = prefs.getInt(SETTINGS_BUTTON_1_LONG_PRESS_ACTION_ID_STR, 0);
@@ -231,53 +231,53 @@ void Settings2::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         set_electric_brake_progressive_mode(buffer_get_uint8(packet, &ind));
         display_electric_brake_progressive_mode();
         break;
-    case SETTINGS_ELECTRIC_BRAKE_TYPE_ID :
-        set_electric_brake_type(buffer_get_uint8(packet, &ind));
-        display_electric_brake_type();
+    case SETTINGS_TYPE_ID :
+        set_type(buffer_get_uint8(packet, &ind));
+        display_type();
         break;
-    case SETTINGS_ELECTRIC_BRAKE_MIN_VALUE_ID :
-        set_electric_brake_min_value(buffer_get_uint8(packet, &ind));
-        display_electric_brake_min_value();
+    case SETTINGS_MIN_VALUE_ID :
+        set_min_value(buffer_get_uint8(packet, &ind));
+        display_min_value();
         break;
-    case SETTINGS_ELECTRIC_BRAKE_MAX_VALUE_ID :
-        set_electric_brake_max_value(buffer_get_uint8(packet, &ind));
-        display_electric_brake_max_value();
+    case SETTINGS_MAX_VALUE_ID :
+        set_max_value(buffer_get_uint8(packet, &ind));
+        display_max_value();
         break;
-    case SETTINGS_ELECTRIC_BRAKE_TIME_BETWEEN_MODE_SHIFT_ID :
-        set_electric_brake_time_between_mode_shift(buffer_get_uint8(packet, &ind));
-        display_electric_brake_time_between_mode_shift();
+    case SETTINGS_TIME_BETWEEN_MODE_SHIFT_ID :
+        set_time_between_mode_shift(buffer_get_uint8(packet, &ind));
+        display_time_between_mode_shift();
         break;
-    case SETTINGS_ELECTRIC_BRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID :
-        set_electric_brake_disabled_on_high_battery_voltage(buffer_get_uint8(packet, &ind));
-        display_electric_brake_disabled_on_high_battery_voltage();
+    case SETTINGS_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID :
+        set_disabled_on_high_battery_voltage(buffer_get_uint8(packet, &ind));
+        display_disabled_on_high_battery_voltage();
         break;
-    case SETTINGS_ELECTRIC_BRAKE_DISABLED_PERCENT_LIMIT_ID :
-        set_electric_brake_disabled_percent_limit(buffer_get_uint8(packet, &ind));
-        display_electric_brake_disabled_percent_limit();
+    case SETTINGS_DISABLED_PERCENT_LIMIT_ID :
+        set_disabled_percent_limit(buffer_get_uint8(packet, &ind));
+        display_disabled_percent_limit();
         break;
     case SETTINGS_THROTTLE_REGENERATION_ID :
         set_throttle_regeneration(buffer_get_uint8(packet, &ind));
         display_throttle_regeneration();
         break;
-    case SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID :
-        set_throttle_input_min_voltage_in_millivolts(buffer_get_uint32(packet, &ind));
-        display_throttle_input_min_voltage_in_millivolts();
+    case SETTINGS_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID :
+        set_input_min_voltage_in_millivolts(buffer_get_uint32(packet, &ind));
+        display_input_min_voltage_in_millivolts();
         break;
-    case SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID :
-        set_throttle_input_max_voltage_in_millivolts(buffer_get_uint32(packet, &ind));
-        display_throttle_input_max_voltage_in_millivolts();
+    case SETTINGS_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID :
+        set_input_max_voltage_in_millivolts(buffer_get_uint32(packet, &ind));
+        display_input_max_voltage_in_millivolts();
         break;
-    case SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID :
-        set_throttle_output_min_voltage_in_millivolts(buffer_get_uint32(packet, &ind));
-        display_throttle_output_min_voltage_in_millivolts();
+    case SETTINGS_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID :
+        set_output_min_voltage_in_millivolts(buffer_get_uint32(packet, &ind));
+        display_output_min_voltage_in_millivolts();
         break;
-    case SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID :
-        set_throttle_output_max_voltage_in_millivolts(buffer_get_uint32(packet, &ind));
-        display_throttle_output_max_voltage_in_millivolts();
+    case SETTINGS_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID :
+        set_output_max_voltage_in_millivolts(buffer_get_uint32(packet, &ind));
+        display_output_max_voltage_in_millivolts();
         break;
-    case SETTINGS_THROTTLE_OUTPUT_CURVE_ID :
-        set_throttle_output_curve(buffer_get_uint8(packet, &ind));
-        display_throttle_output_curve();
+    case SETTINGS_OUTPUT_CURVE_ID :
+        set_output_curve(buffer_get_uint8(packet, &ind));
+        display_output_curve();
         break;
     case SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_ID :
         set_button_1_short_press_action(buffer_get_uint8(packet, &ind));
@@ -830,121 +830,121 @@ void Settings2::display_electric_brake_progressive_mode() {
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_electric_brake_type(uint8_t value) {
+void Settings2::set_type(uint8_t value) {
 
-    electric_brake_type = value;
+    type = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_ELECTRIC_BRAKE_TYPE_ID_STR, electric_brake_type);
+    prefs.putInt(SETTINGS_TYPE_ID_STR, type);
     prefs.end();
 }
 
-uint8_t Settings2::get_electric_brake_type() {
-    return electric_brake_type ;
+uint8_t Settings2::get_type() {
+    return type ;
 }
 
-void Settings2::display_electric_brake_type() {
-    Serial.println("  electric_brake_type = " + (String) electric_brake_type);
+void Settings2::display_type() {
+    Serial.println("  type = " + (String) type);
 }
                 
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_electric_brake_min_value(uint8_t value) {
+void Settings2::set_min_value(uint8_t value) {
 
-    electric_brake_min_value = value;
+    min_value = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_ELECTRIC_BRAKE_MIN_VALUE_ID_STR, electric_brake_min_value);
+    prefs.putInt(SETTINGS_MIN_VALUE_ID_STR, min_value);
     prefs.end();
 }
 
-uint8_t Settings2::get_electric_brake_min_value() {
-    return electric_brake_min_value ;
+uint8_t Settings2::get_min_value() {
+    return min_value ;
 }
 
-void Settings2::display_electric_brake_min_value() {
-    Serial.println("  electric_brake_min_value = " + (String) electric_brake_min_value);
+void Settings2::display_min_value() {
+    Serial.println("  min_value = " + (String) min_value);
 }
                 
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_electric_brake_max_value(uint8_t value) {
+void Settings2::set_max_value(uint8_t value) {
 
-    electric_brake_max_value = value;
+    max_value = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_ELECTRIC_BRAKE_MAX_VALUE_ID_STR, electric_brake_max_value);
+    prefs.putInt(SETTINGS_MAX_VALUE_ID_STR, max_value);
     prefs.end();
 }
 
-uint8_t Settings2::get_electric_brake_max_value() {
-    return electric_brake_max_value ;
+uint8_t Settings2::get_max_value() {
+    return max_value ;
 }
 
-void Settings2::display_electric_brake_max_value() {
-    Serial.println("  electric_brake_max_value = " + (String) electric_brake_max_value);
+void Settings2::display_max_value() {
+    Serial.println("  max_value = " + (String) max_value);
 }
                 
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_electric_brake_time_between_mode_shift(uint8_t value) {
+void Settings2::set_time_between_mode_shift(uint8_t value) {
 
-    electric_brake_time_between_mode_shift = value;
+    time_between_mode_shift = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_ELECTRIC_BRAKE_TIME_BETWEEN_MODE_SHIFT_ID_STR, electric_brake_time_between_mode_shift);
+    prefs.putInt(SETTINGS_TIME_BETWEEN_MODE_SHIFT_ID_STR, time_between_mode_shift);
     prefs.end();
 }
 
-uint8_t Settings2::get_electric_brake_time_between_mode_shift() {
-    return electric_brake_time_between_mode_shift ;
+uint8_t Settings2::get_time_between_mode_shift() {
+    return time_between_mode_shift ;
 }
 
-void Settings2::display_electric_brake_time_between_mode_shift() {
-    Serial.println("  electric_brake_time_between_mode_shift = " + (String) electric_brake_time_between_mode_shift);
+void Settings2::display_time_between_mode_shift() {
+    Serial.println("  time_between_mode_shift = " + (String) time_between_mode_shift);
 }
                 
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_electric_brake_disabled_on_high_battery_voltage(uint8_t value) {
+void Settings2::set_disabled_on_high_battery_voltage(uint8_t value) {
 
-    electric_brake_disabled_on_high_battery_voltage = value;
+    disabled_on_high_battery_voltage = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_ELECTRIC_BRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID_STR, electric_brake_disabled_on_high_battery_voltage);
+    prefs.putInt(SETTINGS_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID_STR, disabled_on_high_battery_voltage);
     prefs.end();
 }
 
-uint8_t Settings2::get_electric_brake_disabled_on_high_battery_voltage() {
-    return electric_brake_disabled_on_high_battery_voltage ;
+uint8_t Settings2::get_disabled_on_high_battery_voltage() {
+    return disabled_on_high_battery_voltage ;
 }
 
-void Settings2::display_electric_brake_disabled_on_high_battery_voltage() {
-    Serial.println("  electric_brake_disabled_on_high_battery_voltage = " + (String) electric_brake_disabled_on_high_battery_voltage);
+void Settings2::display_disabled_on_high_battery_voltage() {
+    Serial.println("  disabled_on_high_battery_voltage = " + (String) disabled_on_high_battery_voltage);
 }
                 
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_electric_brake_disabled_percent_limit(uint8_t value) {
+void Settings2::set_disabled_percent_limit(uint8_t value) {
 
-    electric_brake_disabled_percent_limit = value;
+    disabled_percent_limit = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_ELECTRIC_BRAKE_DISABLED_PERCENT_LIMIT_ID_STR, electric_brake_disabled_percent_limit);
+    prefs.putInt(SETTINGS_DISABLED_PERCENT_LIMIT_ID_STR, disabled_percent_limit);
     prefs.end();
 }
 
-uint8_t Settings2::get_electric_brake_disabled_percent_limit() {
-    return electric_brake_disabled_percent_limit ;
+uint8_t Settings2::get_disabled_percent_limit() {
+    return disabled_percent_limit ;
 }
 
-void Settings2::display_electric_brake_disabled_percent_limit() {
-    Serial.println("  electric_brake_disabled_percent_limit = " + (String) electric_brake_disabled_percent_limit);
+void Settings2::display_disabled_percent_limit() {
+    Serial.println("  disabled_percent_limit = " + (String) disabled_percent_limit);
 }
                 
 
@@ -970,101 +970,101 @@ void Settings2::display_throttle_regeneration() {
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_throttle_input_min_voltage_in_millivolts(uint32_t value) {
+void Settings2::set_input_min_voltage_in_millivolts(uint32_t value) {
 
-    throttle_input_min_voltage_in_millivolts = value;
+    input_min_voltage_in_millivolts = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR, throttle_input_min_voltage_in_millivolts);
+    prefs.putInt(SETTINGS_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR, input_min_voltage_in_millivolts);
     prefs.end();
 }
 
-uint32_t Settings2::get_throttle_input_min_voltage_in_millivolts() {
-    return throttle_input_min_voltage_in_millivolts ;
+uint32_t Settings2::get_input_min_voltage_in_millivolts() {
+    return input_min_voltage_in_millivolts ;
 }
 
-void Settings2::display_throttle_input_min_voltage_in_millivolts() {
-    Serial.println("  throttle_input_min_voltage_in_millivolts = " + (String) throttle_input_min_voltage_in_millivolts);
+void Settings2::display_input_min_voltage_in_millivolts() {
+    Serial.println("  input_min_voltage_in_millivolts = " + (String) input_min_voltage_in_millivolts);
 }
                 
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_throttle_input_max_voltage_in_millivolts(uint32_t value) {
+void Settings2::set_input_max_voltage_in_millivolts(uint32_t value) {
 
-    throttle_input_max_voltage_in_millivolts = value;
+    input_max_voltage_in_millivolts = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR, throttle_input_max_voltage_in_millivolts);
+    prefs.putInt(SETTINGS_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR, input_max_voltage_in_millivolts);
     prefs.end();
 }
 
-uint32_t Settings2::get_throttle_input_max_voltage_in_millivolts() {
-    return throttle_input_max_voltage_in_millivolts ;
+uint32_t Settings2::get_input_max_voltage_in_millivolts() {
+    return input_max_voltage_in_millivolts ;
 }
 
-void Settings2::display_throttle_input_max_voltage_in_millivolts() {
-    Serial.println("  throttle_input_max_voltage_in_millivolts = " + (String) throttle_input_max_voltage_in_millivolts);
+void Settings2::display_input_max_voltage_in_millivolts() {
+    Serial.println("  input_max_voltage_in_millivolts = " + (String) input_max_voltage_in_millivolts);
 }
                 
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_throttle_output_min_voltage_in_millivolts(uint32_t value) {
+void Settings2::set_output_min_voltage_in_millivolts(uint32_t value) {
 
-    throttle_output_min_voltage_in_millivolts = value;
+    output_min_voltage_in_millivolts = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR, throttle_output_min_voltage_in_millivolts);
+    prefs.putInt(SETTINGS_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR, output_min_voltage_in_millivolts);
     prefs.end();
 }
 
-uint32_t Settings2::get_throttle_output_min_voltage_in_millivolts() {
-    return throttle_output_min_voltage_in_millivolts ;
+uint32_t Settings2::get_output_min_voltage_in_millivolts() {
+    return output_min_voltage_in_millivolts ;
 }
 
-void Settings2::display_throttle_output_min_voltage_in_millivolts() {
-    Serial.println("  throttle_output_min_voltage_in_millivolts = " + (String) throttle_output_min_voltage_in_millivolts);
+void Settings2::display_output_min_voltage_in_millivolts() {
+    Serial.println("  output_min_voltage_in_millivolts = " + (String) output_min_voltage_in_millivolts);
 }
                 
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_throttle_output_max_voltage_in_millivolts(uint32_t value) {
+void Settings2::set_output_max_voltage_in_millivolts(uint32_t value) {
 
-    throttle_output_max_voltage_in_millivolts = value;
+    output_max_voltage_in_millivolts = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR, throttle_output_max_voltage_in_millivolts);
+    prefs.putInt(SETTINGS_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR, output_max_voltage_in_millivolts);
     prefs.end();
 }
 
-uint32_t Settings2::get_throttle_output_max_voltage_in_millivolts() {
-    return throttle_output_max_voltage_in_millivolts ;
+uint32_t Settings2::get_output_max_voltage_in_millivolts() {
+    return output_max_voltage_in_millivolts ;
 }
 
-void Settings2::display_throttle_output_max_voltage_in_millivolts() {
-    Serial.println("  throttle_output_max_voltage_in_millivolts = " + (String) throttle_output_max_voltage_in_millivolts);
+void Settings2::display_output_max_voltage_in_millivolts() {
+    Serial.println("  output_max_voltage_in_millivolts = " + (String) output_max_voltage_in_millivolts);
 }
                 
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_throttle_output_curve(uint8_t value) {
+void Settings2::set_output_curve(uint8_t value) {
 
-    throttle_output_curve = value;
+    output_curve = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_THROTTLE_OUTPUT_CURVE_ID_STR, throttle_output_curve);
+    prefs.putInt(SETTINGS_OUTPUT_CURVE_ID_STR, output_curve);
     prefs.end();
 }
 
-uint8_t Settings2::get_throttle_output_curve() {
-    return throttle_output_curve ;
+uint8_t Settings2::get_output_curve() {
+    return output_curve ;
 }
 
-void Settings2::display_throttle_output_curve() {
-    Serial.println("  throttle_output_curve = " + (String) throttle_output_curve);
+void Settings2::display_output_curve() {
+    Serial.println("  output_curve = " + (String) output_curve);
 }
                 
 

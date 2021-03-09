@@ -66,8 +66,8 @@ MENU(displaySettings,"  Display",doNothing,noEvent,noStyle //
 */
 
 
-{% for key, value in parameters.items() %}
-    {% for key2, value2 in value.items() %}
+{%- for key, value in parameters.items() %}
+    {%- for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
             {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
             {%- if item.smartdisplay_tft_menu_visible %}
@@ -75,12 +75,11 @@ MENU(displaySettings,"  Display",doNothing,noEvent,noStyle //
             {%- endif %}
         {%- endfor %}
     {%- endfor %}
-{%- endfor %}
+{% endfor %}
 
-
-{% for key, value in parameters.items() %}
-    {% for key2, value2 in value.items() %}
-        {% set vars = {'foo': False} %}
+{%- for key, value in parameters.items() %}
+    {%- for key2, value2 in value.items() %}
+        {%- set vars = {'foo': False} %}
         {%- for  item in value2.settings %}
             {%- if item.smartdisplay_tft_menu_visible | int == 1 %}
                 {%- if vars.update({'foo': True}) %} {% endif %}
@@ -102,10 +101,10 @@ MENU(SUBMENU_{{ key2 | replace(" ", "_")}},"  {{ key2 }}",doNothing,noEvent,noSt
                     {%- endif %}
                 {%- endif %}
             {%- endfor %}
+    ,EXIT("< Back")
 );        
         {%- endif %}
-    {%- endfor %}
-
+    {% endfor %}
 {%- endfor %}
 
 MENU(mainMenu,"  Main menu",doNothing,noEvent,wrapStyle //
