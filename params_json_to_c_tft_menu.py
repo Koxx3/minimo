@@ -63,7 +63,6 @@ def regex_replace(s, find, replace):
 env = jinja2.Environment()
 env.filters['regex_replace'] = regex_replace
 
-tmpl_cpp = env.from_string(template_cpp)
 tmpl_h = env.from_string(template_h)
 
 

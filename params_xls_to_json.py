@@ -1,5 +1,5 @@
 #%%
-file = 'paramss.xls'
+file = 'params.xls'
 import xlrd
 from itertools import chain
 from collections import OrderedDict

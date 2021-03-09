@@ -101,11 +101,7 @@ public class SmartElecSettings2 {
                         {%- set java_display_type = "Boolean" %}
                         {%- set java_default = "true" if item.default else "false" %}
                         {%- set java_end_comparator = " ? 1 : 0" %}
-<<<<<<< HEAD
                     {%- elif item.smartphone_display_type | lower == "seek_bar" %}
-=======
-                    {%- elif item.smartphone_display_type | lower == "slider" %}
->>>>>>> master
                         {%- set java_display_type = "Int" %}
                         {%- set java_default = item.default %}
                     {%- elif item.smartphone_display_type | lower == "list" %}
@@ -116,7 +112,6 @@ public class SmartElecSettings2 {
                         {%- set java_default = item.default %}
                     {%- endif %}
 
-<<<<<<< HEAD
             Object sourceData = (EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} ));
             
                     {%- if item.smartphone_display_type | lower == "list" %}
@@ -155,41 +150,17 @@ public class SmartElecSettings2 {
                     {%- elif item.type | lower == "float" %}
             dos.writeFloat((Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }}).replace(",", "."))));
 
-=======
-                    {%- if item.type | lower == "uint8_t" %}
-            dos.writeByte({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )) {{ java_end_comparator }});
-                    {%- elif item.type | lower == "int8_t" %}
-            dos.writeByte({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )) {{ java_end_comparator }});
-                    {%- elif item.type | lower == "uint16_t" %}
-            dos.writeShort({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )));
-                    {%- elif item.type | lower == "int16_t" %}
-            dos.writeShort({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )));
-                    {%- elif item.type | lower == "uint32_t" %}
-            dos.writeInt({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )));
-                    {%- elif item.type | lower == "int32_t" %}
-            dos.writeInt({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )));
-                    {%- elif item.type | lower == "float" %}
-            dos.writeFloat((Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }}).replace(",", "."))));
->>>>>>> master
                     {%- elif item.type | lower == "string" %}
             String value = EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }});
             int length = 1;
             if (value.length() > 16)
-<<<<<<< HEAD
                 length = 16;
-=======
-                length = 15;
->>>>>>> master
             else
                 length = value.length();
             dos.writeBytes(value.substring(0, length));
                     {%- else %}
             error
                     {%- endif %}
-<<<<<<< HEAD
-
-=======
->>>>>>> master
             dos.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -377,11 +348,7 @@ public class SmartElecSettings2 {
     }
 
 
-<<<<<<< HEAD
     public static int listToValue(Context ctx, String value, String[] list) {
-=======
-    public static int listToValue_(Context ctx, String value, String[] list) {
->>>>>>> master
         int intValue = 0;
         String valueStr = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(value, "");
 

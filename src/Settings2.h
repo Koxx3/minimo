@@ -1,6 +1,5 @@
 
 //////------------------------------------
-<<<<<<< HEAD
 //////------------------------------------
 //////------------------------------------
 ////// GENERATED FILE - DO NOT EDIT MANUALLY
@@ -12,36 +11,23 @@
 
 #include "Arduino.h"
 #include <Preferences.h>
-=======
-////// Manage settings exchanged in BLE and stored in EEPOM
-
-#include "Arduino.h"
->>>>>>> master
 
 #ifndef _Settings2_h
 #define _Settings2_h
 
 class Settings2
 {
-<<<<<<< HEAD
 private : 
     Preferences prefs;
 
-=======
->>>>>>> master
 public:
 
     Settings2();
 
-<<<<<<< HEAD
     void restore();
 
     void unpack_setting_packet(uint8_t* packet, uint8_t length);
     void pack_setting_packet(uint16_t setting_id, uint8_t* packet,uint8_t* length);
-=======
-    void unpack_setting_packet(uint8_t* packet);
-    uint8_t* pack_setting_packet(uint16_t setting_id);
->>>>>>> master
 
 
     
@@ -49,10 +35,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_WHEEL_SIZE_ID 1
-<<<<<<< HEAD
     #define SETTINGS_WHEEL_SIZE_ID_STR "1"
-=======
->>>>>>> master
     #define SETTINGS_WHEEL_SIZE_NAME "Wheel size"
 
     float wheel_size;
@@ -64,10 +47,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_NUMBER_OF_POLES_PAIRS_ID 2
-<<<<<<< HEAD
     #define SETTINGS_NUMBER_OF_POLES_PAIRS_ID_STR "2"
-=======
->>>>>>> master
     #define SETTINGS_NUMBER_OF_POLES_PAIRS_NAME "Number of poles pairs"
 
     uint8_t number_of_poles_pairs;
@@ -79,10 +59,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_BATTERY_MINIMUM_VOLTAGE_ID 3
-<<<<<<< HEAD
     #define SETTINGS_BATTERY_MINIMUM_VOLTAGE_ID_STR "3"
-=======
->>>>>>> master
     #define SETTINGS_BATTERY_MINIMUM_VOLTAGE_NAME "Battery minimum voltage"
 
     float battery_minimum_voltage;
@@ -94,10 +71,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_BATTERY_MAXIMUM_VOLTAGE_ID 4
-<<<<<<< HEAD
     #define SETTINGS_BATTERY_MAXIMUM_VOLTAGE_ID_STR "4"
-=======
->>>>>>> master
     #define SETTINGS_BATTERY_MAXIMUM_VOLTAGE_NAME "Battery maximum voltage"
 
     float battery_maximum_voltage;
@@ -109,10 +83,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_BATTERY_MAXIMUM_DISTANCE_ID 5
-<<<<<<< HEAD
     #define SETTINGS_BATTERY_MAXIMUM_DISTANCE_ID_STR "5"
-=======
->>>>>>> master
     #define SETTINGS_BATTERY_MAXIMUM_DISTANCE_NAME "Battery maximum distance"
 
     uint8_t battery_maximum_distance;
@@ -124,10 +95,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_SPEED_ADJUSTMENT_ID 13
-<<<<<<< HEAD
     #define SETTINGS_SPEED_ADJUSTMENT_ID_STR "13"
-=======
->>>>>>> master
     #define SETTINGS_SPEED_ADJUSTMENT_NAME "Speed adjustment"
 
     int8_t speed_adjustment;
@@ -139,10 +107,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_DISPLAY_GPS_SPEED_INSTEAD_OF_ESCOOTER_SPEED_ID 14
-<<<<<<< HEAD
     #define SETTINGS_DISPLAY_GPS_SPEED_INSTEAD_OF_ESCOOTER_SPEED_ID_STR "14"
-=======
->>>>>>> master
     #define SETTINGS_DISPLAY_GPS_SPEED_INSTEAD_OF_ESCOOTER_SPEED_NAME "Display GPS speed instead of escooter speed"
 
     uint8_t display_gps_speed_instead_of_escooter_speed;
@@ -154,10 +119,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_AUX_RELAY_NAME_ID 15
-<<<<<<< HEAD
     #define SETTINGS_AUX_RELAY_NAME_ID_STR "15"
-=======
->>>>>>> master
     #define SETTINGS_AUX_RELAY_NAME_NAME "Aux_relay_name"
 
     uint8_t aux_relay_name;
@@ -176,10 +138,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_DEFAULT_MODE_AT_STARTUP_ID 16
-<<<<<<< HEAD
     #define SETTINGS_DEFAULT_MODE_AT_STARTUP_ID_STR "16"
-=======
->>>>>>> master
     #define SETTINGS_DEFAULT_MODE_AT_STARTUP_NAME "Default mode at startup"
 
     uint8_t default_mode_at_startup;
@@ -191,10 +150,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_DEFAULT_ECO_MODE_AT_STARTUP_ID 17
-<<<<<<< HEAD
     #define SETTINGS_DEFAULT_ECO_MODE_AT_STARTUP_ID_STR "17"
-=======
->>>>>>> master
     #define SETTINGS_DEFAULT_ECO_MODE_AT_STARTUP_NAME "Default eco mode at startup"
 
     uint8_t default_eco_mode_at_startup;
@@ -211,10 +167,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_DEFAULT_ACCELERATION_ID 18
-<<<<<<< HEAD
     #define SETTINGS_DEFAULT_ACCELERATION_ID_STR "18"
-=======
->>>>>>> master
     #define SETTINGS_DEFAULT_ACCELERATION_NAME "Default acceleration"
 
     uint8_t default_acceleration;
@@ -234,10 +187,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_DEFAULT_ELECTRIC_BRAKE_AT_STARTUP_ID 19
-<<<<<<< HEAD
     #define SETTINGS_DEFAULT_ELECTRIC_BRAKE_AT_STARTUP_ID_STR "19"
-=======
->>>>>>> master
     #define SETTINGS_DEFAULT_ELECTRIC_BRAKE_AT_STARTUP_NAME "Default electric brake at startup"
 
     uint8_t default_electric_brake_at_startup;
@@ -249,10 +199,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_PAS_ENABLED_ID 20
-<<<<<<< HEAD
     #define SETTINGS_PAS_ENABLED_ID_STR "20"
-=======
->>>>>>> master
     #define SETTINGS_PAS_ENABLED_NAME "PAS enabled"
 
     uint8_t pas_enabled;
@@ -264,10 +211,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_ABS_ENABLED_ID 21
-<<<<<<< HEAD
     #define SETTINGS_ABS_ENABLED_ID_STR "21"
-=======
->>>>>>> master
     #define SETTINGS_ABS_ENABLED_NAME "Abs enabled"
 
     uint8_t abs_enabled;
@@ -279,10 +223,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_DISPLAY_BRIGHTNESS_ID 22
-<<<<<<< HEAD
     #define SETTINGS_DISPLAY_BRIGHTNESS_ID_STR "22"
-=======
->>>>>>> master
     #define SETTINGS_DISPLAY_BRIGHTNESS_NAME "Display brightness"
 
     uint8_t display_brightness;
@@ -294,10 +235,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_TEMPERATURE_WARNING_ID 23
-<<<<<<< HEAD
     #define SETTINGS_TEMPERATURE_WARNING_ID_STR "23"
-=======
->>>>>>> master
     #define SETTINGS_TEMPERATURE_WARNING_NAME "Temperature warning"
 
     uint8_t temperature_warning;
@@ -309,10 +247,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_HUMIDITY_WARNING_ID 24
-<<<<<<< HEAD
     #define SETTINGS_HUMIDITY_WARNING_ID_STR "24"
-=======
->>>>>>> master
     #define SETTINGS_HUMIDITY_WARNING_NAME "Humidity warning"
 
     uint8_t humidity_warning;
@@ -324,10 +259,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_SPEED_LIMITER_AT_STARTUP_ID 6
-<<<<<<< HEAD
     #define SETTINGS_SPEED_LIMITER_AT_STARTUP_ID_STR "6"
-=======
->>>>>>> master
     #define SETTINGS_SPEED_LIMITER_AT_STARTUP_NAME "Speed limiter at startup"
 
     uint8_t speed_limiter_at_startup;
@@ -339,10 +271,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_SPEED_LIMITER_MAX_SPEED_IN_PERCENT_OF_MAX_SPEED_ID 7
-<<<<<<< HEAD
     #define SETTINGS_SPEED_LIMITER_MAX_SPEED_IN_PERCENT_OF_MAX_SPEED_ID_STR "7"
-=======
->>>>>>> master
     #define SETTINGS_SPEED_LIMITER_MAX_SPEED_IN_PERCENT_OF_MAX_SPEED_NAME "Speed limiter max speed (in percent of max speed)"
 
     uint8_t speed_limiter_max_speed_in_percent_of_max_speed;
@@ -354,10 +283,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_BLUETOOTH_LOCK_MODE_ID 8
-<<<<<<< HEAD
     #define SETTINGS_BLUETOOTH_LOCK_MODE_ID_STR "8"
-=======
->>>>>>> master
     #define SETTINGS_BLUETOOTH_LOCK_MODE_NAME "Bluetooth lock mode"
 
     uint8_t bluetooth_lock_mode;
@@ -375,10 +301,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_PIN_CODE_USE_6_DIGITS_ONLY_ID 9
-<<<<<<< HEAD
     #define SETTINGS_PIN_CODE_USE_6_DIGITS_ONLY_ID_STR "9"
-=======
->>>>>>> master
     #define SETTINGS_PIN_CODE_USE_6_DIGITS_ONLY_NAME "PIN code (use 6 digits only)"
 
     uint32_t pin_code_use_6_digits_only;
@@ -390,10 +313,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_BEACON_MAC_ADDRESS_ID 10
-<<<<<<< HEAD
     #define SETTINGS_BEACON_MAC_ADDRESS_ID_STR "10"
-=======
->>>>>>> master
     #define SETTINGS_BEACON_MAC_ADDRESS_NAME "Beacon Mac Address"
 
     String beacon_mac_address;
@@ -405,10 +325,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_BEACON_RANGE_ID 11
-<<<<<<< HEAD
     #define SETTINGS_BEACON_RANGE_ID_STR "11"
-=======
->>>>>>> master
     #define SETTINGS_BEACON_RANGE_NAME "Beacon range"
 
     int8_t beacon_range;
@@ -420,10 +337,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_ID 12
-<<<<<<< HEAD
     #define SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_ID_STR "12"
-=======
->>>>>>> master
     #define SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_NAME "Original display speed adjustment"
 
     int8_t original_display_speed_adjustment;
@@ -435,10 +349,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_ELECTRIC_BRAKE_PROGRESSIVE_MODE_ID 25
-<<<<<<< HEAD
     #define SETTINGS_ELECTRIC_BRAKE_PROGRESSIVE_MODE_ID_STR "25"
-=======
->>>>>>> master
     #define SETTINGS_ELECTRIC_BRAKE_PROGRESSIVE_MODE_NAME "Electric brake progressive mode"
 
     uint8_t electric_brake_progressive_mode;
@@ -450,10 +361,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_ELECTRIC_BRAKE_TYPE_ID 26
-<<<<<<< HEAD
     #define SETTINGS_ELECTRIC_BRAKE_TYPE_ID_STR "26"
-=======
->>>>>>> master
     #define SETTINGS_ELECTRIC_BRAKE_TYPE_NAME "Electric_brake_type"
 
     uint8_t electric_brake_type;
@@ -471,10 +379,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_ELECTRIC_BRAKE_MIN_VALUE_ID 27
-<<<<<<< HEAD
     #define SETTINGS_ELECTRIC_BRAKE_MIN_VALUE_ID_STR "27"
-=======
->>>>>>> master
     #define SETTINGS_ELECTRIC_BRAKE_MIN_VALUE_NAME "Electric brake min value"
 
     uint8_t electric_brake_min_value;
@@ -486,10 +391,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_ELECTRIC_BRAKE_MAX_VALUE_ID 28
-<<<<<<< HEAD
     #define SETTINGS_ELECTRIC_BRAKE_MAX_VALUE_ID_STR "28"
-=======
->>>>>>> master
     #define SETTINGS_ELECTRIC_BRAKE_MAX_VALUE_NAME "Electric brake max value"
 
     uint8_t electric_brake_max_value;
@@ -501,10 +403,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_ELECTRIC_BRAKE_TIME_BETWEEN_MODE_SHIFT_ID 29
-<<<<<<< HEAD
     #define SETTINGS_ELECTRIC_BRAKE_TIME_BETWEEN_MODE_SHIFT_ID_STR "29"
-=======
->>>>>>> master
     #define SETTINGS_ELECTRIC_BRAKE_TIME_BETWEEN_MODE_SHIFT_NAME "Electric brake time between mode shift"
 
     uint8_t electric_brake_time_between_mode_shift;
@@ -516,10 +415,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_ELECTRIC_BRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID 30
-<<<<<<< HEAD
     #define SETTINGS_ELECTRIC_BRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID_STR "30"
-=======
->>>>>>> master
     #define SETTINGS_ELECTRIC_BRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_NAME "Electric brake disabled on high battery voltage"
 
     uint8_t electric_brake_disabled_on_high_battery_voltage;
@@ -531,10 +427,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_ELECTRIC_BRAKE_DISABLED_PERCENT_LIMIT_ID 31
-<<<<<<< HEAD
     #define SETTINGS_ELECTRIC_BRAKE_DISABLED_PERCENT_LIMIT_ID_STR "31"
-=======
->>>>>>> master
     #define SETTINGS_ELECTRIC_BRAKE_DISABLED_PERCENT_LIMIT_NAME "Electric brake disabled percent limit"
 
     uint8_t electric_brake_disabled_percent_limit;
@@ -546,10 +439,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_THROTTLE_REGENERATION_ID 32
-<<<<<<< HEAD
     #define SETTINGS_THROTTLE_REGENERATION_ID_STR "32"
-=======
->>>>>>> master
     #define SETTINGS_THROTTLE_REGENERATION_NAME "Throttle regeneration"
 
     uint8_t throttle_regeneration;
@@ -561,10 +451,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID 33
-<<<<<<< HEAD
     #define SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR "33"
-=======
->>>>>>> master
     #define SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_IN_MILLIVOLTS_NAME "Throttle input min voltage (in millivolts)"
 
     uint32_t throttle_input_min_voltage_in_millivolts;
@@ -576,10 +463,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID 34
-<<<<<<< HEAD
     #define SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR "34"
-=======
->>>>>>> master
     #define SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_IN_MILLIVOLTS_NAME "Throttle input max voltage (in millivolts)"
 
     uint32_t throttle_input_max_voltage_in_millivolts;
@@ -591,10 +475,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID 35
-<<<<<<< HEAD
     #define SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR "35"
-=======
->>>>>>> master
     #define SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_NAME "Throttle output min voltage (in millivolts)"
 
     uint32_t throttle_output_min_voltage_in_millivolts;
@@ -606,10 +487,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID 36
-<<<<<<< HEAD
     #define SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR "36"
-=======
->>>>>>> master
     #define SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_NAME "Throttle output max voltage (in millivolts)"
 
     uint32_t throttle_output_max_voltage_in_millivolts;
@@ -621,10 +499,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_THROTTLE_OUTPUT_CURVE_ID 37
-<<<<<<< HEAD
     #define SETTINGS_THROTTLE_OUTPUT_CURVE_ID_STR "37"
-=======
->>>>>>> master
     #define SETTINGS_THROTTLE_OUTPUT_CURVE_NAME "Throttle output curve"
 
     uint8_t throttle_output_curve;
@@ -643,10 +518,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_ID 38
-<<<<<<< HEAD
     #define SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_ID_STR "38"
-=======
->>>>>>> master
     #define SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_NAME "Button 1 short press action"
 
     uint8_t button_1_short_press_action;
@@ -667,10 +539,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_BUTTON_1_LONG_PRESS_ACTION_ID 39
-<<<<<<< HEAD
     #define SETTINGS_BUTTON_1_LONG_PRESS_ACTION_ID_STR "39"
-=======
->>>>>>> master
     #define SETTINGS_BUTTON_1_LONG_PRESS_ACTION_NAME "Button 1 long press action"
 
     uint8_t button_1_long_press_action;
@@ -693,10 +562,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_ID 40
-<<<<<<< HEAD
     #define SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_ID_STR "40"
-=======
->>>>>>> master
     #define SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_NAME "Button 2 short press action"
 
     uint8_t button_2_short_press_action;
@@ -717,10 +583,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_BUTTON_LONG_PRESS_DURATION_ID 41
-<<<<<<< HEAD
     #define SETTINGS_BUTTON_LONG_PRESS_DURATION_ID_STR "41"
-=======
->>>>>>> master
     #define SETTINGS_BUTTON_LONG_PRESS_DURATION_NAME "Button long press duration"
 
     uint8_t button_long_press_duration;
@@ -732,10 +595,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_WIFI_NETWORK_NAME_SSID_ID 42
-<<<<<<< HEAD
     #define SETTINGS_WIFI_NETWORK_NAME_SSID_ID_STR "42"
-=======
->>>>>>> master
     #define SETTINGS_WIFI_NETWORK_NAME_SSID_NAME "Wifi network name (SSID)"
 
     String wifi_network_name_ssid;
@@ -747,10 +607,7 @@ public:
     /*-------------------------------------------------------*/
 
     #define SETTINGS_WIFI_PASSWORD_ID 43
-<<<<<<< HEAD
     #define SETTINGS_WIFI_PASSWORD_ID_STR "43"
-=======
->>>>>>> master
     #define SETTINGS_WIFI_PASSWORD_NAME "Wifi password"
 
     String wifi_password;
