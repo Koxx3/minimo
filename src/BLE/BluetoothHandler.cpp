@@ -45,6 +45,7 @@
 //#define xxxx "beb5483e-36e1-4688-b7f5-ea07361b26b3"
 //#define xxxx "beb5483e-36e1-4688-b7f5-ea07361b26b4"
 #define DISTANCE_RST_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b5"
+#define SETTINGS_GEN_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ff"
 
 #define BLE_MTU 23
 
@@ -73,6 +74,7 @@ NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings3;
 NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings4;
 NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings5;
 NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings6;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicSettingsGen;
 
 // firmware services
 NimBLECharacteristic *BluetoothHandler::pCharacteristicFirmware;
@@ -529,6 +531,17 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 notifyCommandsFeedback();
             }
+            else if (pCharacteristic->getUUID().toString() == SETTINGS_GEN_CHARACTERISTIC_UUID)
+            {
+                Serial.println("BLH - Write : SETTINGS_GEN_CHARACTERISTIC_UUID");
+                std::string rxValue = pCharacteristic->getValue();
+                for (int i = 0; i < rxValue.length(); i++)
+                {
+                    char print_buffer[5];
+                    sprintf(print_buffer, "%02x ", rxValue[i]);
+                    Serial.print(print_buffer);
+                }
+            }
             else
             {
                 const String uuid = pCharacteristic->getUUID().toString().c_str();
@@ -572,6 +585,10 @@ void BluetoothHandler::setSettings(Settings *data)
                 sprintf(print_buffer, "%02x", shrd->isLocked);
                 Serial.print("BLH - Read bleLock : ");
                 Serial.println(print_buffer);
+            }
+            else if (pCharacteristic->getUUID().toString() == SETTINGS_GEN_CHARACTERISTIC_UUID)
+            {
+                Serial.print("BLH - Read Settings GEN ---- TODO ");
             }
         }
 
@@ -743,6 +760,12 @@ void BluetoothHandler::setSettings(Settings *data)
             NIMBLE_PROPERTY::WRITE_AUTHEN |
             NIMBLE_PROPERTY::READ_AUTHEN);
 
+    pCharacteristicSettingsGen = pServiceSettings->createCharacteristic(
+        SETTINGS_GEN_CHARACTERISTIC_UUID,
+        NIMBLE_PROPERTY::WRITE_NR |
+            NIMBLE_PROPERTY::WRITE_AUTHEN |
+            NIMBLE_PROPERTY::READ_AUTHEN);
+
     //////////////
     pCharacteristicMeasurements->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicBtlockStatus->setCallbacks(new BLECharacteristicCallback());
@@ -759,6 +782,7 @@ void BluetoothHandler::setSettings(Settings *data)
     pCharacteristicSettings4->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettings5->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettings6->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicSettingsGen->setCallbacks(new BLECharacteristicCallback());
 
     pCharacteristicFirmware->setCallbacks(new BLECharacteristicCallback());
 

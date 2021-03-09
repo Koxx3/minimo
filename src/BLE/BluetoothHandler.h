@@ -58,6 +58,7 @@ public:
     static BLECharacteristic *pCharacteristicSettings4;
     static BLECharacteristic *pCharacteristicSettings5;
     static BLECharacteristic *pCharacteristicSettings6;
+    static BLECharacteristic *pCharacteristicSettingsGen;
 
     static BLECharacteristic *pCharacteristicFirmware;
 
