@@ -17,7 +17,8 @@
           "default": 10.0,
           "fast_increment": 1.0,
           "slow_increment": 0.1,
-          "regex_valid": ""
+          "regex_valid": ".*",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 2,
@@ -33,7 +34,8 @@
           "default": 15,
           "fast_increment": 1,
           "slow_increment": 1,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 3,
@@ -49,7 +51,8 @@
           "default": 42.0,
           "fast_increment": 1.0,
           "slow_increment": 0.1,
-          "regex_valid": ""
+          "regex_valid": ".*",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 4,
@@ -65,7 +68,8 @@
           "default": 58.8,
           "fast_increment": 1.0,
           "slow_increment": 0.1,
-          "regex_valid": ""
+          "regex_valid": ".*",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 5,
@@ -81,7 +85,8 @@
           "default": 40,
           "fast_increment": 5,
           "slow_increment": 1,
-          "regex_valid": ""
+          "regex_valid": ".*",
+          "smartdisplay_visible": 1.0
         }
       ]
     },
@@ -102,7 +107,8 @@
           "default": 0,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": ".*",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 14,
@@ -118,7 +124,8 @@
           "default": 0,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": ".*",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 15,
@@ -134,7 +141,8 @@
           "default": 0,
           "fast_increment": 1,
           "slow_increment": 1,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         }
       ]
     },
@@ -155,7 +163,8 @@
           "default": 3,
           "fast_increment": 1,
           "slow_increment": 1,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 17,
@@ -171,7 +180,8 @@
           "default": 2,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 18,
@@ -187,7 +197,8 @@
           "default": 5,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 19,
@@ -203,7 +214,8 @@
           "default": 3,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 20,
@@ -219,7 +231,8 @@
           "default": 0,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 21,
@@ -235,7 +248,8 @@
           "default": 0,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 22,
@@ -251,7 +265,8 @@
           "default": 100,
           "fast_increment": 10,
           "slow_increment": 5,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 23,
@@ -267,7 +282,8 @@
           "default": 70,
           "fast_increment": 10,
           "slow_increment": 5,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 24,
@@ -283,7 +299,8 @@
           "default": 80,
           "fast_increment": 10,
           "slow_increment": 5,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         }
       ]
     },
@@ -304,7 +321,8 @@
           "default": 0,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 7,
@@ -320,7 +338,8 @@
           "default": 37,
           "fast_increment": 1,
           "slow_increment": 1,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 8,
@@ -336,7 +355,8 @@
           "default": 0,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 9,
@@ -352,7 +372,8 @@
           "default": 147258,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": ".*",
+          "smartdisplay_visible": 0.0
         },
         {
           "id": 10,
@@ -368,7 +389,8 @@
           "default": "aa:bb:cc:dd:ee:ff",
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
+          "regex_valid": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
+          "smartdisplay_visible": 0.0
         },
         {
           "id": 11,
@@ -384,7 +406,8 @@
           "default": -80,
           "fast_increment": 5,
           "slow_increment": 5,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 0.0
         },
         {
           "id": 12,
@@ -400,7 +423,8 @@
           "default": 0,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": ".*",
+          "smartdisplay_visible": 0.0
         }
       ]
     },
@@ -421,7 +445,8 @@
           "default": 0,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 26,
@@ -437,7 +462,8 @@
           "default": 0,
           "fast_increment": 1,
           "slow_increment": 1,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 27,
@@ -453,7 +479,8 @@
           "default": 1,
           "fast_increment": 1,
           "slow_increment": 1,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 28,
@@ -469,7 +496,8 @@
           "default": 5,
           "fast_increment": 1,
           "slow_increment": 1,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 29,
@@ -485,7 +513,8 @@
           "default": 500,
           "fast_increment": 50,
           "slow_increment": 50,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 30,
@@ -501,7 +530,8 @@
           "default": 0,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 31,
@@ -517,7 +547,8 @@
           "default": 100,
           "fast_increment": 1,
           "slow_increment": 1,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         }
       ]
     },
@@ -538,7 +569,8 @@
           "default": 0,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 33,
@@ -554,7 +586,8 @@
           "default": 650,
           "fast_increment": 50,
           "slow_increment": 50,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 34,
@@ -570,7 +603,8 @@
           "default": 3950,
           "fast_increment": 50,
           "slow_increment": 50,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 35,
@@ -586,7 +620,8 @@
           "default": 800,
           "fast_increment": 50,
           "slow_increment": 50,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 36,
@@ -602,7 +637,8 @@
           "default": 3350,
           "fast_increment": 50,
           "slow_increment": 50,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 37,
@@ -618,7 +654,8 @@
           "default": 2,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         }
       ]
     },
@@ -639,7 +676,8 @@
           "default": 0,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 39,
@@ -655,7 +693,8 @@
           "default": 0,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 40,
@@ -671,7 +710,8 @@
           "default": 0,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         },
         {
           "id": 41,
@@ -687,7 +727,8 @@
           "default": 5,
           "fast_increment": 1,
           "slow_increment": 1,
-          "regex_valid": ""
+          "regex_valid": "",
+          "smartdisplay_visible": 1.0
         }
       ]
     },
@@ -708,7 +749,8 @@
           "default": "",
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": ".*",
+          "smartdisplay_visible": 0.0
         },
         {
           "id": 43,
@@ -724,7 +766,8 @@
           "default": "",
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ""
+          "regex_valid": ".*",
+          "smartdisplay_visible": 0.0
         }
       ]
     }

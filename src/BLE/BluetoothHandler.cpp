@@ -16,6 +16,7 @@
 #include "esp_gatts_api.h"
 #include "main.h"
 #include "tools/buffer.h"
+#include "Settings2.h"
 #include <WiFi.h>
 
 // See the following for generating UUIDs: https://www.uuidgenerator.net/
@@ -89,6 +90,7 @@ BleStatus BluetoothHandler::deviceStatus;
 BleStatus BluetoothHandler::oldDeviceStatus;
 
 Settings *BluetoothHandler::settings;
+Settings2 *BluetoothHandler::settings2;
 SharedData *BluetoothHandler::shrd;
 
 uint32_t bleBeaconInvisibleCount = 0;
@@ -100,7 +102,7 @@ BluetoothHandler::BluetoothHandler()
 {
 }
 
-void BluetoothHandler::setSettings(Settings *data)
+void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
 {
 
     class BLEServerCallback : public NimBLEServerCallbacks
@@ -535,12 +537,17 @@ void BluetoothHandler::setSettings(Settings *data)
             {
                 Serial.println("BLH - Write : SETTINGS_GEN_CHARACTERISTIC_UUID");
                 std::string rxValue = pCharacteristic->getValue();
+                uint8_t rxInt[20];
                 for (int i = 0; i < rxValue.length(); i++)
                 {
                     char print_buffer[5];
+                    rxInt[i] = rxValue[i];
                     sprintf(print_buffer, "%02x ", rxValue[i]);
                     Serial.print(print_buffer);
                 }
+
+                Serial.println();
+                settings2->unpack_setting_packet((uint8_t*)rxInt, rxValue.length());
             }
             else
             {
@@ -622,6 +629,7 @@ void BluetoothHandler::setSettings(Settings *data)
 
     // Init settings
     settings = data;
+    settings2 = data2;
 
     // Set firmware string
     String firmwareVersion = (String)FIRMWARE_VERSION;

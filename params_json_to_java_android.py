@@ -4,6 +4,14 @@ import jinja2
 
 
 template = """
+//////------------------------------------
+//////------------------------------------
+//////------------------------------------
+////// GENERATED FILE - DO NOT EDIT MANUALLY
+//////------------------------------------
+//////------------------------------------
+//////------------------------------------
+
 package org.koxx.smartcntrl.settings;
 
 import android.content.Context;
@@ -93,7 +101,7 @@ public class SmartElecSettings2 {
                         {%- set java_display_type = "Boolean" %}
                         {%- set java_default = "true" if item.default else "false" %}
                         {%- set java_end_comparator = " ? 1 : 0" %}
-                    {%- elif item.smartphone_display_type | lower == "slider" %}
+                    {%- elif item.smartphone_display_type | lower == "seek_bar" %}
                         {%- set java_display_type = "Int" %}
                         {%- set java_default = item.default %}
                     {%- elif item.smartphone_display_type | lower == "list" %}
@@ -104,31 +112,56 @@ public class SmartElecSettings2 {
                         {%- set java_default = item.default %}
                     {%- endif %}
 
-                    {%- if item.type | lower == "uint8_t" %}
-            dos.writeByte({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )) {{ java_end_comparator }});
-                    {%- elif item.type | lower == "int8_t" %}
-            dos.writeByte({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )) {{ java_end_comparator }});
-                    {%- elif item.type | lower == "uint16_t" %}
-            dos.writeShort({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )));
-                    {%- elif item.type | lower == "int16_t" %}
-            dos.writeShort({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )));
-                    {%- elif item.type | lower == "uint32_t" %}
-            dos.writeInt({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )));
-                    {%- elif item.type | lower == "int32_t" %}
-            dos.writeInt({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )));
+            Object sourceData = (EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} ));
+            
+                    {%- if item.smartphone_display_type | lower == "list" %}
+            sourceData = listToValue(ctx, (String) sourceData, {{ var_name }}_LIST);
+                    {%- endif %}
+
+            if (sourceData instanceof Boolean) {
+                sourceData = new Integer((Boolean)sourceData ? 1 : 0);
+            }
+
+            Timber.e("sourceData = " + sourceData);
+
+                    {%- if 'int8' in item.type %}
+            if (sourceData instanceof Integer) {
+                dos.writeByte((Integer)sourceData);
+            }
+            if (sourceData instanceof String) {
+                dos.writeByte(Integer.parseInt((String)sourceData));
+            }
+                    {%- elif 'int16' in item.type %}
+            if (sourceData instanceof Integer) {
+                dos.writeShort((Integer)sourceData);
+            }
+            if (sourceData instanceof String) {
+                dos.writeShort(Integer.parseInt((String)sourceData));
+            }
+
+                    {%- elif 'int32' in item.type %}
+            if (sourceData instanceof Integer) {
+                dos.writeInt((Integer)sourceData);
+            }
+            if (sourceData instanceof String) {
+                dos.writeInt(Integer.parseInt((String)sourceData));
+            }
+
                     {%- elif item.type | lower == "float" %}
             dos.writeFloat((Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }}).replace(",", "."))));
+
                     {%- elif item.type | lower == "string" %}
             String value = EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }});
             int length = 1;
             if (value.length() > 16)
-                length = 15;
+                length = 16;
             else
                 length = value.length();
             dos.writeBytes(value.substring(0, length));
                     {%- else %}
             error
                     {%- endif %}
+
             dos.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -198,7 +231,7 @@ public class SmartElecSettings2 {
             
                 {%- set list1 = item.list_strings.split('\n')  %}
                 {%- set list_default = list1[item.default] | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") | title %}
-                new ListSettingsObject.Builder({{ var_name }}, {{ var_name }}, {{ var_name }}_LIST_{{ list_default }}, {{ var_name | title }}_LIST , "save")
+                new ListSettingsObject.Builder({{ var_name }}, {{ var_name }}, {{ var_name }}_LIST_{{ list_default }}, {{ var_name | title }}_LIST_AL , "save")
                         .setUseValueAsSummary()
                         .setNegativeBtnText("cancel")
                         .build(),
@@ -316,7 +349,7 @@ public class SmartElecSettings2 {
     }
 
 
-    public static int listToValue_(Context ctx, String value, String[] list) {
+    public static int listToValue(Context ctx, String value, String[] list) {
         int intValue = 0;
         String valueStr = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(value, "");
 
@@ -342,7 +375,7 @@ env.filters['regex_replace'] = regex_replace
 tmpl = env.from_string(template)
 
 # load json from file
-jsonConfigName = "params_list.json"
+jsonConfigName = "params.json"
 print ("jsonConfigName: " + jsonConfigName)
 with open(jsonConfigName) as json_file:
     json_data = json.load(json_file)

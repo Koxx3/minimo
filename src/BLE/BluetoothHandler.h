@@ -10,6 +10,7 @@
 #include <NimBLEUtils.h>
 //#include <NimBLE2902.h>
 #include "Settings.h"
+#include "Settings2.h"
 #include "SharedData.h"
 #include "prefs_storage.h"
 
@@ -25,7 +26,7 @@ class BluetoothHandler
 {
 public:
     BluetoothHandler();
-    static void setSettings(Settings *);
+    static void setSettings(Settings *, Settings2 *);
     static void setSharedData(SharedData *);
     static void deinit();
     static void bleOnScanResults(BLEScanResults);
@@ -73,6 +74,7 @@ public:
 
     static SharedData *shrd;
     static Settings *settings;
+    static Settings2 *settings2;
 };
 
 #endif

@@ -1,5 +1,5 @@
 #%%
-file = 'parameters.xls'
+file = 'paramss.xls'
 import xlrd
 from itertools import chain
 from collections import OrderedDict
@@ -69,7 +69,7 @@ data_list = {'parameters': param_classes_sub_list} # Added line
 j = json.dumps(data_list, indent=2)
 
 # Write to file
-with open('params_list.json', 'w') as f:
+with open('params.json', 'w') as f:
     f.write(j)
     print (j)
 

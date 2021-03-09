@@ -140,6 +140,7 @@ MedianFilter throttleFilter(10 /* 20 */, 900);
 Buttons btns;
 
 Settings settings;
+Settings2 settings2;
 BluetoothHandler blh;
 preferences prefs;
 
@@ -459,6 +460,8 @@ void setup()
   prefs.setSharedData(&shrd);
   prefs.restore();
 
+  settings2.restore();
+
   Serial.println("   settings ...");
   bool settingsStatusOk = prefs.restoreSettings();
   if (!settingsStatusOk)
@@ -471,7 +474,7 @@ void setup()
   initSharedDataWithSettings();
 
   Serial.println("   BLE ...");
-  blh.setSettings(&settings);
+  blh.setSettings(&settings, &settings2);
   blh.setSharedData(&shrd);
 
   setupVoltage();
