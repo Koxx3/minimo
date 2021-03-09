@@ -1,4 +1,16 @@
 
+//////------------------------------------
+//////------------------------------------
+//////------------------------------------
+////// GENERATED FILE - DO NOT EDIT MANUALLY
+//////------------------------------------
+//////------------------------------------
+//////------------------------------------
+
+////// Manage settings exchanged in BLE and stored in EEPOM
+
+/*
+
 float Wheel_size = 8.5;
 int Motor_number_of_magents_pairs=15;
 float Battery_minimum_voltage =42.0;
@@ -46,14 +58,86 @@ MENU(displaySettings,"  Display",doNothing,noEvent,noStyle //
   ,EXIT("< Back") //
 );
 
+
+*/
+
+
+
+
+    
+    
+MENU(Escooter_characteristics,"  Escooter characteristics",doNothing,noEvent,noStyle //
+  ,altFIELD(decPlaces<1>::menuField, wheel_size, "  Wheel size","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
+  ,FIELD(number_of_poles_pairs,"  Number of poles pairs","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,altFIELD(decPlaces<1>::menuField, battery_minimum_voltage, "  Battery minimum voltage","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
+  ,altFIELD(decPlaces<1>::menuField, battery_maximum_voltage, "  Battery maximum voltage","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
+  ,FIELD(battery_maximum_distance,"  Battery maximum distance","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+
+);
+    
+MENU(Smartphone_display,"  Smartphone display",doNothing,noEvent,noStyle //
+  ,FIELD(speed_adjustment,"  Speed adjustment","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(display_gps_speed_instead_of_escooter_speed,"  Display GPS speed instead of escooter speed","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(aux_relay_name,"  Aux_relay_name","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+
+);
+    
+MENU(SmartDisplay,"  SmartDisplay",doNothing,noEvent,noStyle //
+  ,FIELD(default_mode_at_startup,"  Default mode at startup","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(default_eco_mode_at_startup,"  Default eco mode at startup","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(default_acceleration,"  Default acceleration","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(default_electric_brake_at_startup,"  Default electric brake at startup","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(pas_enabled,"  PAS enabled","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(abs_enabled,"  Abs enabled","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(display_brightness,"  Display brightness","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(temperature_warning,"  Temperature warning","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(humidity_warning,"  Humidity warning","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+
+);
+    
+MENU(General,"  General",doNothing,noEvent,noStyle //
+  ,FIELD(speed_limiter_at_startup,"  Speed limiter at startup","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(speed_limiter_max_speed_in_percent_of_max_speed,"  Speed limiter max speed (in percent of max speed)","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(bluetooth_lock_mode,"  Bluetooth lock mode","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(pin_code_use_6_digits_only,"  PIN code (use 6 digits only)","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(beacon_range,"  Beacon range","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(original_display_speed_adjustment,"  Original display speed adjustment","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+
+);
+    
+MENU(Electric_brake,"  Electric brake",doNothing,noEvent,noStyle //
+  ,FIELD(electric_brake_progressive_mode,"  Electric brake progressive mode","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(electric_brake_type,"  Electric_brake_type","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(electric_brake_min_value,"  Electric brake min value","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(electric_brake_max_value,"  Electric brake max value","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(electric_brake_time_between_mode_shift,"  Electric brake time between mode shift","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(electric_brake_disabled_on_high_battery_voltage,"  Electric brake disabled on high battery voltage","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(electric_brake_disabled_percent_limit,"  Electric brake disabled percent limit","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+
+);
+    
+MENU(Throttle,"  Throttle",doNothing,noEvent,noStyle //
+  ,FIELD(throttle_regeneration,"  Throttle regeneration","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(throttle_input_min_voltage_in_millivolts,"  Throttle input min voltage (in millivolts)","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(throttle_input_max_voltage_in_millivolts,"  Throttle input max voltage (in millivolts)","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(throttle_output_min_voltage_in_millivolts,"  Throttle output min voltage (in millivolts)","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(throttle_output_max_voltage_in_millivolts,"  Throttle output max voltage (in millivolts)","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(throttle_output_curve,"  Throttle output curve","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+
+);
+    
+MENU(Escooter_buttons,"  Escooter buttons",doNothing,noEvent,noStyle //
+  ,FIELD(button_1_short_press_action,"  Button 1 short press action","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(button_1_long_press_action,"  Button 1 long press action","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(button_2_short_press_action,"  Button 2 short press action","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,FIELD(button_long_press_duration,"  Button long press duration","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+
+);
+
 MENU(mainMenu,"  Main menu",doNothing,noEvent,wrapStyle //
   ,SUBMENU(moreInfos) //
-  ,SUBMENU(escooterCharac) //
-  ,SUBMENU(escooterSettings) //
-  ,SUBMENU(escooterAccessories) //
-  ,SUBMENU(electricBrake) //
-  ,SUBMENU(electricThrottle) //
-  ,SUBMENU(displaySettings) //
+  
+
   ,SUBMENU(bluetooth) //
   ,SUBMENU(firmware) //
   ,OP("< Discard & exit", discard_exit,enterEvent) //

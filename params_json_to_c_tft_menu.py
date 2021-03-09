@@ -13,45 +13,95 @@ template_h = """
 
 ////// Manage settings exchanged in BLE and stored in EEPOM
 
+/*
+
+float Wheel_size = 8.5;
+int Motor_number_of_magents_pairs=15;
+float Battery_minimum_voltage =42.0;
+float Battery_maximum_voltage=59.0;
+int Battery_distance=40;
+int thottleRegen=0;
+
+TOGGLE(thottleRegen,setThottleRegen,"  Throttle signal regeneration: ",doNothing,noEvent,noStyle //
+  ,VALUE("On",1,doNothing,noEvent) //
+  ,VALUE("Off",0,doNothing,noEvent) //
+);
+
+MENU(escooterCharac,"  E-scooter characteristics",doNothing,noEvent,noStyle //
+  ,altFIELD(decPlaces<1>::menuField, Wheel_size, "  Wheel size (inches)","",8.5,13.0,0.5,0.1,doNothing,anyEvent,wrapStyle) //
+  ,FIELD(Motor_number_of_magents_pairs,"  Motor number of magents pairs","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+  ,altFIELD(decPlaces<1>::menuField, Battery_minimum_voltage,"  Battery minimum voltage (volts)","",30, 100,1,0.1,doNothing,noEvent,wrapStyle) //
+  ,altFIELD(decPlaces<1>::menuField, Battery_maximum_voltage,"  Battery maximum voltage (volts)","",30, 100,1,0.1,doNothing,noEvent,wrapStyle) //
+  ,FIELD(Battery_distance,"  Battery distance (km)","",30, 100,5,1,doNothing,noEvent,wrapStyle) //
+  ,SUBMENU(setThottleRegen) //
+  ,EXIT("< Back")
+);
+
+MENU(escooterSettings,"  E-scooter settings",doNothing,noEvent,noStyle //
+  ,altFIELD(decPlaces<1>::menuField, dummy, "  Dummy","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
+  ,EXIT("< Back") //
+);
+
+MENU(escooterAccessories,"  E-scooter accessories",doNothing,noEvent,noStyle //
+  ,altFIELD(decPlaces<1>::menuField, dummy, "  Dummy","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
+  ,EXIT("< Back") //
+);
+
+MENU(electricBrake,"  Electric brake",doNothing,noEvent,noStyle //
+  ,altFIELD(decPlaces<1>::menuField, dummy, "  Dummy","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
+  ,EXIT("< Back") //
+);
+
+MENU(electricThrottle,"  Electric throttle",doNothing,noEvent,noStyle // 
+  ,altFIELD(decPlaces<1>::menuField, dummy, "  Dummy","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
+  ,EXIT("< Back") //
+);
+
+MENU(displaySettings,"  Display",doNothing,noEvent,noStyle //
+  ,altFIELD(decPlaces<1>::menuField, dummy, "  Dummy","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
+  ,EXIT("< Back") //
+);
+
+
+*/
+
 {% for key, value in parameters.items() %}
+
+
     {% for key2, value2 in value.items() %}
+    
+MENU({{ key2 | replace(" ", "_")}},"  {{ key2 }}",doNothing,noEvent,noStyle //
+
         {%- for  item in value2.settings %}
-        {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
-        
-        {%- if item.type | lower == "string" %}
-            {% set var_type = "String" %}
-        {%- else %}
-            {% set var_type = item.type %}
-        {%- endif %}
-    /*-------------------------------------------------------*/
-
-    #define SETTINGS_{{ var_name | upper }}_ID {{ item.id }}
-    #define SETTINGS_{{ var_name | upper }}_ID_STR "{{ item.id }}"
-    #define SETTINGS_{{ var_name | upper }}_NAME "{{ item.display_name }}"
-
-    {{ var_type }} {{ var_name }};
-
-        {%- if item.smartphone_display_type | lower == "list" %}
-    typedef enum LIST_{{ item.display_name | replace(" ", "_") |title}} {
-            {%- set list1 = item.list_strings.split('\n') %}
-            {%- for item4 in list1 %}
-        LIST_{{ var_name |title}}_{{ item4 | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") |title}},
-            {%- endfor %} 
-    } t{{ var_name |title}};
-        {%- else %}
-        {%- endif %}
-
-    void set_{{ var_name }} ({{ var_type }} value);
-    {{ var_type }} get_{{ var_name }}();
-    void display_{{ var_name }}();
+            {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
+            
+            {%- if item.type | lower == "float" %}
+  ,altFIELD(decPlaces<1>::menuField, {{ var_name }}, "  {{ item.display_name }}","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
+            {%- elif 'int' in item.type %}
+  ,FIELD({{ var_name }},"  {{ item.display_name }}","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+            {%- else %}
+            {%- endif %}
 
         {%- endfor %}
+
+);        
+
+
+
     {%- endfor %}
+
 {%- endfor %}
 
-};
+MENU(mainMenu,"  Main menu",doNothing,noEvent,wrapStyle //
+  ,SUBMENU(moreInfos) //
+  
 
-#endif
+  ,SUBMENU(bluetooth) //
+  ,SUBMENU(firmware) //
+  ,OP("< Discard & exit", discard_exit,enterEvent) //
+  ,OP("< Save & exit", save_exit,enterEvent) //
+);
+
 """
 
 
