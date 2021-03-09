@@ -65,6 +65,12 @@ MENU(displaySettings,"  Display",doNothing,noEvent,noStyle //
 
 */
 
+int test = 0;
+TOGGLE(test,setTest,"  Test: ",doNothing,noEvent,noStyle //
+  ,VALUE("On",1,doNothing,noEvent) //
+  ,VALUE("Off",0,doNothing,noEvent) //
+);
+
 
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
@@ -72,6 +78,21 @@ MENU(displaySettings,"  Display",doNothing,noEvent,noStyle //
             {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
             {%- if item.smartdisplay_tft_menu_visible %}
     {{ item.type }} {{ var_name }};
+    
+                {%- if item.smartphone_display_type == "checkbox" %}
+    TOGGLE({{ var_name }},{{ var_name }}_LIST,"  {{ item.display_name }} : ",doNothing,noEvent,noStyle //
+        ,VALUE("Off",0,doNothing,noEvent) //
+        ,VALUE("On",1,doNothing,noEvent) //
+    );
+                {%- endif %}
+            {%- if item.smartphone_display_type | lower == "list" %}
+                {%- set list1 = item.list_strings.split('\\n') %}
+    TOGGLE({{ var_name }},{{ var_name }}_LIST,"  {{ item.display_name }} : ",doNothing,noEvent,noStyle //
+                {%- for item4 in list1 %}
+        ,VALUE("{{ item4 }}", {{ loop.index - 1 }} ,doNothing,noEvent) //
+                {%- endfor %}
+    );
+                {%- endif %}
             {%- endif %}
         {%- endfor %}
     {%- endfor %}
@@ -91,9 +112,12 @@ MENU(SUBMENU_{{ key2 | replace(" ", "_")}},"  {{ key2 }}",doNothing,noEvent,noSt
 
             {%- for  item in value2.settings %}
                 {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
-                
                 {%- if item.smartdisplay_tft_menu_visible %}
-                    {%- if item.type | lower == "float" %}
+                    {%- if item.smartphone_display_type == "checkbox" %}
+    ,SUBMENU({{ var_name }}_LIST) //
+                    {%- elif item.smartphone_display_type | lower == "list" %}
+    ,SUBMENU({{ var_name }}_LIST) //
+                    {%- elif item.type | lower == "float" %}
     ,altFIELD(decPlaces<1>::menuField, {{ var_name }}, "  {{ item.display_name }}","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
                     {%- elif 'int' in item.type %}
     ,FIELD({{ var_name }},"  {{ item.display_name }}","",5,20,1,0,doNothing,noEvent,wrapStyle) //
@@ -108,7 +132,7 @@ MENU(SUBMENU_{{ key2 | replace(" ", "_")}},"  {{ key2 }}",doNothing,noEvent,noSt
 {%- endfor %}
 
 MENU(mainMenu,"  Main menu",doNothing,noEvent,wrapStyle //
-    ,SUBMENU(SUBMENU_MANUAL_moreInfos) //
+    ,SUBMENU(SUBMENU_MANUAL_status) //
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
         {%- set vars = {'foo': False} %}
@@ -122,8 +146,7 @@ MENU(mainMenu,"  Main menu",doNothing,noEvent,wrapStyle //
         {%- endif %}
     {%- endfor %}
 {%- endfor %}
-    ,SUBMENU(SUBMENU_MANUAL_bluetooth) //
-    ,SUBMENU(SUBMENU_MANUAL_firmware) //
+    ,SUBMENU(SUBMENU_MANUAL_more) //
     ,OP("< Discard & exit", discard_exit,enterEvent) //
     ,OP("< Save & exit", save_exit,enterEvent) //
 );

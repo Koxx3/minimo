@@ -125,11 +125,11 @@ void settings_menu_setup()
 
   tft.setTextSize(1);
   tft.setTextDatum(BL_DATUM);
-  tft.setFreeFont(FONT_FORCED_SQUARE14pt7b);
+  tft.setFreeFont(FONT_FORCED_SQUARE10pt7b);
 
   tft.fillScreen(Black);
 
-  eSpiOut.fontMarginY = 18;
+  eSpiOut.fontMarginY = 17;
 
 }
 

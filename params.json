@@ -326,7 +326,7 @@
         },
         {
           "id": 7,
-          "display_name": "Speed limiter max speed (in percent of max speed)",
+          "display_name": "Speed limiter max speed",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -433,7 +433,7 @@
       "settings": [
         {
           "id": 25,
-          "display_name": "Electric brake progressive mode",
+          "display_name": "Progressive mode",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -456,7 +456,7 @@
           "type": "uint8_t",
           "smartphone_display_type": "list",
           "valid_config": ".*",
-          "list_strings": "From Controller\nFrom Smart - Digital brake lever\nFrom Smart - Analog brake lever\nFrom Smart - Digital brake lever + Throttle (Experimental)",
+          "list_strings": "Controller\nSmart - Digital brake lever\nSmart - Analog brake lever\nSmart - Digital brake + throttle (exp)",
           "min": 0,
           "max": 3,
           "default": 0,
@@ -664,13 +664,13 @@
       "settings": [
         {
           "id": 38,
-          "display_name": "Button 1 short press action",
+          "display_name": "B1 short press action",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
           "smartphone_display_type": "list",
           "valid_config": ".*",
-          "list_strings": "None\nStartup speed limitation ON/OFF\nAux ON/OFF\nMode switch 1/2/3\nMode switch 2/3\nEco switch NONE/MED/MAX\nEco switch NONE/MED",
+          "list_strings": "None\nStartup speed limi\nAux ON/OFF\nMode switch 1/2/3\nMode switch 2/3\nEco switch NONE/MED/MAX\nEco switch NONE/MED",
           "min": 0,
           "max": 6,
           "default": 0,
@@ -681,13 +681,13 @@
         },
         {
           "id": 39,
-          "display_name": "Button 1 long press action",
+          "display_name": "B1 long press action",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
           "smartphone_display_type": "list",
           "valid_config": ".*",
-          "list_strings": "None\nStartup speed limitation ON/OFF\nAux ON/OFF\nMode switch 1/2/3\nMode switch 2/3\nEco switch NONE/MED/MAX\nEco switch NONE/MED\nAnti-theft manual lock ON\nNitro boost continuous",
+          "list_strings": "None\nStartup speed limitation\nAux ON/OFF\nMode switch 1/2/3\nMode switch 2/3\nEco switch NONE/MED/MAX\nEco switch NONE/MED\nAnti-theft manual lock ON\nNitro boost continuous",
           "min": 0,
           "max": 8,
           "default": 0,
@@ -698,7 +698,7 @@
         },
         {
           "id": 40,
-          "display_name": "Button 2 short press action",
+          "display_name": "B2 short press action",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",

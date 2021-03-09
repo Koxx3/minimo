@@ -59,8 +59,8 @@ void Settings2::restore() {
     Serial.println("  >> humidity_warning = " + (String)humidity_warning);
     speed_limiter_at_startup = prefs.getInt(SETTINGS_SPEED_LIMITER_AT_STARTUP_ID_STR, 0);
     Serial.println("  >> speed_limiter_at_startup = " + (String)speed_limiter_at_startup);
-    speed_limiter_max_speed_in_percent_of_max_speed = prefs.getInt(SETTINGS_SPEED_LIMITER_MAX_SPEED_IN_PERCENT_OF_MAX_SPEED_ID_STR, 37);
-    Serial.println("  >> speed_limiter_max_speed_in_percent_of_max_speed = " + (String)speed_limiter_max_speed_in_percent_of_max_speed);
+    speed_limiter_max_speed = prefs.getInt(SETTINGS_SPEED_LIMITER_MAX_SPEED_ID_STR, 37);
+    Serial.println("  >> speed_limiter_max_speed = " + (String)speed_limiter_max_speed);
     bluetooth_lock_mode = prefs.getInt(SETTINGS_BLUETOOTH_LOCK_MODE_ID_STR, 0);
     Serial.println("  >> bluetooth_lock_mode = " + (String)bluetooth_lock_mode);
     pin_code_use_6_digits_only = prefs.getInt(SETTINGS_PIN_CODE_USE_6_DIGITS_ONLY_ID_STR, 147258);
@@ -71,8 +71,8 @@ void Settings2::restore() {
     Serial.println("  >> beacon_range = " + (String)beacon_range);
     original_display_speed_adjustment = prefs.getInt(SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_ID_STR, 0);
     Serial.println("  >> original_display_speed_adjustment = " + (String)original_display_speed_adjustment);
-    electric_brake_progressive_mode = prefs.getInt(SETTINGS_ELECTRIC_BRAKE_PROGRESSIVE_MODE_ID_STR, 0);
-    Serial.println("  >> electric_brake_progressive_mode = " + (String)electric_brake_progressive_mode);
+    progressive_mode = prefs.getInt(SETTINGS_PROGRESSIVE_MODE_ID_STR, 0);
+    Serial.println("  >> progressive_mode = " + (String)progressive_mode);
     type = prefs.getInt(SETTINGS_TYPE_ID_STR, 0);
     Serial.println("  >> type = " + (String)type);
     min_value = prefs.getInt(SETTINGS_MIN_VALUE_ID_STR, 1);
@@ -196,9 +196,9 @@ void Settings2::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         set_speed_limiter_at_startup(buffer_get_uint8(packet, &ind));
         display_speed_limiter_at_startup();
         break;
-    case SETTINGS_SPEED_LIMITER_MAX_SPEED_IN_PERCENT_OF_MAX_SPEED_ID :
-        set_speed_limiter_max_speed_in_percent_of_max_speed(buffer_get_uint8(packet, &ind));
-        display_speed_limiter_max_speed_in_percent_of_max_speed();
+    case SETTINGS_SPEED_LIMITER_MAX_SPEED_ID :
+        set_speed_limiter_max_speed(buffer_get_uint8(packet, &ind));
+        display_speed_limiter_max_speed();
         break;
     case SETTINGS_BLUETOOTH_LOCK_MODE_ID :
         set_bluetooth_lock_mode(buffer_get_uint8(packet, &ind));
@@ -227,9 +227,9 @@ void Settings2::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         set_original_display_speed_adjustment(buffer_get_int8(packet, &ind));
         display_original_display_speed_adjustment();
         break;
-    case SETTINGS_ELECTRIC_BRAKE_PROGRESSIVE_MODE_ID :
-        set_electric_brake_progressive_mode(buffer_get_uint8(packet, &ind));
-        display_electric_brake_progressive_mode();
+    case SETTINGS_PROGRESSIVE_MODE_ID :
+        set_progressive_mode(buffer_get_uint8(packet, &ind));
+        display_progressive_mode();
         break;
     case SETTINGS_TYPE_ID :
         set_type(buffer_get_uint8(packet, &ind));
@@ -690,21 +690,21 @@ void Settings2::display_speed_limiter_at_startup() {
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_speed_limiter_max_speed_in_percent_of_max_speed(uint8_t value) {
+void Settings2::set_speed_limiter_max_speed(uint8_t value) {
 
-    speed_limiter_max_speed_in_percent_of_max_speed = value;
+    speed_limiter_max_speed = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_SPEED_LIMITER_MAX_SPEED_IN_PERCENT_OF_MAX_SPEED_ID_STR, speed_limiter_max_speed_in_percent_of_max_speed);
+    prefs.putInt(SETTINGS_SPEED_LIMITER_MAX_SPEED_ID_STR, speed_limiter_max_speed);
     prefs.end();
 }
 
-uint8_t Settings2::get_speed_limiter_max_speed_in_percent_of_max_speed() {
-    return speed_limiter_max_speed_in_percent_of_max_speed ;
+uint8_t Settings2::get_speed_limiter_max_speed() {
+    return speed_limiter_max_speed ;
 }
 
-void Settings2::display_speed_limiter_max_speed_in_percent_of_max_speed() {
-    Serial.println("  speed_limiter_max_speed_in_percent_of_max_speed = " + (String) speed_limiter_max_speed_in_percent_of_max_speed);
+void Settings2::display_speed_limiter_max_speed() {
+    Serial.println("  speed_limiter_max_speed = " + (String) speed_limiter_max_speed);
 }
                 
 
@@ -810,21 +810,21 @@ void Settings2::display_original_display_speed_adjustment() {
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_electric_brake_progressive_mode(uint8_t value) {
+void Settings2::set_progressive_mode(uint8_t value) {
 
-    electric_brake_progressive_mode = value;
+    progressive_mode = value;
     
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_ELECTRIC_BRAKE_PROGRESSIVE_MODE_ID_STR, electric_brake_progressive_mode);
+    prefs.putInt(SETTINGS_PROGRESSIVE_MODE_ID_STR, progressive_mode);
     prefs.end();
 }
 
-uint8_t Settings2::get_electric_brake_progressive_mode() {
-    return electric_brake_progressive_mode ;
+uint8_t Settings2::get_progressive_mode() {
+    return progressive_mode ;
 }
 
-void Settings2::display_electric_brake_progressive_mode() {
-    Serial.println("  electric_brake_progressive_mode = " + (String) electric_brake_progressive_mode);
+void Settings2::display_progressive_mode() {
+    Serial.println("  progressive_mode = " + (String) progressive_mode);
 }
                 
 

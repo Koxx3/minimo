@@ -270,15 +270,15 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_SPEED_LIMITER_MAX_SPEED_IN_PERCENT_OF_MAX_SPEED_ID 7
-    #define SETTINGS_SPEED_LIMITER_MAX_SPEED_IN_PERCENT_OF_MAX_SPEED_ID_STR "7"
-    #define SETTINGS_SPEED_LIMITER_MAX_SPEED_IN_PERCENT_OF_MAX_SPEED_NAME "Speed limiter max speed (in percent of max speed)"
+    #define SETTINGS_SPEED_LIMITER_MAX_SPEED_ID 7
+    #define SETTINGS_SPEED_LIMITER_MAX_SPEED_ID_STR "7"
+    #define SETTINGS_SPEED_LIMITER_MAX_SPEED_NAME "Speed limiter max speed"
 
-    uint8_t speed_limiter_max_speed_in_percent_of_max_speed;
+    uint8_t speed_limiter_max_speed;
 
-    void set_speed_limiter_max_speed_in_percent_of_max_speed (uint8_t value);
-    uint8_t get_speed_limiter_max_speed_in_percent_of_max_speed();
-    void display_speed_limiter_max_speed_in_percent_of_max_speed();
+    void set_speed_limiter_max_speed (uint8_t value);
+    uint8_t get_speed_limiter_max_speed();
+    void display_speed_limiter_max_speed();
             
     /*-------------------------------------------------------*/
 
@@ -348,15 +348,15 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_ELECTRIC_BRAKE_PROGRESSIVE_MODE_ID 25
-    #define SETTINGS_ELECTRIC_BRAKE_PROGRESSIVE_MODE_ID_STR "25"
-    #define SETTINGS_ELECTRIC_BRAKE_PROGRESSIVE_MODE_NAME "Electric brake progressive mode"
+    #define SETTINGS_PROGRESSIVE_MODE_ID 25
+    #define SETTINGS_PROGRESSIVE_MODE_ID_STR "25"
+    #define SETTINGS_PROGRESSIVE_MODE_NAME "Progressive mode"
 
-    uint8_t electric_brake_progressive_mode;
+    uint8_t progressive_mode;
 
-    void set_electric_brake_progressive_mode (uint8_t value);
-    uint8_t get_electric_brake_progressive_mode();
-    void display_electric_brake_progressive_mode();
+    void set_progressive_mode (uint8_t value);
+    uint8_t get_progressive_mode();
+    void display_progressive_mode();
             
     /*-------------------------------------------------------*/
 
