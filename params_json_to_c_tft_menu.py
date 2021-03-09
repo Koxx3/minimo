@@ -76,15 +76,15 @@ with open(jsonConfigName) as json_file:
     print("================================================")
 
     # merge template with data
-    result_cpp = tmpl_cpp.render(parameters=json_data)
+    result_h = tmpl_h.render(parameters=json_data)
 
     # get template name, output file name
     outputFileName = ".\\src\\TFT\\tft_settings_menu_specs_gen.h"
     print("outputFileName H : " + outputFileName)
-    print (result_cpp)
+    print (result_h)
 
     # write output to file
     outFile = open(outputFileName,"w")
-    outFile.write(result_cpp)
+    outFile.write(result_h)
     outFile.close()
     

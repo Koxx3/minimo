@@ -1187,9 +1187,3 @@ void Settings2::display_wifi_password() {
     Serial.println("  wifi_password = " + (String) wifi_password);
 }
 
-
-env = jinja2.Environment()
-env.filters['regex_replace'] = regex_replace
-
-tmpl_cpp = env.from_string(template_cpp)
-tmpl_h = env.from_string(template_h)
