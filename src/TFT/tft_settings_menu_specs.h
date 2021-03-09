@@ -54,7 +54,7 @@ result resetBlePinCode() {
 
 double dummy = 0.0;
 
-MENU(moreInfos,"  More informations",doNothing,noEvent,noStyle
+MENU(SUBMENU_MANUAL_moreInfos,"  More informations",doNothing,noEvent,noStyle
   ,altFIELD(decPlaces<1>::menuField, dummy, "  ODO","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle)
   ,altFIELD(decPlaces<1>::menuField, dummy, "  Temperature","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle)
   ,altFIELD(decPlaces<1>::menuField, dummy, "  Humidity","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle)
@@ -62,14 +62,14 @@ MENU(moreInfos,"  More informations",doNothing,noEvent,noStyle
   ,EXIT("< Back")
 );
 
-MENU(bluetooth,"  Bluetooth",doNothing,noEvent,noStyle
+MENU(SUBMENU_MANUAL_bluetooth,"  Bluetooth",doNothing,noEvent,noStyle
   ,altFIELD(decPlaces<1>::menuField, dummy, "  Beacon RSSI","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle)
   ,altFIELD(decPlaces<1>::menuField, dummy, "  Beacon MAC address","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle)
   ,OP("  Reset PIN code to 147258",resetBlePinCode,enterEvent)
   ,EXIT("< Back")
 );
 
-MENU(firmware,"  Firmware",doNothing,noEvent,noStyle
+MENU(SUBMENU_MANUAL_firmware,"  Firmware",doNothing,noEvent,noStyle
   ,OP("  Type", doNothing, noEvent)
   ,OP("  Version", doNothing, noEvent)
   ,OP("  Configure wifi to prepare OTA", doNothing, noEvent)

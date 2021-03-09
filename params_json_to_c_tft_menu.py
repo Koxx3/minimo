@@ -65,41 +65,68 @@ MENU(displaySettings,"  Display",doNothing,noEvent,noStyle //
 
 */
 
+
 {% for key, value in parameters.items() %}
-
-
     {% for key2, value2 in value.items() %}
-    
-MENU({{ key2 | replace(" ", "_")}},"  {{ key2 }}",doNothing,noEvent,noStyle //
-
         {%- for  item in value2.settings %}
             {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
-            
-            {%- if item.type | lower == "float" %}
-  ,altFIELD(decPlaces<1>::menuField, {{ var_name }}, "  {{ item.display_name }}","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
-            {%- elif 'int' in item.type %}
-  ,FIELD({{ var_name }},"  {{ item.display_name }}","",5,20,1,0,doNothing,noEvent,wrapStyle) //
-            {%- else %}
+            {%- if item.smartdisplay_tft_menu_visible %}
+    {{ item.type }} {{ var_name }};
             {%- endif %}
+        {%- endfor %}
+    {%- endfor %}
+{%- endfor %}
 
+
+{% for key, value in parameters.items() %}
+    {% for key2, value2 in value.items() %}
+        {% set vars = {'foo': False} %}
+        {%- for  item in value2.settings %}
+            {%- if item.smartdisplay_tft_menu_visible | int == 1 %}
+                {%- if vars.update({'foo': True}) %} {% endif %}
+            {%- endif %}
         {%- endfor %}
 
+            {%- if vars.foo == True %}
+MENU(SUBMENU_{{ key2 | replace(" ", "_")}},"  {{ key2 }}",doNothing,noEvent,noStyle //
+
+            {%- for  item in value2.settings %}
+                {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
+                
+                {%- if item.smartdisplay_tft_menu_visible %}
+                    {%- if item.type | lower == "float" %}
+    ,altFIELD(decPlaces<1>::menuField, {{ var_name }}, "  {{ item.display_name }}","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
+                    {%- elif 'int' in item.type %}
+    ,FIELD({{ var_name }},"  {{ item.display_name }}","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+                    {%- else %}
+                    {%- endif %}
+                {%- endif %}
+            {%- endfor %}
 );        
-
-
-
+        {%- endif %}
     {%- endfor %}
 
 {%- endfor %}
 
 MENU(mainMenu,"  Main menu",doNothing,noEvent,wrapStyle //
-  ,SUBMENU(moreInfos) //
-  
-
-  ,SUBMENU(bluetooth) //
-  ,SUBMENU(firmware) //
-  ,OP("< Discard & exit", discard_exit,enterEvent) //
-  ,OP("< Save & exit", save_exit,enterEvent) //
+    ,SUBMENU(SUBMENU_MANUAL_moreInfos) //
+{%- for key, value in parameters.items() %}
+    {%- for key2, value2 in value.items() %}
+        {%- set vars = {'foo': False} %}
+        {%- for  item in value2.settings %}
+            {%- if item.smartdisplay_tft_menu_visible | int == 1 %}
+                {%- if vars.update({'foo': True}) %} {% endif %}
+            {%- endif %}
+        {%- endfor %}
+            {%- if vars.foo == True %}
+    ,SUBMENU(SUBMENU_{{ key2 | replace(" ", "_")}}) //
+        {%- endif %}
+    {%- endfor %}
+{%- endfor %}
+    ,SUBMENU(SUBMENU_MANUAL_bluetooth) //
+    ,SUBMENU(SUBMENU_MANUAL_firmware) //
+    ,OP("< Discard & exit", discard_exit,enterEvent) //
+    ,OP("< Save & exit", save_exit,enterEvent) //
 );
 
 """
