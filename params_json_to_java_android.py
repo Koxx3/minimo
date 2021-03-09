@@ -20,6 +20,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import timber.log.Timber;
 
 public class SmartElecSettings2 {
 
@@ -29,20 +32,132 @@ public class SmartElecSettings2 {
 
     {%- for key2, value2 in value.items() %}
 
+    /* ------------------------------------------------------------------------------------*/
+    /* ------------------------------------------------------------------------------------*/
+
     public static final String {{ key2 | replace(" ", "_") | title }} = "{{ key2 }}";
 
         {%- for  item in value2.settings %}
-            {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
-    public static final String {{ var_name | title }} = "{{ item.display_name }}";
+    /* ------------------------------------------------------------------------------------*/
+
+            {%- set var_name = item.display_name | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") | title  %}
+    public static final int {{ var_name | upper }}_ID = {{ item.id }};
+    public static final String {{ var_name  }} = "{{ item.display_name }}";
 
             {%- if item.smartphone_display_type | lower == "list" %}
                 {%- set list1 = item.list_strings.split('\\n') %}
                 {%- for item4 in list1 %}
-    public static final String {{ var_name |title}}_LIST_{{ item4 | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") |title}} = "{{ item4 }}";
+    public static final String {{ var_name |title }}_LIST_{{ item4 | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") |title}} = "{{ item4 }}";
                 {%- endfor %}
             {%- endif %}
 
-        {%- endfor %}
+            {%- if item.smartphone_display_type | lower == "list" %}
+    public static final String[] {{ var_name | title }}_LIST = {
+
+                {%- set list1 = item.list_strings.split('\\n') %}
+                {%- for item4 in list1 %}
+        {{ var_name |title }}_LIST_{{ item4 | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") |title}},
+                {%- endfor %}
+    };
+            {%- endif %}
+
+
+
+
+    static public ArrayList<byte[]> {{ var_name }}_to_byte_array(Context ctx) {
+
+        // First packet
+        ArrayList<byte[]> result = new ArrayList<byte[]>();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+        try {
+            dos.writeShort({{ var_name | upper }}_ID);
+            dos.writeShort(0);
+
+                    {%- if item.smartphone_display_type | lower == "edit_text_number_float" %}
+                        {%- set java_display_type = "String" %}
+                        {%- set java_default = '"' + item.default |string + '"' %}
+                    {%- elif item.smartphone_display_type | lower == "edit_text_number_integer" %}
+                        {%- set java_display_type = "String" %}
+                        {%- set java_default = '"' + item.default |string + '"' %}
+                    {%- elif item.smartphone_display_type | lower == "edit_text_number_integer_signed" %}
+                        {%- set java_display_type = "String" %}
+                        {%- set java_default = '"' + item.default |string + '"' %}
+                    {%- elif item.smartphone_display_type | lower == "edit_text_number_integer_signed" %}
+                        {%- set java_display_type = "String" %}
+                        {%- set java_default = '"' + item.default |string + '"' %}
+                    {%- elif item.smartphone_display_type | lower == "edit_text_string" %}
+                        {%- set java_display_type = "String" %}
+                        {%- set java_default = '"' + item.default |string + '"' %}
+                    {%- elif item.smartphone_display_type | lower == "checkbox" %}
+                        {%- set java_display_type = "Boolean" %}
+                        {%- set java_default = "true" if item.default else "false" %}
+                        {%- set java_end_comparator = " ? 1 : 0" %}
+                    {%- elif item.smartphone_display_type | lower == "slider" %}
+                        {%- set java_display_type = "Int" %}
+                        {%- set java_default = item.default %}
+                    {%- elif item.smartphone_display_type | lower == "list" %}
+                        {%- set java_display_type = "String" %}
+                        {%- set java_default = '"' + item.default |string + '"' %}
+                    {%- else %}
+                        {%- set java_display_type = "Int" %}
+                        {%- set java_default = item.default %}
+                    {%- endif %}
+
+                    {%- if item.type | lower == "uint8_t" %}
+            dos.writeByte({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )) {{ java_end_comparator }});
+                    {%- elif item.type | lower == "int8_t" %}
+            dos.writeByte({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )) {{ java_end_comparator }});
+                    {%- elif item.type | lower == "uint16_t" %}
+            dos.writeShort({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )));
+                    {%- elif item.type | lower == "int16_t" %}
+            dos.writeShort({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )));
+                    {%- elif item.type | lower == "uint32_t" %}
+            dos.writeInt({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )));
+                    {%- elif item.type | lower == "int32_t" %}
+            dos.writeInt({{ "Integer.parseInt" if java_display_type == "String" }}(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }} )));
+                    {%- elif item.type | lower == "float" %}
+            dos.writeFloat((Float.parseFloat(EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }}).replace(",", "."))));
+                    {%- elif item.type | lower == "string" %}
+            String value = EasySettings.retrieveSettingsSharedPrefs(ctx).get{{ java_display_type }}({{ var_name }}, {{ java_default }});
+            int length = 1;
+            if (value.length() > 16)
+                length = 15;
+            else
+                length = value.length();
+            dos.writeBytes(value.substring(0, length));
+                    {%- else %}
+            error
+                    {%- endif %}
+            dos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        result.add(bos.toByteArray());
+
+                    {%- if item.type | lower == "string" %}
+
+        // Second packet
+        String value = EasySettings.retrieveSettingsSharedPrefs(ctx).getString({{ var_name }}, "{{ item.default }}");
+        if (value.length() > 16) {
+            bos = new ByteArrayOutputStream();
+            dos = new DataOutputStream(bos);
+            try {
+                dos.writeShort({{ var_name | upper }}_ID);
+                dos.writeShort(1);
+                dos.writeBytes(EasySettings.retrieveSettingsSharedPrefs(ctx).getString({{ var_name }}, "{{ item.default }}" ).substring(16, value.length()));
+                dos.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            result.add(bos.toByteArray());
+        }
+                    {%- endif %}
+
+        return result;
+    }
+
+        {% endfor %}
 
     {%- endfor %}
 {% endfor %}
@@ -57,12 +172,8 @@ public class SmartElecSettings2 {
             {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
                 {%- if item.smartphone_display_type | lower == "list" %}
                 {%- set list1 = item.list_strings.split('\n')  %}
-
-        ArrayList<String> {{ item.display_name | replace(" ", "_") |title}}_LIST = new ArrayList<>();;
-                {%- for item4 in list1 %}
-                    {%- set var_elem_name = item4 | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
-        {{ item.display_name | replace(" ", "_") |title}}_LIST.add({{ item.display_name | replace(" ", "_") |title}}_LIST_{{ var_elem_name | replace(" ", "_") |title}} );
-                {%- endfor %}
+        ArrayList<String> {{ var_name |title}}_LIST_AL = new ArrayList<>();
+        {{ var_name |title}}_LIST_AL.addAll(Arrays.asList({{ var_name | title }}_LIST));
             {% endif %}
 
         {%- endfor %}
@@ -147,9 +258,6 @@ public class SmartElecSettings2 {
                         .setOnText("on")
                         .build(),
             {% endif %}
-            
-
-
         {%- endfor %}
 
                 new HeaderSettingsObject.Builder("")
@@ -164,6 +272,63 @@ public class SmartElecSettings2 {
         return settings;
     }
 
+    public static ArrayList<Integer> getAllSettingsIdList() {
+
+        ArrayList<Integer> result = new ArrayList<Integer>();
+
+{#- run 4 - settings list #}
+{%- for key, value in parameters.items() %}
+    {%- for key2, value2 in value.items() %}
+        {%- for  item in value2.settings %}
+            {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
+        result.add({{ var_name | upper }}_ID);
+        {%- endfor %}
+    {%- endfor %}
+{%- endfor %}
+        return result;
+    }
+    
+{#- run 5 - settings packer #}
+    static public ArrayList<byte[]> pack_setting_packet(Context ctx, Integer settingId) {
+        ArrayList<byte[]> result = null;
+        
+        switch(settingId) {
+{%- for key, value in parameters.items() %}
+    {%- for key2, value2 in value.items() %}
+        {%- for  item in value2.settings %}
+            {%- set var_name = item.display_name | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") | title %}
+        case {{ var_name | upper }}_ID :
+            result = {{ var_name }}_to_byte_array(ctx);
+            break;
+        {%- endfor %}
+    {%- endfor %}
+{%- endfor %}
+        default:
+            Timber.e("invalid parameter");
+            break;
+        }
+
+        return result;
+    }
+
+    static public void unpack_setting_packet(Context ctx, byte[] packet) {
+
+    }
+
+
+    public static int listToValue_(Context ctx, String value, String[] list) {
+        int intValue = 0;
+        String valueStr = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(value, "");
+
+        int i = 0;
+        for (String elem : list) {
+            if (elem.equals(list[0])) {
+                return i;
+            }
+        }
+
+        return 0;
+    }
 }
 """
 # Custom filter method
