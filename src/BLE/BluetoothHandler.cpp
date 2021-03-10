@@ -25,27 +25,16 @@
 #define SERVICE_SETTINGS_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914d"
 
 #define MEASUREMENTS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a0"
-//#define xxx "beb5483e-36e1-4688-b7f5-ea07361b26a1"
-//#define xxx "beb5483e-36e1-4688-b7f5-ea07361b26a2"
 #define FIRMWARE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a3"
 #define KEEP_ALIVE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a4"
 #define COMMANDS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a5"
 #define BTLOCK_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a6"
-#define SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a7"
-#define SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
-#define SETTINGS1_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a9"
-#define SETTINGS6_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26aa"
-//#define xxx "beb5483e-36e1-4688-b7f5-ea07361b26ab"
-//#define xxx "beb5483e-36e1-4688-b7f5-ea07361b26ac"
 #define CALIB_ORDER_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ad"
 #define SWITCH_TO_OTA_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ae"
 #define LOGS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26af"
 #define FAST_UPDATE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b0"
-#define SETTINGS2_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b1"
-#define SETTINGS3_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b2"
-//#define xxxx "beb5483e-36e1-4688-b7f5-ea07361b26b3"
-//#define xxxx "beb5483e-36e1-4688-b7f5-ea07361b26b4"
 #define DISTANCE_RST_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b5"
+#define SETTINGS_ACTION_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26fe"
 #define SETTINGS_GEN_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ff"
 
 #define BLE_MTU 23
@@ -76,6 +65,7 @@ NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings4;
 NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings5;
 NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings6;
 NimBLECharacteristic *BluetoothHandler::pCharacteristicSettingsGen;
+NimBLECharacteristic *BluetoothHandler::pCharacteristicSettingsAction;
 
 // firmware services
 NimBLECharacteristic *BluetoothHandler::pCharacteristicFirmware;
@@ -243,184 +233,7 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
             //const char *uuid = pCharacteristic->getUUID().toString().data();
             //Serial.println("onWrite : " + (String)(uuid));
 
-            if (pCharacteristic->getUUID().toString() == SETTINGS1_CHARACTERISTIC_UUID)
-            {
-                std::string rxValue = pCharacteristic->getValue();
-
-                for (int i = 0; i < rxValue.length(); i++)
-                {
-                    settings->getS1B()[i] = rxValue[i];
-                }
-
-                //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
-
-                //Serial.print("BLH - Settings1 len : ");
-                //Serial.println(rxValue.length());
-                Serial.print("BLH - Settings1 size : ");
-                Serial.println(rxValue.size());
-
-                Serial.print("BLH - Settings1 : ");
-                for (int i = 0; i < rxValue.length(); i++)
-                {
-                    char print_buffer[5];
-                    sprintf(print_buffer, "%02x ", rxValue[i]);
-                    Serial.print(print_buffer);
-                }
-                Serial.println("");
-
-                settings->displaySettings1();
-            }
-            else if (pCharacteristic->getUUID().toString() == SETTINGS2_CHARACTERISTIC_UUID)
-            {
-                std::string rxValue = pCharacteristic->getValue();
-
-                for (int i = 0; i < rxValue.length(); i++)
-                {
-                    settings->getS2B()[i] = rxValue[i];
-                }
-
-                //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
-
-                //Serial.print("BLH - Settings2 len : ");
-                //Serial.println(rxValue.length());
-                Serial.print("BLH - Settings2 size : ");
-                Serial.println(rxValue.size());
-
-                Serial.print("BLH - Settings2 : ");
-                for (int i = 0; i < rxValue.length(); i++)
-                {
-                    char print_buffer[5];
-                    sprintf(print_buffer, "%02x ", rxValue[i]);
-                    Serial.print(print_buffer);
-                }
-                Serial.println("");
-
-                settings->displaySettings2();
-            }
-            else if (pCharacteristic->getUUID().toString() == SETTINGS3_CHARACTERISTIC_UUID)
-            {
-                std::string rxValue = pCharacteristic->getValue();
-
-                for (int i = 0; i < rxValue.length(); i++)
-                {
-                    settings->getS3B()[i] = rxValue[i];
-                }
-
-                //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
-
-                //Serial.print("BLH - Settings3 len : ");
-                //Serial.println(rxValue.length());
-                Serial.print("BLH - Settings3 size : ");
-                Serial.println(rxValue.size());
-
-                Serial.print("BLH - Settings3 : ");
-                for (int i = 0; i < rxValue.length(); i++)
-                {
-                    char print_buffer[5];
-                    sprintf(print_buffer, "%02x ", rxValue[i]);
-                    Serial.print(print_buffer);
-                }
-                Serial.println("");
-
-                settings->displaySettings3();
-
-                // reset battery min/max datas
-                setupBattery();
-
-                // update BLE PIN code
-                pSecurity->setStaticPIN(settings->getS3F().Bluetooth_pin_code);
-            }
-            else if (pCharacteristic->getUUID().toString() == SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID)
-            {
-                std::string rxValue = pCharacteristic->getValue();
-
-                memset(settings->getS4B(), 0, 20);
-                for (int i = 0; i < rxValue.length(); i++)
-                {
-                    settings->getS4B()[i] = rxValue[i];
-                }
-
-                //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
-
-                //Serial.print("BLH - Settings4 len : ");
-                //Serial.println(rxValue.length());
-                Serial.print("BLH - Settings4 size : ");
-                Serial.println(rxValue.size());
-
-                Serial.print("BLH - Settings4 : ");
-                for (int i = 0; i < rxValue.length(); i++)
-                {
-                    char print_buffer[5];
-                    sprintf(print_buffer, "%02x ", rxValue[i]);
-                    Serial.print(print_buffer);
-                }
-                Serial.println("");
-
-                settings->displaySettings4();
-            }
-
-            else if (pCharacteristic->getUUID().toString() == SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID)
-            {
-                std::string rxValue = pCharacteristic->getValue();
-
-                memset(settings->getS5B(), 0, 20);
-
-                for (int i = 0; i < rxValue.length(); i++)
-                {
-                    settings->getS5B()[i] = rxValue[i];
-                }
-
-                //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
-
-                //Serial.print("BLH - Settings5 len : ");
-                //Serial.println(rxValue.length());
-                Serial.print("BLH - Settings5 size : ");
-                Serial.println(rxValue.size());
-
-                Serial.print("BLH - Settings5 : ");
-                for (int i = 0; i < rxValue.length(); i++)
-                {
-                    char print_buffer[5];
-                    sprintf(print_buffer, "%02x ", rxValue[i]);
-                    Serial.print(print_buffer);
-                }
-                Serial.println("");
-
-                settings->displaySettings5();
-
-                // update BLE PIN code
-                pSecurity->setStaticPIN(settings->getS3F().Bluetooth_pin_code);
-            }
-            else if (pCharacteristic->getUUID().toString() == SETTINGS6_CHARACTERISTIC_UUID)
-            {
-                std::string rxValue = pCharacteristic->getValue();
-
-                for (int i = 0; i < rxValue.length(); i++)
-                {
-                    settings->getS6B()[i] = rxValue[i];
-                }
-
-                //memcpy(&settings1.buffer, &rxValue, sizeof(settings1.buffer));
-
-                //Serial.print("BLH - Settings6 len : ");
-                //Serial.println(rxValue.length());
-                Serial.print("BLH - Settings6 size : ");
-                Serial.println(rxValue.size());
-
-                Serial.print("BLH - Settings6 : ");
-                for (int i = 0; i < rxValue.length(); i++)
-                {
-                    char print_buffer[5];
-                    sprintf(print_buffer, "%02x ", rxValue[i]);
-                    Serial.print(print_buffer);
-                }
-                Serial.println("");
-
-                settings->displaySettings6();
-
-                saveSettings();
-            }
-            else if (pCharacteristic->getUUID().toString() == CALIB_ORDER_CHARACTERISTIC_UUID)
+            if (pCharacteristic->getUUID().toString() == CALIB_ORDER_CHARACTERISTIC_UUID)
             {
                 std::string rxValue = pCharacteristic->getValue();
 
@@ -535,8 +348,9 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
             }
             else if (pCharacteristic->getUUID().toString() == SETTINGS_GEN_CHARACTERISTIC_UUID)
             {
-                Serial.println("BLH - Write : SETTINGS_GEN_CHARACTERISTIC_UUID");
                 std::string rxValue = pCharacteristic->getValue();
+                /*
+                Serial.println("BLH - Write : SETTINGS_GEN_CHARACTERISTIC_UUID");
                 uint8_t rxInt[20];
                 for (int i = 0; i < rxValue.length(); i++)
                 {
@@ -547,7 +361,25 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
                 }
 
                 Serial.println();
-                settings2->unpack_setting_packet((uint8_t*)rxInt, rxValue.length());
+                */
+                settings2->unpack_setting_packet((uint8_t *)pCharacteristic->getValue().data(), rxValue.length());
+            }
+            else if (pCharacteristic->getUUID().toString() == SETTINGS_ACTION_CHARACTERISTIC_UUID)
+            {
+                //Serial.println("BLH - Write : SETTINGS_ACTION_CHARACTERISTIC_UUID");
+                std::string rxValue = pCharacteristic->getValue();
+
+                if (rxValue[0] == 0)
+                {
+
+                    //Serial.println("BLH - request");
+                    sendSettingValueDataPacket((uint8_t *)pCharacteristic->getValue().data());
+                }
+                else if (rxValue[0] == 1)
+                {
+                    settings2->save();
+                    Serial.println("BLH - save");
+                }
             }
             else
             {
@@ -571,8 +403,9 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
             }
             else if (pCharacteristic->getUUID().toString() == MEASUREMENTS_CHARACTERISTIC_UUID)
             {
-                int nb_bytes = setMeasurementsDataPacket();
-/*
+                //int nb_bytes =
+                setMeasurementsDataPacket();
+                /*
                 Serial.print("BLH - Read measurement : nb bytes");
                 Serial.println(nb_bytes);
                 */
@@ -596,6 +429,10 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
             else if (pCharacteristic->getUUID().toString() == SETTINGS_GEN_CHARACTERISTIC_UUID)
             {
                 Serial.print("BLH - Read Settings GEN ---- TODO ");
+            }
+            else if (pCharacteristic->getUUID().toString() == SETTINGS_ACTION_CHARACTERISTIC_UUID)
+            {
+                Serial.print("BLH - Read Settings ACTION");
             }
         }
 
@@ -732,45 +569,17 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
     //-------------------
     // services settings
 
-    pCharacteristicSettings1 = pServiceSettings->createCharacteristic(
-        SETTINGS1_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_NR |
-            NIMBLE_PROPERTY::WRITE_AUTHEN |
-            NIMBLE_PROPERTY::READ_AUTHEN);
-
-    pCharacteristicSettings2 = pServiceSettings->createCharacteristic(
-        SETTINGS2_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_NR |
-            NIMBLE_PROPERTY::WRITE_AUTHEN |
-            NIMBLE_PROPERTY::READ_AUTHEN);
-
-    pCharacteristicSettings3 = pServiceSettings->createCharacteristic(
-        SETTINGS3_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_NR |
-            NIMBLE_PROPERTY::WRITE_AUTHEN |
-            NIMBLE_PROPERTY::READ_AUTHEN);
-
-    pCharacteristicSettings4 = pServiceSettings->createCharacteristic(
-        SETTINGS4_WIFI_SSID_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_NR |
-            NIMBLE_PROPERTY::WRITE_AUTHEN |
-            NIMBLE_PROPERTY::READ_AUTHEN);
-
-    pCharacteristicSettings5 = pServiceSettings->createCharacteristic(
-        SETTINGS5_WIFI_PWD_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_NR |
-            NIMBLE_PROPERTY::WRITE_AUTHEN |
-            NIMBLE_PROPERTY::READ_AUTHEN);
-
-    pCharacteristicSettings6 = pServiceSettings->createCharacteristic(
-        SETTINGS6_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_NR |
-            NIMBLE_PROPERTY::WRITE_AUTHEN |
-            NIMBLE_PROPERTY::READ_AUTHEN);
-
     pCharacteristicSettingsGen = pServiceSettings->createCharacteristic(
         SETTINGS_GEN_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_NR |
+        NIMBLE_PROPERTY::NOTIFY |
+            NIMBLE_PROPERTY::WRITE_NR |
+            NIMBLE_PROPERTY::WRITE_AUTHEN);
+
+    pCharacteristicSettingsAction = pServiceSettings->createCharacteristic(
+        SETTINGS_ACTION_CHARACTERISTIC_UUID,
+        NIMBLE_PROPERTY::NOTIFY |
+            NIMBLE_PROPERTY::READ |
+            NIMBLE_PROPERTY::WRITE_NR |
             NIMBLE_PROPERTY::WRITE_AUTHEN |
             NIMBLE_PROPERTY::READ_AUTHEN);
 
@@ -784,13 +593,8 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
     pCharacteristicKeepAlive->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicCommands->setCallbacks(new BLECharacteristicCallback());
 
-    pCharacteristicSettings1->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicSettings2->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicSettings3->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicSettings4->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicSettings5->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicSettings6->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicSettingsGen->setCallbacks(new BLECharacteristicCallback());
+    pCharacteristicSettingsAction->setCallbacks(new BLECharacteristicCallback());
 
     pCharacteristicFirmware->setCallbacks(new BLECharacteristicCallback());
 
@@ -1058,10 +862,10 @@ uint8_t BluetoothHandler::setCommandsDataPacket()
         buffer_append_uint8(txValue, shrd->brakeFordidenHighVoltage, &ind);
         buffer_append_uint8(txValue, fastUpdate, &ind);
 
-//#if (MINIMO_SIMULATED_DISPLAY == 0)
+        //#if (MINIMO_SIMULATED_DISPLAY == 0)
         // copy values
         shrd->brakeSentOrderFromBLE = shrd->brakeSentOrder;
-//#endif 
+        //#endif
 
         pCharacteristicCommands->setValue((uint8_t *)&txValue[0], ind);
 
@@ -1074,6 +878,25 @@ uint8_t BluetoothHandler::setCommandsDataPacket()
         Serial.println("deviceStatus = " + (String)deviceStatus);
     }
     return ind;
+}
+
+void BluetoothHandler::sendSettingValueDataPacket(uint8_t *rxValue)
+{
+    int32_t indRcv = 0;
+    int32_t sizeToSend = 0;
+    uint8_t bufferSend[21];
+    uint8_t *bufferSendPtr = bufferSend;
+
+    buffer_get_uint8(rxValue, &indRcv); // skip action
+    uint16_t settingId = buffer_get_uint16(rxValue, &indRcv);
+    uint16_t packetNumber = buffer_get_uint16(rxValue, &indRcv);
+
+    settings2->pack_setting_packet(settingId, packetNumber, bufferSendPtr, &sizeToSend);
+
+    pCharacteristicSettingsGen->setValue((uint8_t *)bufferSendPtr, sizeToSend);
+    pCharacteristicSettingsGen->notify();
+
+    //Serial.println("BLH - sendSettingValueDataPacket settingId : " + (String)settingId + " / packetNumber" + (String)packetNumber + " / sizeToSend = " + (String)sizeToSend);
 }
 
 void BluetoothHandler::getCommandsDataPacket(uint8_t *rxValue)
@@ -1095,7 +918,6 @@ void BluetoothHandler::getCommandsDataPacket(uint8_t *rxValue)
     buffer_get_uint8(rxValue, &ind); /*shrd->brakeFordidenHighVoltage*/
     fastUpdate = buffer_get_uint8(rxValue, &ind);
 
-
 #if DEBUG_BLE_DISPLAY_COMMANDSFEEDBACK
     Serial.println("getCommandsDataPacket - modeOrder = " + (String)shrd->modeOrder);
     Serial.println("getCommandsDataPacket - speedLimiter = " + (String)shrd->speedLimiter);
@@ -1108,13 +930,31 @@ void BluetoothHandler::notifyCommandsFeedback()
 {
 #if DEBUG_BLE_DISPLAY_COMMANDSFEEDBACK
     Serial.println("notifyCommandsFeedback");
-#endif 
+#endif
 
     if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         // notify of new log
         setCommandsDataPacket();
         pCharacteristicCommands->notify();
+    }
+}
+
+void BluetoothHandler::notifySettingsChanged()
+{
+#if DEBUG_BLE_DISPLAY_SETTINGSCHANGED
+    Serial.println("notifySettingsChanged");
+#endif
+
+    if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
+    {
+        // notify of settings action
+        uint8_t txValue[1];
+        int ind = 0;
+        buffer_append_uint8(txValue, 1, &ind);
+        pCharacteristicSettingsAction->setValue((uint8_t *)&txValue[0], ind);
+
+        pCharacteristicSettingsAction->notify();
     }
 }
 

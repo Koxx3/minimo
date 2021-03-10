@@ -124,7 +124,7 @@
           "default": 0,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ".*",
+          "regex_valid": "",
           "smartdisplay_tft_menu_visible": 0.0
         },
         {
@@ -206,14 +206,14 @@
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
-          "smartphone_display_type": "",
-          "valid_config": "",
+          "smartphone_display_type": "seek_bar",
+          "valid_config": ".*",
           "list_strings": "",
-          "min": 0,
+          "min": 1,
           "max": 5,
           "default": 3,
-          "fast_increment": "",
-          "slow_increment": "",
+          "fast_increment": 1,
+          "slow_increment": 1,
           "regex_valid": "",
           "smartdisplay_tft_menu_visible": 1.0
         },
@@ -360,7 +360,7 @@
         },
         {
           "id": 9,
-          "display_name": "PIN code (use 6 digits only)",
+          "display_name": "PIN code",
           "display_unit": "",
           "display_hint": "",
           "type": "uint32_t",
@@ -372,7 +372,7 @@
           "default": 147258,
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ".*",
+          "regex_valid": "^[0-9]{6,6}$",
           "smartdisplay_tft_menu_visible": 0.0
         },
         {
@@ -504,7 +504,7 @@
           "display_name": "Time between mode shift",
           "display_unit": "",
           "display_hint": "",
-          "type": "uint8_t",
+          "type": "uint32_t",
           "smartphone_display_type": "seek_bar",
           "valid_config": ".*",
           "list_strings": "",
@@ -560,7 +560,7 @@
           "display_name": "Throttle regeneration",
           "display_unit": "",
           "display_hint": "",
-          "type": "uint8_t",
+          "type": "uint32_t",
           "smartphone_display_type": "checkbox",
           "valid_config": ".*",
           "list_strings": "",
@@ -749,7 +749,7 @@
           "default": "",
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ".*",
+          "regex_valid": "^(.{0,32})$",
           "smartdisplay_tft_menu_visible": 0.0
         },
         {
@@ -766,7 +766,7 @@
           "default": "",
           "fast_increment": "",
           "slow_increment": "",
-          "regex_valid": ".*",
+          "regex_valid": "^(.{0,32})$",
           "smartdisplay_tft_menu_visible": 0.0
         }
       ]

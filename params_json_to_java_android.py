@@ -24,11 +24,16 @@ import com.hotmail.or_dvir.easysettings.pojos.SettingsObject;
 import com.hotmail.or_dvir.easysettings_dialogs.pojos.EditTextSettingsObject;
 import com.hotmail.or_dvir.easysettings_dialogs.pojos.ListSettingsObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.nio.ByteOrder;
+
+import com.welie.blessed.BluetoothBytesParser;
 
 import timber.log.Timber;
 
@@ -72,7 +77,7 @@ public class SmartElecSettings2 {
 
 
 
-    static public ArrayList<byte[]> {{ var_name }}_to_byte_array(Context ctx) {
+    static public ArrayList<byte[]> {{ var_name }}_to_byte_array_write(Context ctx) {
 
         // First packet
         ArrayList<byte[]> result = new ArrayList<byte[]>();
@@ -187,6 +192,94 @@ public class SmartElecSettings2 {
                     {%- endif %}
 
         return result;
+    }
+
+
+
+    static public ArrayList<byte[]> {{ var_name }}_to_byte_array_read(Context ctx) {
+
+        // First packet
+        ArrayList<byte[]> result = new ArrayList<byte[]>();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+        try {
+            dos.writeByte(0);
+            dos.writeShort({{ var_name | upper }}_ID);
+            dos.writeShort(0);
+            dos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        result.add(bos.toByteArray());
+
+                    {%- if item.type | lower == "string" %}
+        // Second packet
+        String value = EasySettings.retrieveSettingsSharedPrefs(ctx).getString({{ var_name }}, "{{ item.default }}");
+        if (value.length() > 16) {
+            bos = new ByteArrayOutputStream();
+            dos = new DataOutputStream(bos);
+            try {
+                dos.writeByte(0);
+                dos.writeShort({{ var_name | upper }}_ID);
+                dos.writeShort(1);
+                dos.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            result.add(bos.toByteArray());
+        }
+                    {%- endif %}
+
+        return result;
+    }
+
+
+    static public void {{ var_name }}_from_byte(Context ctx, BluetoothBytesParser parser) {
+
+        int packetNumber = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT16);
+
+                    {%- if 'uint8' in item.type %}
+        int value = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT8);
+                    {%- elif 'int8' in item.type %}
+        int value = parser.getIntValue(BluetoothBytesParser.FORMAT_SINT8);
+                    {%- elif 'uint16' in item.type %}
+        int value = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT16);
+                    {%- elif 'int16' in item.type %}
+        int value = parser.getIntValue(BluetoothBytesParser.FORMAT_SINT16);
+                    {%- elif 'uint32' in item.type %}
+        int value = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT32);
+                    {%- elif 'int32' in item.type %}
+        int value = parser.getIntValue(BluetoothBytesParser.FORMAT_SINT32);
+                    {%- elif item.type | lower == "float" %}
+        float value = 0;
+        try {
+            DataInputStream dis = new DataInputStream(new ByteArrayInputStream(parser.getValue(), 4, parser.getValue().length));
+            value = dis.readFloat();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+                    {%- elif item.type | lower == "string" %}
+        String value = parser.getStringValue();
+                    {%- endif %}
+
+        
+                    {%- if item.smartphone_display_type | lower == "list" %}
+        EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putString({{ var_name }}, {{ var_name }}_LIST[value]).commit();
+                    {%- elif item.smartphone_display_type | lower == "edit_text_number_float" %}
+        EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putString({{ var_name }}, "" + value).commit();
+                    {%- elif item.smartphone_display_type | lower == "edit_text_number_integer" %}
+        EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putString({{ var_name }}, "" + value).commit();
+                    {%- elif item.smartphone_display_type | lower == "edit_text_number_integer_signed" %}
+        EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putString({{ var_name }}, "" + value).commit();
+                    {%- elif item.smartphone_display_type | lower == "edit_text_string" %}
+        EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putString({{ var_name }}, "" + value).commit();
+                    {%- elif item.smartphone_display_type | lower == "seek_bar" %}
+        EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putInt({{ var_name }}, value).commit();
+                    {%- elif item.smartphone_display_type | lower == "checkbox" %}
+        EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putBoolean({{ var_name }}, value == 1).commit();
+                    {%- endif %}
+
+        Timber.i("{{ var_name }} value = " + value);
     }
 
         {% endfor %}
@@ -320,8 +413,8 @@ public class SmartElecSettings2 {
         return result;
     }
     
-{#- run 5 - settings packer #}
-    static public ArrayList<byte[]> pack_setting_packet(Context ctx, Integer settingId) {
+{#- run 5 - settings packer write #}
+    static public ArrayList<byte[]> pack_setting_packet_write(Context ctx, Integer settingId) {
         ArrayList<byte[]> result = null;
         
         switch(settingId) {
@@ -330,7 +423,7 @@ public class SmartElecSettings2 {
         {%- for  item in value2.settings %}
             {%- set var_name = item.display_name | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") | title %}
         case {{ var_name | upper }}_ID :
-            result = {{ var_name }}_to_byte_array(ctx);
+            result = {{ var_name }}_to_byte_array_write(ctx);
             break;
         {%- endfor %}
     {%- endfor %}
@@ -343,24 +436,68 @@ public class SmartElecSettings2 {
         return result;
     }
 
-    static public void unpack_setting_packet(Context ctx, byte[] packet) {
+
+{#- run 6 - settings packer read #}
+    static public ArrayList<byte[]> pack_setting_packet_read(Context ctx, Integer settingId) {
+        ArrayList<byte[]> result = null;
+        
+        switch(settingId) {
+{%- for key, value in parameters.items() %}
+    {%- for key2, value2 in value.items() %}
+        {%- for  item in value2.settings %}
+            {%- set var_name = item.display_name | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") | title %}
+        case {{ var_name | upper }}_ID :
+            result = {{ var_name }}_to_byte_array_read(ctx);
+            break;
+        {%- endfor %}
+    {%- endfor %}
+{%- endfor %}
+        default:
+            Timber.e("invalid parameter");
+            break;
+        }
+
+        return result;
+    }
+
+{#- run 7 - settings unpacker #}
+    static public void unpack_setting_packet(Context ctx, byte[] value) {
+        BluetoothBytesParser parser = new BluetoothBytesParser(value, ByteOrder.BIG_ENDIAN);
+        
+        int settingId = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT16);
+        
+        switch(settingId) {
+{%- for key, value in parameters.items() %}
+    {%- for key2, value2 in value.items() %}
+        {%- for  item in value2.settings %}
+            {%- set var_name = item.display_name | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") | title %}
+        case {{ var_name | upper }}_ID :
+            {{ var_name }}_from_byte(ctx, parser);
+            break;
+        {%- endfor %}
+    {%- endfor %}
+{%- endfor %}
+        default:
+            Timber.e("invalid parameter");
+            break;
+        }
 
     }
 
-
     public static int listToValue(Context ctx, String value, String[] list) {
-        int intValue = 0;
-        String valueStr = EasySettings.retrieveSettingsSharedPrefs(ctx).getString(value, "");
 
         int i = 0;
         for (String elem : list) {
-            if (elem.equals(list[0])) {
+            if (elem.equals(value)) {
                 return i;
             }
+            i++;
         }
 
         return 0;
     }
+
+
 }
 """
 # Custom filter method

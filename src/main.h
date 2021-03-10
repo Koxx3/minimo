@@ -42,6 +42,9 @@ void saveBrakeMaxPressure();
 void saveOdo();
 void saveBatteryCalib();
 void saveSettings();
+
+void notifySettingsChangedWithBle();
+
 boolean restoreSettings();
 
 void setupAutonomy();

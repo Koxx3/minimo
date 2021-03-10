@@ -36,9 +36,11 @@ public:
     static void processBLE();
     static void notifyMeasurements();
     static void notifyCommandsFeedback();
+    static void notifySettingsChanged();
     static uint8_t setMeasurementsDataPacket();
     static uint8_t setCommandsDataPacket();
     static void getCommandsDataPacket(uint8_t *);
+    static void sendSettingValueDataPacket(uint8_t *);
 
     static BLEScan *pBLEScan;
     static BLEServer *pServer;
@@ -60,6 +62,7 @@ public:
     static BLECharacteristic *pCharacteristicSettings5;
     static BLECharacteristic *pCharacteristicSettings6;
     static BLECharacteristic *pCharacteristicSettingsGen;
+    static BLECharacteristic *pCharacteristicSettingsAction;
 
     static BLECharacteristic *pCharacteristicFirmware;
 

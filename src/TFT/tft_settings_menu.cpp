@@ -33,7 +33,6 @@ you when you have improved the sketch. You can mail me at j [dot] maathuis [at] 
 #include <TFT_eSPI.h>
 
 #include "tft_settings_menu.h"
-#include "tft_settings_menu_specs.h"
 
 #include "TFT/fonts/FORCED_SQUARE6pt7b.h"
 #include "TFT/fonts/FORCED_SQUARE7pt7b.h"
@@ -43,6 +42,9 @@ you when you have improved the sketch. You can mail me at j [dot] maathuis [at] 
 #include "TFT/fonts/FORCED_SQUARE12pt7b.h"
 #include "TFT/fonts/FORCED_SQUARE14pt7b.h"
 #include "TFT/fonts/FORCED_SQUARE18pt7b.h"
+
+#include "main.h"
+#include "Settings2.h"
 
 // Easily remembered name for the font
 #define FONT_FORCED_SQUARE6pt7b &FORCED_SQUARE6pt7b
@@ -54,13 +56,17 @@ you when you have improved the sketch. You can mail me at j [dot] maathuis [at] 
 #define FONT_FORCED_SQUARE14pt7b &FORCED_SQUARE14pt7b
 #define FONT_FORCED_SQUARE18pt7b &FORCED_SQUARE18pt7b
 
-using namespace Menu;
+#define MAX_DEPTH 5
 
+using namespace Menu;
 extern TFT_eSPI tft;
+serialIn serial(Serial);
+Settings2 *app_settings;
+extern bool isInMenu;
 
 result doAlert(eventMask e, prompt &item);
 
-serialIn serial(Serial);
+#include "tft_settings_menu_specs.h"
 
 //define serial output device
 idx_t serialTops[MAX_DEPTH] = {0};
@@ -77,6 +83,7 @@ idx_t eSpiTops[MAX_DEPTH] = {0};
 TFT_eSPIOut eSpiOut(tft, colors, eSpiTops, pList, fontW, fontH);
 menuOut *constMEM outputs[] MEMMODE = {&eSpiOut};              //list of output devices
 outputsList out(outputs, sizeof(outputs) / sizeof(menuOut *)); //outputs list controller
+
 
 NAVROOT(nav, mainMenu, MAX_DEPTH, serial, out);
 
@@ -131,6 +138,9 @@ void settings_menu_setup()
 
   eSpiOut.fontMarginY = 17;
 
+  Serial.println("settings_menu_set_settings");
+  settings_menu_init_from_settings();
+
 }
 
 void settings_menu_loop()
@@ -141,4 +151,9 @@ void settings_menu_loop()
 void settings_menu_enter_settings()
 {
   isInMenu = true;
+}
+
+void settings_menu_set_settings(Settings2 *set)
+{
+  app_settings = set;
 }

@@ -11,93 +11,36 @@ template_h = """
 //////------------------------------------
 //////------------------------------------
 
-////// Manage settings exchanged in BLE and stored in EEPOM
-
-/*
-
-float Wheel_size = 8.5;
-int Motor_number_of_magents_pairs=15;
-float Battery_minimum_voltage =42.0;
-float Battery_maximum_voltage=59.0;
-int Battery_distance=40;
-int thottleRegen=0;
-
-TOGGLE(thottleRegen,setThottleRegen,"  Throttle signal regeneration: ",doNothing,noEvent,noStyle //
-  ,VALUE("On",1,doNothing,noEvent) //
-  ,VALUE("Off",0,doNothing,noEvent) //
-);
-
-MENU(escooterCharac,"  E-scooter characteristics",doNothing,noEvent,noStyle //
-  ,altFIELD(decPlaces<1>::menuField, Wheel_size, "  Wheel size (inches)","",8.5,13.0,0.5,0.1,doNothing,anyEvent,wrapStyle) //
-  ,FIELD(Motor_number_of_magents_pairs,"  Motor number of magents pairs","",5,20,1,0,doNothing,noEvent,wrapStyle) //
-  ,altFIELD(decPlaces<1>::menuField, Battery_minimum_voltage,"  Battery minimum voltage (volts)","",30, 100,1,0.1,doNothing,noEvent,wrapStyle) //
-  ,altFIELD(decPlaces<1>::menuField, Battery_maximum_voltage,"  Battery maximum voltage (volts)","",30, 100,1,0.1,doNothing,noEvent,wrapStyle) //
-  ,FIELD(Battery_distance,"  Battery distance (km)","",30, 100,5,1,doNothing,noEvent,wrapStyle) //
-  ,SUBMENU(setThottleRegen) //
-  ,EXIT("< Back")
-);
-
-MENU(escooterSettings,"  E-scooter settings",doNothing,noEvent,noStyle //
-  ,altFIELD(decPlaces<1>::menuField, dummy, "  Dummy","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
-  ,EXIT("< Back") //
-);
-
-MENU(escooterAccessories,"  E-scooter accessories",doNothing,noEvent,noStyle //
-  ,altFIELD(decPlaces<1>::menuField, dummy, "  Dummy","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
-  ,EXIT("< Back") //
-);
-
-MENU(electricBrake,"  Electric brake",doNothing,noEvent,noStyle //
-  ,altFIELD(decPlaces<1>::menuField, dummy, "  Dummy","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
-  ,EXIT("< Back") //
-);
-
-MENU(electricThrottle,"  Electric throttle",doNothing,noEvent,noStyle // 
-  ,altFIELD(decPlaces<1>::menuField, dummy, "  Dummy","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
-  ,EXIT("< Back") //
-);
-
-MENU(displaySettings,"  Display",doNothing,noEvent,noStyle //
-  ,altFIELD(decPlaces<1>::menuField, dummy, "  Dummy","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
-  ,EXIT("< Back") //
-);
-
-
-*/
-
-int test = 0;
-TOGGLE(test,setTest,"  Test: ",doNothing,noEvent,noStyle //
-  ,VALUE("On",1,doNothing,noEvent) //
-  ,VALUE("Off",0,doNothing,noEvent) //
-);
-
-
+//-----------------------
+// variables and lists
+//-----------------------
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
             {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
             {%- if item.smartdisplay_tft_menu_visible %}
-    {{ item.type }} {{ var_name }};
+{{ item.type }} tft_{{ var_name }} = {{ item.default }};
     
                 {%- if item.smartphone_display_type == "checkbox" %}
-    TOGGLE({{ var_name }},{{ var_name }}_LIST,"  {{ item.display_name }} : ",doNothing,noEvent,noStyle //
-        ,VALUE("Off",0,doNothing,noEvent) //
-        ,VALUE("On",1,doNothing,noEvent) //
-    );
+TOGGLE(tft_{{ var_name }}, tft_{{ var_name }}_LIST,"  {{ item.display_name }} : ",doNothing,noEvent,noStyle //
+    ,VALUE("Off",0,doNothing,noEvent) //
+    ,VALUE("On",1,doNothing,noEvent) //
+);
                 {%- endif %}
             {%- if item.smartphone_display_type | lower == "list" %}
                 {%- set list1 = item.list_strings.split('\\n') %}
-    TOGGLE({{ var_name }},{{ var_name }}_LIST,"  {{ item.display_name }} : ",doNothing,noEvent,noStyle //
+TOGGLE(tft_{{ var_name }}, tft_{{ var_name }}_LIST,"  {{ item.display_name }} : ",doNothing,noEvent,noStyle //
                 {%- for item4 in list1 %}
-        ,VALUE("{{ item4 }}", {{ loop.index - 1 }} ,doNothing,noEvent) //
+    ,VALUE("{{ item4 }}", {{ loop.index - 1 }} ,doNothing,noEvent) //
                 {%- endfor %}
-    );
+);
                 {%- endif %}
             {%- endif %}
         {%- endfor %}
     {%- endfor %}
 {% endfor %}
 
+/* submenus */
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
         {%- set vars = {'foo': False} %}
@@ -114,13 +57,13 @@ MENU(SUBMENU_{{ key2 | replace(" ", "_")}},"  {{ key2 }}",doNothing,noEvent,noSt
                 {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
                 {%- if item.smartdisplay_tft_menu_visible %}
                     {%- if item.smartphone_display_type == "checkbox" %}
-    ,SUBMENU({{ var_name }}_LIST) //
+    ,SUBMENU(tft_{{ var_name }}_LIST) //
                     {%- elif item.smartphone_display_type | lower == "list" %}
-    ,SUBMENU({{ var_name }}_LIST) //
+    ,SUBMENU(tft_{{ var_name }}_LIST) //
                     {%- elif item.type | lower == "float" %}
-    ,altFIELD(decPlaces<1>::menuField, {{ var_name }}, "  {{ item.display_name }}","",0,10.0,0.5,0.01,doNothing,anyEvent,wrapStyle) //
+    ,altFIELD(decPlaces<1>::menuField, tft_{{ var_name }}, "  {{ item.display_name }} : " ,"", {{ item.min }}, {{ item.max }}, {{ item.fast_increment }}, {{ item.slow_increment }}, doNothing,anyEvent,wrapStyle) //
                     {%- elif 'int' in item.type %}
-    ,FIELD({{ var_name }},"  {{ item.display_name }}","",5,20,1,0,doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_{{ var_name }},"  {{ item.display_name }} : ","", {{ item.min }}, {{ item.max }}, {{ item.fast_increment }}, {{ item.slow_increment }}, doNothing,noEvent,wrapStyle) //
                     {%- else %}
                     {%- endif %}
                 {%- endif %}
@@ -131,6 +74,9 @@ MENU(SUBMENU_{{ key2 | replace(" ", "_")}},"  {{ key2 }}",doNothing,noEvent,noSt
     {% endfor %}
 {%- endfor %}
 
+//-----------------------
+// menu
+//-----------------------
 MENU(mainMenu,"  Main menu",doNothing,noEvent,wrapStyle //
     ,SUBMENU(SUBMENU_MANUAL_status) //
 {%- for key, value in parameters.items() %}
@@ -150,6 +96,36 @@ MENU(mainMenu,"  Main menu",doNothing,noEvent,wrapStyle //
     ,OP("< Discard & exit", discard_exit,enterEvent) //
     ,OP("< Save & exit", save_exit,enterEvent) //
 );
+
+//-----------------------
+// functions
+//-----------------------
+void settings_menu_init_from_settings() {
+{%- for key, value in parameters.items() %}
+    {%- for key2, value2 in value.items() %}
+        {%- for  item in value2.settings %}
+            {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
+            {%- if item.smartdisplay_tft_menu_visible %}
+    tft_{{ var_name }} = app_settings->get_{{ var_name }}();
+            {%- endif %}
+        {%- endfor %}
+    {%- endfor %}
+{% endfor %}
+}
+
+void settings_menu_save_to_settings() {
+{%- for key, value in parameters.items() %}
+    {%- for key2, value2 in value.items() %}
+        {%- for  item in value2.settings %}
+            {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
+            {%- if item.smartdisplay_tft_menu_visible %}
+    app_settings->set_{{ var_name }}(tft_{{ var_name }});
+            {%- endif %}
+        {%- endfor %}
+    {%- endfor %}
+{% endfor %}
+    app_settings->save();
+}
 
 """
 

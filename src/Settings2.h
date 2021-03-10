@@ -25,9 +25,10 @@ public:
     Settings2();
 
     void restore();
+    void save();
 
     void unpack_setting_packet(uint8_t* packet, uint8_t length);
-    void pack_setting_packet(uint16_t setting_id, uint8_t* packet,uint8_t* length);
+    void pack_setting_packet(uint16_t settingId, uint16_t packetNumber, uint8_t* packet, int32_t* length);
 
 
     
@@ -43,6 +44,7 @@ public:
     void set_wheel_size (float value);
     float get_wheel_size();
     void display_wheel_size();
+    void save_wheel_size(float value);
             
     /*-------------------------------------------------------*/
 
@@ -55,6 +57,7 @@ public:
     void set_number_of_poles_pairs (uint8_t value);
     uint8_t get_number_of_poles_pairs();
     void display_number_of_poles_pairs();
+    void save_number_of_poles_pairs(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -67,6 +70,7 @@ public:
     void set_battery_minimum_voltage (float value);
     float get_battery_minimum_voltage();
     void display_battery_minimum_voltage();
+    void save_battery_minimum_voltage(float value);
             
     /*-------------------------------------------------------*/
 
@@ -79,6 +83,7 @@ public:
     void set_battery_maximum_voltage (float value);
     float get_battery_maximum_voltage();
     void display_battery_maximum_voltage();
+    void save_battery_maximum_voltage(float value);
             
     /*-------------------------------------------------------*/
 
@@ -91,6 +96,7 @@ public:
     void set_battery_maximum_distance (uint8_t value);
     uint8_t get_battery_maximum_distance();
     void display_battery_maximum_distance();
+    void save_battery_maximum_distance(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -103,6 +109,7 @@ public:
     void set_speed_adjustment (int8_t value);
     int8_t get_speed_adjustment();
     void display_speed_adjustment();
+    void save_speed_adjustment(int8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -115,6 +122,7 @@ public:
     void set_display_gps_speed_instead_of_escooter_speed (uint8_t value);
     uint8_t get_display_gps_speed_instead_of_escooter_speed();
     void display_display_gps_speed_instead_of_escooter_speed();
+    void save_display_gps_speed_instead_of_escooter_speed(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -134,6 +142,7 @@ public:
     void set_aux_relay_name (uint8_t value);
     uint8_t get_aux_relay_name();
     void display_aux_relay_name();
+    void save_aux_relay_name(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -146,6 +155,7 @@ public:
     void set_default_mode_at_startup (uint8_t value);
     uint8_t get_default_mode_at_startup();
     void display_default_mode_at_startup();
+    void save_default_mode_at_startup(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -163,6 +173,7 @@ public:
     void set_default_eco_mode_at_startup (uint8_t value);
     uint8_t get_default_eco_mode_at_startup();
     void display_default_eco_mode_at_startup();
+    void save_default_eco_mode_at_startup(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -183,6 +194,7 @@ public:
     void set_default_acceleration (uint8_t value);
     uint8_t get_default_acceleration();
     void display_default_acceleration();
+    void save_default_acceleration(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -195,6 +207,7 @@ public:
     void set_default_electric_brake_at_startup (uint8_t value);
     uint8_t get_default_electric_brake_at_startup();
     void display_default_electric_brake_at_startup();
+    void save_default_electric_brake_at_startup(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -207,6 +220,7 @@ public:
     void set_pas_enabled (uint8_t value);
     uint8_t get_pas_enabled();
     void display_pas_enabled();
+    void save_pas_enabled(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -219,6 +233,7 @@ public:
     void set_abs_enabled (uint8_t value);
     uint8_t get_abs_enabled();
     void display_abs_enabled();
+    void save_abs_enabled(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -231,6 +246,7 @@ public:
     void set_display_brightness (uint8_t value);
     uint8_t get_display_brightness();
     void display_display_brightness();
+    void save_display_brightness(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -243,6 +259,7 @@ public:
     void set_temperature_warning (uint8_t value);
     uint8_t get_temperature_warning();
     void display_temperature_warning();
+    void save_temperature_warning(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -255,6 +272,7 @@ public:
     void set_humidity_warning (uint8_t value);
     uint8_t get_humidity_warning();
     void display_humidity_warning();
+    void save_humidity_warning(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -267,6 +285,7 @@ public:
     void set_speed_limiter_at_startup (uint8_t value);
     uint8_t get_speed_limiter_at_startup();
     void display_speed_limiter_at_startup();
+    void save_speed_limiter_at_startup(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -279,6 +298,7 @@ public:
     void set_speed_limiter_max_speed (uint8_t value);
     uint8_t get_speed_limiter_max_speed();
     void display_speed_limiter_max_speed();
+    void save_speed_limiter_max_speed(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -297,18 +317,20 @@ public:
     void set_bluetooth_lock_mode (uint8_t value);
     uint8_t get_bluetooth_lock_mode();
     void display_bluetooth_lock_mode();
+    void save_bluetooth_lock_mode(uint8_t value);
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_PIN_CODE_USE_6_DIGITS_ONLY_ID 9
-    #define SETTINGS_PIN_CODE_USE_6_DIGITS_ONLY_ID_STR "9"
-    #define SETTINGS_PIN_CODE_USE_6_DIGITS_ONLY_NAME "PIN code (use 6 digits only)"
+    #define SETTINGS_PIN_CODE_ID 9
+    #define SETTINGS_PIN_CODE_ID_STR "9"
+    #define SETTINGS_PIN_CODE_NAME "PIN code"
 
-    uint32_t pin_code_use_6_digits_only;
+    uint32_t pin_code;
 
-    void set_pin_code_use_6_digits_only (uint32_t value);
-    uint32_t get_pin_code_use_6_digits_only();
-    void display_pin_code_use_6_digits_only();
+    void set_pin_code (uint32_t value);
+    uint32_t get_pin_code();
+    void display_pin_code();
+    void save_pin_code(uint32_t value);
             
     /*-------------------------------------------------------*/
 
@@ -321,6 +343,7 @@ public:
     void set_beacon_mac_address (String value);
     String get_beacon_mac_address();
     void display_beacon_mac_address();
+    void save_beacon_mac_address(String value);
             
     /*-------------------------------------------------------*/
 
@@ -333,6 +356,7 @@ public:
     void set_beacon_range (int8_t value);
     int8_t get_beacon_range();
     void display_beacon_range();
+    void save_beacon_range(int8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -345,6 +369,7 @@ public:
     void set_original_display_speed_adjustment (int8_t value);
     int8_t get_original_display_speed_adjustment();
     void display_original_display_speed_adjustment();
+    void save_original_display_speed_adjustment(int8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -357,6 +382,7 @@ public:
     void set_progressive_mode (uint8_t value);
     uint8_t get_progressive_mode();
     void display_progressive_mode();
+    void save_progressive_mode(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -366,15 +392,16 @@ public:
 
     uint8_t type;
     typedef enum LIST_Type {
-        LIST_Type_From_controller,
-        LIST_Type_From_smart__digital_brake_lever,
-        LIST_Type_From_smart__analog_brake_lever,
-        LIST_Type_From_smart__digital_brake_lever__throttle_experimental, 
+        LIST_Type_Controller,
+        LIST_Type_Smart__digital_brake_lever,
+        LIST_Type_Smart__analog_brake_lever,
+        LIST_Type_Smart__digital_brake__throttle_exp, 
     } tType;
 
     void set_type (uint8_t value);
     uint8_t get_type();
     void display_type();
+    void save_type(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -387,6 +414,7 @@ public:
     void set_min_value (uint8_t value);
     uint8_t get_min_value();
     void display_min_value();
+    void save_min_value(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -399,6 +427,7 @@ public:
     void set_max_value (uint8_t value);
     uint8_t get_max_value();
     void display_max_value();
+    void save_max_value(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -406,11 +435,12 @@ public:
     #define SETTINGS_TIME_BETWEEN_MODE_SHIFT_ID_STR "29"
     #define SETTINGS_TIME_BETWEEN_MODE_SHIFT_NAME "Time between mode shift"
 
-    uint8_t time_between_mode_shift;
+    uint32_t time_between_mode_shift;
 
-    void set_time_between_mode_shift (uint8_t value);
-    uint8_t get_time_between_mode_shift();
+    void set_time_between_mode_shift (uint32_t value);
+    uint32_t get_time_between_mode_shift();
     void display_time_between_mode_shift();
+    void save_time_between_mode_shift(uint32_t value);
             
     /*-------------------------------------------------------*/
 
@@ -423,6 +453,7 @@ public:
     void set_disabled_on_high_battery_voltage (uint8_t value);
     uint8_t get_disabled_on_high_battery_voltage();
     void display_disabled_on_high_battery_voltage();
+    void save_disabled_on_high_battery_voltage(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -435,6 +466,7 @@ public:
     void set_disabled_percent_limit (uint8_t value);
     uint8_t get_disabled_percent_limit();
     void display_disabled_percent_limit();
+    void save_disabled_percent_limit(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -442,11 +474,12 @@ public:
     #define SETTINGS_THROTTLE_REGENERATION_ID_STR "32"
     #define SETTINGS_THROTTLE_REGENERATION_NAME "Throttle regeneration"
 
-    uint8_t throttle_regeneration;
+    uint32_t throttle_regeneration;
 
-    void set_throttle_regeneration (uint8_t value);
-    uint8_t get_throttle_regeneration();
+    void set_throttle_regeneration (uint32_t value);
+    uint32_t get_throttle_regeneration();
     void display_throttle_regeneration();
+    void save_throttle_regeneration(uint32_t value);
             
     /*-------------------------------------------------------*/
 
@@ -459,6 +492,7 @@ public:
     void set_input_min_voltage_in_millivolts (uint32_t value);
     uint32_t get_input_min_voltage_in_millivolts();
     void display_input_min_voltage_in_millivolts();
+    void save_input_min_voltage_in_millivolts(uint32_t value);
             
     /*-------------------------------------------------------*/
 
@@ -471,6 +505,7 @@ public:
     void set_input_max_voltage_in_millivolts (uint32_t value);
     uint32_t get_input_max_voltage_in_millivolts();
     void display_input_max_voltage_in_millivolts();
+    void save_input_max_voltage_in_millivolts(uint32_t value);
             
     /*-------------------------------------------------------*/
 
@@ -483,6 +518,7 @@ public:
     void set_output_min_voltage_in_millivolts (uint32_t value);
     uint32_t get_output_min_voltage_in_millivolts();
     void display_output_min_voltage_in_millivolts();
+    void save_output_min_voltage_in_millivolts(uint32_t value);
             
     /*-------------------------------------------------------*/
 
@@ -495,6 +531,7 @@ public:
     void set_output_max_voltage_in_millivolts (uint32_t value);
     uint32_t get_output_max_voltage_in_millivolts();
     void display_output_max_voltage_in_millivolts();
+    void save_output_max_voltage_in_millivolts(uint32_t value);
             
     /*-------------------------------------------------------*/
 
@@ -514,71 +551,75 @@ public:
     void set_output_curve (uint8_t value);
     uint8_t get_output_curve();
     void display_output_curve();
+    void save_output_curve(uint8_t value);
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_ID 38
-    #define SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_ID_STR "38"
-    #define SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_NAME "Button 1 short press action"
+    #define SETTINGS_B1_SHORT_PRESS_ACTION_ID 38
+    #define SETTINGS_B1_SHORT_PRESS_ACTION_ID_STR "38"
+    #define SETTINGS_B1_SHORT_PRESS_ACTION_NAME "B1 short press action"
 
-    uint8_t button_1_short_press_action;
-    typedef enum LIST_Button_1_short_press_action {
-        LIST_Button_1_short_press_action_None,
-        LIST_Button_1_short_press_action_Startup_speed_limitation_onoff,
-        LIST_Button_1_short_press_action_Aux_onoff,
-        LIST_Button_1_short_press_action_Mode_switch_123,
-        LIST_Button_1_short_press_action_Mode_switch_23,
-        LIST_Button_1_short_press_action_Eco_switch_nonemedmax,
-        LIST_Button_1_short_press_action_Eco_switch_nonemed, 
-    } tButton_1_short_press_action;
+    uint8_t b1_short_press_action;
+    typedef enum LIST_B1_short_press_action {
+        LIST_B1_short_press_action_None,
+        LIST_B1_short_press_action_Startup_speed_limi,
+        LIST_B1_short_press_action_Aux_onoff,
+        LIST_B1_short_press_action_Mode_switch_123,
+        LIST_B1_short_press_action_Mode_switch_23,
+        LIST_B1_short_press_action_Eco_switch_nonemedmax,
+        LIST_B1_short_press_action_Eco_switch_nonemed, 
+    } tB1_short_press_action;
 
-    void set_button_1_short_press_action (uint8_t value);
-    uint8_t get_button_1_short_press_action();
-    void display_button_1_short_press_action();
+    void set_b1_short_press_action (uint8_t value);
+    uint8_t get_b1_short_press_action();
+    void display_b1_short_press_action();
+    void save_b1_short_press_action(uint8_t value);
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_BUTTON_1_LONG_PRESS_ACTION_ID 39
-    #define SETTINGS_BUTTON_1_LONG_PRESS_ACTION_ID_STR "39"
-    #define SETTINGS_BUTTON_1_LONG_PRESS_ACTION_NAME "Button 1 long press action"
+    #define SETTINGS_B1_LONG_PRESS_ACTION_ID 39
+    #define SETTINGS_B1_LONG_PRESS_ACTION_ID_STR "39"
+    #define SETTINGS_B1_LONG_PRESS_ACTION_NAME "B1 long press action"
 
-    uint8_t button_1_long_press_action;
-    typedef enum LIST_Button_1_long_press_action {
-        LIST_Button_1_long_press_action_None,
-        LIST_Button_1_long_press_action_Startup_speed_limitation_onoff,
-        LIST_Button_1_long_press_action_Aux_onoff,
-        LIST_Button_1_long_press_action_Mode_switch_123,
-        LIST_Button_1_long_press_action_Mode_switch_23,
-        LIST_Button_1_long_press_action_Eco_switch_nonemedmax,
-        LIST_Button_1_long_press_action_Eco_switch_nonemed,
-        LIST_Button_1_long_press_action_Antitheft_manual_lock_on,
-        LIST_Button_1_long_press_action_Nitro_boost_continuous, 
-    } tButton_1_long_press_action;
+    uint8_t b1_long_press_action;
+    typedef enum LIST_B1_long_press_action {
+        LIST_B1_long_press_action_None,
+        LIST_B1_long_press_action_Startup_speed_limitation,
+        LIST_B1_long_press_action_Aux_onoff,
+        LIST_B1_long_press_action_Mode_switch_123,
+        LIST_B1_long_press_action_Mode_switch_23,
+        LIST_B1_long_press_action_Eco_switch_nonemedmax,
+        LIST_B1_long_press_action_Eco_switch_nonemed,
+        LIST_B1_long_press_action_Antitheft_manual_lock_on,
+        LIST_B1_long_press_action_Nitro_boost_continuous, 
+    } tB1_long_press_action;
 
-    void set_button_1_long_press_action (uint8_t value);
-    uint8_t get_button_1_long_press_action();
-    void display_button_1_long_press_action();
+    void set_b1_long_press_action (uint8_t value);
+    uint8_t get_b1_long_press_action();
+    void display_b1_long_press_action();
+    void save_b1_long_press_action(uint8_t value);
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_ID 40
-    #define SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_ID_STR "40"
-    #define SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_NAME "Button 2 short press action"
+    #define SETTINGS_B2_SHORT_PRESS_ACTION_ID 40
+    #define SETTINGS_B2_SHORT_PRESS_ACTION_ID_STR "40"
+    #define SETTINGS_B2_SHORT_PRESS_ACTION_NAME "B2 short press action"
 
-    uint8_t button_2_short_press_action;
-    typedef enum LIST_Button_2_short_press_action {
-        LIST_Button_2_short_press_action_None,
-        LIST_Button_2_short_press_action_Startup_speed_limitation_onoff,
-        LIST_Button_2_short_press_action_Aux_onoff,
-        LIST_Button_2_short_press_action_Mode_switch_123,
-        LIST_Button_2_short_press_action_Mode_switch_23,
-        LIST_Button_2_short_press_action_Eco_switch_nonemedmax,
-        LIST_Button_2_short_press_action_Eco_switch_nonemed, 
-    } tButton_2_short_press_action;
+    uint8_t b2_short_press_action;
+    typedef enum LIST_B2_short_press_action {
+        LIST_B2_short_press_action_None,
+        LIST_B2_short_press_action_Startup_speed_limitation_onoff,
+        LIST_B2_short_press_action_Aux_onoff,
+        LIST_B2_short_press_action_Mode_switch_123,
+        LIST_B2_short_press_action_Mode_switch_23,
+        LIST_B2_short_press_action_Eco_switch_nonemedmax,
+        LIST_B2_short_press_action_Eco_switch_nonemed, 
+    } tB2_short_press_action;
 
-    void set_button_2_short_press_action (uint8_t value);
-    uint8_t get_button_2_short_press_action();
-    void display_button_2_short_press_action();
+    void set_b2_short_press_action (uint8_t value);
+    uint8_t get_b2_short_press_action();
+    void display_b2_short_press_action();
+    void save_b2_short_press_action(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -591,6 +632,7 @@ public:
     void set_button_long_press_duration (uint8_t value);
     uint8_t get_button_long_press_duration();
     void display_button_long_press_duration();
+    void save_button_long_press_duration(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -603,6 +645,7 @@ public:
     void set_wifi_network_name_ssid (String value);
     String get_wifi_network_name_ssid();
     void display_wifi_network_name_ssid();
+    void save_wifi_network_name_ssid(String value);
             
     /*-------------------------------------------------------*/
 
@@ -615,6 +658,7 @@ public:
     void set_wifi_password (String value);
     String get_wifi_password();
     void display_wifi_password();
+    void save_wifi_password(String value);
 
 };
 

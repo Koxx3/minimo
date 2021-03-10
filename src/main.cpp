@@ -461,6 +461,7 @@ void setup()
   prefs.restore();
 
   settings2.restore();
+  settings_menu_set_settings(&settings2);
 
   Serial.println("   settings ...");
   bool settingsStatusOk = prefs.restoreSettings();
@@ -640,6 +641,11 @@ void changeBrakeIOState()
 
     shrd.brakePressedStatus = 0;
   }
+}
+
+void notifySettingsChangedWithBle()
+{
+  blh.notifySettingsChanged();
 }
 
 void notifyBrakeWithBle()

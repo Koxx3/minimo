@@ -14,7 +14,7 @@
 #include <menuIO/TFT_eSPIOut.h>
 #include <menuIO/esp8266Out.h>//must include this even if not doing web output...
 
-extern bool isInMenu;
+
 
 
 class discard_exit_item:public prompt {
@@ -45,6 +45,8 @@ result discard_exit() {
 result save_exit() {
   isInMenu = false;
   Serial.print("\n\nEXIT - save_exit!!!!\n\n");
+  settings_menu_save_to_settings();
+  notifySettingsChangedWithBle();
   return proceed;
 }
 
@@ -166,6 +168,5 @@ const colorDef<uint16_t> colors[6] MEMMODE={
   },//titleColor
 };
 
-#define MAX_DEPTH 5
 
 #endif
