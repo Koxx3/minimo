@@ -18,18 +18,18 @@ template_h = """
     {%- for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
             {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
-            {%- if item.smartdisplay_tft_menu_visible %}
+            {%- if item.tft_menu_visible %}
 {{ item.type }} tft_{{ var_name }} = {{ item.default }};
     
                 {%- if item.smartphone_display_type == "checkbox" %}
-TOGGLE(tft_{{ var_name }}, tft_{{ var_name }}_LIST,"  {{ item.display_name }} : ",doNothing,noEvent,noStyle //
+TOGGLE(tft_{{ var_name }}, tft_{{ var_name }}_LIST,"  {{ item.tft_display_name }} ",doNothing,noEvent,noStyle //
     ,VALUE("Off",0,doNothing,noEvent) //
     ,VALUE("On",1,doNothing,noEvent) //
 );
                 {%- endif %}
             {%- if item.smartphone_display_type | lower == "list" %}
                 {%- set list1 = item.list_strings.split('\\n') %}
-TOGGLE(tft_{{ var_name }}, tft_{{ var_name }}_LIST,"  {{ item.display_name }} : ",doNothing,noEvent,noStyle //
+TOGGLE(tft_{{ var_name }}, tft_{{ var_name }}_LIST,"  {{ item.tft_display_name }} ",doNothing,noEvent,noStyle //
                 {%- for item4 in list1 %}
     ,VALUE("{{ item4 }}", {{ loop.index - 1 }} ,doNothing,noEvent) //
                 {%- endfor %}
@@ -45,7 +45,7 @@ TOGGLE(tft_{{ var_name }}, tft_{{ var_name }}_LIST,"  {{ item.display_name }} : 
     {%- for key2, value2 in value.items() %}
         {%- set vars = {'foo': False} %}
         {%- for  item in value2.settings %}
-            {%- if item.smartdisplay_tft_menu_visible | int == 1 %}
+            {%- if item.tft_menu_visible | int == 1 %}
                 {%- if vars.update({'foo': True}) %} {% endif %}
             {%- endif %}
         {%- endfor %}
@@ -55,15 +55,15 @@ MENU(SUBMENU_{{ key2 | replace(" ", "_")}},"  {{ key2 }}",doNothing,noEvent,noSt
 
             {%- for  item in value2.settings %}
                 {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
-                {%- if item.smartdisplay_tft_menu_visible %}
+                {%- if item.tft_menu_visible %}
                     {%- if item.smartphone_display_type == "checkbox" %}
     ,SUBMENU(tft_{{ var_name }}_LIST) //
                     {%- elif item.smartphone_display_type | lower == "list" %}
     ,SUBMENU(tft_{{ var_name }}_LIST) //
                     {%- elif item.type | lower == "float" %}
-    ,altFIELD(decPlaces<1>::menuField, tft_{{ var_name }}, "  {{ item.display_name }} : " ,"", {{ item.min }}, {{ item.max }}, {{ item.fast_increment }}, {{ item.slow_increment }}, doNothing,anyEvent,wrapStyle) //
+    ,altFIELD(decPlaces<1>::menuField, tft_{{ var_name }}, "  {{ item.tft_display_name }} " ,"", {{ item.min }}, {{ item.max }}, {{ item.tft_fast_increment }}, {{ item.tft_slow_increment }}, doNothing,anyEvent,wrapStyle) //
                     {%- elif 'int' in item.type %}
-    ,FIELD(tft_{{ var_name }},"  {{ item.display_name }} : ","", {{ item.min }}, {{ item.max }}, {{ item.fast_increment }}, {{ item.slow_increment }}, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_{{ var_name }},"  {{ item.tft_display_name }} ","", {{ item.min }}, {{ item.max }}, {{ item.tft_fast_increment }}, {{ item.tft_slow_increment }}, doNothing,noEvent,wrapStyle) //
                     {%- else %}
                     {%- endif %}
                 {%- endif %}
@@ -83,7 +83,7 @@ MENU(mainMenu,"  Main menu",doNothing,noEvent,wrapStyle //
     {%- for key2, value2 in value.items() %}
         {%- set vars = {'foo': False} %}
         {%- for  item in value2.settings %}
-            {%- if item.smartdisplay_tft_menu_visible | int == 1 %}
+            {%- if item.tft_menu_visible | int == 1 %}
                 {%- if vars.update({'foo': True}) %} {% endif %}
             {%- endif %}
         {%- endfor %}
@@ -105,7 +105,7 @@ void settings_menu_init_from_settings() {
     {%- for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
             {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
-            {%- if item.smartdisplay_tft_menu_visible %}
+            {%- if item.tft_menu_visible %}
     tft_{{ var_name }} = app_settings->get_{{ var_name }}();
             {%- endif %}
         {%- endfor %}
@@ -118,7 +118,7 @@ void settings_menu_save_to_settings() {
     {%- for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
             {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
-            {%- if item.smartdisplay_tft_menu_visible %}
+            {%- if item.tft_menu_visible %}
     app_settings->set_{{ var_name }}(tft_{{ var_name }});
             {%- endif %}
         {%- endfor %}

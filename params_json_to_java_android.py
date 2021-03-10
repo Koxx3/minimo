@@ -308,92 +308,81 @@ public class SmartElecSettings2 {
 
 
 {#- run 3 - menu builder #}
-        ArrayList<SettingsObject> settings = EasySettings.createSettingsArray(
+        ArrayList<SettingsObject> settings = EasySettings.createSettingsArray();
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
 
+        {% set outer_loop = loop %}
 // ----------------------
 
-                new HeaderSettingsObject.Builder({{ key2 | replace(" ", "_") | title }})
-                        .build(),
+        settings.add(new HeaderSettingsObject.Builder({{ key2 | replace(" ", "_") | title }})
+                        .build());
 
         {%- for  item in value2.settings %}
+        settings.add(
             {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") | title %}
             {%- if item.smartphone_display_type | lower == "list" %}
-            
                 {%- set list1 = item.list_strings.split('\n')  %}
                 {%- set list_default = list1[item.default] | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") | title %}
-                new ListSettingsObject.Builder({{ var_name }}, {{ var_name }}, {{ var_name }}_LIST_{{ list_default }}, {{ var_name | title }}_LIST_AL , "save")
-                        .setUseValueAsSummary()
-                        .setNegativeBtnText("cancel")
-                        .build(),
-
+            new ListSettingsObject.Builder({{ var_name }}, {{ var_name }}, {{ var_name }}_LIST_{{ list_default }}, {{ var_name | title }}_LIST_AL , "save")
+                .setUseValueAsSummary()
+                .setNegativeBtnText("cancel")
                 {%- set list1 = item.list_strings.split('\n')  %}
                 {%- for item4 in list1 %}
                     {%- set var_elem_name = item4 | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
-                    
                 {%- endfor %}
-            {% endif %}
-
+            {%- endif %}
             {%- if item.smartphone_display_type | lower == "edit_text_number_float" %}
-                new EditTextSettingsObject.Builder({{ var_name }}, {{ var_name }}, "{{ item.default }}", "save")
-                        .setDialogTitle("{{ item.display_unit }}")
-                        .setUseValueAsPrefillText()
-                        .setNegativeBtnText("cancel")
-                        .setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL)
-                        .setUseValueAsSummary()
-                        .build(),
-            {% endif %}
+            new EditTextSettingsObject.Builder({{ var_name }}, {{ var_name }}, "{{ item.default }}", "save")
+                .setDialogTitle("{{ item.display_unit }}")
+                .setUseValueAsPrefillText()
+                .setNegativeBtnText("cancel")
+                .setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL)
+                .setUseValueAsSummary()
+            {%- endif %}
             {%- if item.smartphone_display_type | lower == "edit_text_number_integer" %}
-                new EditTextSettingsObject.Builder({{ var_name }}, {{ var_name }}, "{{ item.default }}", "save")
-                        .setDialogTitle("{{ item.display_unit }}")
-                        .setUseValueAsPrefillText()
-                        .setNegativeBtnText("cancel")
-                        .setInputType(InputType.TYPE_CLASS_NUMBER)
-                        .setUseValueAsSummary()
-                        .build(),
-            {% endif %}
+            new EditTextSettingsObject.Builder({{ var_name }}, {{ var_name }}, "{{ item.default }}", "save")
+                .setDialogTitle("{{ item.display_unit }}")
+                .setUseValueAsPrefillText()
+                .setNegativeBtnText("cancel")
+                .setInputType(InputType.TYPE_CLASS_NUMBER)
+                .setUseValueAsSummary()
+            {%- endif %}
             {%- if item.smartphone_display_type | lower == "edit_text_number_integer_signed" %}
-                new EditTextSettingsObject.Builder({{ var_name }}, {{ var_name }}, "{{ item.default }}", "save")
-                        .setDialogTitle("{{ item.display_unit }}")
-                        .setUseValueAsPrefillText()
-                        .setNegativeBtnText("cancel")
-                        .setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED)
-                        .setUseValueAsSummary()
-                        .build(),
-            {% endif %}
+            new EditTextSettingsObject.Builder({{ var_name }}, {{ var_name }}, "{{ item.default }}", "save")
+                .setDialogTitle("{{ item.display_unit }}")
+                .setUseValueAsPrefillText()
+                .setNegativeBtnText("cancel")
+                .setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED)
+                .setUseValueAsSummary()
+            {%- endif %}
             {%- if item.smartphone_display_type | lower == "edit_text_string" %}            
-                new EditTextSettingsObject.Builder({{ var_name }}, {{ var_name }}, "{{ item.default }}", "save")
-                        .setDialogTitle("{{ item.display_hint }}")
-                        .setUseValueAsPrefillText()
-                        .setNegativeBtnText("cancel")
-                        .setRegex("{{ item.regex_valid }}")
-                        .setInputType(InputType.TYPE_CLASS_TEXT)
-                        .setUseValueAsSummary()
-                        .build(),
+            new EditTextSettingsObject.Builder({{ var_name }}, {{ var_name }}, "{{ item.default }}", "save")
+                .setDialogTitle("{{ item.display_hint }}")
+                .setUseValueAsPrefillText()
+                .setNegativeBtnText("cancel")
+                .setRegex("{{ item.regex_valid }}")
+                .setInputType(InputType.TYPE_CLASS_TEXT)
+                .setUseValueAsSummary()
             {% endif %}
             {%- if item.smartphone_display_type | lower == "seek_bar" %}
-                new SeekBarSettingsObject.Builder({{ var_name }}, {{ var_name }}, {{ item.default }}, {{ item.min }}, {{ item.max }}, {{ item.fast_increment }})
-                        .setUseValueAsSummary()
-                        .build(),
-            {% endif %}
+            new SeekBarSettingsObject.Builder({{ var_name }}, {{ var_name }}, {{ item.default }}, {{ item.min }}, {{ item.max }}, {{ item.increment | int }})
+                .setUseValueAsSummary()
+            {%- endif %}
             {%- if item.smartphone_display_type | lower == "checkbox" %}
-                new CheckBoxSettingsObject.Builder({{ var_name }}, {{ var_name }}, {{ "true" if item.default else "false" }})
-                        .setOffText("off")
-                        .setOnText("on")
-                        .build(),
-            {% endif %}
-        {%- endfor %}
+            new CheckBoxSettingsObject.Builder({{ var_name }}, {{ var_name }}, {{ "true" if item.default else "false" }})
+                .setOffText("off")
+                .setOnText("on")
+            {%- endif %}
+            {%- if outer_loop.last == False and loop.last == True %}
+                .addDivider()
+            {%- endif %}
+                .build());
 
-                new HeaderSettingsObject.Builder("")
-                        .addDivider()
-                        .build(),
+        {%- endfor %}
 
     {%- endfor %}
 {%- endfor %}
-                new HeaderSettingsObject.Builder("")
-                        .build()
-        );
         return settings;
     }
 

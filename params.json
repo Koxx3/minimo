@@ -15,10 +15,12 @@
           "min": 8.0,
           "max": 20.0,
           "default": 10.0,
-          "fast_increment": 1.0,
-          "slow_increment": 0.1,
+          "increment": "",
           "regex_valid": ".*",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Wheel size",
+          "tft_fast_increment": 0.5,
+          "tft_slow_increment": 0.1
         },
         {
           "id": 2,
@@ -32,10 +34,12 @@
           "min": 10,
           "max": 30,
           "default": 15,
-          "fast_increment": 1,
-          "slow_increment": 1,
+          "increment": 1.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Number of poles pairs",
+          "tft_fast_increment": 1.0,
+          "tft_slow_increment": 1.0
         },
         {
           "id": 3,
@@ -49,10 +53,12 @@
           "min": 30.0,
           "max": 100.0,
           "default": 42.0,
-          "fast_increment": 1.0,
-          "slow_increment": 0.1,
+          "increment": "",
           "regex_valid": ".*",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Battery minimum voltage",
+          "tft_fast_increment": 1.0,
+          "tft_slow_increment": 0.1
         },
         {
           "id": 4,
@@ -66,10 +72,12 @@
           "min": 30.0,
           "max": 100.0,
           "default": 58.8,
-          "fast_increment": 1.0,
-          "slow_increment": 0.1,
+          "increment": "",
           "regex_valid": ".*",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Battery maximum voltage",
+          "tft_fast_increment": 1.0,
+          "tft_slow_increment": 0.1
         },
         {
           "id": 5,
@@ -83,10 +91,12 @@
           "min": 10,
           "max": 100,
           "default": 40,
-          "fast_increment": 5,
-          "slow_increment": 1,
+          "increment": "",
           "regex_valid": ".*",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Battery maximum distance",
+          "tft_fast_increment": 5.0,
+          "tft_slow_increment": 1.0
         }
       ]
     },
@@ -95,9 +105,9 @@
       "settings": [
         {
           "id": 13,
-          "display_name": "Speed adjustment",
+          "display_name": "Speed adjustment (in percent)",
           "display_unit": "",
-          "display_hint": "Display adjusted speed (-10 = displayed speed decreased by 10%)",
+          "display_hint": "write -10 to decrease speed by 10%",
           "type": "int8_t",
           "smartphone_display_type": "edit_text_number_integer_signed",
           "valid_config": ".*",
@@ -105,10 +115,12 @@
           "min": -100,
           "max": 100,
           "default": 0,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": ".*",
-          "smartdisplay_tft_menu_visible": 0.0
+          "smartdisplay_tft_menu_visible": 0.0,
+          "tft_display_name": "",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 14,
@@ -122,10 +134,12 @@
           "min": 0,
           "max": 1,
           "default": 0,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 0.0
+          "smartdisplay_tft_menu_visible": 0.0,
+          "tft_display_name": "",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 15,
@@ -139,10 +153,12 @@
           "min": 0,
           "max": 4,
           "default": 0,
-          "fast_increment": 1,
-          "slow_increment": 1,
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 0.0
+          "smartdisplay_tft_menu_visible": 0.0,
+          "tft_display_name": "",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         }
       ]
     },
@@ -161,10 +177,12 @@
           "min": 1,
           "max": 3,
           "default": 3,
-          "fast_increment": 1,
-          "slow_increment": 1,
+          "increment": 1.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Default mode at startup",
+          "tft_fast_increment": 1.0,
+          "tft_slow_increment": 1.0
         },
         {
           "id": 17,
@@ -178,10 +196,12 @@
           "min": 0,
           "max": 2,
           "default": 2,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Default eco mode at startup",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 18,
@@ -195,10 +215,12 @@
           "min": 0,
           "max": 5,
           "default": 5,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Default acceleration",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 19,
@@ -212,10 +234,12 @@
           "min": 1,
           "max": 5,
           "default": 3,
-          "fast_increment": 1,
-          "slow_increment": 1,
+          "increment": 1.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Default electric brake at startup",
+          "tft_fast_increment": 1.0,
+          "tft_slow_increment": 1.0
         },
         {
           "id": 20,
@@ -229,10 +253,12 @@
           "min": 0,
           "max": 1,
           "default": 0,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "PAS enabled",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 21,
@@ -246,10 +272,12 @@
           "min": 0,
           "max": 1,
           "default": 0,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Abs enabled",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 22,
@@ -263,10 +291,12 @@
           "min": 50,
           "max": 100,
           "default": 100,
-          "fast_increment": 10,
-          "slow_increment": 5,
+          "increment": 10.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Display brightness",
+          "tft_fast_increment": 20.0,
+          "tft_slow_increment": 10.0
         },
         {
           "id": 23,
@@ -280,10 +310,12 @@
           "min": 50,
           "max": 100,
           "default": 70,
-          "fast_increment": 10,
-          "slow_increment": 5,
+          "increment": 10.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Temperature warning",
+          "tft_fast_increment": 20.0,
+          "tft_slow_increment": 10.0
         },
         {
           "id": 24,
@@ -297,10 +329,12 @@
           "min": 20,
           "max": 100,
           "default": 80,
-          "fast_increment": 10,
-          "slow_increment": 5,
+          "increment": 10.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Humidity warning",
+          "tft_fast_increment": 20.0,
+          "tft_slow_increment": 10.0
         }
       ]
     },
@@ -319,10 +353,12 @@
           "min": 0,
           "max": 1,
           "default": 0,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Speed limiter at startup",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 7,
@@ -336,10 +372,12 @@
           "min": 5,
           "max": 100,
           "default": 37,
-          "fast_increment": 1,
-          "slow_increment": 1,
+          "increment": 1.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Speed limiter max speed",
+          "tft_fast_increment": 5.0,
+          "tft_slow_increment": 1.0
         },
         {
           "id": 8,
@@ -353,10 +391,12 @@
           "min": 0,
           "max": 3,
           "default": 0,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 0.0
+          "smartdisplay_tft_menu_visible": 0.0,
+          "tft_display_name": "",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 9,
@@ -370,10 +410,12 @@
           "min": 0,
           "max": 999999,
           "default": 147258,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "^[0-9]{6,6}$",
-          "smartdisplay_tft_menu_visible": 0.0
+          "smartdisplay_tft_menu_visible": 0.0,
+          "tft_display_name": "",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 10,
@@ -387,10 +429,12 @@
           "min": 18.0,
           "max": 18.0,
           "default": "aa:bb:cc:dd:ee:ff",
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
-          "smartdisplay_tft_menu_visible": 0.0
+          "smartdisplay_tft_menu_visible": 0.0,
+          "tft_display_name": "",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 11,
@@ -404,16 +448,18 @@
           "min": -100,
           "max": -30,
           "default": -80,
-          "fast_increment": 5,
-          "slow_increment": 5,
+          "increment": 5.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 0.0
+          "smartdisplay_tft_menu_visible": 0.0,
+          "tft_display_name": "",
+          "tft_fast_increment": 5.0,
+          "tft_slow_increment": 1.0
         },
         {
           "id": 12,
-          "display_name": "Original display speed adjustment",
+          "display_name": "Original display speed adjustment (in percent)",
           "display_unit": "",
-          "display_hint": "Display adjusted speed (-10 = displayed speed decreased by 10%)",
+          "display_hint": "write -10 to decrease speed by 10%",
           "type": "int8_t",
           "smartphone_display_type": "edit_text_number_integer_signed",
           "valid_config": ".*",
@@ -421,10 +467,12 @@
           "min": -100,
           "max": 100,
           "default": 0,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": ".*",
-          "smartdisplay_tft_menu_visible": 0.0
+          "smartdisplay_tft_menu_visible": 0.0,
+          "tft_display_name": "",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         }
       ]
     },
@@ -443,14 +491,16 @@
           "min": 0,
           "max": 1,
           "default": 0,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Progressive mode",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 26,
-          "display_name": "Type",
+          "display_name": "Smart brake type",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -460,14 +510,16 @@
           "min": 0,
           "max": 3,
           "default": 0,
-          "fast_increment": 1,
-          "slow_increment": 1,
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Type",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 27,
-          "display_name": "Min value",
+          "display_name": "Min power value",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -477,14 +529,16 @@
           "min": 0,
           "max": 5,
           "default": 1,
-          "fast_increment": 1,
-          "slow_increment": 1,
+          "increment": 1.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Min value",
+          "tft_fast_increment": 1.0,
+          "tft_slow_increment": 1.0
         },
         {
           "id": 28,
-          "display_name": "Max value",
+          "display_name": "Max power value",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -494,10 +548,12 @@
           "min": 0,
           "max": 5,
           "default": 5,
-          "fast_increment": 1,
-          "slow_increment": 1,
+          "increment": 1.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Max value",
+          "tft_fast_increment": 1.0,
+          "tft_slow_increment": 1.0
         },
         {
           "id": 29,
@@ -511,10 +567,12 @@
           "min": 100,
           "max": 2000,
           "default": 500,
-          "fast_increment": 50,
-          "slow_increment": 50,
+          "increment": 50.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Time between mode shift",
+          "tft_fast_increment": 100.0,
+          "tft_slow_increment": 50.0
         },
         {
           "id": 30,
@@ -528,10 +586,12 @@
           "min": 0,
           "max": 1,
           "default": 0,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Disabled on high battery voltage",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 31,
@@ -545,10 +605,12 @@
           "min": 80,
           "max": 100,
           "default": 100,
-          "fast_increment": 1,
-          "slow_increment": 1,
+          "increment": 1.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Disabled percent limit",
+          "tft_fast_increment": 5.0,
+          "tft_slow_increment": 1.0
         }
       ]
     },
@@ -567,10 +629,12 @@
           "min": 0,
           "max": 1,
           "default": 0,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Throttle regeneration",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 33,
@@ -584,10 +648,12 @@
           "min": 500,
           "max": 1500,
           "default": 650,
-          "fast_increment": 50,
-          "slow_increment": 50,
+          "increment": 50.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Input min voltage (in millivolts)",
+          "tft_fast_increment": 100.0,
+          "tft_slow_increment": 50.0
         },
         {
           "id": 34,
@@ -601,10 +667,12 @@
           "min": 2500,
           "max": 5000,
           "default": 3950,
-          "fast_increment": 50,
-          "slow_increment": 50,
+          "increment": 50.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Input max voltage (in millivolts)",
+          "tft_fast_increment": 100.0,
+          "tft_slow_increment": 50.0
         },
         {
           "id": 35,
@@ -618,10 +686,12 @@
           "min": 500,
           "max": 2000,
           "default": 800,
-          "fast_increment": 50,
-          "slow_increment": 50,
+          "increment": 50.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Output min voltage (in millivolts)",
+          "tft_fast_increment": 100.0,
+          "tft_slow_increment": 50.0
         },
         {
           "id": 36,
@@ -635,10 +705,12 @@
           "min": 2500,
           "max": 5000,
           "default": 3350,
-          "fast_increment": 50,
-          "slow_increment": 50,
+          "increment": 50.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Output max voltage (in millivolts)",
+          "tft_fast_increment": 100.0,
+          "tft_slow_increment": 50.0
         },
         {
           "id": 37,
@@ -652,10 +724,12 @@
           "min": 0,
           "max": 4,
           "default": 2,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Output curve",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         }
       ]
     },
@@ -664,7 +738,7 @@
       "settings": [
         {
           "id": 38,
-          "display_name": "B1 short press action",
+          "display_name": "Button 1 short press action",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -674,14 +748,16 @@
           "min": 0,
           "max": 6,
           "default": 0,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "B1 short press action",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 39,
-          "display_name": "B1 long press action",
+          "display_name": "Button 1 long press action",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -691,14 +767,16 @@
           "min": 0,
           "max": 8,
           "default": 0,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "B1 long press action",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 40,
-          "display_name": "B2 short press action",
+          "display_name": "Button 2 short press action",
           "display_unit": "",
           "display_hint": "",
           "type": "uint8_t",
@@ -708,10 +786,12 @@
           "min": 0,
           "max": 6,
           "default": 0,
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "B2 short press action",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 41,
@@ -725,10 +805,12 @@
           "min": 2,
           "max": 30,
           "default": 5,
-          "fast_increment": 1,
-          "slow_increment": 1,
+          "increment": 1.0,
           "regex_valid": "",
-          "smartdisplay_tft_menu_visible": 1.0
+          "smartdisplay_tft_menu_visible": 1.0,
+          "tft_display_name": "Button long press duration",
+          "tft_fast_increment": 1.0,
+          "tft_slow_increment": 1.0
         }
       ]
     },
@@ -747,10 +829,12 @@
           "min": 1.0,
           "max": 32.0,
           "default": "",
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "^(.{0,32})$",
-          "smartdisplay_tft_menu_visible": 0.0
+          "smartdisplay_tft_menu_visible": 0.0,
+          "tft_display_name": "",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         },
         {
           "id": 43,
@@ -764,10 +848,12 @@
           "min": 1.0,
           "max": 32.0,
           "default": "",
-          "fast_increment": "",
-          "slow_increment": "",
+          "increment": "",
           "regex_valid": "^(.{0,32})$",
-          "smartdisplay_tft_menu_visible": 0.0
+          "smartdisplay_tft_menu_visible": 0.0,
+          "tft_display_name": "",
+          "tft_fast_increment": "",
+          "tft_slow_increment": ""
         }
       ]
     }

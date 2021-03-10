@@ -33,8 +33,8 @@ void Settings2::restore() {
     Serial.println("  >> battery_maximum_voltage = " + (String)battery_maximum_voltage);
     battery_maximum_distance = prefs.getInt(SETTINGS_BATTERY_MAXIMUM_DISTANCE_ID_STR, 40);
     Serial.println("  >> battery_maximum_distance = " + (String)battery_maximum_distance);
-    speed_adjustment = prefs.getInt(SETTINGS_SPEED_ADJUSTMENT_ID_STR, 0);
-    Serial.println("  >> speed_adjustment = " + (String)speed_adjustment);
+    speed_adjustment_in_percent = prefs.getInt(SETTINGS_SPEED_ADJUSTMENT_IN_PERCENT_ID_STR, 0);
+    Serial.println("  >> speed_adjustment_in_percent = " + (String)speed_adjustment_in_percent);
     display_gps_speed_instead_of_escooter_speed = prefs.getInt(SETTINGS_DISPLAY_GPS_SPEED_INSTEAD_OF_ESCOOTER_SPEED_ID_STR, 0);
     Serial.println("  >> display_gps_speed_instead_of_escooter_speed = " + (String)display_gps_speed_instead_of_escooter_speed);
     aux_relay_name = prefs.getInt(SETTINGS_AUX_RELAY_NAME_ID_STR, 0);
@@ -69,16 +69,16 @@ void Settings2::restore() {
     Serial.println("  >> beacon_mac_address = " + (String)beacon_mac_address);
     beacon_range = prefs.getInt(SETTINGS_BEACON_RANGE_ID_STR, -80);
     Serial.println("  >> beacon_range = " + (String)beacon_range);
-    original_display_speed_adjustment = prefs.getInt(SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_ID_STR, 0);
-    Serial.println("  >> original_display_speed_adjustment = " + (String)original_display_speed_adjustment);
+    original_display_speed_adjustment_in_percent = prefs.getInt(SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_IN_PERCENT_ID_STR, 0);
+    Serial.println("  >> original_display_speed_adjustment_in_percent = " + (String)original_display_speed_adjustment_in_percent);
     progressive_mode = prefs.getInt(SETTINGS_PROGRESSIVE_MODE_ID_STR, 0);
     Serial.println("  >> progressive_mode = " + (String)progressive_mode);
-    type = prefs.getInt(SETTINGS_TYPE_ID_STR, 0);
-    Serial.println("  >> type = " + (String)type);
-    min_value = prefs.getInt(SETTINGS_MIN_VALUE_ID_STR, 1);
-    Serial.println("  >> min_value = " + (String)min_value);
-    max_value = prefs.getInt(SETTINGS_MAX_VALUE_ID_STR, 5);
-    Serial.println("  >> max_value = " + (String)max_value);
+    smart_brake_type = prefs.getInt(SETTINGS_SMART_BRAKE_TYPE_ID_STR, 0);
+    Serial.println("  >> smart_brake_type = " + (String)smart_brake_type);
+    min_power_value = prefs.getInt(SETTINGS_MIN_POWER_VALUE_ID_STR, 1);
+    Serial.println("  >> min_power_value = " + (String)min_power_value);
+    max_power_value = prefs.getInt(SETTINGS_MAX_POWER_VALUE_ID_STR, 5);
+    Serial.println("  >> max_power_value = " + (String)max_power_value);
     time_between_mode_shift = prefs.getInt(SETTINGS_TIME_BETWEEN_MODE_SHIFT_ID_STR, 500);
     Serial.println("  >> time_between_mode_shift = " + (String)time_between_mode_shift);
     disabled_on_high_battery_voltage = prefs.getInt(SETTINGS_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID_STR, 0);
@@ -97,12 +97,12 @@ void Settings2::restore() {
     Serial.println("  >> output_max_voltage_in_millivolts = " + (String)output_max_voltage_in_millivolts);
     output_curve = prefs.getInt(SETTINGS_OUTPUT_CURVE_ID_STR, 2);
     Serial.println("  >> output_curve = " + (String)output_curve);
-    b1_short_press_action = prefs.getInt(SETTINGS_B1_SHORT_PRESS_ACTION_ID_STR, 0);
-    Serial.println("  >> b1_short_press_action = " + (String)b1_short_press_action);
-    b1_long_press_action = prefs.getInt(SETTINGS_B1_LONG_PRESS_ACTION_ID_STR, 0);
-    Serial.println("  >> b1_long_press_action = " + (String)b1_long_press_action);
-    b2_short_press_action = prefs.getInt(SETTINGS_B2_SHORT_PRESS_ACTION_ID_STR, 0);
-    Serial.println("  >> b2_short_press_action = " + (String)b2_short_press_action);
+    button_1_short_press_action = prefs.getInt(SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_ID_STR, 0);
+    Serial.println("  >> button_1_short_press_action = " + (String)button_1_short_press_action);
+    button_1_long_press_action = prefs.getInt(SETTINGS_BUTTON_1_LONG_PRESS_ACTION_ID_STR, 0);
+    Serial.println("  >> button_1_long_press_action = " + (String)button_1_long_press_action);
+    button_2_short_press_action = prefs.getInt(SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_ID_STR, 0);
+    Serial.println("  >> button_2_short_press_action = " + (String)button_2_short_press_action);
     button_long_press_duration = prefs.getInt(SETTINGS_BUTTON_LONG_PRESS_DURATION_ID_STR, 5);
     Serial.println("  >> button_long_press_duration = " + (String)button_long_press_duration);
     wifi_network_name_ssid = prefs.getString(SETTINGS_WIFI_NETWORK_NAME_SSID_ID_STR, "");
@@ -121,7 +121,7 @@ void Settings2::save() {
     prefs.putFloat(SETTINGS_BATTERY_MINIMUM_VOLTAGE_ID_STR, battery_minimum_voltage);
     prefs.putFloat(SETTINGS_BATTERY_MAXIMUM_VOLTAGE_ID_STR, battery_maximum_voltage);
     prefs.putInt(SETTINGS_BATTERY_MAXIMUM_DISTANCE_ID_STR, battery_maximum_distance);
-    prefs.putInt(SETTINGS_SPEED_ADJUSTMENT_ID_STR, speed_adjustment);
+    prefs.putInt(SETTINGS_SPEED_ADJUSTMENT_IN_PERCENT_ID_STR, speed_adjustment_in_percent);
     prefs.putInt(SETTINGS_DISPLAY_GPS_SPEED_INSTEAD_OF_ESCOOTER_SPEED_ID_STR, display_gps_speed_instead_of_escooter_speed);
     prefs.putInt(SETTINGS_AUX_RELAY_NAME_ID_STR, aux_relay_name);
     prefs.putInt(SETTINGS_DEFAULT_MODE_AT_STARTUP_ID_STR, default_mode_at_startup);
@@ -139,11 +139,11 @@ void Settings2::save() {
     prefs.putInt(SETTINGS_PIN_CODE_ID_STR, pin_code);
     prefs.putString(SETTINGS_BEACON_MAC_ADDRESS_ID_STR, beacon_mac_address);
     prefs.putInt(SETTINGS_BEACON_RANGE_ID_STR, beacon_range);
-    prefs.putInt(SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_ID_STR, original_display_speed_adjustment);
+    prefs.putInt(SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_IN_PERCENT_ID_STR, original_display_speed_adjustment_in_percent);
     prefs.putInt(SETTINGS_PROGRESSIVE_MODE_ID_STR, progressive_mode);
-    prefs.putInt(SETTINGS_TYPE_ID_STR, type);
-    prefs.putInt(SETTINGS_MIN_VALUE_ID_STR, min_value);
-    prefs.putInt(SETTINGS_MAX_VALUE_ID_STR, max_value);
+    prefs.putInt(SETTINGS_SMART_BRAKE_TYPE_ID_STR, smart_brake_type);
+    prefs.putInt(SETTINGS_MIN_POWER_VALUE_ID_STR, min_power_value);
+    prefs.putInt(SETTINGS_MAX_POWER_VALUE_ID_STR, max_power_value);
     prefs.putInt(SETTINGS_TIME_BETWEEN_MODE_SHIFT_ID_STR, time_between_mode_shift);
     prefs.putInt(SETTINGS_DISABLED_ON_HIGH_BATTERY_VOLTAGE_ID_STR, disabled_on_high_battery_voltage);
     prefs.putInt(SETTINGS_DISABLED_PERCENT_LIMIT_ID_STR, disabled_percent_limit);
@@ -153,9 +153,9 @@ void Settings2::save() {
     prefs.putInt(SETTINGS_OUTPUT_MIN_VOLTAGE_IN_MILLIVOLTS_ID_STR, output_min_voltage_in_millivolts);
     prefs.putInt(SETTINGS_OUTPUT_MAX_VOLTAGE_IN_MILLIVOLTS_ID_STR, output_max_voltage_in_millivolts);
     prefs.putInt(SETTINGS_OUTPUT_CURVE_ID_STR, output_curve);
-    prefs.putInt(SETTINGS_B1_SHORT_PRESS_ACTION_ID_STR, b1_short_press_action);
-    prefs.putInt(SETTINGS_B1_LONG_PRESS_ACTION_ID_STR, b1_long_press_action);
-    prefs.putInt(SETTINGS_B2_SHORT_PRESS_ACTION_ID_STR, b2_short_press_action);
+    prefs.putInt(SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_ID_STR, button_1_short_press_action);
+    prefs.putInt(SETTINGS_BUTTON_1_LONG_PRESS_ACTION_ID_STR, button_1_long_press_action);
+    prefs.putInt(SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_ID_STR, button_2_short_press_action);
     prefs.putInt(SETTINGS_BUTTON_LONG_PRESS_DURATION_ID_STR, button_long_press_duration);
     prefs.putString(SETTINGS_WIFI_NETWORK_NAME_SSID_ID_STR, wifi_network_name_ssid);
     prefs.putString(SETTINGS_WIFI_PASSWORD_ID_STR, wifi_password);
@@ -200,9 +200,9 @@ void Settings2::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         Serial.print("unpack_setting_packet - battery_maximum_distance : " + (String) battery_maximum_distance + " / ");
         buffer_display("", packet, length);
         break;
-    case SETTINGS_SPEED_ADJUSTMENT_ID :
-        set_speed_adjustment(buffer_get_int8(packet, &ind));
-        Serial.print("unpack_setting_packet - speed_adjustment : " + (String) speed_adjustment + " / ");
+    case SETTINGS_SPEED_ADJUSTMENT_IN_PERCENT_ID :
+        set_speed_adjustment_in_percent(buffer_get_int8(packet, &ind));
+        Serial.print("unpack_setting_packet - speed_adjustment_in_percent : " + (String) speed_adjustment_in_percent + " / ");
         buffer_display("", packet, length);
         break;
     case SETTINGS_DISPLAY_GPS_SPEED_INSTEAD_OF_ESCOOTER_SPEED_ID :
@@ -297,9 +297,9 @@ void Settings2::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         Serial.print("unpack_setting_packet - beacon_range : " + (String) beacon_range + " / ");
         buffer_display("", packet, length);
         break;
-    case SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_ID :
-        set_original_display_speed_adjustment(buffer_get_int8(packet, &ind));
-        Serial.print("unpack_setting_packet - original_display_speed_adjustment : " + (String) original_display_speed_adjustment + " / ");
+    case SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_IN_PERCENT_ID :
+        set_original_display_speed_adjustment_in_percent(buffer_get_int8(packet, &ind));
+        Serial.print("unpack_setting_packet - original_display_speed_adjustment_in_percent : " + (String) original_display_speed_adjustment_in_percent + " / ");
         buffer_display("", packet, length);
         break;
     case SETTINGS_PROGRESSIVE_MODE_ID :
@@ -307,19 +307,19 @@ void Settings2::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         Serial.print("unpack_setting_packet - progressive_mode : " + (String) progressive_mode + " / ");
         buffer_display("", packet, length);
         break;
-    case SETTINGS_TYPE_ID :
-        set_type(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - type : " + (String) type + " / ");
+    case SETTINGS_SMART_BRAKE_TYPE_ID :
+        set_smart_brake_type(buffer_get_uint8(packet, &ind));
+        Serial.print("unpack_setting_packet - smart_brake_type : " + (String) smart_brake_type + " / ");
         buffer_display("", packet, length);
         break;
-    case SETTINGS_MIN_VALUE_ID :
-        set_min_value(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - min_value : " + (String) min_value + " / ");
+    case SETTINGS_MIN_POWER_VALUE_ID :
+        set_min_power_value(buffer_get_uint8(packet, &ind));
+        Serial.print("unpack_setting_packet - min_power_value : " + (String) min_power_value + " / ");
         buffer_display("", packet, length);
         break;
-    case SETTINGS_MAX_VALUE_ID :
-        set_max_value(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - max_value : " + (String) max_value + " / ");
+    case SETTINGS_MAX_POWER_VALUE_ID :
+        set_max_power_value(buffer_get_uint8(packet, &ind));
+        Serial.print("unpack_setting_packet - max_power_value : " + (String) max_power_value + " / ");
         buffer_display("", packet, length);
         break;
     case SETTINGS_TIME_BETWEEN_MODE_SHIFT_ID :
@@ -367,19 +367,19 @@ void Settings2::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         Serial.print("unpack_setting_packet - output_curve : " + (String) output_curve + " / ");
         buffer_display("", packet, length);
         break;
-    case SETTINGS_B1_SHORT_PRESS_ACTION_ID :
-        set_b1_short_press_action(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - b1_short_press_action : " + (String) b1_short_press_action + " / ");
+    case SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_ID :
+        set_button_1_short_press_action(buffer_get_uint8(packet, &ind));
+        Serial.print("unpack_setting_packet - button_1_short_press_action : " + (String) button_1_short_press_action + " / ");
         buffer_display("", packet, length);
         break;
-    case SETTINGS_B1_LONG_PRESS_ACTION_ID :
-        set_b1_long_press_action(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - b1_long_press_action : " + (String) b1_long_press_action + " / ");
+    case SETTINGS_BUTTON_1_LONG_PRESS_ACTION_ID :
+        set_button_1_long_press_action(buffer_get_uint8(packet, &ind));
+        Serial.print("unpack_setting_packet - button_1_long_press_action : " + (String) button_1_long_press_action + " / ");
         buffer_display("", packet, length);
         break;
-    case SETTINGS_B2_SHORT_PRESS_ACTION_ID :
-        set_b2_short_press_action(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - b2_short_press_action : " + (String) b2_short_press_action + " / ");
+    case SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_ID :
+        set_button_2_short_press_action(buffer_get_uint8(packet, &ind));
+        Serial.print("unpack_setting_packet - button_2_short_press_action : " + (String) button_2_short_press_action + " / ");
         buffer_display("", packet, length);
         break;
     case SETTINGS_BUTTON_LONG_PRESS_DURATION_ID :
@@ -451,9 +451,9 @@ void Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, u
         Serial.print("pack_setting_packet - battery_maximum_distance : " + (String) battery_maximum_distance + " / ");
         buffer_display("", packet, *ind);
         break;
-    case SETTINGS_SPEED_ADJUSTMENT_ID :
-        buffer_append_int8(packet, speed_adjustment, ind);
-        Serial.print("pack_setting_packet - speed_adjustment : " + (String) speed_adjustment + " / ");
+    case SETTINGS_SPEED_ADJUSTMENT_IN_PERCENT_ID :
+        buffer_append_int8(packet, speed_adjustment_in_percent, ind);
+        Serial.print("pack_setting_packet - speed_adjustment_in_percent : " + (String) speed_adjustment_in_percent + " / ");
         buffer_display("", packet, *ind);
         break;
     case SETTINGS_DISPLAY_GPS_SPEED_INSTEAD_OF_ESCOOTER_SPEED_ID :
@@ -550,9 +550,9 @@ void Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, u
         Serial.print("pack_setting_packet - beacon_range : " + (String) beacon_range + " / ");
         buffer_display("", packet, *ind);
         break;
-    case SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_ID :
-        buffer_append_int8(packet, original_display_speed_adjustment, ind);
-        Serial.print("pack_setting_packet - original_display_speed_adjustment : " + (String) original_display_speed_adjustment + " / ");
+    case SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_IN_PERCENT_ID :
+        buffer_append_int8(packet, original_display_speed_adjustment_in_percent, ind);
+        Serial.print("pack_setting_packet - original_display_speed_adjustment_in_percent : " + (String) original_display_speed_adjustment_in_percent + " / ");
         buffer_display("", packet, *ind);
         break;
     case SETTINGS_PROGRESSIVE_MODE_ID :
@@ -560,19 +560,19 @@ void Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, u
         Serial.print("pack_setting_packet - progressive_mode : " + (String) progressive_mode + " / ");
         buffer_display("", packet, *ind);
         break;
-    case SETTINGS_TYPE_ID :
-        buffer_append_uint8(packet, type, ind);
-        Serial.print("pack_setting_packet - type : " + (String) type + " / ");
+    case SETTINGS_SMART_BRAKE_TYPE_ID :
+        buffer_append_uint8(packet, smart_brake_type, ind);
+        Serial.print("pack_setting_packet - smart_brake_type : " + (String) smart_brake_type + " / ");
         buffer_display("", packet, *ind);
         break;
-    case SETTINGS_MIN_VALUE_ID :
-        buffer_append_uint8(packet, min_value, ind);
-        Serial.print("pack_setting_packet - min_value : " + (String) min_value + " / ");
+    case SETTINGS_MIN_POWER_VALUE_ID :
+        buffer_append_uint8(packet, min_power_value, ind);
+        Serial.print("pack_setting_packet - min_power_value : " + (String) min_power_value + " / ");
         buffer_display("", packet, *ind);
         break;
-    case SETTINGS_MAX_VALUE_ID :
-        buffer_append_uint8(packet, max_value, ind);
-        Serial.print("pack_setting_packet - max_value : " + (String) max_value + " / ");
+    case SETTINGS_MAX_POWER_VALUE_ID :
+        buffer_append_uint8(packet, max_power_value, ind);
+        Serial.print("pack_setting_packet - max_power_value : " + (String) max_power_value + " / ");
         buffer_display("", packet, *ind);
         break;
     case SETTINGS_TIME_BETWEEN_MODE_SHIFT_ID :
@@ -620,19 +620,19 @@ void Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, u
         Serial.print("pack_setting_packet - output_curve : " + (String) output_curve + " / ");
         buffer_display("", packet, *ind);
         break;
-    case SETTINGS_B1_SHORT_PRESS_ACTION_ID :
-        buffer_append_uint8(packet, b1_short_press_action, ind);
-        Serial.print("pack_setting_packet - b1_short_press_action : " + (String) b1_short_press_action + " / ");
+    case SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_ID :
+        buffer_append_uint8(packet, button_1_short_press_action, ind);
+        Serial.print("pack_setting_packet - button_1_short_press_action : " + (String) button_1_short_press_action + " / ");
         buffer_display("", packet, *ind);
         break;
-    case SETTINGS_B1_LONG_PRESS_ACTION_ID :
-        buffer_append_uint8(packet, b1_long_press_action, ind);
-        Serial.print("pack_setting_packet - b1_long_press_action : " + (String) b1_long_press_action + " / ");
+    case SETTINGS_BUTTON_1_LONG_PRESS_ACTION_ID :
+        buffer_append_uint8(packet, button_1_long_press_action, ind);
+        Serial.print("pack_setting_packet - button_1_long_press_action : " + (String) button_1_long_press_action + " / ");
         buffer_display("", packet, *ind);
         break;
-    case SETTINGS_B2_SHORT_PRESS_ACTION_ID :
-        buffer_append_uint8(packet, b2_short_press_action, ind);
-        Serial.print("pack_setting_packet - b2_short_press_action : " + (String) b2_short_press_action + " / ");
+    case SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_ID :
+        buffer_append_uint8(packet, button_2_short_press_action, ind);
+        Serial.print("pack_setting_packet - button_2_short_press_action : " + (String) button_2_short_press_action + " / ");
         buffer_display("", packet, *ind);
         break;
     case SETTINGS_BUTTON_LONG_PRESS_DURATION_ID :
@@ -782,21 +782,21 @@ void Settings2::save_battery_maximum_distance(uint8_t value) {
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_speed_adjustment(int8_t value) {
-    speed_adjustment = value;
+void Settings2::set_speed_adjustment_in_percent(int8_t value) {
+    speed_adjustment_in_percent = value;
 }
 
-int8_t Settings2::get_speed_adjustment() {
-    return speed_adjustment ;
+int8_t Settings2::get_speed_adjustment_in_percent() {
+    return speed_adjustment_in_percent ;
 }
 
-void Settings2::display_speed_adjustment() {
-    Serial.println("  speed_adjustment = " + (String) speed_adjustment);
+void Settings2::display_speed_adjustment_in_percent() {
+    Serial.println("  speed_adjustment_in_percent = " + (String) speed_adjustment_in_percent);
 }
 
-void Settings2::save_speed_adjustment(int8_t value) {
+void Settings2::save_speed_adjustment_in_percent(int8_t value) {
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_SPEED_ADJUSTMENT_ID_STR, speed_adjustment);
+    prefs.putInt(SETTINGS_SPEED_ADJUSTMENT_IN_PERCENT_ID_STR, speed_adjustment_in_percent);
     prefs.end();
 }
                 
@@ -1160,21 +1160,21 @@ void Settings2::save_beacon_range(int8_t value) {
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_original_display_speed_adjustment(int8_t value) {
-    original_display_speed_adjustment = value;
+void Settings2::set_original_display_speed_adjustment_in_percent(int8_t value) {
+    original_display_speed_adjustment_in_percent = value;
 }
 
-int8_t Settings2::get_original_display_speed_adjustment() {
-    return original_display_speed_adjustment ;
+int8_t Settings2::get_original_display_speed_adjustment_in_percent() {
+    return original_display_speed_adjustment_in_percent ;
 }
 
-void Settings2::display_original_display_speed_adjustment() {
-    Serial.println("  original_display_speed_adjustment = " + (String) original_display_speed_adjustment);
+void Settings2::display_original_display_speed_adjustment_in_percent() {
+    Serial.println("  original_display_speed_adjustment_in_percent = " + (String) original_display_speed_adjustment_in_percent);
 }
 
-void Settings2::save_original_display_speed_adjustment(int8_t value) {
+void Settings2::save_original_display_speed_adjustment_in_percent(int8_t value) {
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_ID_STR, original_display_speed_adjustment);
+    prefs.putInt(SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_IN_PERCENT_ID_STR, original_display_speed_adjustment_in_percent);
     prefs.end();
 }
                 
@@ -1202,63 +1202,63 @@ void Settings2::save_progressive_mode(uint8_t value) {
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_type(uint8_t value) {
-    type = value;
+void Settings2::set_smart_brake_type(uint8_t value) {
+    smart_brake_type = value;
 }
 
-uint8_t Settings2::get_type() {
-    return type ;
+uint8_t Settings2::get_smart_brake_type() {
+    return smart_brake_type ;
 }
 
-void Settings2::display_type() {
-    Serial.println("  type = " + (String) type);
+void Settings2::display_smart_brake_type() {
+    Serial.println("  smart_brake_type = " + (String) smart_brake_type);
 }
 
-void Settings2::save_type(uint8_t value) {
+void Settings2::save_smart_brake_type(uint8_t value) {
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_TYPE_ID_STR, type);
+    prefs.putInt(SETTINGS_SMART_BRAKE_TYPE_ID_STR, smart_brake_type);
     prefs.end();
 }
                 
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_min_value(uint8_t value) {
-    min_value = value;
+void Settings2::set_min_power_value(uint8_t value) {
+    min_power_value = value;
 }
 
-uint8_t Settings2::get_min_value() {
-    return min_value ;
+uint8_t Settings2::get_min_power_value() {
+    return min_power_value ;
 }
 
-void Settings2::display_min_value() {
-    Serial.println("  min_value = " + (String) min_value);
+void Settings2::display_min_power_value() {
+    Serial.println("  min_power_value = " + (String) min_power_value);
 }
 
-void Settings2::save_min_value(uint8_t value) {
+void Settings2::save_min_power_value(uint8_t value) {
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_MIN_VALUE_ID_STR, min_value);
+    prefs.putInt(SETTINGS_MIN_POWER_VALUE_ID_STR, min_power_value);
     prefs.end();
 }
                 
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_max_value(uint8_t value) {
-    max_value = value;
+void Settings2::set_max_power_value(uint8_t value) {
+    max_power_value = value;
 }
 
-uint8_t Settings2::get_max_value() {
-    return max_value ;
+uint8_t Settings2::get_max_power_value() {
+    return max_power_value ;
 }
 
-void Settings2::display_max_value() {
-    Serial.println("  max_value = " + (String) max_value);
+void Settings2::display_max_power_value() {
+    Serial.println("  max_power_value = " + (String) max_power_value);
 }
 
-void Settings2::save_max_value(uint8_t value) {
+void Settings2::save_max_power_value(uint8_t value) {
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_MAX_VALUE_ID_STR, max_value);
+    prefs.putInt(SETTINGS_MAX_POWER_VALUE_ID_STR, max_power_value);
     prefs.end();
 }
                 
@@ -1454,63 +1454,63 @@ void Settings2::save_output_curve(uint8_t value) {
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_b1_short_press_action(uint8_t value) {
-    b1_short_press_action = value;
+void Settings2::set_button_1_short_press_action(uint8_t value) {
+    button_1_short_press_action = value;
 }
 
-uint8_t Settings2::get_b1_short_press_action() {
-    return b1_short_press_action ;
+uint8_t Settings2::get_button_1_short_press_action() {
+    return button_1_short_press_action ;
 }
 
-void Settings2::display_b1_short_press_action() {
-    Serial.println("  b1_short_press_action = " + (String) b1_short_press_action);
+void Settings2::display_button_1_short_press_action() {
+    Serial.println("  button_1_short_press_action = " + (String) button_1_short_press_action);
 }
 
-void Settings2::save_b1_short_press_action(uint8_t value) {
+void Settings2::save_button_1_short_press_action(uint8_t value) {
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_B1_SHORT_PRESS_ACTION_ID_STR, b1_short_press_action);
+    prefs.putInt(SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_ID_STR, button_1_short_press_action);
     prefs.end();
 }
                 
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_b1_long_press_action(uint8_t value) {
-    b1_long_press_action = value;
+void Settings2::set_button_1_long_press_action(uint8_t value) {
+    button_1_long_press_action = value;
 }
 
-uint8_t Settings2::get_b1_long_press_action() {
-    return b1_long_press_action ;
+uint8_t Settings2::get_button_1_long_press_action() {
+    return button_1_long_press_action ;
 }
 
-void Settings2::display_b1_long_press_action() {
-    Serial.println("  b1_long_press_action = " + (String) b1_long_press_action);
+void Settings2::display_button_1_long_press_action() {
+    Serial.println("  button_1_long_press_action = " + (String) button_1_long_press_action);
 }
 
-void Settings2::save_b1_long_press_action(uint8_t value) {
+void Settings2::save_button_1_long_press_action(uint8_t value) {
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_B1_LONG_PRESS_ACTION_ID_STR, b1_long_press_action);
+    prefs.putInt(SETTINGS_BUTTON_1_LONG_PRESS_ACTION_ID_STR, button_1_long_press_action);
     prefs.end();
 }
                 
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_b2_short_press_action(uint8_t value) {
-    b2_short_press_action = value;
+void Settings2::set_button_2_short_press_action(uint8_t value) {
+    button_2_short_press_action = value;
 }
 
-uint8_t Settings2::get_b2_short_press_action() {
-    return b2_short_press_action ;
+uint8_t Settings2::get_button_2_short_press_action() {
+    return button_2_short_press_action ;
 }
 
-void Settings2::display_b2_short_press_action() {
-    Serial.println("  b2_short_press_action = " + (String) b2_short_press_action);
+void Settings2::display_button_2_short_press_action() {
+    Serial.println("  button_2_short_press_action = " + (String) button_2_short_press_action);
 }
 
-void Settings2::save_b2_short_press_action(uint8_t value) {
+void Settings2::save_button_2_short_press_action(uint8_t value) {
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putInt(SETTINGS_B2_SHORT_PRESS_ACTION_ID_STR, b2_short_press_action);
+    prefs.putInt(SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_ID_STR, button_2_short_press_action);
     prefs.end();
 }
                 

@@ -100,16 +100,16 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_SPEED_ADJUSTMENT_ID 13
-    #define SETTINGS_SPEED_ADJUSTMENT_ID_STR "13"
-    #define SETTINGS_SPEED_ADJUSTMENT_NAME "Speed adjustment"
+    #define SETTINGS_SPEED_ADJUSTMENT_IN_PERCENT_ID 13
+    #define SETTINGS_SPEED_ADJUSTMENT_IN_PERCENT_ID_STR "13"
+    #define SETTINGS_SPEED_ADJUSTMENT_IN_PERCENT_NAME "Speed adjustment (in percent)"
 
-    int8_t speed_adjustment;
+    int8_t speed_adjustment_in_percent;
 
-    void set_speed_adjustment (int8_t value);
-    int8_t get_speed_adjustment();
-    void display_speed_adjustment();
-    void save_speed_adjustment(int8_t value);
+    void set_speed_adjustment_in_percent (int8_t value);
+    int8_t get_speed_adjustment_in_percent();
+    void display_speed_adjustment_in_percent();
+    void save_speed_adjustment_in_percent(int8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -360,16 +360,16 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_ID 12
-    #define SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_ID_STR "12"
-    #define SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_NAME "Original display speed adjustment"
+    #define SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_IN_PERCENT_ID 12
+    #define SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_IN_PERCENT_ID_STR "12"
+    #define SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_IN_PERCENT_NAME "Original display speed adjustment (in percent)"
 
-    int8_t original_display_speed_adjustment;
+    int8_t original_display_speed_adjustment_in_percent;
 
-    void set_original_display_speed_adjustment (int8_t value);
-    int8_t get_original_display_speed_adjustment();
-    void display_original_display_speed_adjustment();
-    void save_original_display_speed_adjustment(int8_t value);
+    void set_original_display_speed_adjustment_in_percent (int8_t value);
+    int8_t get_original_display_speed_adjustment_in_percent();
+    void display_original_display_speed_adjustment_in_percent();
+    void save_original_display_speed_adjustment_in_percent(int8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -386,48 +386,48 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_TYPE_ID 26
-    #define SETTINGS_TYPE_ID_STR "26"
-    #define SETTINGS_TYPE_NAME "Type"
+    #define SETTINGS_SMART_BRAKE_TYPE_ID 26
+    #define SETTINGS_SMART_BRAKE_TYPE_ID_STR "26"
+    #define SETTINGS_SMART_BRAKE_TYPE_NAME "Smart brake type"
 
-    uint8_t type;
-    typedef enum LIST_Type {
-        LIST_Type_Controller,
-        LIST_Type_Smart__digital_brake_lever,
-        LIST_Type_Smart__analog_brake_lever,
-        LIST_Type_Smart__digital_brake__throttle_exp, 
-    } tType;
+    uint8_t smart_brake_type;
+    typedef enum LIST_Smart_brake_type {
+        LIST_Smart_brake_type_Controller,
+        LIST_Smart_brake_type_Smart__digital_brake_lever,
+        LIST_Smart_brake_type_Smart__analog_brake_lever,
+        LIST_Smart_brake_type_Smart__digital_brake__throttle_exp, 
+    } tSmart_brake_type;
 
-    void set_type (uint8_t value);
-    uint8_t get_type();
-    void display_type();
-    void save_type(uint8_t value);
+    void set_smart_brake_type (uint8_t value);
+    uint8_t get_smart_brake_type();
+    void display_smart_brake_type();
+    void save_smart_brake_type(uint8_t value);
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_MIN_VALUE_ID 27
-    #define SETTINGS_MIN_VALUE_ID_STR "27"
-    #define SETTINGS_MIN_VALUE_NAME "Min value"
+    #define SETTINGS_MIN_POWER_VALUE_ID 27
+    #define SETTINGS_MIN_POWER_VALUE_ID_STR "27"
+    #define SETTINGS_MIN_POWER_VALUE_NAME "Min power value"
 
-    uint8_t min_value;
+    uint8_t min_power_value;
 
-    void set_min_value (uint8_t value);
-    uint8_t get_min_value();
-    void display_min_value();
-    void save_min_value(uint8_t value);
+    void set_min_power_value (uint8_t value);
+    uint8_t get_min_power_value();
+    void display_min_power_value();
+    void save_min_power_value(uint8_t value);
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_MAX_VALUE_ID 28
-    #define SETTINGS_MAX_VALUE_ID_STR "28"
-    #define SETTINGS_MAX_VALUE_NAME "Max value"
+    #define SETTINGS_MAX_POWER_VALUE_ID 28
+    #define SETTINGS_MAX_POWER_VALUE_ID_STR "28"
+    #define SETTINGS_MAX_POWER_VALUE_NAME "Max power value"
 
-    uint8_t max_value;
+    uint8_t max_power_value;
 
-    void set_max_value (uint8_t value);
-    uint8_t get_max_value();
-    void display_max_value();
-    void save_max_value(uint8_t value);
+    void set_max_power_value (uint8_t value);
+    uint8_t get_max_power_value();
+    void display_max_power_value();
+    void save_max_power_value(uint8_t value);
             
     /*-------------------------------------------------------*/
 
@@ -555,71 +555,71 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_B1_SHORT_PRESS_ACTION_ID 38
-    #define SETTINGS_B1_SHORT_PRESS_ACTION_ID_STR "38"
-    #define SETTINGS_B1_SHORT_PRESS_ACTION_NAME "B1 short press action"
+    #define SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_ID 38
+    #define SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_ID_STR "38"
+    #define SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_NAME "Button 1 short press action"
 
-    uint8_t b1_short_press_action;
-    typedef enum LIST_B1_short_press_action {
-        LIST_B1_short_press_action_None,
-        LIST_B1_short_press_action_Startup_speed_limi,
-        LIST_B1_short_press_action_Aux_onoff,
-        LIST_B1_short_press_action_Mode_switch_123,
-        LIST_B1_short_press_action_Mode_switch_23,
-        LIST_B1_short_press_action_Eco_switch_nonemedmax,
-        LIST_B1_short_press_action_Eco_switch_nonemed, 
-    } tB1_short_press_action;
+    uint8_t button_1_short_press_action;
+    typedef enum LIST_Button_1_short_press_action {
+        LIST_Button_1_short_press_action_None,
+        LIST_Button_1_short_press_action_Startup_speed_limi,
+        LIST_Button_1_short_press_action_Aux_onoff,
+        LIST_Button_1_short_press_action_Mode_switch_123,
+        LIST_Button_1_short_press_action_Mode_switch_23,
+        LIST_Button_1_short_press_action_Eco_switch_nonemedmax,
+        LIST_Button_1_short_press_action_Eco_switch_nonemed, 
+    } tButton_1_short_press_action;
 
-    void set_b1_short_press_action (uint8_t value);
-    uint8_t get_b1_short_press_action();
-    void display_b1_short_press_action();
-    void save_b1_short_press_action(uint8_t value);
+    void set_button_1_short_press_action (uint8_t value);
+    uint8_t get_button_1_short_press_action();
+    void display_button_1_short_press_action();
+    void save_button_1_short_press_action(uint8_t value);
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_B1_LONG_PRESS_ACTION_ID 39
-    #define SETTINGS_B1_LONG_PRESS_ACTION_ID_STR "39"
-    #define SETTINGS_B1_LONG_PRESS_ACTION_NAME "B1 long press action"
+    #define SETTINGS_BUTTON_1_LONG_PRESS_ACTION_ID 39
+    #define SETTINGS_BUTTON_1_LONG_PRESS_ACTION_ID_STR "39"
+    #define SETTINGS_BUTTON_1_LONG_PRESS_ACTION_NAME "Button 1 long press action"
 
-    uint8_t b1_long_press_action;
-    typedef enum LIST_B1_long_press_action {
-        LIST_B1_long_press_action_None,
-        LIST_B1_long_press_action_Startup_speed_limitation,
-        LIST_B1_long_press_action_Aux_onoff,
-        LIST_B1_long_press_action_Mode_switch_123,
-        LIST_B1_long_press_action_Mode_switch_23,
-        LIST_B1_long_press_action_Eco_switch_nonemedmax,
-        LIST_B1_long_press_action_Eco_switch_nonemed,
-        LIST_B1_long_press_action_Antitheft_manual_lock_on,
-        LIST_B1_long_press_action_Nitro_boost_continuous, 
-    } tB1_long_press_action;
+    uint8_t button_1_long_press_action;
+    typedef enum LIST_Button_1_long_press_action {
+        LIST_Button_1_long_press_action_None,
+        LIST_Button_1_long_press_action_Startup_speed_limitation,
+        LIST_Button_1_long_press_action_Aux_onoff,
+        LIST_Button_1_long_press_action_Mode_switch_123,
+        LIST_Button_1_long_press_action_Mode_switch_23,
+        LIST_Button_1_long_press_action_Eco_switch_nonemedmax,
+        LIST_Button_1_long_press_action_Eco_switch_nonemed,
+        LIST_Button_1_long_press_action_Antitheft_manual_lock_on,
+        LIST_Button_1_long_press_action_Nitro_boost_continuous, 
+    } tButton_1_long_press_action;
 
-    void set_b1_long_press_action (uint8_t value);
-    uint8_t get_b1_long_press_action();
-    void display_b1_long_press_action();
-    void save_b1_long_press_action(uint8_t value);
+    void set_button_1_long_press_action (uint8_t value);
+    uint8_t get_button_1_long_press_action();
+    void display_button_1_long_press_action();
+    void save_button_1_long_press_action(uint8_t value);
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_B2_SHORT_PRESS_ACTION_ID 40
-    #define SETTINGS_B2_SHORT_PRESS_ACTION_ID_STR "40"
-    #define SETTINGS_B2_SHORT_PRESS_ACTION_NAME "B2 short press action"
+    #define SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_ID 40
+    #define SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_ID_STR "40"
+    #define SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_NAME "Button 2 short press action"
 
-    uint8_t b2_short_press_action;
-    typedef enum LIST_B2_short_press_action {
-        LIST_B2_short_press_action_None,
-        LIST_B2_short_press_action_Startup_speed_limitation_onoff,
-        LIST_B2_short_press_action_Aux_onoff,
-        LIST_B2_short_press_action_Mode_switch_123,
-        LIST_B2_short_press_action_Mode_switch_23,
-        LIST_B2_short_press_action_Eco_switch_nonemedmax,
-        LIST_B2_short_press_action_Eco_switch_nonemed, 
-    } tB2_short_press_action;
+    uint8_t button_2_short_press_action;
+    typedef enum LIST_Button_2_short_press_action {
+        LIST_Button_2_short_press_action_None,
+        LIST_Button_2_short_press_action_Startup_speed_limitation_onoff,
+        LIST_Button_2_short_press_action_Aux_onoff,
+        LIST_Button_2_short_press_action_Mode_switch_123,
+        LIST_Button_2_short_press_action_Mode_switch_23,
+        LIST_Button_2_short_press_action_Eco_switch_nonemedmax,
+        LIST_Button_2_short_press_action_Eco_switch_nonemed, 
+    } tButton_2_short_press_action;
 
-    void set_b2_short_press_action (uint8_t value);
-    uint8_t get_b2_short_press_action();
-    void display_b2_short_press_action();
-    void save_b2_short_press_action(uint8_t value);
+    void set_button_2_short_press_action (uint8_t value);
+    uint8_t get_button_2_short_press_action();
+    void display_button_2_short_press_action();
+    void save_button_2_short_press_action(uint8_t value);
             
     /*-------------------------------------------------------*/
 
