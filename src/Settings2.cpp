@@ -159,7 +159,6 @@ void Settings2::save() {
     prefs.putInt(SETTINGS_BUTTON_LONG_PRESS_DURATION_ID_STR, button_long_press_duration);
     prefs.putString(SETTINGS_WIFI_NETWORK_NAME_SSID_ID_STR, wifi_network_name_ssid);
     prefs.putString(SETTINGS_WIFI_PASSWORD_ID_STR, wifi_password);
-
     prefs.end();
 
 }
@@ -417,8 +416,10 @@ void Settings2::unpack_setting_packet(uint8_t* packet, uint8_t length) {
     }
 }
 
-void Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, uint8_t* packet, int32_t* ind) {
+bool Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, uint8_t* packet, int32_t* ind) {
     
+    bool hasNextPacket = false;
+
     buffer_append_uint16(packet, settingId, ind);
     buffer_append_uint16(packet, packetNumber, ind);;
 
@@ -532,16 +533,21 @@ void Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, u
         buffer_display("", packet, *ind);
         break;
     case SETTINGS_BEACON_MAC_ADDRESS_ID :
-/*
-        char beacon_mac_address_part[17];
-        memset(beacon_mac_address_part, 0, 17 );
         if (packetNumber == 0) {
-            beacon_mac_address = "";
+            if (beacon_mac_address.length() > 16) {
+                hasNextPacket = true;
+                memcpy(&packet[*ind], &beacon_mac_address[0], 16);
+                *ind = *ind + 16;
+            }
+            else {
+                memcpy(&packet[*ind], &beacon_mac_address[0], beacon_mac_address.length());
+                *ind = *ind + beacon_mac_address.length();
+            }
         }
-        memcpy(beacon_mac_address_part, &packet[ind], length  - 4);
-        beacon_mac_address =  beacon_mac_address + beacon_mac_address_part;
-        set_beacon_mac_address( beacon_mac_address);
-*/
+        else if (packetNumber == 1) {
+            memcpy(&packet[*ind], &beacon_mac_address[16], beacon_mac_address.length() - 16);
+            *ind = *ind + beacon_mac_address.length() - 16;
+        }
         Serial.print("pack_setting_packet - beacon_mac_address : " + (String) beacon_mac_address + " / ");
         buffer_display("", packet, *ind);
         break;
@@ -641,30 +647,40 @@ void Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, u
         buffer_display("", packet, *ind);
         break;
     case SETTINGS_WIFI_NETWORK_NAME_SSID_ID :
-/*
-        char wifi_network_name_ssid_part[17];
-        memset(wifi_network_name_ssid_part, 0, 17 );
         if (packetNumber == 0) {
-            wifi_network_name_ssid = "";
+            if (wifi_network_name_ssid.length() > 16) {
+                hasNextPacket = true;
+                memcpy(&packet[*ind], &wifi_network_name_ssid[0], 16);
+                *ind = *ind + 16;
+            }
+            else {
+                memcpy(&packet[*ind], &wifi_network_name_ssid[0], wifi_network_name_ssid.length());
+                *ind = *ind + wifi_network_name_ssid.length();
+            }
         }
-        memcpy(wifi_network_name_ssid_part, &packet[ind], length  - 4);
-        wifi_network_name_ssid =  wifi_network_name_ssid + wifi_network_name_ssid_part;
-        set_wifi_network_name_ssid( wifi_network_name_ssid);
-*/
+        else if (packetNumber == 1) {
+            memcpy(&packet[*ind], &wifi_network_name_ssid[16], wifi_network_name_ssid.length() - 16);
+            *ind = *ind + wifi_network_name_ssid.length() - 16;
+        }
         Serial.print("pack_setting_packet - wifi_network_name_ssid : " + (String) wifi_network_name_ssid + " / ");
         buffer_display("", packet, *ind);
         break;
     case SETTINGS_WIFI_PASSWORD_ID :
-/*
-        char wifi_password_part[17];
-        memset(wifi_password_part, 0, 17 );
         if (packetNumber == 0) {
-            wifi_password = "";
+            if (wifi_password.length() > 16) {
+                hasNextPacket = true;
+                memcpy(&packet[*ind], &wifi_password[0], 16);
+                *ind = *ind + 16;
+            }
+            else {
+                memcpy(&packet[*ind], &wifi_password[0], wifi_password.length());
+                *ind = *ind + wifi_password.length();
+            }
         }
-        memcpy(wifi_password_part, &packet[ind], length  - 4);
-        wifi_password =  wifi_password + wifi_password_part;
-        set_wifi_password( wifi_password);
-*/
+        else if (packetNumber == 1) {
+            memcpy(&packet[*ind], &wifi_password[16], wifi_password.length() - 16);
+            *ind = *ind + wifi_password.length() - 16;
+        }
         Serial.print("pack_setting_packet - wifi_password : " + (String) wifi_password + " / ");
         buffer_display("", packet, *ind);
         break;
@@ -672,6 +688,8 @@ void Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, u
         Serial.println("pack_setting_packet : ID error");
         break;
     }
+    
+    return hasNextPacket;
 }
                 
 

@@ -28,7 +28,7 @@ public:
     void save();
 
     void unpack_setting_packet(uint8_t* packet, uint8_t length);
-    void pack_setting_packet(uint16_t settingId, uint16_t packetNumber, uint8_t* packet, int32_t* length);
+    bool pack_setting_packet(uint16_t settingId, uint16_t packetNumber, uint8_t* packet, int32_t* length);
 
 
     

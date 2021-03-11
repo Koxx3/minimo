@@ -883,18 +883,23 @@ uint8_t BluetoothHandler::setCommandsDataPacket()
 void BluetoothHandler::sendSettingValueDataPacket(uint8_t *rxValue)
 {
     int32_t indRcv = 0;
-    int32_t sizeToSend = 0;
     uint8_t bufferSend[21];
     uint8_t *bufferSendPtr = bufferSend;
+    uint8_t packetNumber = 0;
 
     buffer_get_uint8(rxValue, &indRcv); // skip action
     uint16_t settingId = buffer_get_uint16(rxValue, &indRcv);
-    uint16_t packetNumber = buffer_get_uint16(rxValue, &indRcv);
 
-    settings2->pack_setting_packet(settingId, packetNumber, bufferSendPtr, &sizeToSend);
-
-    pCharacteristicSettingsGen->setValue((uint8_t *)bufferSendPtr, sizeToSend);
-    pCharacteristicSettingsGen->notify();
+    bool hasNextPacketToSend = true;
+    while (hasNextPacketToSend)
+    {
+        int32_t sizeToSend = 0;
+        memset(bufferSend, 0, sizeof(bufferSend));
+        hasNextPacketToSend = settings2->pack_setting_packet(settingId, packetNumber, bufferSendPtr, &sizeToSend);
+        pCharacteristicSettingsGen->setValue((uint8_t *)bufferSendPtr, sizeToSend);
+        pCharacteristicSettingsGen->notify();
+        packetNumber++;
+    }
 
     //Serial.println("BLH - sendSettingValueDataPacket settingId : " + (String)settingId + " / packetNumber" + (String)packetNumber + " / sizeToSend = " + (String)sizeToSend);
 }

@@ -32,7 +32,7 @@ public:
     void save();
 
     void unpack_setting_packet(uint8_t* packet, uint8_t length);
-    void pack_setting_packet(uint16_t settingId, uint16_t packetNumber, uint8_t* packet, int32_t* length);
+    bool pack_setting_packet(uint16_t settingId, uint16_t packetNumber, uint8_t* packet, int32_t* length);
 
 {% for key, value in parameters.items() %}
     {% for key2, value2 in value.items() %}
@@ -143,7 +143,6 @@ void Settings2::save() {
         {%- endfor %}
     {%- endfor %}
 {%- endfor %}
-
     prefs.end();
 
 }
@@ -200,8 +199,10 @@ void Settings2::unpack_setting_packet(uint8_t* packet, uint8_t length) {
     }
 }
 
-void Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, uint8_t* packet, int32_t* ind) {
+bool Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, uint8_t* packet, int32_t* ind) {
     
+    bool hasNextPacket = false;
+
     buffer_append_uint16(packet, settingId, ind);
     buffer_append_uint16(packet, packetNumber, ind);;
 
@@ -229,16 +230,21 @@ void Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, u
             {%- elif item.type == "float" %}
         buffer_append_float32_auto(packet, {{ var_name | lower }}, ind);
             {%- elif item.type == "string" %}
-/*
-        char {{ var_name | lower }}_part[17];
-        memset({{ var_name | lower }}_part, 0, 17 );
         if (packetNumber == 0) {
-            {{ var_name | lower }} = "";
+            if ({{ var_name | lower }}.length() > 16) {
+                hasNextPacket = true;
+                memcpy(&packet[*ind], &{{ var_name | lower }}[0], 16);
+                *ind = *ind + 16;
+            }
+            else {
+                memcpy(&packet[*ind], &{{ var_name | lower }}[0], {{ var_name | lower }}.length());
+                *ind = *ind + {{ var_name | lower }}.length();
+            }
         }
-        memcpy({{ var_name | lower }}_part, &packet[ind], length  - 4);
-        {{ var_name | lower }} =  {{ var_name | lower }} + {{ var_name | lower }}_part;
-        set_{{ var_name | lower }}( {{ var_name | lower }});
-*/
+        else if (packetNumber == 1) {
+            memcpy(&packet[*ind], &{{ var_name | lower }}[16], {{ var_name | lower }}.length() - 16);
+            *ind = *ind + {{ var_name | lower }}.length() - 16;
+        }
             {%- endif %}
         Serial.print("pack_setting_packet - {{ var_name | lower }} : " + (String) {{ var_name | lower }} + " / ");
         buffer_display("", packet, *ind);
@@ -250,6 +256,8 @@ void Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, u
         Serial.println("pack_setting_packet : ID error");
         break;
     }
+    
+    return hasNextPacket;
 }
 
 

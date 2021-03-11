@@ -76,7 +76,6 @@ public class SmartElecSettings2 {
 
 
 
-
     static public ArrayList<byte[]> {{ var_name }}_to_byte_array_write(Context ctx) {
 
         // First packet
@@ -195,8 +194,7 @@ public class SmartElecSettings2 {
     }
 
 
-
-    static public ArrayList<byte[]> {{ var_name }}_to_byte_array_read(Context ctx) {
+    static public byte[] {{ var_name }}_to_byte_array_read(Context ctx) {
 
         // First packet
         ArrayList<byte[]> result = new ArrayList<byte[]>();
@@ -205,32 +203,12 @@ public class SmartElecSettings2 {
         try {
             dos.writeByte(0);
             dos.writeShort({{ var_name | upper }}_ID);
-            dos.writeShort(0);
             dos.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        result.add(bos.toByteArray());
 
-                    {%- if item.type | lower == "string" %}
-        // Second packet
-        String value = EasySettings.retrieveSettingsSharedPrefs(ctx).getString({{ var_name }}, "{{ item.default }}");
-        if (value.length() > 16) {
-            bos = new ByteArrayOutputStream();
-            dos = new DataOutputStream(bos);
-            try {
-                dos.writeByte(0);
-                dos.writeShort({{ var_name | upper }}_ID);
-                dos.writeShort(1);
-                dos.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            result.add(bos.toByteArray());
-        }
-                    {%- endif %}
-
-        return result;
+        return bos.toByteArray();
     }
 
 
@@ -272,7 +250,10 @@ public class SmartElecSettings2 {
                     {%- elif item.smartphone_display_type | lower == "edit_text_number_integer_signed" %}
         EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putString({{ var_name }}, "" + value).commit();
                     {%- elif item.smartphone_display_type | lower == "edit_text_string" %}
-        EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putString({{ var_name }}, "" + value).commit();
+        if (packetNumber == 1)
+            EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putString({{ var_name }}, EasySettings.retrieveSettingsSharedPrefs(ctx).getString({{ var_name }}, "") + value).commit();
+        else if (packetNumber == 0)
+            EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putString({{ var_name }}, "" + value).commit();
                     {%- elif item.smartphone_display_type | lower == "seek_bar" %}
         EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putInt({{ var_name }}, value).commit();
                     {%- elif item.smartphone_display_type | lower == "checkbox" %}
@@ -426,28 +407,6 @@ public class SmartElecSettings2 {
     }
 
 
-{#- run 6 - settings packer read #}
-    static public ArrayList<byte[]> pack_setting_packet_read(Context ctx, Integer settingId) {
-        ArrayList<byte[]> result = null;
-        
-        switch(settingId) {
-{%- for key, value in parameters.items() %}
-    {%- for key2, value2 in value.items() %}
-        {%- for  item in value2.settings %}
-            {%- set var_name = item.display_name | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") | title %}
-        case {{ var_name | upper }}_ID :
-            result = {{ var_name }}_to_byte_array_read(ctx);
-            break;
-        {%- endfor %}
-    {%- endfor %}
-{%- endfor %}
-        default:
-            Timber.e("invalid parameter");
-            break;
-        }
-
-        return result;
-    }
 
 {#- run 7 - settings unpacker #}
     static public void unpack_setting_packet(Context ctx, byte[] value) {
@@ -470,7 +429,22 @@ public class SmartElecSettings2 {
             Timber.e("invalid parameter");
             break;
         }
+    }
 
+    static public byte[] pack_setting_packet_read(Context ctx, Integer settingId) {
+                
+        byte[] result = null;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+        try {
+            dos.writeByte(0);
+            dos.writeShort(settingId);
+            dos.flush();
+            result = bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public static int listToValue(Context ctx, String value, String[] list) {
