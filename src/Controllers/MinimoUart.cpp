@@ -629,9 +629,9 @@ uint8_t MinimoUart::modifyEco(char var, char data_buffer[])
 {
 
   if (MINIMO_SIMULATED_DISPLAY == 0)
-    shrd->ecoLcd = var;
+    shrd->ecoLcd = var - 1;
   else
-    var = shrd->ecoOrder;
+    var = shrd->ecoOrder + 1;
 
   // override Smartphone mode with LCD mode
   if (shrd->ecoLcd != shrd->ecoLcdOld)

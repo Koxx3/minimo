@@ -43,7 +43,7 @@ void Settings::restore() {
     Serial.println("  >> Default_mode_at_startup = " + (String)Default_mode_at_startup);
     Default_eco_mode_at_startup = prefs.getInt(SETTINGS_DEFAULT_ECO_MODE_AT_STARTUP_ID_STR, 2);
     Serial.println("  >> Default_eco_mode_at_startup = " + (String)Default_eco_mode_at_startup);
-    Default_acceleration = prefs.getInt(SETTINGS_DEFAULT_ACCELERATION_ID_STR, 5);
+    Default_acceleration = prefs.getInt(SETTINGS_DEFAULT_ACCELERATION_ID_STR, 0);
     Serial.println("  >> Default_acceleration = " + (String)Default_acceleration);
     Default_electric_brake_at_startup = prefs.getInt(SETTINGS_DEFAULT_ELECTRIC_BRAKE_AT_STARTUP_ID_STR, 3);
     Serial.println("  >> Default_electric_brake_at_startup = " + (String)Default_electric_brake_at_startup);

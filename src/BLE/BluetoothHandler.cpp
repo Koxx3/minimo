@@ -626,6 +626,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
         String addressStr = address.c_str();
 
         String addressBeaconSettings = settings->get_Ble_beacon_mac_address();
+        addressBeaconSettings.toLowerCase();
         addressBeaconSettings = addressBeaconSettings.substring(0, 17);
 
 #if DEBUG_DISPLAY_BLE_SCAN
@@ -651,7 +652,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
                 Serial.print("BLH -  ==> Beacon found ... but too far away / RSSI = ");
                 Serial.print(bleBeaconRSSI);
                 Serial.print(" / min RSSI required = ");
-                Serial.print(settings->getS1F().Beacon_range);
+                Serial.print(settings->get_Ble_beacon_range());
                 Serial.println(" ==> lock from scan");
                 Serial.println();
 #endif
@@ -666,7 +667,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
                 Serial.print("BLH -  ==> Beacon found  / RSSI = ");
                 Serial.print(bleBeaconRSSI);
                 Serial.print(" / min RSSI required = ");
-                Serial.print(settings->getS1F().Beacon_range);
+                Serial.print(settings->get_Ble_beacon_range());
                 Serial.println(" ==> unlock from scan");
                 Serial.println();
 #endif
@@ -702,7 +703,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
     bleBeaconVisible = newBleBeaconVisible;
 
 #if DEBUG_DISPLAY_BLE_SCAN
-    Serial.printf("BLH - bleLockForced = %d / settings->getS1F().Bluetooth_lock_mode = %d / bleBeaconVisible = %d / deviceStatus = %d \n", bleLockForced, settings->getS1F().Bluetooth_lock_mode, bleBeaconVisible, deviceStatus);
+    Serial.printf("BLH - bleLockForced = %d / settings->getS1F().Bluetooth_lock_mode = %d / bleBeaconVisible = %d / deviceStatus = %d \n", bleLockForced, settings->get_Bluetooth_lock_mode(), bleBeaconVisible, deviceStatus);
 #endif
 
     if (bleLockForced <= 0)

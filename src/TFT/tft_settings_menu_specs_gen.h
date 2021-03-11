@@ -22,14 +22,14 @@ TOGGLE(tft_Default_eco_mode_at_startup, tft_Default_eco_mode_at_startup_LIST,"  
     ,VALUE("Medium", 1 ,doNothing,noEvent) //
     ,VALUE("None", 2 ,doNothing,noEvent) //
 );
-uint8_t tft_Default_acceleration = 5;
+uint8_t tft_Default_acceleration = 0;
 TOGGLE(tft_Default_acceleration, tft_Default_acceleration_LIST,"  Default acceleration ",doNothing,noEvent,noStyle //
-    ,VALUE("Very slow", 0 ,doNothing,noEvent) //
-    ,VALUE("Slow", 1 ,doNothing,noEvent) //
-    ,VALUE("Medium", 2 ,doNothing,noEvent) //
-    ,VALUE("Fast", 3 ,doNothing,noEvent) //
-    ,VALUE("Very fast", 4 ,doNothing,noEvent) //
-    ,VALUE("Maximum", 5 ,doNothing,noEvent) //
+    ,VALUE("Maximum", 0 ,doNothing,noEvent) //
+    ,VALUE("Very fast", 1 ,doNothing,noEvent) //
+    ,VALUE("Fast", 2 ,doNothing,noEvent) //
+    ,VALUE("Medium", 3 ,doNothing,noEvent) //
+    ,VALUE("Slow", 4 ,doNothing,noEvent) //
+    ,VALUE("Very slow", 5 ,doNothing,noEvent) //
 );
 uint8_t tft_Default_electric_brake_at_startup = 3;
 uint8_t tft_Pas_enabled = 0;

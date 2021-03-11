@@ -5,7 +5,7 @@
 #define DEBUG_BLE_DISPLAY_VOLTAGE                   0
 #define DEBUG_BLE_DISPLAY_ANALOG_BRAKE              0
 #define DEBUG_BLE_DISPLAY_FRAME                     0
-#define DEBUG_BLE_DISPLAY_COMMANDSFEEDBACK          0
+#define DEBUG_BLE_DISPLAY_COMMANDSFEEDBACK          1
 #define DEBUG_BLE_DISPLAY_SETTINGSCHANGED           1
 
 // Serial general debugs

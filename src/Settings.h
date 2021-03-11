@@ -183,12 +183,12 @@ public:
 
     uint8_t Default_acceleration;
     typedef enum LIST_Default_acceleration {
-        LIST_Default_acceleration_Very_slow,
-        LIST_Default_acceleration_Slow,
-        LIST_Default_acceleration_Medium,
-        LIST_Default_acceleration_Fast,
+        LIST_Default_acceleration_Maximum,
         LIST_Default_acceleration_Very_fast,
-        LIST_Default_acceleration_Maximum, 
+        LIST_Default_acceleration_Fast,
+        LIST_Default_acceleration_Medium,
+        LIST_Default_acceleration_Slow,
+        LIST_Default_acceleration_Very_slow, 
     } tDefault_acceleration;
 
     void set_Default_acceleration (uint8_t value);
