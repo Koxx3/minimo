@@ -86,7 +86,7 @@ public class SmartElecSettings {
             dos.writeShort({{ item.var_name | upper }}_ID);
             dos.writeShort(0);
 
-            {% set key = (item.var_name | upper) + "_DISPLAY_STR" %}
+            {% set key = (item.var_name | upper) + "_KEY_STR" %}
 
                     {%- if item.smartphone_display_type | lower == "edit_text_number_float" %}
                         {%- set java_display_type = "String" %}

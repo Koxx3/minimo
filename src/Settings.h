@@ -474,12 +474,12 @@ public:
     #define SETTINGS_THROTTLE_REGENERATION_ID_STR "32"
     #define SETTINGS_THROTTLE_REGENERATION_NAME "Throttle_regeneration"
 
-    uint32_t Throttle_regeneration;
+    uint8_t Throttle_regeneration;
 
-    void set_Throttle_regeneration (uint32_t value);
-    uint32_t get_Throttle_regeneration();
+    void set_Throttle_regeneration (uint8_t value);
+    uint8_t get_Throttle_regeneration();
     void display_Throttle_regeneration();
-    void save_Throttle_regeneration(uint32_t value);
+    void save_Throttle_regeneration(uint8_t value);
             
     /*-------------------------------------------------------*/
 

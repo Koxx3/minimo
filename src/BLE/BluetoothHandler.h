@@ -50,7 +50,6 @@ public:
     static BLECharacteristic *pCharacteristicOtaSwitch;
     static BLECharacteristic *pCharacteristicLogs;
     static BLECharacteristic *pCharacteristicDistanceRst;
-    static BLECharacteristic *pCharacteristicKeepAlive;
     static BLECharacteristic *pCharacteristicCommands;
 
     static BLECharacteristic *pCharacteristicSettingsGen;

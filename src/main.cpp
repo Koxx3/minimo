@@ -913,6 +913,7 @@ void getThrottleFromAnalog()
   // ignore out of range datas ... and notify
   if (throttleInMillv < tInMin * TMIN_MARGIN)
   {
+    /*
     char print_buffer[500];
     sprintf(print_buffer, "throttle : value too low / tAnalogValue : %d / throttleFilter.getMean() : %d / tInMin : %d / tInMin with margin : %d",
             throttleAnalogValue,
@@ -922,7 +923,7 @@ void getThrottleFromAnalog()
             );
     blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
-
+*/
     shrd.errorThrottle = true;
 
     return;

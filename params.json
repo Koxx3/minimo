@@ -210,8 +210,8 @@
           "smartphone_display_type": "list",
           "tft_menu_visible": 1.0,
           "tft_display_name": "Default eco mode at startup",
-          "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_fast_increment": 1.0,
+          "tft_slow_increment": 1.0
         },
         {
           "id": 18,
@@ -230,8 +230,8 @@
           "smartphone_display_type": "list",
           "tft_menu_visible": 1.0,
           "tft_display_name": "Default acceleration",
-          "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_fast_increment": 1.0,
+          "tft_slow_increment": 1.0
         },
         {
           "id": 19,
@@ -650,7 +650,7 @@
       "settings": [
         {
           "id": 32,
-          "type": "uint32_t",
+          "type": "uint8_t",
           "var_name": "Throttle_regeneration",
           "valid_config": ".*",
           "list_strings": "",

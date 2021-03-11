@@ -26,7 +26,6 @@
 
 #define MEASUREMENTS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a0"
 #define FIRMWARE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a3"
-#define KEEP_ALIVE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a4"
 #define COMMANDS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a5"
 #define BTLOCK_STATUS_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a6"
 #define CALIB_ORDER_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ad"
@@ -54,7 +53,6 @@ NimBLECharacteristic *BluetoothHandler::pCharacteristicCalibOrder;
 NimBLECharacteristic *BluetoothHandler::pCharacteristicOtaSwitch;
 NimBLECharacteristic *BluetoothHandler::pCharacteristicLogs;
 NimBLECharacteristic *BluetoothHandler::pCharacteristicDistanceRst;
-NimBLECharacteristic *BluetoothHandler::pCharacteristicKeepAlive;
 NimBLECharacteristic *BluetoothHandler::pCharacteristicCommands;
 
 // Settings services
@@ -92,7 +90,7 @@ void BluetoothHandler::setSettings(Settings *data)
     {
         void onConnect(BLEServer *pServer)
         {
-            Serial.println("BLE connecting");
+            Serial.println("BLH - BLE connecting");
 
             deviceStatus = BLE_STATUS_CONNECTED_AND_AUTHENTIFYING;
 
@@ -101,21 +99,21 @@ void BluetoothHandler::setSettings(Settings *data)
                 if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Smartphone_connected)
                 {
                     shrd->isLocked = false;
-                    Serial.println(" ==> device connected ==> UNLOCK decision");
-                    Serial.println("-------------------------------------");
+                    Serial.println("BLH -  ==> device connected ==> UNLOCK decision");
+                    Serial.println("BLH - -------------------------------------");
                 }
                 if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Smartphone_connected_or_beacon_visible)
                 {
                     shrd->isLocked = false;
-                    Serial.println(" ==> device connected ==> UNLOCK decision");
-                    Serial.println("-------------------------------------");
+                    Serial.println("BLH -  ==> device connected ==> UNLOCK decision");
+                    Serial.println("BLH - -------------------------------------");
                 }
             }
         };
 
         void onDisconnect(BLEServer *pServer)
         {
-            Serial.println("BLE disconnected");
+            Serial.println("BLH - BLE disconnected");
             deviceStatus = BLE_STATUS_DISCONNECTED;
 
             if (bleLockForced == 0)
@@ -123,8 +121,8 @@ void BluetoothHandler::setSettings(Settings *data)
                 if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Smartphone_connected)
                 {
                     shrd->isLocked = true;
-                    Serial.println(" ==> device disconnected ==> LOCK decision");
-                    Serial.println("-------------------------------------");
+                    Serial.println("BLH -  ==> device disconnected ==> LOCK decision");
+                    Serial.println("BLH - -------------------------------------");
                 }
                 if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Smartphone_connected_or_beacon_visible)
                 {
@@ -174,7 +172,7 @@ void BluetoothHandler::setSettings(Settings *data)
 
         bool onSecurityRequest()
         {
-            Serial.println("onSecurityRequest");
+            Serial.println("BLH - onSecurityRequest");
             return true;
         }
 
@@ -184,7 +182,7 @@ void BluetoothHandler::setSettings(Settings *data)
             {
                 uint16_t length;
                 esp_ble_gap_get_whitelist_size(&length);
-                Serial.println("onAuthenticationComplete : success");
+                Serial.println("BLH - onAuthenticationComplete cmpl : success");
                 deviceStatus = BLE_STATUS_CONNECTED_AND_AUTHENTIFIED;
 
                 // notify commands feedback
@@ -193,7 +191,7 @@ void BluetoothHandler::setSettings(Settings *data)
             }
             else
             {
-                Serial.print("BLH - onAuthenticationComplete : hummm ... failed / reason : ");
+                Serial.print("BLH - onAuthenticationComplete cmpl : hummm ... failed / reason : ");
                 Serial.println(cmpl.fail_reason);
 
                 deviceStatus = BLE_STATUS_DISCONNECTED;
@@ -205,14 +203,14 @@ void BluetoothHandler::setSettings(Settings *data)
 
             if (!desc->sec_state.encrypted)
             {
-                Serial.println("onAuthenticationComplete : Encrypt connection failed - disconnecting");
+                Serial.println("BLH - onAuthenticationComplete desc : Encrypt connection failed - disconnecting");
                 /** Find the client with the connection handle provided in desc */
                 NimBLEDevice::getClientByID(desc->conn_handle)->disconnect();
                 deviceStatus = BLE_STATUS_DISCONNECTED;
             }
             else
             {
-                Serial.println("onAuthenticationComplete : success");
+                Serial.println("BLH - onAuthenticationComplete desc : success");
                 deviceStatus = BLE_STATUS_CONNECTED_AND_AUTHENTIFIED;
             }
         }
@@ -303,7 +301,7 @@ void BluetoothHandler::setSettings(Settings *data)
             }
             else if (pCharacteristic->getUUID().toString() == SWITCH_TO_OTA_CHARACTERISTIC_UUID)
             {
-                Serial.println("Write SWITCH_TO_OTA_CHARACTERISTIC_UUID");
+                Serial.println("BLH - Write SWITCH_TO_OTA_CHARACTERISTIC_UUID");
 
                 std::string rxValue = pCharacteristic->getValue();
                 shrd->inOtaMode = rxValue[0]; // Enable http OTA mode
@@ -327,11 +325,6 @@ void BluetoothHandler::setSettings(Settings *data)
             {
                 shrd->distanceTrip = 0;
             }
-            else if (pCharacteristic->getUUID().toString() == KEEP_ALIVE_CHARACTERISTIC_UUID)
-            {
-                //Serial.println("BLH - Write : KEEP_ALIVE_CHARACTERISTIC_UUID");
-                checkAndSaveOdo();
-            }
             else if (pCharacteristic->getUUID().toString() == COMMANDS_CHARACTERISTIC_UUID)
             {
                 Serial.println("BLH - Write : COMMANDS_CHARACTERISTIC_UUID");
@@ -342,8 +335,8 @@ void BluetoothHandler::setSettings(Settings *data)
             else if (pCharacteristic->getUUID().toString() == SETTINGS_GEN_CHARACTERISTIC_UUID)
             {
                 std::string rxValue = pCharacteristic->getValue();
-                /*
                 Serial.println("BLH - Write : SETTINGS_GEN_CHARACTERISTIC_UUID");
+                /*
                 uint8_t rxInt[20];
                 for (int i = 0; i < rxValue.length(); i++)
                 {
@@ -359,7 +352,7 @@ void BluetoothHandler::setSettings(Settings *data)
             }
             else if (pCharacteristic->getUUID().toString() == SETTINGS_ACTION_CHARACTERISTIC_UUID)
             {
-                //Serial.println("BLH - Write : SETTINGS_ACTION_CHARACTERISTIC_UUID");
+                Serial.println("BLH - Write : SETTINGS_ACTION_CHARACTERISTIC_UUID");
                 std::string rxValue = pCharacteristic->getValue();
 
                 if (rxValue[0] == 0)
@@ -385,7 +378,7 @@ void BluetoothHandler::setSettings(Settings *data)
         {
 
             const String uuid = pCharacteristic->getUUID().toString().c_str();
-            Serial.println("onRead : " + uuid);
+            Serial.println("BLH - onRead : " + uuid);
 
             if (pCharacteristic->getUUID().toString() == FIRMWARE_CHARACTERISTIC_UUID)
             {
@@ -421,11 +414,7 @@ void BluetoothHandler::setSettings(Settings *data)
             }
             else if (pCharacteristic->getUUID().toString() == SETTINGS_GEN_CHARACTERISTIC_UUID)
             {
-                Serial.print("BLH - Read Settings GEN ---- TODO ");
-            }
-            else if (pCharacteristic->getUUID().toString() == SETTINGS_ACTION_CHARACTERISTIC_UUID)
-            {
-                Serial.print("BLH - Read Settings ACTION");
+                Serial.print("BLH - unknown read command");
             }
         }
 
@@ -538,11 +527,6 @@ void BluetoothHandler::setSettings(Settings *data)
         NIMBLE_PROPERTY::WRITE_NR |
             NIMBLE_PROPERTY::WRITE_AUTHEN);
 
-    pCharacteristicKeepAlive = pServiceMain->createCharacteristic(
-        KEEP_ALIVE_CHARACTERISTIC_UUID,
-        NIMBLE_PROPERTY::WRITE_NR |
-            NIMBLE_PROPERTY::WRITE_AUTHEN);
-
     pCharacteristicCommands = pServiceMain->createCharacteristic(
         COMMANDS_CHARACTERISTIC_UUID,
         NIMBLE_PROPERTY::NOTIFY |
@@ -570,10 +554,8 @@ void BluetoothHandler::setSettings(Settings *data)
     pCharacteristicSettingsAction = pServiceSettings->createCharacteristic(
         SETTINGS_ACTION_CHARACTERISTIC_UUID,
         NIMBLE_PROPERTY::NOTIFY |
-            NIMBLE_PROPERTY::READ |
             NIMBLE_PROPERTY::WRITE_NR |
-            NIMBLE_PROPERTY::WRITE_AUTHEN |
-            NIMBLE_PROPERTY::READ_AUTHEN);
+            NIMBLE_PROPERTY::WRITE_AUTHEN);
 
     //////////////
     pCharacteristicMeasurements->setCallbacks(new BLECharacteristicCallback());
@@ -582,7 +564,6 @@ void BluetoothHandler::setSettings(Settings *data)
     pCharacteristicOtaSwitch->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicLogs->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicDistanceRst->setCallbacks(new BLECharacteristicCallback());
-    pCharacteristicKeepAlive->setCallbacks(new BLECharacteristicCallback());
     pCharacteristicCommands->setCallbacks(new BLECharacteristicCallback());
 
     pCharacteristicSettingsGen->setCallbacks(new BLECharacteristicCallback());

@@ -337,7 +337,7 @@ void Settings::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         buffer_display("", packet, length);
         break;
     case SETTINGS_THROTTLE_REGENERATION_ID :
-        set_Throttle_regeneration(buffer_get_uint32(packet, &ind));
+        set_Throttle_regeneration(buffer_get_uint8(packet, &ind));
         Serial.print("unpack_setting_packet - Throttle_regeneration : " + (String) Throttle_regeneration + " / ");
         buffer_display("", packet, length);
         break;
@@ -597,7 +597,7 @@ bool Settings::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, ui
         buffer_display("", packet, *ind);
         break;
     case SETTINGS_THROTTLE_REGENERATION_ID :
-        buffer_append_uint32(packet, Throttle_regeneration, ind);
+        buffer_append_uint8(packet, Throttle_regeneration, ind);
         Serial.print("pack_setting_packet - Throttle_regeneration : " + (String) Throttle_regeneration + " / ");
         buffer_display("", packet, *ind);
         break;
@@ -1346,11 +1346,11 @@ void Settings::save_Ebrake_disabled_percent_limit(uint8_t value) {
 
 /*-------------------------------------------------------*/
 
-void Settings::set_Throttle_regeneration(uint32_t value) {
+void Settings::set_Throttle_regeneration(uint8_t value) {
     Throttle_regeneration = value;
 }
 
-uint32_t Settings::get_Throttle_regeneration() {
+uint8_t Settings::get_Throttle_regeneration() {
     return Throttle_regeneration ;
 }
 
@@ -1358,7 +1358,7 @@ void Settings::display_Throttle_regeneration() {
     Serial.println("  Throttle_regeneration = " + (String) Throttle_regeneration);
 }
 
-void Settings::save_Throttle_regeneration(uint32_t value) {
+void Settings::save_Throttle_regeneration(uint8_t value) {
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_THROTTLE_REGENERATION_ID_STR, Throttle_regeneration);
     prefs.end();

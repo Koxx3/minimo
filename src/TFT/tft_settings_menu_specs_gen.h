@@ -72,7 +72,7 @@ TOGGLE(tft_Ebrake_disabled_on_high_battery_voltage, tft_Ebrake_disabled_on_high_
     ,VALUE("On",1,doNothing,noEvent) //
 );
 uint8_t tft_Ebrake_disabled_percent_limit = 100;
-uint32_t tft_Throttle_regeneration = 0;
+uint8_t tft_Throttle_regeneration = 0;
 TOGGLE(tft_Throttle_regeneration, tft_Throttle_regeneration_LIST,"  Throttle regeneration ",doNothing,noEvent,noStyle //
     ,VALUE("Off",0,doNothing,noEvent) //
     ,VALUE("On",1,doNothing,noEvent) //
