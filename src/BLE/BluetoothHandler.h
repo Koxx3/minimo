@@ -39,7 +39,8 @@ public:
     static uint8_t setCommandsDataPacket();
     static void getCommandsDataPacket(uint8_t *);
     static void sendSettingValueDataPacket(uint8_t *);
-
+    static void switchToOta(uint8_t *);
+    
     static BLEScan *pBLEScan;
     static BLEServer *pServer;
     static BLESecurity *pSecurity;

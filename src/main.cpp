@@ -4,6 +4,14 @@
 // TODO : auto mode shift on low battery
 // TODO : reduce SHTC3 read time - brake read function in 2 parts
 // BUG : Minimo - original regulator perturbation
+
+// BUG : minimo - brake digital lever ?
+// BUG : minimo - brake controller ?
+// BUG : minimo - accel + eco KO
+// BUG : current init = false max current/power on smartphone
+// BUG : ODO ?
+// BUG : fake speed if limited KO
+
 //////////////////////////////////////////
 
 //////------------------------------------

@@ -303,10 +303,7 @@ void BluetoothHandler::setSettings(Settings *data)
             {
                 Serial.println("BLH - Write SWITCH_TO_OTA_CHARACTERISTIC_UUID");
 
-                std::string rxValue = pCharacteristic->getValue();
-                shrd->inOtaMode = rxValue[0]; // Enable http OTA mode
-                shrd->inOtaModeVersion = (rxValue[1]) | (rxValue[2] << 8);
-                Serial.println("inOtaModeVersion = " + (String)shrd->inOtaModeVersion);
+                switchToOta((uint8_t *)pCharacteristic->getValue().data());
             }
             else
                 /* if (pCharacteristic->getUUID().toString() == FAST_UPDATE_CHARACTERISTIC_UUID)
@@ -877,6 +874,14 @@ void BluetoothHandler::sendSettingValueDataPacket(uint8_t *rxValue)
     }
 
     //Serial.println("BLH - sendSettingValueDataPacket settingId : " + (String)settingId + " / packetNumber" + (String)packetNumber + " / sizeToSend = " + (String)sizeToSend);
+}
+
+void BluetoothHandler::switchToOta(uint8_t *rxValue)
+{
+    int32_t ind = 0;
+    shrd->inOtaMode = buffer_get_uint8(rxValue, &ind); // Enable http OTA mode
+    shrd->inOtaModeVersion = buffer_get_uint16(rxValue, &ind);
+    Serial.println("switchToOta : inOtaMode = " + (String)shrd->inOtaMode + " / inOtaModeVersion = " + (String)shrd->inOtaModeVersion);
 }
 
 void BluetoothHandler::getCommandsDataPacket(uint8_t *rxValue)
