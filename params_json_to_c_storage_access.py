@@ -16,17 +16,17 @@ template_h = """
 #include "Arduino.h"
 #include <Preferences.h>
 
-#ifndef _Settings2_h
-#define _Settings2_h
+#ifndef _Settings_h
+#define _Settings_h
 
-class Settings2
+class Settings
 {
 private : 
     Preferences prefs;
 
 public:
 
-    Settings2();
+    Settings();
 
     void restore();
     void save();
@@ -37,7 +37,6 @@ public:
 {% for key, value in parameters.items() %}
     {% for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
-        {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
         
         {%- if item.type | lower == "string" %}
             {% set var_type = "String" %}
@@ -46,26 +45,26 @@ public:
         {%- endif %}
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_{{ var_name | upper }}_ID {{ item.id }}
-    #define SETTINGS_{{ var_name | upper }}_ID_STR "{{ item.id }}"
-    #define SETTINGS_{{ var_name | upper }}_NAME "{{ item.display_name }}"
+    #define SETTINGS_{{ item.var_name | upper }}_ID {{ item.id }}
+    #define SETTINGS_{{ item.var_name | upper }}_ID_STR "{{ item.id }}"
+    #define SETTINGS_{{ item.var_name | upper }}_NAME "{{ item.var_name }}"
 
-    {{ var_type }} {{ var_name }};
+    {{ var_type }} {{ item.var_name }};
 
         {%- if item.smartphone_display_type | lower == "list" %}
-    typedef enum LIST_{{ item.display_name | replace(" ", "_") |title}} {
+    typedef enum LIST_{{ item.var_name }} {
             {%- set list1 = item.list_strings.split('\n') %}
             {%- for item4 in list1 %}
-        LIST_{{ var_name |title}}_{{ item4 | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") |title}},
+        LIST_{{ item.var_name }}_{{ item4 | replace(" ", "_") | replace("/", "_") | regex_replace("[^A-Za-z0-9_]","") |title}},
             {%- endfor %} 
-    } t{{ var_name |title}};
+    } t{{ item.var_name }};
         {%- else %}
         {%- endif %}
 
-    void set_{{ var_name }} ({{ var_type }} value);
-    {{ var_type }} get_{{ var_name }}();
-    void display_{{ var_name }}();
-    void save_{{ var_name }}({{ var_type }} value);
+    void set_{{ item.var_name }} ({{ var_type }} value);
+    {{ var_type }} get_{{ item.var_name }}();
+    void display_{{ item.var_name }}();
+    void save_{{ item.var_name }}({{ var_type }} value);
 
         {%- endfor %}
     {%- endfor %}
@@ -88,16 +87,16 @@ template_cpp = """
 ////// Manage settings exchanged in BLE and stored in EEPOM
 
 #include "Arduino.h"
-#include "Settings2.h"
+#include "Settings.h"
 #include "tools/buffer.h"
 
 #define SETTINGS_STORAGE "SETTINGS"
 
-Settings2::Settings2()
+Settings::Settings()
 {
 }
 
-void Settings2::restore() {
+void Settings::restore() {
 
     Serial.println(" > restore settings");
     prefs.begin(SETTINGS_STORAGE, false);
@@ -105,15 +104,14 @@ void Settings2::restore() {
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
-            {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
             {%- if item.type | lower == "string" %}
-    {{ var_name }} = prefs.getString(SETTINGS_{{ var_name | upper }}_ID_STR, "{{ item.default }}");
+    {{ item.var_name }} = prefs.getString(SETTINGS_{{ item.var_name | upper }}_ID_STR, "{{ item.default }}");
             {%- elif item.type | lower == "float" %}
-    {{ var_name }} = prefs.getFloat(SETTINGS_{{ var_name | upper }}_ID_STR, {{ item.default }});
+    {{ item.var_name }} = prefs.getFloat(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.default }});
             {%- else %}
-    {{ var_name }} = prefs.getInt(SETTINGS_{{ var_name | upper }}_ID_STR, {{ item.default  | int}});
+    {{ item.var_name }} = prefs.getInt(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.default  | int}});
             {%- endif %}
-    Serial.println("  >> {{ var_name }} = " + (String){{ var_name }});
+    Serial.println("  >> {{ item.var_name }} = " + (String){{ item.var_name }});
         {%- endfor %}
     {%- endfor %}
 {%- endfor %}
@@ -121,24 +119,23 @@ void Settings2::restore() {
     Serial.println(" < restore settings");
 }
 
-void Settings2::save() {
+void Settings::save() {
 
     prefs.begin(SETTINGS_STORAGE, false);
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
-            {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
             {%- if item.type | lower == "string" %}
                 {%- set var_type = "String" %}
             {%- else %}
                 {%- set var_type = item.type %}
             {%- endif %}
             {%- if item.type | lower == "string" %}
-    prefs.putString(SETTINGS_{{ var_name | upper }}_ID_STR, {{ var_name }});
+    prefs.putString(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.var_name }});
             {%- elif item.type | lower == "float" %}
-    prefs.putFloat(SETTINGS_{{ var_name | upper }}_ID_STR, {{ var_name }});
+    prefs.putFloat(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.var_name }});
             {%- else %}
-    prefs.putInt(SETTINGS_{{ var_name | upper }}_ID_STR, {{ var_name }});
+    prefs.putInt(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.var_name }});
             {%- endif %}
         {%- endfor %}
     {%- endfor %}
@@ -147,7 +144,7 @@ void Settings2::save() {
 
 }
 
-void Settings2::unpack_setting_packet(uint8_t* packet, uint8_t length) {
+void Settings::unpack_setting_packet(uint8_t* packet, uint8_t length) {
     
     int32_t ind = 0;
 
@@ -161,33 +158,32 @@ void Settings2::unpack_setting_packet(uint8_t* packet, uint8_t length) {
 {%- for key, value in parameters.items() %}
 {%- for key2, value2 in value.items() %}
     {%- for  item in value2.settings %}
-        {%- set var_name = item.display_name | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") | title %}
-    case SETTINGS_{{ var_name | upper }}_ID :
+    case SETTINGS_{{ item.var_name | upper }}_ID :
             {%- if item.type == "uint8_t" %}
-        set_{{ var_name | lower }}(buffer_get_uint8(packet, &ind));
+        set_{{ item.var_name  }}(buffer_get_uint8(packet, &ind));
             {%- elif item.type == "int8_t" %}
-        set_{{ var_name | lower }}(buffer_get_int8(packet, &ind));
+        set_{{ item.var_name  }}(buffer_get_int8(packet, &ind));
             {%- elif item.type == "uint16_t" %}
-        set_{{ var_name | lower }}(buffer_get_uint16(packet, &ind));
+        set_{{ item.var_name  }}(buffer_get_uint16(packet, &ind));
             {%- elif item.type == "int16_t" %}
-        set_{{ var_name | lower }}(buffer_get_int16(packet, &ind));
+        set_{{ item.var_name  }}(buffer_get_int16(packet, &ind));
             {%- elif item.type == "uint32_t" %}
-        set_{{ var_name | lower }}(buffer_get_uint32(packet, &ind));
+        set_{{ item.var_name  }}(buffer_get_uint32(packet, &ind));
             {%- elif item.type == "int32_t" %}
-        set_{{ var_name | lower }}(buffer_get_int32(packet, &ind));
+        set_{{ item.var_name  }}(buffer_get_int32(packet, &ind));
             {%- elif item.type == "float" %}
-        set_{{ var_name | lower }}(buffer_get_float32_auto(packet, &ind));
+        set_{{ item.var_name  }}(buffer_get_float32_auto(packet, &ind));
             {%- elif item.type == "string" %}
-        char {{ var_name | lower }}_part[17];
-        memset({{ var_name | lower }}_part, 0, 17 );
+        char {{ item.var_name  }}_part[17];
+        memset({{ item.var_name  }}_part, 0, 17 );
         if (packetNumber == 0) {
-            {{ var_name | lower }} = "";
+            {{ item.var_name  }} = "";
         }
-        memcpy({{ var_name | lower }}_part, &packet[ind], length  - 4);
-        {{ var_name | lower }} =  {{ var_name | lower }} + {{ var_name | lower }}_part;
-        set_{{ var_name | lower }}( {{ var_name | lower }});
+        memcpy({{ item.var_name  }}_part, &packet[ind], length  - 4);
+        {{ item.var_name  }} =  {{ item.var_name  }} + {{ item.var_name  }}_part;
+        set_{{ item.var_name  }}( {{ item.var_name  }});
             {%- endif %}
-        Serial.print("unpack_setting_packet - {{ var_name | lower }} : " + (String) {{ var_name | lower }} + " / ");
+        Serial.print("unpack_setting_packet - {{ item.var_name  }} : " + (String) {{ item.var_name  }} + " / ");
         buffer_display("", packet, length);
         break;
     {%- endfor %}
@@ -199,7 +195,7 @@ void Settings2::unpack_setting_packet(uint8_t* packet, uint8_t length) {
     }
 }
 
-bool Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, uint8_t* packet, int32_t* ind) {
+bool Settings::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, uint8_t* packet, int32_t* ind) {
     
     bool hasNextPacket = false;
 
@@ -213,40 +209,39 @@ bool Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, u
 {%- for key, value in parameters.items() %}
 {%- for key2, value2 in value.items() %}
     {%- for  item in value2.settings %}
-        {%- set var_name = item.display_name | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") | title %}
-    case SETTINGS_{{ var_name | upper }}_ID :
+    case SETTINGS_{{ item.var_name | upper }}_ID :
             {%- if item.type == "uint8_t" %}
-        buffer_append_uint8(packet, {{ var_name | lower }}, ind);
+        buffer_append_uint8(packet, {{ item.var_name  }}, ind);
             {%- elif item.type == "int8_t" %}
-        buffer_append_int8(packet, {{ var_name | lower }}, ind);
+        buffer_append_int8(packet, {{ item.var_name  }}, ind);
             {%- elif item.type == "uint16_t" %}
-        buffer_append_uint16(packet, {{ var_name | lower }}, ind);
+        buffer_append_uint16(packet, {{ item.var_name  }}, ind);
             {%- elif item.type == "int16_t" %}
-        buffer_append_int16(packet, {{ var_name | lower }}, ind);
+        buffer_append_int16(packet, {{ item.var_name  }}, ind);
             {%- elif item.type == "uint32_t" %}
-        buffer_append_uint32(packet, {{ var_name | lower }}, ind);
+        buffer_append_uint32(packet, {{ item.var_name  }}, ind);
             {%- elif item.type == "int32_t" %}
-        buffer_append_int32(packet, {{ var_name | lower }}, ind);
+        buffer_append_int32(packet, {{ item.var_name  }}, ind);
             {%- elif item.type == "float" %}
-        buffer_append_float32_auto(packet, {{ var_name | lower }}, ind);
+        buffer_append_float32_auto(packet, {{ item.var_name  }}, ind);
             {%- elif item.type == "string" %}
         if (packetNumber == 0) {
-            if ({{ var_name | lower }}.length() > 16) {
+            if ({{ item.var_name  }}.length() > 16) {
                 hasNextPacket = true;
-                memcpy(&packet[*ind], &{{ var_name | lower }}[0], 16);
+                memcpy(&packet[*ind], &{{ item.var_name  }}[0], 16);
                 *ind = *ind + 16;
             }
             else {
-                memcpy(&packet[*ind], &{{ var_name | lower }}[0], {{ var_name | lower }}.length());
-                *ind = *ind + {{ var_name | lower }}.length();
+                memcpy(&packet[*ind], &{{ item.var_name  }}[0], {{ item.var_name  }}.length());
+                *ind = *ind + {{ item.var_name  }}.length();
             }
         }
         else if (packetNumber == 1) {
-            memcpy(&packet[*ind], &{{ var_name | lower }}[16], {{ var_name | lower }}.length() - 16);
-            *ind = *ind + {{ var_name | lower }}.length() - 16;
+            memcpy(&packet[*ind], &{{ item.var_name  }}[16], {{ item.var_name  }}.length() - 16);
+            *ind = *ind + {{ item.var_name  }}.length() - 16;
         }
             {%- endif %}
-        Serial.print("pack_setting_packet - {{ var_name | lower }} : " + (String) {{ var_name | lower }} + " / ");
+        Serial.print("pack_setting_packet - {{ item.var_name  }} : " + (String) {{ item.var_name  }} + " / ");
         buffer_display("", packet, *ind);
         break;
     {%- endfor %}
@@ -263,9 +258,7 @@ bool Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, u
 
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
-        {%- for  item in value2.settings %}
-            {%- set var_name = item.display_name | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") %}
-        
+        {%- for  item in value2.settings %}        
             {%- if item.type | lower == "string" %}
                 {% set var_type = "String" %}
             {%- else %}
@@ -274,33 +267,32 @@ bool Settings2::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, u
 
 /*-------------------------------------------------------*/
 
-void Settings2::set_{{ var_name }}({{ var_type }} value) {
-    {{ var_name }} = value;
+void Settings::set_{{ item.var_name }}({{ var_type }} value) {
+    {{ item.var_name }} = value;
 }
 
-{{ var_type }} Settings2::get_{{ var_name }}() {
-    return {{ var_name }} ;
+{{ var_type }} Settings::get_{{ item.var_name }}() {
+    return {{ item.var_name }} ;
 }
 
-void Settings2::display_{{ var_name }}() {
-    Serial.println("  {{ var_name }} = " + (String) {{ var_name }});
+void Settings::display_{{ item.var_name }}() {
+    Serial.println("  {{ item.var_name }} = " + (String) {{ item.var_name }});
 }
 
-void Settings2::save_{{ var_name }}({{ var_type }} value) {
+void Settings::save_{{ item.var_name }}({{ var_type }} value) {
     prefs.begin(SETTINGS_STORAGE, false);
             {%- if item.type | lower == "string" %}
-    prefs.putString(SETTINGS_{{ var_name | upper }}_ID_STR, {{ var_name }});
+    prefs.putString(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.var_name }});
             {%- elif item.type | lower == "float" %}
-    prefs.putFloat(SETTINGS_{{ var_name | upper }}_ID_STR, {{ var_name }});
+    prefs.putFloat(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.var_name }});
             {%- else %}
-    prefs.putInt(SETTINGS_{{ var_name | upper }}_ID_STR, {{ var_name }});
+    prefs.putInt(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.var_name }});
             {%- endif %}
     prefs.end();
 }
         {%- endfor %}
     {%- endfor %}
 {%- endfor %}
-
 
 
 """
@@ -331,7 +323,7 @@ with open(jsonConfigName) as json_file:
     result_cpp = tmpl_cpp.render(parameters=json_data)
 
     # get template name, output file name
-    outputFileName = ".\\src\\Settings2.cpp"
+    outputFileName = ".\\src\\Settings.cpp"
     print("outputFileName CPP : " + outputFileName)
     print (result_cpp)
 
@@ -346,7 +338,7 @@ with open(jsonConfigName) as json_file:
     result_h = tmpl_h.render(parameters=json_data)
 
     # get template name, output file name
-    outputFileName = ".\\src\\Settings2.h"
+    outputFileName = ".\\src\\Settings.h"
     print("outputFileName H : " + outputFileName)
     print (result_h)
 

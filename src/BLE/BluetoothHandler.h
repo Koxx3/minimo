@@ -8,9 +8,7 @@
 #include <NimBLEDevice.h>
 #include <NimBLEServer.h>
 #include <NimBLEUtils.h>
-//#include <NimBLE2902.h>
 #include "Settings.h"
-#include "Settings2.h"
 #include "SharedData.h"
 #include "prefs_storage.h"
 
@@ -26,7 +24,7 @@ class BluetoothHandler
 {
 public:
     BluetoothHandler();
-    static void setSettings(Settings *, Settings2 *);
+    static void setSettings(Settings *);
     static void setSharedData(SharedData *);
     static void deinit();
     static void bleOnScanResults(BLEScanResults);
@@ -55,12 +53,6 @@ public:
     static BLECharacteristic *pCharacteristicKeepAlive;
     static BLECharacteristic *pCharacteristicCommands;
 
-    static BLECharacteristic *pCharacteristicSettings1;
-    static BLECharacteristic *pCharacteristicSettings2;
-    static BLECharacteristic *pCharacteristicSettings3;
-    static BLECharacteristic *pCharacteristicSettings4;
-    static BLECharacteristic *pCharacteristicSettings5;
-    static BLECharacteristic *pCharacteristicSettings6;
     static BLECharacteristic *pCharacteristicSettingsGen;
     static BLECharacteristic *pCharacteristicSettingsAction;
 
@@ -77,7 +69,6 @@ public:
 
     static SharedData *shrd;
     static Settings *settings;
-    static Settings2 *settings2;
 };
 
 #endif

@@ -16,7 +16,7 @@
 #include "esp_gatts_api.h"
 #include "main.h"
 #include "tools/buffer.h"
-#include "Settings2.h"
+#include "Settings.h"
 #include <WiFi.h>
 
 // See the following for generating UUIDs: https://www.uuidgenerator.net/
@@ -58,12 +58,6 @@ NimBLECharacteristic *BluetoothHandler::pCharacteristicKeepAlive;
 NimBLECharacteristic *BluetoothHandler::pCharacteristicCommands;
 
 // Settings services
-NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings1;
-NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings2;
-NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings3;
-NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings4;
-NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings5;
-NimBLECharacteristic *BluetoothHandler::pCharacteristicSettings6;
 NimBLECharacteristic *BluetoothHandler::pCharacteristicSettingsGen;
 NimBLECharacteristic *BluetoothHandler::pCharacteristicSettingsAction;
 
@@ -80,7 +74,6 @@ BleStatus BluetoothHandler::deviceStatus;
 BleStatus BluetoothHandler::oldDeviceStatus;
 
 Settings *BluetoothHandler::settings;
-Settings2 *BluetoothHandler::settings2;
 SharedData *BluetoothHandler::shrd;
 
 uint32_t bleBeaconInvisibleCount = 0;
@@ -92,7 +85,7 @@ BluetoothHandler::BluetoothHandler()
 {
 }
 
-void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
+void BluetoothHandler::setSettings(Settings *data)
 {
 
     class BLEServerCallback : public NimBLEServerCallbacks
@@ -105,13 +98,13 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
 
             if (bleLockForced == 0)
             {
-                if (settings->getS1F().Bluetooth_lock_mode == 1)
+                if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Smartphone_connected)
                 {
                     shrd->isLocked = false;
                     Serial.println(" ==> device connected ==> UNLOCK decision");
                     Serial.println("-------------------------------------");
                 }
-                if (settings->getS1F().Bluetooth_lock_mode == 2)
+                if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Smartphone_connected_or_beacon_visible)
                 {
                     shrd->isLocked = false;
                     Serial.println(" ==> device connected ==> UNLOCK decision");
@@ -127,13 +120,13 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
 
             if (bleLockForced == 0)
             {
-                if (settings->getS1F().Bluetooth_lock_mode == 1)
+                if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Smartphone_connected)
                 {
                     shrd->isLocked = true;
                     Serial.println(" ==> device disconnected ==> LOCK decision");
                     Serial.println("-------------------------------------");
                 }
-                if (settings->getS1F().Bluetooth_lock_mode == 2)
+                if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Smartphone_connected_or_beacon_visible)
                 {
                     if (!bleBeaconVisible)
                     {
@@ -168,7 +161,7 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
         {
             Serial.print("BLH - onPassKeyRequest : ");
             uint32_t pinCode;
-            pinCode = settings->getS3F().Bluetooth_pin_code;
+            pinCode = settings->get_Ble_pin_code();
             Serial.println(pinCode);
             return pinCode;
         }
@@ -362,7 +355,7 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
 
                 Serial.println();
                 */
-                settings2->unpack_setting_packet((uint8_t *)pCharacteristic->getValue().data(), rxValue.length());
+                settings->unpack_setting_packet((uint8_t *)pCharacteristic->getValue().data(), rxValue.length());
             }
             else if (pCharacteristic->getUUID().toString() == SETTINGS_ACTION_CHARACTERISTIC_UUID)
             {
@@ -377,7 +370,7 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
                 }
                 else if (rxValue[0] == 1)
                 {
-                    settings2->save();
+                    settings->save();
                     Serial.println("BLH - save");
                 }
             }
@@ -466,7 +459,6 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
 
     // Init settings
     settings = data;
-    settings2 = data2;
 
     // Set firmware string
     String firmwareVersion = (String)FIRMWARE_VERSION;
@@ -618,7 +610,7 @@ void BluetoothHandler::setSettings(Settings *data, Settings2 *data2)
     // Security
     pSecurity = new BLESecurity();
     Serial.print("BLH - pin code : ");
-    uint32_t pinCode = settings->getS3F().Bluetooth_pin_code;
+    uint32_t pinCode = settings->get_Ble_pin_code();
     Serial.println(pinCode);
     pSecurity->setStaticPIN(pinCode);
     pSecurity->setInitEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
@@ -652,7 +644,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
         std::string address = scanResults.getDevice(i).getAddress().toString();
         String addressStr = address.c_str();
 
-        String addressBeaconSettings = settings->getS2F().Beacon_Mac_Address;
+        String addressBeaconSettings = settings->get_Ble_beacon_mac_address();
         addressBeaconSettings = addressBeaconSettings.substring(0, 17);
 
 #if DEBUG_DISPLAY_BLE_SCAN
@@ -671,7 +663,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
             beaconFound = true;
             bleBeaconRSSI = RSSI;
 
-            if (bleBeaconRSSI < settings->getS1F().Beacon_range)
+            if (bleBeaconRSSI < settings->get_Ble_beacon_range())
             {
 
 #if DEBUG_DISPLAY_BLE_SCAN
@@ -734,7 +726,8 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
 
     if (bleLockForced <= 0)
     {
-        if (settings->getS1F().Bluetooth_lock_mode == 2)
+
+        if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Smartphone_connected_or_beacon_visible)
         {
             if ((!bleBeaconVisible) && (deviceStatus != BLE_STATUS_DISCONNECTED))
             {
@@ -763,7 +756,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
                 Serial.println();
             }
         }
-        if (settings->getS1F().Bluetooth_lock_mode == 3)
+        if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Beacon_visible)
         {
             if (!bleBeaconVisible)
             {
@@ -895,7 +888,7 @@ void BluetoothHandler::sendSettingValueDataPacket(uint8_t *rxValue)
     {
         int32_t sizeToSend = 0;
         memset(bufferSend, 0, sizeof(bufferSend));
-        hasNextPacketToSend = settings2->pack_setting_packet(settingId, packetNumber, bufferSendPtr, &sizeToSend);
+        hasNextPacketToSend = settings->pack_setting_packet(settingId, packetNumber, bufferSendPtr, &sizeToSend);
         pCharacteristicSettingsGen->setValue((uint8_t *)bufferSendPtr, sizeToSend);
         pCharacteristicSettingsGen->notify();
         packetNumber++;

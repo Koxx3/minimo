@@ -44,7 +44,7 @@ you when you have improved the sketch. You can mail me at j [dot] maathuis [at] 
 #include "TFT/fonts/FORCED_SQUARE18pt7b.h"
 
 #include "main.h"
-#include "Settings2.h"
+#include "Settings.h"
 
 // Easily remembered name for the font
 #define FONT_FORCED_SQUARE6pt7b &FORCED_SQUARE6pt7b
@@ -61,7 +61,7 @@ you when you have improved the sketch. You can mail me at j [dot] maathuis [at] 
 using namespace Menu;
 extern TFT_eSPI tft;
 serialIn serial(Serial);
-Settings2 *app_settings;
+Settings *app_settings;
 extern bool isInMenu;
 
 result doAlert(eventMask e, prompt &item);
@@ -153,7 +153,7 @@ void settings_menu_enter_settings()
   isInMenu = true;
 }
 
-void settings_menu_set_settings(Settings2 *set)
+void settings_menu_set_settings(Settings *set)
 {
   app_settings = set;
 }

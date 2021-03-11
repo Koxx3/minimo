@@ -109,7 +109,7 @@ void Buttons::processButton1LpDuring()
 {
     shrd->button1LpDuration = button1.getPressedTicks();
 
-    if ((shrd->button1LpDuration > settings->getS3F().Button_long_press_duration * 1000) && (!shrd->button1LpProcessed) && (!shrd->inSettingsMenu))
+    if ((shrd->button1LpDuration > settings->get_Button_long_press_duration() * 1000) && (!shrd->button1LpProcessed) && (!shrd->inSettingsMenu))
     {
 
         char print_buffer[500];
@@ -195,7 +195,7 @@ void Buttons::processButton2LpDuring()
 {
     shrd->button2LpDuration = button2.getPressedTicks();
 
-    if ((shrd->button2LpDuration > settings->getS3F().Button_long_press_duration * 1000) && (!shrd->button2LpProcessed))
+    if ((shrd->button2LpDuration > settings->get_Button_long_press_duration() * 1000) && (!shrd->button2LpProcessed))
     {
         // button 2 long press reserved for settings menu access
         /*
@@ -240,7 +240,7 @@ void Buttons::processNitroEvent(uint8_t buttonId, uint8_t action)
 {
 
     // process AUX order -- button 1
-    if ((buttonId == 1) && (settings->getS3F().Button_1_long_press_action == settings->LIST_Button_press_action_Nitro_boost_cont))
+    if ((buttonId == 1) && (settings->get_Button_1_long_press_action() == settings->LIST_Button_1_long_press_action_Nitro_boost_continuous))
     {
         if (action == ACTION_ON)
         {
@@ -267,10 +267,9 @@ void Buttons::processAuxEvent(uint8_t buttonId, bool isLongPress)
 {
 
     // process AUX order -- button 1
-    if (((buttonId == 1) && (!isLongPress) && (settings->getS3F().Button_1_short_press_action == settings->LIST_Button_press_action_Aux_on_off)) ||
-        ((buttonId == 1) && (isLongPress) && (settings->getS3F().Button_1_long_press_action == settings->LIST_Button_press_action_Aux_on_off)) ||
-        ((buttonId == 2) && (!isLongPress) && (settings->getS3F().Button_2_short_press_action == settings->LIST_Button_press_action_Aux_on_off)) ||
-        ((buttonId == 2) && (isLongPress) && (settings->getS3F().Button_2_long_press_action == settings->LIST_Button_press_action_Aux_on_off)))
+    if (((buttonId == 1) && (!isLongPress) && (settings->get_Button_1_short_press_action() == settings->LIST_Button_1_short_press_action_Aux_on_off)) ||
+        ((buttonId == 1) && (isLongPress) && (settings->get_Button_1_long_press_action() == settings->LIST_Button_1_long_press_action_Aux_on_off)) ||
+        ((buttonId == 2) && (!isLongPress) && (settings->get_Button_2_short_press_action() == settings->LIST_Button_2_short_press_action_Aux_on_off)))
     {
         if (shrd->auxOrder == 0)
         {
@@ -297,10 +296,9 @@ void Buttons::processSpeedLimiterEvent(uint8_t buttonId, bool isLongPress)
 {
 
     // process SpeedLimiter
-    if (((buttonId == 1) && (!isLongPress) && (settings->getS3F().Button_1_short_press_action == settings->LIST_Button_press_action_Startup_speed_limitation_on_off)) ||
-        ((buttonId == 1) && (isLongPress) && (settings->getS3F().Button_1_long_press_action == settings->LIST_Button_press_action_Startup_speed_limitation_on_off)) ||
-        ((buttonId == 2) && (!isLongPress) && (settings->getS3F().Button_2_short_press_action == settings->LIST_Button_press_action_Startup_speed_limitation_on_off)) ||
-        ((buttonId == 2) && (isLongPress) && (settings->getS3F().Button_2_long_press_action == settings->LIST_Button_press_action_Startup_speed_limitation_on_off)))
+    if (((buttonId == 1) && (!isLongPress) && (settings->get_Button_1_short_press_action() == settings->LIST_Button_1_short_press_action_Speed_limitation_on_off)) ||
+        ((buttonId == 1) && (isLongPress) && (settings->get_Button_1_long_press_action() == settings->LIST_Button_1_long_press_action_Speed_limitation_on_off)) ||
+        ((buttonId == 2) && (!isLongPress) && (settings->get_Button_2_short_press_action() == settings->LIST_Button_2_short_press_action_Speed_limitation_on_off)))
     {
         if (shrd->speedLimiter == 0)
         {
@@ -328,10 +326,7 @@ void Buttons::processLockEvent(uint8_t buttonId, bool isLongPress)
 {
 
     // process SpeedLimiter
-    if (((buttonId == 1) && (!isLongPress) && (settings->getS3F().Button_1_short_press_action == settings->LIST_Button_press_action_Anti_theft_manual_lock_on)) ||
-        ((buttonId == 1) && (isLongPress) && (settings->getS3F().Button_1_long_press_action == settings->LIST_Button_press_action_Anti_theft_manual_lock_on)) ||
-        ((buttonId == 2) && (!isLongPress) && (settings->getS3F().Button_2_short_press_action == settings->LIST_Button_press_action_Anti_theft_manual_lock_on)) ||
-        ((buttonId == 2) && (isLongPress) && (settings->getS3F().Button_2_long_press_action == settings->LIST_Button_press_action_Anti_theft_manual_lock_on)))
+    if ((buttonId == 1) && (!isLongPress) && (settings->get_Button_1_long_press_action() == settings->LIST_Button_1_long_press_action_Antitheft_manual_lock_on))
     {
         blh->setBleLock(true);
         blh->notifyBleLock();
@@ -350,10 +345,9 @@ void Buttons::processModeEvent(uint8_t buttonId, bool isLongPress)
 {
 
     // process mode switch 1/2/3
-    if (((buttonId == 1) && (!isLongPress) && (settings->getS3F().Button_1_short_press_action == settings->LIST_Button_press_action_Mode_switch_1_2_3)) ||
-        ((buttonId == 1) && (isLongPress) && (settings->getS3F().Button_1_long_press_action == settings->LIST_Button_press_action_Mode_switch_1_2_3)) ||
-        ((buttonId == 2) && (!isLongPress) && (settings->getS3F().Button_2_short_press_action == settings->LIST_Button_press_action_Mode_switch_1_2_3)) ||
-        ((buttonId == 2) && (isLongPress) && (settings->getS3F().Button_2_long_press_action == settings->LIST_Button_press_action_Mode_switch_1_2_3)))
+    if (((buttonId == 1) && (!isLongPress) && (settings->get_Button_1_short_press_action() == settings->LIST_Button_1_short_press_action_Mode_switch_1_2_3)) ||
+        ((buttonId == 1) && (isLongPress) && (settings->get_Button_1_long_press_action() == settings->LIST_Button_1_long_press_action_Mode_switch_1_2_3)) ||
+        ((buttonId == 2) && (!isLongPress) && (settings->get_Button_2_short_press_action() == settings->LIST_Button_2_short_press_action_Mode_switch_1_2_3)))
     {
         if (shrd->modeOrder == 1)
         {
@@ -381,10 +375,9 @@ void Buttons::processModeEvent(uint8_t buttonId, bool isLongPress)
     }
 
     // process mode switch 2/3
-    if (((buttonId == 1) && (!isLongPress) && (settings->getS3F().Button_1_short_press_action == settings->LIST_Button_press_action_Mode_switch_2_3)) ||
-        ((buttonId == 1) && (isLongPress) && (settings->getS3F().Button_1_long_press_action == settings->LIST_Button_press_action_Mode_switch_2_3)) ||
-        ((buttonId == 2) && (!isLongPress) && (settings->getS3F().Button_2_short_press_action == settings->LIST_Button_press_action_Mode_switch_2_3)) ||
-        ((buttonId == 2) && (isLongPress) && (settings->getS3F().Button_2_long_press_action == settings->LIST_Button_press_action_Mode_switch_2_3)))
+    if (((buttonId == 1) && (!isLongPress) && (settings->get_Button_1_short_press_action() == settings->LIST_Button_1_short_press_action_Mode_switch_2_3)) ||
+        ((buttonId == 1) && (isLongPress) && (settings->get_Button_1_long_press_action() == settings->LIST_Button_1_long_press_action_Mode_switch_2_3)) ||
+        ((buttonId == 2) && (!isLongPress) && (settings->get_Button_2_short_press_action() == settings->LIST_Button_2_short_press_action_Mode_switch_2_3)))
     {
         if ((shrd->modeOrder == 1) || (shrd->modeOrder == 3))
         {
@@ -414,10 +407,9 @@ void Buttons::processEcoEvent(uint8_t buttonId, bool isLongPress)
     Serial.println("processEcoEvent => ecoOrder = " + (String)shrd->ecoOrder);
 
     // process mode switch 1/2/3
-    if (((buttonId == 1) && (!isLongPress) && (settings->getS3F().Button_1_short_press_action == settings->LIST_Button_press_action_Eco_switch_none_med_max)) ||
-        ((buttonId == 1) && (isLongPress) && (settings->getS3F().Button_1_long_press_action == settings->LIST_Button_press_action_Eco_switch_none_med_max)) ||
-        ((buttonId == 2) && (!isLongPress) && (settings->getS3F().Button_2_short_press_action == settings->LIST_Button_press_action_Eco_switch_none_med_max)) ||
-        ((buttonId == 2) && (isLongPress) && (settings->getS3F().Button_2_long_press_action == settings->LIST_Button_press_action_Eco_switch_none_med_max)))
+    if (((buttonId == 1) && (!isLongPress) && (settings->get_Button_1_short_press_action() == settings->LIST_Button_1_short_press_action_Eco_switch_none_med_max)) ||
+        ((buttonId == 1) && (isLongPress) && (settings->get_Button_1_long_press_action() == settings->LIST_Button_1_long_press_action_Eco_switch_none_med_max)) ||
+        ((buttonId == 2) && (!isLongPress) && (settings->get_Button_2_short_press_action() == settings->LIST_Button_2_short_press_action_Eco_switch_none_med_max)))
     {
         if (shrd->ecoOrder == 3)
         {
@@ -445,10 +437,9 @@ void Buttons::processEcoEvent(uint8_t buttonId, bool isLongPress)
     }
 
     // process mode switch 2/3
-    if (((buttonId == 1) && (!isLongPress) && (settings->getS3F().Button_1_short_press_action == settings->LIST_Button_press_action_Eco_switch_none_med)) ||
-        ((buttonId == 1) && (isLongPress) && (settings->getS3F().Button_1_long_press_action == settings->LIST_Button_press_action_Eco_switch_none_med)) ||
-        ((buttonId == 2) && (!isLongPress) && (settings->getS3F().Button_2_short_press_action == settings->LIST_Button_press_action_Eco_switch_none_med)) ||
-        ((buttonId == 2) && (isLongPress) && (settings->getS3F().Button_2_long_press_action == settings->LIST_Button_press_action_Eco_switch_none_med)))
+    if (((buttonId == 1) && (!isLongPress) && (settings->get_Button_1_short_press_action() == settings->LIST_Button_1_short_press_action_Eco_switch_none_med)) ||
+        ((buttonId == 1) && (isLongPress) && (settings->get_Button_1_long_press_action() == settings->LIST_Button_1_long_press_action_Eco_switch_none_med)) ||
+        ((buttonId == 2) && (!isLongPress) && (settings->get_Button_2_short_press_action() == settings->LIST_Button_2_short_press_action_Eco_switch_none_med)))
     {
         if ((shrd->ecoOrder == 1) || (shrd->ecoOrder == 3))
         {

@@ -187,18 +187,15 @@ uint8_t ZeroUart::modifyMode(char var, char data_buffer[])
   #if DEBUG_DISPLAY_NITRO
   Serial.print("button1LpDuration = ");
   Serial.print(button1LpDuration);
-  Serial.print(" / settings->getS3F().Button_1_long_press_action = ");
-  Serial.print(settings->getS3F().Button_1_long_press_action);
+  Serial.print(" / settings->get_Button_1_long_press_action = ");
+  Serial.print(settings->get_Button_1_long_press_action);
   Serial.print(" / settings->LIST_Button_press_action_Nitro_boost = ");
   Serial.println(settings->LIST_Button_press_action_Nitro_boost);
 #endif
 */
 
   // Nitro boost
-  if (((settings->getS3F().Button_1_short_press_action == settings->LIST_Button_press_action_Nitro_boost_on_off) && (shrd->button1ClickStatus == ACTION_ON)) ||
-      ((settings->getS3F().Button_1_long_press_action == settings->LIST_Button_press_action_Nitro_boost_cont) && (shrd->button1LpDuration > 0)) ||
-      ((settings->getS3F().Button_2_short_press_action == settings->LIST_Button_press_action_Nitro_boost_on_off) && (shrd->button2ClickStatus == ACTION_ON)) ||
-      ((settings->getS3F().Button_2_long_press_action == settings->LIST_Button_press_action_Nitro_boost_cont) && (shrd->button2LpDuration > 0)))
+  if ((settings->get_Button_1_long_press_action() == settings->LIST_Button_1_long_press_action_Nitro_boost_continuous) && (shrd->button1LpDuration > 0))
   {
     if (shrd->modeOrderBeforeNitro < 0)
     {
@@ -265,11 +262,11 @@ uint8_t ZeroUart::modifyPower(char var, char data_buffer[])
   uint8_t newPower = 100;
 
   float voltage = shrd->voltageFilterMean / 1000.0;
-  float bat_min = settings->getS3F().Battery_min_voltage / 10.0;
-  float bat_max = settings->getS3F().Battery_max_voltage / 10.0;
+  float bat_min = settings->get_Battery_minimum_voltage();
+  float bat_max = settings->get_Battery_maximum_voltage();
   //float bat_med_save = settings->getS3F().Battery_saving_medium_voltage;
 
-  float bat_med_save_voltage = ((bat_max - bat_min) * settings->getS3F().Battery_saving_medium_voltage / 100.0) + bat_min;
+  //float bat_med_save_voltage = ((bat_max - bat_min) * settings->getS3F().Battery_saving_medium_voltage / 100.0) + bat_min;
 
   /*
   Serial.print("voltage : ");
@@ -304,7 +301,7 @@ uint8_t ZeroUart::modifyPower(char var, char data_buffer[])
   else if (shrd->speedLimiter == 1)
   {
     // Apply limit
-    newPower = settings->getS1F().Speed_limiter_max_speed;
+    newPower = settings->get_Speed_limiter_max_speed();
     if (newPower < 5)
     {
       newPower = 5;
@@ -328,24 +325,24 @@ uint8_t ZeroUart::modifyPower(char var, char data_buffer[])
         newPower = min_power;
       }
     }
+    /*
     else if (voltage < bat_med_save_voltage)
     {
       float factor = ((min_power - 100) / (bat_min - bat_med_save_voltage));
 
       float origin = 100 - (factor * bat_med_save_voltage);
 
-      /*
       Serial.print(" / factor = ");
       Serial.print(factor);
       Serial.print(" / origin = ");
       Serial.print(origin);
-*/
 
       if (newPower < var)
       {
         newPower = (voltage * factor) + origin;
       }
     }
+      */
     else
     {
       newPower = var;
@@ -360,7 +357,7 @@ uint8_t ZeroUart::modifyPas(char var, char data_buffer[])
 
   if (ZERO_SIMULATED_DISPLAY == 1)
   {
-    shrd->pasEnabled = settings->getS6F().Pas_enabled;
+    shrd->pasEnabled = settings->get_Pas_enabled();
     if (shrd->pasEnabled)
       var = var | 0x02;
     else
@@ -411,9 +408,9 @@ uint8_t ZeroUart::getBrakeFromCntrlFrame(char var, char data_buffer[])
     shrd->brakePressedStatus = brakePressedStatusFromControllerNew;
 
     // reset brake sent to controller
-    if (settings->getS1F().Electric_brake_progressive_mode == 0)
+    if (settings->get_Ebrake_progressive_mode() == 0)
     {
-      if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_cntrl)
+      if (settings->get_Ebrake_smart_brake_type() == settings->LIST_Ebrake_smart_brake_type_Controller)
       {
         if (shrd->brakeSentOrderFromBLE < 0)
         {
@@ -428,7 +425,7 @@ uint8_t ZeroUart::getBrakeFromCntrlFrame(char var, char data_buffer[])
     }
     else
     {
-      shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value;
+      shrd->brakeSentOrder = settings->get_Ebrake_min_power_value();
 #if DEBUG_BRAKE_SENT_ORDER
       Serial.println("getBrakeFromLCD - 1 - brakeSentOrder : " + (String)shrd->brakeSentOrder);
 #endif
@@ -485,35 +482,35 @@ uint8_t ZeroUart::modifyBrakeFromDisplay(char var, char data_buffer[])
   Serial.println("modifyBrakeFromLCD - 2 - brakeSentOrder : " + (String)shrd->brakeSentOrder);
 #endif
 
-  if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_cntrl)
+  if (settings->get_Ebrake_smart_brake_type() == settings->LIST_Ebrake_smart_brake_type_Controller)
   {
 
     // progressive mode
-    if ((settings->getS1F().Electric_brake_progressive_mode == 1))
+    if ((settings->get_Ebrake_progressive_mode() == 1))
     {
       if ((shrd->brakePressedStatus == 1) && (shrd->brakeFordidenHighVoltage == 0))
       {
-        if (shrd->brakeSentOrder < settings->getS1F().Electric_brake_max_value)
+        if (shrd->brakeSentOrder < settings->get_Ebrake_max_power_value())
         {
-          if (currentTime - timeLastBrake > settings->getS1F().Electric_brake_time_between_mode_shift * 5)
+          if (currentTime - timeLastBrake > settings->get_Ebrake_time_between_mode_shift() * 5)
           {
-            shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value + 5;
+            shrd->brakeSentOrder = settings->get_Ebrake_min_power_value() + 5;
           }
-          else if (currentTime - timeLastBrake > settings->getS1F().Electric_brake_time_between_mode_shift * 4)
+          else if (currentTime - timeLastBrake > settings->get_Ebrake_time_between_mode_shift() * 4)
           {
-            shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value + 4;
+            shrd->brakeSentOrder = settings->get_Ebrake_min_power_value() + 4;
           }
-          else if (currentTime - timeLastBrake > settings->getS1F().Electric_brake_time_between_mode_shift * 3)
+          else if (currentTime - timeLastBrake > settings->get_Ebrake_time_between_mode_shift() * 3)
           {
-            shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value + 3;
+            shrd->brakeSentOrder = settings->get_Ebrake_min_power_value() + 3;
           }
-          else if (currentTime - timeLastBrake > settings->getS1F().Electric_brake_time_between_mode_shift * 2)
+          else if (currentTime - timeLastBrake > settings->get_Ebrake_time_between_mode_shift() * 2)
           {
-            shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value + 2;
+            shrd->brakeSentOrder = settings->get_Ebrake_min_power_value() + 2;
           }
-          else if (currentTime - timeLastBrake > settings->getS1F().Electric_brake_time_between_mode_shift * 1)
+          else if (currentTime - timeLastBrake > settings->get_Ebrake_time_between_mode_shift() * 1)
           {
-            shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value + 1;
+            shrd->brakeSentOrder = settings->get_Ebrake_min_power_value() + 1;
           }
         }
 
@@ -527,7 +524,7 @@ uint8_t ZeroUart::modifyBrakeFromDisplay(char var, char data_buffer[])
       }
       else // progressive brake enabled but brake released
       {
-        shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value;
+        shrd->brakeSentOrder = settings->get_Ebrake_min_power_value();
       }
     }
     else
@@ -614,21 +611,21 @@ uint8_t ZeroUart::modifyBrakeFromAnalog(char var, char data_buffer[])
   Serial.println("modifyBrakeFromLCD - 1 - modifyBrakeFromAnalog : " + (String)shrd->brakeSentOrder);
 #endif
 
-  shrd->brakeSentOrder = settings->getS1F().Electric_brake_min_value;
+  shrd->brakeSentOrder = settings->get_Ebrake_min_power_value();
 #if DEBUG_BRAKE_SENT_ORDER
   Serial.println("modifyBrakeFromLCD - 2 - modifyBrakeFromAnalog : " + (String)shrd->brakeSentOrder);
 #endif
 
-  if (settings->getS1F().Electric_brake_progressive_mode == 1)
+  if (settings->get_Ebrake_progressive_mode() == 1)
   {
 
     uint32_t step = 0;
     uint32_t diff = 0;
     uint32_t diffStep = 0;
 
-    if (settings->getS1F().Electric_brake_max_value - settings->getS1F().Electric_brake_min_value > 0)
+    if (settings->get_Ebrake_max_power_value() - settings->get_Ebrake_min_power_value() > 0)
     {
-      step = (shrd->brakeMaxPressureRaw - shrd->brakeMinPressureRaw) / (settings->getS1F().Electric_brake_max_value - settings->getS1F().Electric_brake_min_value);
+      step = (shrd->brakeMaxPressureRaw - shrd->brakeMinPressureRaw) / (settings->get_Ebrake_max_power_value() - settings->get_Ebrake_min_power_value());
 
       if (shrd->brakeFilterMeanErr > shrd->brakeMinPressureRaw)
       {
@@ -639,7 +636,7 @@ uint8_t ZeroUart::modifyBrakeFromAnalog(char var, char data_buffer[])
         Serial.println("modifyBrakeFromLCD - 3 - modifyBrakeFromAnalog : " + (String)shrd->brakeSentOrder);
 #endif
 
-        shrd->brakeSentOrder = diffStep + settings->getS1F().Electric_brake_min_value;
+        shrd->brakeSentOrder = diffStep + settings->get_Ebrake_min_power_value();
 #if DEBUG_BRAKE_SENT_ORDER
         Serial.println("modifyBrakeFromLCD - 4 - modifyBrakeFromAnalog : " + (String)shrd->brakeSentOrder);
 #endif
@@ -789,11 +786,11 @@ uint8_t ZeroUart::modifySpeed(char var, char data_buffer[], uint8_t byte)
 {
 
   // LCD Speed adjustement
-  if ((settings->getS1F().LCD_Speed_adjustement != 0) || (shrd->speedLimiter == 1))
+  if ((settings->get_Original_display_speed_adjustment() != 0) || (shrd->speedLimiter == 1))
   {
-    double speedToProcess = shrd->speedOld * ((settings->getS1F().LCD_Speed_adjustement + 100) / 100.0);
+    double speedToProcess = shrd->speedOld * ((settings->get_Original_display_speed_adjustment() + 100) / 100.0);
 
-    if ((shrd->speedLimiter == 1) && (speedToProcess > settings->getS1F().Speed_limiter_max_speed))
+    if ((shrd->speedLimiter == 1) && (speedToProcess > settings->get_Speed_limiter_max_speed()))
     {
       speedToProcess = 25;
     }
@@ -967,12 +964,12 @@ void ZeroUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSe
       {
         var = modifyAccel(var, data_buffer_ori);
 
-        if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_cntrl)
+        if (settings->get_Ebrake_smart_brake_type() == settings->LIST_Ebrake_smart_brake_type_Controller)
         {
           var = modifyBrakeFromDisplay(var, data_buffer_ori);
         }
-        else if ((settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_smart_analog) ||
-                 (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_smart_digital))
+        else if ((settings->get_Ebrake_smart_brake_type() == settings->LIST_Ebrake_smart_brake_type_Smart__analog_brake_lever) ||
+                 (settings->get_Ebrake_smart_brake_type() == settings->LIST_Ebrake_smart_brake_type_Smart__digital_brake_lever))
         {
           var = modifyBrakeFromAnalog(var, data_buffer_ori);
         }
@@ -989,7 +986,7 @@ void ZeroUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSe
 
       if (*i == 4)
       {
-        if (settings->getS2F().Electric_brake_type == settings->LIST_Electric_brake_type_cntrl)
+        if (settings->get_Ebrake_smart_brake_type() == settings->LIST_Ebrake_smart_brake_type_Controller)
         {
           getBrakeFromCntrlFrame(var, data_buffer_ori);
         }

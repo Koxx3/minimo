@@ -140,7 +140,6 @@ MedianFilter throttleFilter(10 /* 20 */, 900);
 Buttons btns;
 
 Settings settings;
-Settings2 settings2;
 BluetoothHandler blh;
 preferences prefs;
 
@@ -266,9 +265,9 @@ void setupSerial()
 
 void setupBattery()
 {
-  batt = Battery(settings.getS3F().Battery_min_voltage * 100, settings.getS3F().Battery_max_voltage * 100);
+  batt = Battery(settings.get_Battery_minimum_voltage() * 10, settings.get_Battery_maximum_voltage() * 10);
 
-  Serial.println("Battery : min = " + (String)settings.getS3F().Battery_min_voltage + " / max = " + settings.getS3F().Battery_max_voltage);
+  Serial.println("Battery : min = " + (String)settings.get_Battery_minimum_voltage() + " / max = " + settings.get_Battery_maximum_voltage());
 }
 
 void setupVoltage()
@@ -290,7 +289,7 @@ void setupVoltage()
 void setupAutonomy()
 {
   shrd.batteryLevel = batt.level(shrd.voltageActual);
-  shrd.autonomyLeft = (settings.getS3F().Battery_max_distance / 10) * (shrd.batteryLevel) / 100.0;
+  shrd.autonomyLeft = (settings.get_Battery_maximum_distance()) * (shrd.batteryLevel) / 100.0;
 }
 
 void saveBleLockForced()
@@ -313,19 +312,15 @@ void saveBatteryCalib()
 {
   prefs.saveBatteryCalib();
 }
-void saveSettings()
-{
-  prefs.saveSettings();
-}
 void initSharedDataWithSettings()
 {
-  shrd.speedLimiter = (settings.getS1F().Speed_limiter_at_startup == 1);
-  shrd.pasEnabled = (settings.getS6F().Pas_enabled == 1);
-  shrd.modeOrder = settings.getS1F().Default_mode;
-  shrd.ecoOrder = settings.getS1F().Default_eco;
-  shrd.accelOrder = settings.getS1F().Default_accel;
-  shrd.brakeSentOrder = settings.getS6F().Default_brake;
-  shrd.brakeSentOrderFromBLE = settings.getS6F().Default_brake;
+  shrd.speedLimiter = (settings.get_Speed_limiter_at_startup() == 1);
+  shrd.pasEnabled = (settings.get_Pas_enabled() == 1);
+  shrd.modeOrder = settings.get_Default_mode_at_startup();
+  shrd.ecoOrder = settings.get_Default_eco_mode_at_startup();
+  shrd.accelOrder = settings.get_Default_acceleration();
+  shrd.brakeSentOrder = settings.get_Default_electric_brake_at_startup();
+  shrd.brakeSentOrderFromBLE = settings.get_Default_electric_brake_at_startup();
 }
 
 #if ENABLE_WATCHDOG
@@ -456,26 +451,18 @@ void setup()
   blh.setBleLock(false);
 
   Serial.println("   prefs... ");
-  prefs.setSettings(&settings);
   prefs.setSharedData(&shrd);
   prefs.restore();
 
-  settings2.restore();
-  settings_menu_set_settings(&settings2);
-
   Serial.println("   settings ...");
-  bool settingsStatusOk = prefs.restoreSettings();
-  if (!settingsStatusOk)
-  {
-    settings.init();
-  }
-  settings.displaySettings();
+  settings.restore();
+  settings_menu_set_settings(&settings);
 
   Serial.println("   init data with settings... ");
   initSharedDataWithSettings();
 
   Serial.println("   BLE ...");
-  blh.setSettings(&settings, &settings2);
+  blh.setSettings(&settings);
   blh.setSharedData(&shrd);
 
   setupVoltage();
@@ -705,7 +692,7 @@ void getBrakeFromAnalog()
 
   shrd.brakeAnalogValue = analogRead(PIN_IN_ABRAKE);
 
-  if (settings.getS2F().Electric_brake_type == settings.LIST_Electric_brake_type_smart_analog)
+  if (settings.get_Ebrake_smart_brake_type() == settings.LIST_Ebrake_smart_brake_type_Smart__analog_brake_lever)
   {
     shrd.brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
 
@@ -775,7 +762,7 @@ void getBrakeFromAnalog()
 
     brakeFilter.in(shrd.brakeAnalogValue);
 
-    if (settings.getS1F().Electric_brake_progressive_mode == 1)
+    if (settings.get_Ebrake_progressive_mode() == 1)
     {
       shrd.brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
 
@@ -792,7 +779,7 @@ void getBrakeFromAnalog()
       notifyBrakeWithBle();
     }
   }
-  else if (settings.getS2F().Electric_brake_type == settings.LIST_Electric_brake_type_smart_digital)
+  else if (settings.get_Ebrake_smart_brake_type() == settings.LIST_Ebrake_smart_brake_type_Smart__digital_brake_lever)
   {
     //Serial.println("getBrakeFromAnalog - digital - shrd.brakeFilterMeanErr = " + (String)shrd.brakeFilterMeanErr + " / shrd.brakeAnalogValue = " + (String)shrd.brakeAnalogValue);
 
@@ -815,7 +802,7 @@ void getBrakeFromAnalog()
 
     brakeFilter.in(shrd.brakeAnalogValue);
 
-    if (settings.getS1F().Electric_brake_progressive_mode == 1)
+    if (settings.get_Ebrake_progressive_mode() == 1)
     {
       shrd.brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
 
@@ -828,8 +815,8 @@ void getBrakeFromAnalog()
         }
 
         // calculate pressure percentage
-        uint8_t nbSteps = (settings.getS1F().Electric_brake_max_value - settings.getS1F().Electric_brake_min_value);
-        uint32_t fullBrakeDuration = settings.getS1F().Electric_brake_time_between_mode_shift * nbSteps;
+        uint8_t nbSteps = (settings.get_Ebrake_max_power_value() - settings.get_Ebrake_min_power_value());
+        uint32_t fullBrakeDuration = settings.get_Ebrake_time_between_mode_shift() * nbSteps;
         shrd.brakePercent = map(millis(), shrd.brakeDigitalTimeStart, shrd.brakeDigitalTimeStart + fullBrakeDuration, 0, 100);
         shrd.brakePercent = constrain(shrd.brakePercent, 0, 100);
 
@@ -853,7 +840,7 @@ void getBrakeFromAnalog()
       notifyBrakeWithBle();
     }
   }
-  else if (settings.getS2F().Electric_brake_type == settings.LIST_Electric_brake_type_smart_digital_and_throttle)
+  else if (settings.get_Ebrake_smart_brake_type() == settings.LIST_Ebrake_smart_brake_type_Smart__digital_brake__throttle_exp)
   {
 
     shrd.brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
@@ -877,7 +864,7 @@ void getBrakeFromAnalog()
 
     brakeFilter.in(shrd.brakeAnalogValue);
 
-    if (settings.getS1F().Electric_brake_progressive_mode == 1)
+    if (settings.get_Ebrake_progressive_mode() == 1)
     {
       shrd.brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
 
@@ -912,8 +899,8 @@ void getThrottleFromAnalog()
 #define TMIN_MARGIN 0.75
 #define TMAX_MARGIN 1.25
 
-  uint32_t tInMin = settings.getS6F().Throttle_input_min * 50;
-  uint32_t tInMax = settings.getS6F().Throttle_input_max * 50;
+  uint32_t tInMin = settings.get_Throttle_input_min_voltage();
+  uint32_t tInMax = settings.get_Throttle_input_max_voltage();
   
   // Read and filter ADC
   throttleAnalogValue = analogRead(PIN_IN_ATHROTTLE);
@@ -969,8 +956,8 @@ void processDacOutput()
   uint32_t filteredThrottleIn = throttleFilter.getMeanWithoutExtremes(2);
   uint32_t throttleInMillv = filteredThrottleIn * ANALOG_TO_VOLTS_5V * 1000;
 
-  uint32_t tInMin = settings.getS6F().Throttle_input_min * 50;
-  uint32_t tInMax = settings.getS6F().Throttle_input_max * 50;
+  uint32_t tInMin = settings.get_Throttle_input_min_voltage();
+  uint32_t tInMax = settings.get_Throttle_input_max_voltage();
 
   uint32_t rangeInMilliv = tInMax - tInMin;
 
@@ -979,18 +966,18 @@ void processDacOutput()
   throttlePercent = constrain(throttlePercent, 0, 100);
 
   // apply exponential curve
-  if (settings.getS6F().Throttle_output_curve == settings.LIST_Throttle_curve_type_1)
+  if (settings.get_Throttle_output_curve() == settings.LIST_Throttle_output_curve_Exponential_1)
     throttlePercent = (exp(throttlePercent / 100.0) - 1) / (exp(1) - 1) * 100;
-  else if (settings.getS6F().Throttle_output_curve == settings.LIST_Throttle_curve_type_2)
+  else if (settings.get_Throttle_output_curve() == settings.LIST_Throttle_output_curve_Exponential_2)
     throttlePercent = (exp(throttlePercent / 100.0 * 2) - 1) / (exp(2) - 1) * 100;
-  else if (settings.getS6F().Throttle_output_curve == settings.LIST_Throttle_curve_type_3)
+  else if (settings.get_Throttle_output_curve() == settings.LIST_Throttle_output_curve_Exponential_3)
     throttlePercent = (exp(throttlePercent / 100.0 * 3) - 1) / (exp(3) - 1) * 100;
-  else if (settings.getS6F().Throttle_output_curve == settings.LIST_Throttle_curve_type_4)
+  else if (settings.get_Throttle_output_curve() == settings.LIST_Throttle_output_curve_Exponential_4)
     throttlePercent = (exp(throttlePercent / 100.0 * 4) - 1) / (exp(4) - 1) * 100;
 
   shrd.throttlePercent = throttlePercent;
 
-  shrd.pasEnabled = settings.getS6F().Pas_enabled;
+  shrd.pasEnabled = settings.get_Pas_enabled();
 
   uint32_t dacOutput = 0;
   uint32_t outputMilliv = 0;
@@ -1006,7 +993,7 @@ void processDacOutput()
     }
     else // ... else apply brake current
     {
-      minBrakeVoltage = map(settings.getS1F().Electric_brake_max_value, 0, 5, 3300 / 2, 0);
+      minBrakeVoltage = map(settings.get_Ebrake_maximum_value, 0, 5, 3300 / 2, 0);
       outputMilliv = map(shrd.brakePercent * 16, 100 * 16, 0, minBrakeVoltage, 3300 / 2);
     }
   }
@@ -1027,8 +1014,8 @@ void processDacOutput()
   }
 #else
 
-  uint32_t tOutMin = settings.getS6F().Throttle_output_min * 50;
-  uint32_t tOutMax = settings.getS6F().Throttle_output_max * 50;
+  uint32_t tOutMin = settings.get_Throttle_output_min_voltage();
+  uint32_t tOutMax = settings.get_Throttle_output_max_voltage();
 
   if (shrd.isLocked) // if locked... 0 current target
   {
@@ -1074,7 +1061,7 @@ void processDacOutput()
 
 bool isElectricBrakeForbiden()
 {
-  if (settings.getS1F().Electric_brake_disabled_on_high_voltage == 0)
+  if (settings.get_Ebrake_disabled_on_high_battery_voltage() == 0)
   {
 #if DEBUG_DISPLAY_BRAKE_FORBIDEN
     Serial.println("electric brake not disabled on battery high voltage");
@@ -1086,7 +1073,7 @@ bool isElectricBrakeForbiden()
   float voltage = shrd.voltageFilterMean / 1000.0;
   float bat_min = settings.getS3F().Battery_min_voltage / 10.0;
   float bat_max = settings.getS3F().Battery_max_voltage / 10.0;
-  float maxVoltage = bat_min + (settings.getS1F().Electric_brake_disabled_percent_limit * (bat_max - bat_min) / 100.0);
+  float maxVoltage = bat_min + (settings.get_Ebrake_disabled_percent_limit * (bat_max - bat_min) / 100.0);
 
 #if DEBUG_DISPLAY_BRAKE_FORBIDEN
   Serial.print("bat_min ");
@@ -1097,14 +1084,14 @@ bool isElectricBrakeForbiden()
   Serial.print(voltage);
   Serial.print(" / maxVoltage ");
   Serial.print(maxVoltage);
-  Serial.print(" / settings.getS1F().Electric_brake_disabled_percent_limit ");
-  Serial.println(settings.getS1F().Electric_brake_disabled_percent_limit);
+  Serial.print(" / settings.get_Ebrake_disabled_percent_limit ");
+  Serial.println(settings.get_Ebrake_disabled_percent_limit);
 #endif
 
   return (voltage > maxVoltage);
 */
 
-  return (shrd.batteryLevel > settings.getS1F().Electric_brake_disabled_percent_limit);
+  return (shrd.batteryLevel > settings.get_Ebrake_disabled_percent_limit());
 }
 
 #if (CONTROLLER_TYPE == CONTROLLER_VESC)
@@ -1112,7 +1099,7 @@ void processVescSerial()
 {
 
   // simulate brake force from 0 to 5 for smartphone feedback
-  shrd.brakeSentOrder = map(shrd.brakePercent, 0, 100, 0, settings.getS1F().Electric_brake_max_value);
+  shrd.brakeSentOrder = map(shrd.brakePercent, 0, 100, 0, settings.get_Ebrake_maximum_value);
 
   // synchronous - set mode 1/2/3
   vescCntrl.setMaxSpeed(shrd.modeOrder);
@@ -1393,7 +1380,7 @@ void processAutonomy()
     }
   }
 
-  shrd.autonomyLeft = (settings.getS3F().Battery_max_distance / 10) * (shrd.batteryLevel) / 100.0;
+  shrd.autonomyLeft = (settings.get_Battery_maximum_distance()) * (shrd.batteryLevel) / 100.0;
 
 #if DEBUG_DISPLAY_AUTONOMY
   Serial.println("bat level : " + (String)shrd.batteryLevel +
@@ -1490,21 +1477,26 @@ void loop()
     // stop BLE
     blh.deinit();
 
+    // convert String to char*
+    char Wifi_ssid[settings.get_Wifi_ssid().length()];
+    settings.get_Wifi_ssid().toCharArray(Wifi_ssid, settings.get_Wifi_ssid().length());
+    char Wifi_password[settings.get_Wifi_password().length()];
+    settings.get_Wifi_password().toCharArray(Wifi_password, settings.get_Wifi_password().length());
+
     // select & launch requested OTA mode
     if (shrd.inOtaMode == OTA_SERVER)
     {
-      OTA_server_run(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd, shrd.inOtaModeVersion);
+      OTA_server_run(Wifi_ssid, Wifi_password, shrd.inOtaModeVersion);
     }
     else if (shrd.inOtaMode == OTA_IDE)
     {
       while (1)
       {
-        OTA_ide_loop(settings.getS4F().Wifi_ssid, settings.getS5F().Wifi_pwd);
+        OTA_ide_loop(Wifi_ssid, Wifi_password);
         delay(1);
       }
     }
 
-    //shrd.inOtaMode = 0;
     return;
   }
 
@@ -1642,7 +1634,7 @@ void loop()
 
 #if HAS_I2C
   // avoid reading throttle in settings menu
-  if ((settings.getS6F().Throttle_regeneration) && (!shrd.inSettingsMenu))
+  if ((settings.get_Throttle_regeneration()) && (!shrd.inSettingsMenu))
   {
     // 1000 Hz read loop
     getThrottleFromAnalog();

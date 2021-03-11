@@ -144,7 +144,7 @@ void tftSetupBacklight()
 
 void tftBacklightFull()
 {
-  uint16_t brigtness = map(settings.getS6F().Display_brightness, 0, 100, 0, 1023);
+  uint16_t brigtness = map(settings.get_Display_brightness(), 0, 100, 0, 1023);
   ledcWrite(0, brigtness);
 }
 
@@ -350,8 +350,8 @@ void tftUpdateData(uint32_t i_loop)
     }
     case 8:
     {
-      float bat_min = settings.getS3F().Battery_min_voltage / 10.0;
-      float bat_max = settings.getS3F().Battery_max_voltage / 10.0;
+      float bat_min = settings.get_Battery_minimum_voltage();
+      float bat_max = settings.get_Battery_maximum_voltage();
       float batteryPercent = (1 / ((bat_max - bat_min) / ((shrd.voltageFilterMean / 1000.0) - bat_min)) * 100);
       drawBatteryJauge(&tft, batteryPercent, COLUMN7, LINE_2Y, 4 * SCALE_FACTOR_X, 24 * SCALE_FACTOR_Y, NB_BATTERY_BARS);
       break;
@@ -393,7 +393,7 @@ void tftUpdateData(uint32_t i_loop)
       }
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
-      uint8_t currentTemperatureStatus = (shrd.currentTemperature > settings.getS6F().Temperature_warning);
+      uint8_t currentTemperatureStatus = (shrd.currentTemperature > settings.get_Temperature_warning());
       if (oldShrdCurrentTemperature != currentTemperatureStatus)
       {
         tft.setTextColor(currentTemperatureStatus ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
@@ -402,7 +402,7 @@ void tftUpdateData(uint32_t i_loop)
       }
 
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
-      uint8_t currentHumidityStatus = (shrd.currentHumidity > settings.getS6F().Humidity_warning);
+      uint8_t currentHumidityStatus = (shrd.currentHumidity > settings.get_Humidity_warning());
       if (oldShrdCurrentHumidity != currentHumidityStatus)
       {
         tft.setTextColor(currentHumidityStatus ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);

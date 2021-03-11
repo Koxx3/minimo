@@ -505,9 +505,9 @@ void VescUart::setMaxSpeed(uint8_t modeOrder)
 		//		Serial.println("mode = " + (String)modeOrder + " / KmhToErpm2(1) = " + (String)KmhToErpm2(settings, 1) + " / l_max_erpm = " + (String)mcconf.l_max_erpm);
 
 		// override speed mode if speed limit is enabled
-		if ((shrd->speedLimiter) && (mcconf.l_max_erpm > KmhToErpm2(settings, settings->getS1F().Speed_limiter_max_speed + 0.5)))
+		if ((shrd->speedLimiter) && (mcconf.l_max_erpm > KmhToErpm2(settings, settings->get_Speed_limiter_max_speed() + 0.5)))
 		{
-			mcconf.l_max_erpm = KmhToErpm2(settings, settings->getS1F().Speed_limiter_max_speed + 0.5);
+			mcconf.l_max_erpm = KmhToErpm2(settings, settings->get_Speed_limiter_max_speed() + 0.5);
 		}
 		shrd->speedLimiterOld = shrd->speedLimiter;
 
