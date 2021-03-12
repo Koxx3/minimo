@@ -10,7 +10,7 @@
 #include <NimBLEUtils.h>
 #include "Settings.h"
 #include "SharedData.h"
-#include "prefs_storage.h"
+#include "Settings2.h"
 
 typedef enum
 {

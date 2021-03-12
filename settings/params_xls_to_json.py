@@ -1,5 +1,5 @@
 #%%
-file = 'params.xls'
+file = 'settings\\params.xls'
 import xlrd
 from itertools import chain
 from collections import OrderedDict
@@ -41,35 +41,28 @@ for rownum in range(1, sh.nrows):
             param_param_data_sub[keys[col_idx]] = row_values[col_idx]
 
     if row_values[1] in param_classes_sub_list:
-        print ("-- update")
         current_items = param_classes_sub_list[row_values[1]].get("settings")
-        print (current_items)
-
         array_items = []
         array_items.append(param_param_data_sub)
         merged_items = current_items + array_items
 
         param_classes_sub_list[row_values[1]] = { "class_order" : int(row_values[keys.index("class_order")]), "settings" : merged_items }
     elif (row_values[keys.index("class")]) :
-        print ("-- create")
         array_items = []
         array_items.append(param_param_data_sub)
         param_classes_sub_list[row_values[1]] = { "class_order" : int(row_values[keys.index("class_order")]), "settings" : array_items }
-        print (param_classes_sub_list[row_values[1]])
 
 temp = sorted(list(param_classes_sub_list.items()), key=lambda x: x[1]['class_order'])
 param_classes_sub_list.clear()
 param_classes_sub_list.update(temp)
 
-
-print ("-----------")
 data_list = {'parameters': param_classes_sub_list} # Added line
 
 # Serialize the list of dicts to JSON
 j = json.dumps(data_list, indent=2)
 
 # Write to file
-with open('params.json', 'w') as f:
+with open('settings\\params.json', 'w') as f:
     f.write(j)
-    print (j)
 
+    print("done.")

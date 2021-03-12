@@ -454,13 +454,10 @@ env.filters['regex_replace'] = regex_replace
 tmpl = env.from_string(template)
 
 # load json from file
-jsonConfigName = "params.json"
+jsonConfigName = "settings\\params.json"
 print ("jsonConfigName: " + jsonConfigName)
 with open(jsonConfigName) as json_file:
     json_data = json.load(json_file)
-    print(json_data)
-
-    print("================================================")
 
     # merge template with data
     result = tmpl.render(parameters=json_data)
@@ -468,9 +465,10 @@ with open(jsonConfigName) as json_file:
     # get template name, output file name
     outputFileName = "C:\\Users\\Francois\\StudioProjects\\minimo_android\\app\\src\\main\\java\\org\\koxx\\smartcntrl\\settings\\SmartElecSettings.java"
     print("outputFileName: " + outputFileName)
-    print (result)
 
     # write output to file
     outFile = open(outputFileName,"w")
     outFile.write(result)
     outFile.close()
+    
+    print("done.")

@@ -311,13 +311,10 @@ tmpl_h = env.from_string(template_h)
 
 
 # load json from file
-jsonConfigName = "params.json"
+jsonConfigName = "settings\\params.json"
 print ("jsonConfigName: " + jsonConfigName)
 with open(jsonConfigName) as json_file:
     json_data = json.load(json_file)
-    print(json_data)
-
-    print("================================================")
 
     # merge template with data
     result_cpp = tmpl_cpp.render(parameters=json_data)
@@ -325,24 +322,21 @@ with open(jsonConfigName) as json_file:
     # get template name, output file name
     outputFileName = ".\\src\\Settings.cpp"
     print("outputFileName CPP : " + outputFileName)
-    print (result_cpp)
 
     # write output to file
     outFile = open(outputFileName,"w")
     outFile.write(result_cpp)
     outFile.close()
-    
-    print("================================================")
 
     # merge template with data
     result_h = tmpl_h.render(parameters=json_data)
 
     # get template name, output file name
     outputFileName = ".\\src\\Settings.h"
-    print("outputFileName H : " + outputFileName)
-    print (result_h)
 
     # write output to file
     outFile = open(outputFileName,"w")
     outFile.write(result_h)
     outFile.close()
+    
+    print("done.")

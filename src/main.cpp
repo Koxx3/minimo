@@ -32,10 +32,11 @@
 #include "esp32-hal-uart.h"
 #include "filters/MedianFilter.h"
 #include "pinout.h"
-#include "prefs_storage.h"
 #include "tools/utils.h"
 #include <MCP4725/Adafruit_MCP4725.h>
 #include <Wire.h>
+#include "Settings.h"
+#include "Settings2.h"
 
 #include "Controllers/ControllerType.h"
 #include "Controllers/KellyUart.h"
@@ -148,8 +149,8 @@ MedianFilter throttleFilter(10 /* 20 */, 900);
 Buttons btns;
 
 Settings settings;
+Settings2 settings2;
 BluetoothHandler blh;
-preferences prefs;
 
 //////------------------------------------
 //////------------------------------------
@@ -273,7 +274,7 @@ void setupSerial()
 
 void setupBattery()
 {
-  batt = Battery(settings.get_Battery_minimum_voltage() * 10, settings.get_Battery_maximum_voltage() * 10);
+  batt = Battery(settings.get_Battery_minimum_voltage() * 1000, settings.get_Battery_maximum_voltage() * 1000);
 
   Serial.println("Battery : min = " + (String)settings.get_Battery_minimum_voltage() + " / max = " + settings.get_Battery_maximum_voltage());
 }
@@ -296,29 +297,28 @@ void setupVoltage()
 
 void setupAutonomy()
 {
-  shrd.batteryLevel = batt.level(shrd.voltageActual);
   shrd.autonomyLeft = (settings.get_Battery_maximum_distance()) * (shrd.batteryLevel) / 100.0;
 }
 
 void saveBleLockForced()
 {
-  prefs.saveBleLockForced();
+  settings2.saveBleLockForced();
 }
 void saveBrakeMinPressure()
 {
-  prefs.saveBrakeMinPressure();
+  settings2.saveBrakeMinPressure();
 }
 void saveBrakeMaxPressure()
 {
-  prefs.saveBrakeMaxPressure();
+  settings2.saveBrakeMaxPressure();
 }
 void saveOdo()
 {
-  prefs.saveOdo();
+  settings2.saveOdo();
 }
 void saveBatteryCalib()
 {
-  prefs.saveBatteryCalib();
+  settings2.saveBatteryCalib();
 }
 void initSharedDataWithSettings()
 {
@@ -459,8 +459,8 @@ void setup()
   blh.setBleLock(false);
 
   Serial.println("   prefs... ");
-  prefs.setSharedData(&shrd);
-  prefs.restore();
+  settings2.setSharedData(&shrd);
+  settings2.restore();
 
   Serial.println("   settings ...");
   settings.restore();
@@ -561,7 +561,7 @@ void checkAndSaveOdo()
     shrd.distanceOdoInFlash = shrd.distanceOdo;
 
     //#ifndef DEBUG_FAKE_SPEED
-    prefs.saveOdo();
+    settings2.saveOdo();
     //#endif
   }
 }
@@ -1078,28 +1078,6 @@ bool isElectricBrakeForbiden()
     return false;
   }
 
-  /*
-  float voltage = shrd.voltageFilterMean / 1000.0;
-  float bat_min = settings.getS3F().Battery_min_voltage / 10.0;
-  float bat_max = settings.getS3F().Battery_max_voltage / 10.0;
-  float maxVoltage = bat_min + (settings.get_Ebrake_disabled_percent_limit * (bat_max - bat_min) / 100.0);
-
-#if DEBUG_DISPLAY_BRAKE_FORBIDEN
-  Serial.print("bat_min ");
-  Serial.print(bat_min);
-  Serial.print(" / bat_max ");
-  Serial.print(bat_max);
-  Serial.print(" / voltage ");
-  Serial.print(voltage);
-  Serial.print(" / maxVoltage ");
-  Serial.print(maxVoltage);
-  Serial.print(" / settings.get_Ebrake_disabled_percent_limit ");
-  Serial.println(settings.get_Ebrake_disabled_percent_limit);
-#endif
-
-  return (voltage > maxVoltage);
-*/
-
   return (shrd.batteryLevel > settings.get_Ebrake_disabled_percent_limit());
 }
 
@@ -1382,6 +1360,13 @@ void processAutonomy()
       float correction = voltageDiff / currentFactor;
       uint32_t correctedVoltage = shrd.voltageFilterLongMean - correction;
       shrd.batteryLevel = batt.level(correctedVoltage);
+      
+#if DEBUG_DISPLAY_AUTONOMY
+  Serial.println("voltageDiff = " + (String)voltageDiff +
+                 " / currentFactor = " + (String)currentFactor +
+                 " / correction = " + (String)correction +
+                 " / correctedVoltage = " + (String)correctedVoltage);
+#endif
     }
     else
     {
@@ -1392,17 +1377,13 @@ void processAutonomy()
   shrd.autonomyLeft = (settings.get_Battery_maximum_distance()) * (shrd.batteryLevel) / 100.0;
 
 #if DEBUG_DISPLAY_AUTONOMY
-  Serial.println("bat level : " + (String)shrd.batteryLevel +
+  Serial.println(" / bat level : " + (String)shrd.batteryLevel +
                  " / voltageInMilliVolts = " + voltageInMilliVolts +
-                 " / autonomy = " + (String)autonomyLeft +
-                 " / bat dst = " + (String)(settings.getS3F().Battery_max_distance / 10) +
+                 " / autonomy = " + (String)shrd.autonomyLeft +
+                 " / bat dst = " + (String)(settings.get_Battery_maximum_distance()) +
                  " / voltageFilterLongMean = " + (String)shrd.voltageFilterLongMean +
                  " / voltageActual = " + (String)shrd.voltageActual +
-                 " / currentActual = " + (String)shrd.currentActual +
-                 " / voltageDiff = " + (String)voltageDiff +
-                 " / currentFactor = " + (String)currentFactor +
-                 " / correction = " + (String)correction +
-                 " / correctedVoltage = " + (String)correctedVoltage);
+                 " / currentActual = " + (String)shrd.currentActual);
 #endif
 }
 

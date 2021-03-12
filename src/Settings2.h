@@ -6,7 +6,7 @@
 #include <Preferences.h>
 
 
-class preferences
+class Settings2
 {
 public:
 
