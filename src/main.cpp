@@ -1472,22 +1472,16 @@ void loop()
     // stop BLE
     blh.deinit();
 
-    // convert String to char*
-    char Wifi_ssid[settings.get_Wifi_ssid().length()];
-    settings.get_Wifi_ssid().toCharArray(Wifi_ssid, settings.get_Wifi_ssid().length());
-    char Wifi_password[settings.get_Wifi_password().length()];
-    settings.get_Wifi_password().toCharArray(Wifi_password, settings.get_Wifi_password().length());
-
     // select & launch requested OTA mode
     if (shrd.inOtaMode == OTA_SERVER)
     {
-      OTA_server_run(Wifi_ssid, Wifi_password, shrd.inOtaModeVersion);
+      OTA_server_run((char*)settings.get_Wifi_ssid().c_str(), (char*)settings.get_Wifi_password().c_str(), shrd.inOtaModeVersion);
     }
     else if (shrd.inOtaMode == OTA_IDE)
     {
       while (1)
       {
-        OTA_ide_loop(Wifi_ssid, Wifi_password);
+        OTA_ide_loop((char*)settings.get_Wifi_ssid().c_str(), (char*)settings.get_Wifi_password().c_str());
         delay(1);
       }
     }

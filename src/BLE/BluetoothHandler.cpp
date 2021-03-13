@@ -1107,11 +1107,15 @@ void BluetoothHandler::deinit()
         Serial.println("BLH - stop scanning ... done");
 
         // stop BLE stack
+        /*
         esp_bluedroid_disable();
         esp_bluedroid_deinit();
         esp_bt_controller_disable();
         esp_bt_controller_deinit();
-        Serial.println("BLH - stop scanning ... done");
+        */
+        NimBLEDevice::deinit(true);
+
+        Serial.println("BLH - deinit ... done");
 
         deviceStatus = BLE_STATUS_DISABLED;
     }
