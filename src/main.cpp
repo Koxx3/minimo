@@ -1004,7 +1004,7 @@ void processDacOutput()
     }
     else // ... else apply brake current
     {
-      minBrakeVoltage = map(settings.get_Ebrake_maximum_value, 0, 5, 3300 / 2, 0);
+      minBrakeVoltage = map(settings.get_Ebrake_max_power_value(), 0, 5, 3300 / 2, 0);
       outputMilliv = map(shrd.brakePercent * 16, 100 * 16, 0, minBrakeVoltage, 3300 / 2);
     }
   }
@@ -1089,7 +1089,7 @@ void processVescSerial()
 {
 
   // simulate brake force from 0 to 5 for smartphone feedback
-  shrd.brakeSentOrder = map(shrd.brakePercent, 0, 100, 0, settings.get_Ebrake_maximum_value);
+  shrd.brakeSentOrder = map(shrd.brakePercent, 0, 100, 0, settings.get_Ebrake_max_power_value());
 
   // synchronous - set mode 1/2/3
   vescCntrl.setMaxSpeed(shrd.modeOrder);
