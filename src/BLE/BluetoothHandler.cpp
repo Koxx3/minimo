@@ -34,7 +34,7 @@
 #define FAST_UPDATE_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b0"
 #define DISTANCE_RST_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26b5"
 #define SETTINGS_ACTION_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26fe"
-#define SETTINGS_GEN_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ff"
+#define SETTINGS_DATA_CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26ff"
 
 #define BLE_MTU 23
 
@@ -329,10 +329,10 @@ void BluetoothHandler::setSettings(Settings *data)
 
                 notifyCommandsFeedback();
             }
-            else if (pCharacteristic->getUUID().toString() == SETTINGS_GEN_CHARACTERISTIC_UUID)
+            else if (pCharacteristic->getUUID().toString() == SETTINGS_DATA_CHARACTERISTIC_UUID)
             {
                 std::string rxValue = pCharacteristic->getValue();
-                Serial.println("BLH - Write : SETTINGS_GEN_CHARACTERISTIC_UUID");
+                Serial.println("BLH - Write : SETTINGS_DATA_CHARACTERISTIC_UUID");
                 /*
                 uint8_t rxInt[20];
                 for (int i = 0; i < rxValue.length(); i++)
@@ -409,7 +409,7 @@ void BluetoothHandler::setSettings(Settings *data)
                 Serial.print("BLH - Read bleLock : ");
                 Serial.println(print_buffer);
             }
-            else if (pCharacteristic->getUUID().toString() == SETTINGS_GEN_CHARACTERISTIC_UUID)
+            else if (pCharacteristic->getUUID().toString() == SETTINGS_DATA_CHARACTERISTIC_UUID)
             {
                 Serial.print("BLH - unknown read command");
             }
@@ -543,7 +543,7 @@ void BluetoothHandler::setSettings(Settings *data)
     // services settings
 
     pCharacteristicSettingsGen = pServiceSettings->createCharacteristic(
-        SETTINGS_GEN_CHARACTERISTIC_UUID,
+        SETTINGS_DATA_CHARACTERISTIC_UUID,
         NIMBLE_PROPERTY::NOTIFY |
             NIMBLE_PROPERTY::WRITE_NR |
             NIMBLE_PROPERTY::WRITE_AUTHEN);

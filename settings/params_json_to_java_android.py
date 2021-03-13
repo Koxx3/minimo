@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.nio.ByteOrder;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.welie.blessed.BluetoothBytesParser;
 
 import timber.log.Timber;
@@ -53,7 +55,7 @@ public class SmartElecSettings {
         {%- for  item in value2.settings %}
     /* ------------------------------------------------------------------------------------*/
 
-    public static final int {{ item.var_name | upper }}_ID = {{ item.id }};
+    public static final int {{ item.var_name | upper }}_BLE_ID = {{ item.ble_id }};
     public static final String {{ item.var_name | upper }}_KEY_STR = "{{ item.var_name }}";
     public static final String {{ item.var_name | upper }}_DISPLAY_STR = "{{ item.smartphone_display_name }}";
 
@@ -76,14 +78,14 @@ public class SmartElecSettings {
 
 
 
-    static public ArrayList<byte[]> {{ item.var_name }}_to_byte_array_write(Context ctx) {
+    static public @NotNull ArrayList<byte[]> {{ item.var_name }}_to_byte_array_write(Context ctx) {
 
         // First packet
         ArrayList<byte[]> result = new ArrayList<byte[]>();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(bos);
         try {
-            dos.writeShort({{ item.var_name | upper }}_ID);
+            dos.writeShort({{ item.var_name | upper }}_BLE_ID);
             dos.writeShort(0);
 
             {% set key = (item.var_name | upper) + "_KEY_STR" %}
@@ -181,7 +183,7 @@ public class SmartElecSettings {
             bos = new ByteArrayOutputStream();
             dos = new DataOutputStream(bos);
             try {
-                dos.writeShort({{ item.var_name | upper }}_ID);
+                dos.writeShort({{ item.var_name | upper }}_BLE_ID);
                 dos.writeShort(1);
                 dos.writeBytes(EasySettings.retrieveSettingsSharedPrefs(ctx).getString({{ key }}, "{{ item.default }}" ).substring(16, value.length()));
                 dos.flush();
@@ -195,7 +197,7 @@ public class SmartElecSettings {
         return result;
     }
 
-    static public void {{ item.var_name }}_from_byte(Context ctx, BluetoothBytesParser parser) {
+    static public void {{ item.var_name }}_from_byte(Context ctx, @NotNull BluetoothBytesParser parser) {
 
         int packetNumber = parser.getIntValue(BluetoothBytesParser.FORMAT_UINT16);
 
@@ -251,7 +253,7 @@ public class SmartElecSettings {
     {%- endfor %}
 {% endfor %}
 
-    public static ArrayList<SettingsObject> initialize() {
+    public static ArrayList<SettingsObject> initialize(Context ctx, String firmware_type) {
 
 {#- run 2 - array list init #}
 {%- for key, value in parameters.items() %}
@@ -275,8 +277,16 @@ public class SmartElecSettings {
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
 
+        boolean hasOneTimeValid_{{key2  | replace(" ", "_") | title }} = (firmware_type != null) && (
+        {%- for  item in value2.settings %}
+                (("{{ item.valid_config }}" == "") || (firmware_type.matches("{{ item.valid_config }}"))) |
+        {%- endfor %}
+            false) ;
+
         {% set outer_loop = loop %}
 // ----------------------
+
+        if (hasOneTimeValid_{{key2  | replace(" ", "_") | title }}) {
 
         settings.add(new HeaderSettingsObject.Builder({{ key2 | replace(" ", "_") | title }})
                         .build());
@@ -284,66 +294,76 @@ public class SmartElecSettings {
         {%- for  item in value2.settings %}
             {% set key = (item.var_name | upper) + "_KEY_STR" %}
             {% set display_str = (item.var_name | upper) + "_DISPLAY_STR" %}
-        settings.add(
+
+
+            {%- if item.valid_config != "" %}
+        if (firmware_type.matches("{{ item.valid_config }}")) 
+        {
+            {%- endif %}
+            settings.add(
             {%- if item.smartphone_display_type | lower == "list" %}
                 {%- set list1 = item.list_strings.split('\n')  %}
                 {%- set list_default = list1[item.default] | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") | title %}
-            new ListSettingsObject.Builder({{ key }}, {{ display_str }}, {{ item.var_name }}_LIST_{{ list_default }}, {{ item.var_name  }}_LIST_AL , "save")
-                .setUseValueAsSummary()
-                .setNegativeBtnText("cancel")
+                new ListSettingsObject.Builder({{ key }}, {{ display_str }}, {{ item.var_name }}_LIST_{{ list_default }}, {{ item.var_name  }}_LIST_AL , "save")
+                    .setUseValueAsSummary()
+                    .setNegativeBtnText("cancel")
                 {%- set list1 = item.list_strings.split('\n')  %}
                 {%- for item4 in list1 %}
                     {%- set var_elem_name = item4 | lower  | replace(" ", "_") | replace("/", "_") | regex_replace("[^A-Za-z0-9_]","") %}
                 {%- endfor %}
             {%- endif %}
             {%- if item.smartphone_display_type | lower == "edit_text_number_float" %}
-            new EditTextSettingsObject.Builder({{ key }}, {{ display_str }}, "{{ item.default }}", "save")
-                .setDialogTitle("{{ item.display_unit }}")
-                .setUseValueAsPrefillText()
-                .setNegativeBtnText("cancel")
-                .setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL)
-                .setUseValueAsSummary()
+                new EditTextSettingsObject.Builder({{ key }}, {{ display_str }}, "{{ item.default }}", "save")
+                    .setDialogTitle({{ display_str }} + " {{ item.smartphone_display_unit }}")
+                    .setUseValueAsPrefillText()
+                    .setNegativeBtnText("cancel")
+                    .setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL)
+                    .setUseValueAsSummary()
             {%- endif %}
             {%- if item.smartphone_display_type | lower == "edit_text_number_integer" %}
-            new EditTextSettingsObject.Builder({{ key }}, {{ display_str }}, "{{ item.default }}", "save")
-                .setDialogTitle("{{ item.display_unit }}")
-                .setUseValueAsPrefillText()
-                .setNegativeBtnText("cancel")
-                .setInputType(InputType.TYPE_CLASS_NUMBER)
-                .setUseValueAsSummary()
+                new EditTextSettingsObject.Builder({{ key }}, {{ display_str }}, "{{ item.default }}", "save")
+                    .setDialogTitle({{ display_str }} + " {{ item.smartphone_display_unit }}")
+                    .setUseValueAsPrefillText()
+                    .setNegativeBtnText("cancel")
+                    .setInputType(InputType.TYPE_CLASS_NUMBER)
+                    .setUseValueAsSummary()
             {%- endif %}
             {%- if item.smartphone_display_type | lower == "edit_text_number_integer_signed" %}
-            new EditTextSettingsObject.Builder({{ key }}, {{ display_str }}, "{{ item.default }}", "save")
-                .setDialogTitle("{{ item.display_unit }}")
-                .setUseValueAsPrefillText()
-                .setNegativeBtnText("cancel")
-                .setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED)
-                .setUseValueAsSummary()
+                new EditTextSettingsObject.Builder({{ key }}, {{ display_str }}, "{{ item.default }}", "save")
+                    .setDialogTitle({{ display_str }} + " {{ item.smartphone_display_unit }}")
+                    .setUseValueAsPrefillText()
+                    .setNegativeBtnText("cancel")
+                    .setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED)
+                    .setUseValueAsSummary()
             {%- endif %}
             {%- if item.smartphone_display_type | lower == "edit_text_string" %}            
-            new EditTextSettingsObject.Builder({{ key }}, {{ display_str }}, "{{ item.default }}", "save")
-                .setDialogTitle("{{ item.display_hint }}")
-                .setUseValueAsPrefillText()
-                .setNegativeBtnText("cancel")
-                .setRegex("{{ item.regex_valid }}")
-                .setInputType(InputType.TYPE_CLASS_TEXT)
-                .setUseValueAsSummary()
+                new EditTextSettingsObject.Builder({{ key }}, {{ display_str }}, "{{ item.default }}", "save")
+                    .setDialogTitle({{ display_str }} + " {{ item.smartphone_display_unit }}")
+                    .setUseValueAsPrefillText()
+                    .setNegativeBtnText("cancel")
+                    .setRegex("{{ item.regex_valid }}")
+                    .setInputType(InputType.TYPE_CLASS_TEXT)
+                    .setUseValueAsSummary()
             {% endif %}
             {%- if item.smartphone_display_type | lower == "seek_bar" %}
-            new SeekBarSettingsObject.Builder({{ key }}, {{ display_str }}, {{ item.default }}, {{ item.min }}, {{ item.max }}, {{ item.increment | int }})
-                .setUseValueAsSummary()
+                new SeekBarSettingsObject.Builder({{ key }}, {{ display_str }}, {{ item.default }}, {{ item.min }}, {{ item.max }}, {{ item.increment | int }})
+                    .setUseValueAsSummary()
             {%- endif %}
             {%- if item.smartphone_display_type | lower == "checkbox" %}
-            new CheckBoxSettingsObject.Builder({{ key }}, {{ display_str }}, {{ "true" if item.default else "false" }})
-                .setOffText("off")
-                .setOnText("on")
+                new CheckBoxSettingsObject.Builder({{ key }}, {{ display_str }}, {{ "true" if item.default else "false" }})
+                    .setOffText("off")
+                    .setOnText("on")
             {%- endif %}
             {%- if outer_loop.last == False and loop.last == True %}
-                .addDivider()
+                    .addDivider()
             {%- endif %}
-                .build());
+                    .build());
 
+            {%- if item.valid_config != "" %}
+        }
+            {%- endif %}
         {%- endfor %}
+        }
 
     {%- endfor %}
 {%- endfor %}
@@ -358,7 +378,7 @@ public class SmartElecSettings {
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
-        result.add({{ item.var_name | upper }}_ID);
+        result.add({{ item.var_name | upper }}_BLE_ID);
         {%- endfor %}
     {%- endfor %}
 {%- endfor %}
@@ -373,7 +393,7 @@ public class SmartElecSettings {
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
-        case {{ item.var_name | upper }}_ID :
+        case {{ item.var_name | upper }}_BLE_ID :
             result = {{ item.var_name }}_to_byte_array_write(ctx);
             break;
         {%- endfor %}
@@ -399,7 +419,7 @@ public class SmartElecSettings {
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
-        case {{ item.var_name | upper }}_ID :
+        case {{ item.var_name | upper }}_BLE_ID :
             {{ item.var_name }}_from_byte(ctx, parser);
             break;
         {%- endfor %}
@@ -470,5 +490,5 @@ with open(jsonConfigName) as json_file:
     outFile = open(outputFileName,"w")
     outFile.write(result)
     outFile.close()
-    
+
     print("done.")

@@ -45,8 +45,8 @@ public:
         {%- endif %}
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_{{ item.var_name | upper }}_ID {{ item.id }}
-    #define SETTINGS_{{ item.var_name | upper }}_ID_STR "{{ item.id }}"
+    #define SETTINGS_{{ item.var_name | upper }}_BLE_ID {{ item.ble_id }}
+    #define SETTINGS_{{ item.var_name | upper }}_STORAGE_KEY "{{ item.var_name_hash }}"
     #define SETTINGS_{{ item.var_name | upper }}_NAME "{{ item.var_name }}"
 
     {{ var_type }} {{ item.var_name }};
@@ -105,11 +105,11 @@ void Settings::restore() {
     {%- for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
             {%- if item.type | lower == "string" %}
-    {{ item.var_name }} = prefs.getString(SETTINGS_{{ item.var_name | upper }}_ID_STR, "{{ item.default }}");
+    {{ item.var_name }} = prefs.getString(SETTINGS_{{ item.var_name | upper }}_STORAGE_KEY, "{{ item.default }}");
             {%- elif item.type | lower == "float" %}
-    {{ item.var_name }} = prefs.getFloat(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.default }});
+    {{ item.var_name }} = prefs.getFloat(SETTINGS_{{ item.var_name | upper }}_STORAGE_KEY, {{ item.default }});
             {%- else %}
-    {{ item.var_name }} = prefs.getInt(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.default  | int}});
+    {{ item.var_name }} = prefs.getInt(SETTINGS_{{ item.var_name | upper }}_STORAGE_KEY, {{ item.default  | int}});
             {%- endif %}
     Serial.println("  >> {{ item.var_name }} = " + (String){{ item.var_name }});
         {%- endfor %}
@@ -131,11 +131,11 @@ void Settings::save() {
                 {%- set var_type = item.type %}
             {%- endif %}
             {%- if item.type | lower == "string" %}
-    prefs.putString(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.var_name }});
+    prefs.putString(SETTINGS_{{ item.var_name | upper }}_STORAGE_KEY, {{ item.var_name }});
             {%- elif item.type | lower == "float" %}
-    prefs.putFloat(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.var_name }});
+    prefs.putFloat(SETTINGS_{{ item.var_name | upper }}_STORAGE_KEY, {{ item.var_name }});
             {%- else %}
-    prefs.putInt(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.var_name }});
+    prefs.putInt(SETTINGS_{{ item.var_name | upper }}_STORAGE_KEY, {{ item.var_name }});
             {%- endif %}
         {%- endfor %}
     {%- endfor %}
@@ -158,7 +158,7 @@ void Settings::unpack_setting_packet(uint8_t* packet, uint8_t length) {
 {%- for key, value in parameters.items() %}
 {%- for key2, value2 in value.items() %}
     {%- for  item in value2.settings %}
-    case SETTINGS_{{ item.var_name | upper }}_ID :
+    case SETTINGS_{{ item.var_name | upper }}_BLE_ID :
             {%- if item.type == "uint8_t" %}
         set_{{ item.var_name  }}(buffer_get_uint8(packet, &ind));
             {%- elif item.type == "int8_t" %}
@@ -209,7 +209,7 @@ bool Settings::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, ui
 {%- for key, value in parameters.items() %}
 {%- for key2, value2 in value.items() %}
     {%- for  item in value2.settings %}
-    case SETTINGS_{{ item.var_name | upper }}_ID :
+    case SETTINGS_{{ item.var_name | upper }}_BLE_ID :
             {%- if item.type == "uint8_t" %}
         buffer_append_uint8(packet, {{ item.var_name  }}, ind);
             {%- elif item.type == "int8_t" %}
@@ -282,11 +282,11 @@ void Settings::display_{{ item.var_name }}() {
 void Settings::save_{{ item.var_name }}({{ var_type }} value) {
     prefs.begin(SETTINGS_STORAGE, false);
             {%- if item.type | lower == "string" %}
-    prefs.putString(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.var_name }});
+    prefs.putString(SETTINGS_{{ item.var_name | upper }}_STORAGE_KEY, {{ item.var_name }});
             {%- elif item.type | lower == "float" %}
-    prefs.putFloat(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.var_name }});
+    prefs.putFloat(SETTINGS_{{ item.var_name | upper }}_STORAGE_KEY, {{ item.var_name }});
             {%- else %}
-    prefs.putInt(SETTINGS_{{ item.var_name | upper }}_ID_STR, {{ item.var_name }});
+    prefs.putInt(SETTINGS_{{ item.var_name | upper }}_STORAGE_KEY, {{ item.var_name }});
             {%- endif %}
     prefs.end();
 }

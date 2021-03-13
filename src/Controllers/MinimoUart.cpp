@@ -629,11 +629,15 @@ uint8_t MinimoUart::modifyEco(char var, char data_buffer[])
 {
 
   if (MINIMO_SIMULATED_DISPLAY == 0)
+  {
     shrd->ecoLcd = var - 1;
-  else
-    var = shrd->ecoOrder + 1;
+  }
 
-  // override Smartphone mode with LCD mode
+#if DEBUG_DISPLAY_ECO
+  Serial.print("ecoLcd = " + (String)shrd->ecoLcd + " / ecoLcdOld = " + (String)shrd->ecoLcdOld);
+#endif
+
+  // override Smartphone mode with LCD mode if changed
   if (shrd->ecoLcd != shrd->ecoLcdOld)
   {
     shrd->ecoOrder = shrd->ecoLcd;
@@ -643,13 +647,10 @@ uint8_t MinimoUart::modifyEco(char var, char data_buffer[])
     blh->notifyCommandsFeedback();
   }
 
-#if DEBUG_DISPLAY_ECO
-  char print_buffer[500];
-  sprintf(print_buffer, "%s %02x",
-          "Eco Status : ",
-          var);
+  var = shrd->ecoOrder + 1;
 
-  Serial.println(print_buffer);
+#if DEBUG_DISPLAY_ECO
+  Serial.println(" ==> ecoOrder = " + (String)shrd->ecoOrder + " / ecoLcdOld = " + (String)shrd->ecoLcdOld + " / var = " + (String)((uint8_t)var));
 #endif
 
   return var;
@@ -659,9 +660,9 @@ uint8_t MinimoUart::modifyAccel(char var, char data_buffer[])
 {
 
   if (MINIMO_SIMULATED_DISPLAY == 0)
-    shrd->accelOrder = var;
-  else
-    var = shrd->accelOrder;
+  {
+    shrd->accelLcd = var;
+  }
 
   // override Smartphone mode with LCD mode
   if (shrd->accelLcd != shrd->accelLcdOld)
@@ -686,6 +687,8 @@ uint8_t MinimoUart::modifyAccel(char var, char data_buffer[])
 
   Serial.println(print_buffer);
 #endif
+
+  var = shrd->accelOrder;
 
   return var;
 }
@@ -732,7 +735,7 @@ uint8_t MinimoUart::modifySpeed(char var, char data_buffer[], uint8_t byte)
   {
     double speedToProcess = shrd->speedOld * ((settings->get_Original_display_speed_adjustment() + 100) / 100.0);
 
-    if ((shrd->speedLimiter == 1) && (speedToProcess > settings->get_Speed_limiter_max_speed()))
+    if ((shrd->speedLimiter == 1) && (speedToProcess > 25))
     {
       speedToProcess = 25;
     }
@@ -744,7 +747,7 @@ uint8_t MinimoUart::modifySpeed(char var, char data_buffer[], uint8_t byte)
 
     uint8_t regulatorOffset = (data_buffer_cntrl_ori[5] - data_buffer_cntrl_ori[3]) & 0xff;
 
-    /*
+#if DEBUG_DISPLAY_SPEED
     char print_buffer[500];
     sprintf(print_buffer, "speed : %.2f / reg %02x / mc %02x %02x / oc %02x %02x / md %02x %02x / od %02x %02x %02x %02x %02x %02x ",
             speedToProcess,
@@ -767,7 +770,7 @@ uint8_t MinimoUart::modifySpeed(char var, char data_buffer[], uint8_t byte)
             (data_buffer_cntrl_ori[7] - data_buffer_cntrl_ori[3]) & 0xff,
             (data_buffer_cntrl_ori[8] - data_buffer_cntrl_ori[3]) & 0xff);
     Serial.print(print_buffer);
-    */
+#endif
 
     if (byte == 0)
       return (((high + regulatorOffset) & 0xff) + data_buffer_cntrl_ori[3]) & 0xff;
@@ -1024,7 +1027,7 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
 
     data_buffer_mod[*i] = var;
 
-    uint32_t time = millis();
+    //uint32_t time = millis();
 
     ss_out->write(var);
 

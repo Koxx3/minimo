@@ -15,6 +15,15 @@ uint8_t tft_Number_of_poles_pairs = 15;
 float tft_Battery_minimum_voltage = 42.0;
 float tft_Battery_maximum_voltage = 58.8;
 uint8_t tft_Battery_maximum_distance = 40;
+uint8_t tft_Speed_limiter_at_startup = 0;
+TOGGLE(tft_Speed_limiter_at_startup, tft_Speed_limiter_at_startup_LIST,"  Speed limiter at startup ",doNothing,noEvent,noStyle //
+    ,VALUE("Off",0,doNothing,noEvent) //
+    ,VALUE("On",1,doNothing,noEvent) //
+);
+uint8_t tft_Speed_limiter_max_speed = 37;
+int8_t tft_Original_display_speed_adjustment = 0;
+uint8_t tft_Temperature_warning = 70;
+uint8_t tft_Humidity_warning = 80;
 uint8_t tft_Default_mode_at_startup = 3;
 uint8_t tft_Default_eco_mode_at_startup = 2;
 TOGGLE(tft_Default_eco_mode_at_startup, tft_Default_eco_mode_at_startup_LIST,"  Default eco mode at startup ",doNothing,noEvent,noStyle //
@@ -43,14 +52,6 @@ TOGGLE(tft_Abs_enabled, tft_Abs_enabled_LIST,"  Abs enabled ",doNothing,noEvent,
     ,VALUE("On",1,doNothing,noEvent) //
 );
 uint8_t tft_Display_brightness = 100;
-uint8_t tft_Temperature_warning = 70;
-uint8_t tft_Humidity_warning = 80;
-uint8_t tft_Speed_limiter_at_startup = 0;
-TOGGLE(tft_Speed_limiter_at_startup, tft_Speed_limiter_at_startup_LIST,"  Speed limiter at startup ",doNothing,noEvent,noStyle //
-    ,VALUE("Off",0,doNothing,noEvent) //
-    ,VALUE("On",1,doNothing,noEvent) //
-);
-uint8_t tft_Speed_limiter_max_speed = 37;
 uint8_t tft_Ebrake_progressive_mode = 0;
 TOGGLE(tft_Ebrake_progressive_mode, tft_Ebrake_progressive_mode_LIST,"  Progressive mode ",doNothing,noEvent,noStyle //
     ,VALUE("Off",0,doNothing,noEvent) //
@@ -121,7 +122,7 @@ TOGGLE(tft_Button_2_short_press_action, tft_Button_2_short_press_action_LIST,"  
     ,VALUE("Eco switch NONE/MED/MAX", 5 ,doNothing,noEvent) //
     ,VALUE("Eco switch NONE/MED", 6 ,doNothing,noEvent) //
 );
-uint8_t tft_Button_long_press_duration = 5;
+uint8_t tft_Button_long_press_duration = 3;
 
 
 /* submenus */
@@ -134,6 +135,15 @@ MENU(SUBMENU_Escooter_characteristics,"  Escooter characteristics",doNothing,noE
     ,EXIT("< Back")
 );
     
+MENU(SUBMENU_General,"  General",doNothing,noEvent,noStyle //
+    ,SUBMENU(tft_Speed_limiter_at_startup_LIST) //
+    ,FIELD(tft_Speed_limiter_max_speed,"  Speed limiter max speed ","", 5, 100, 5, 1, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_Original_display_speed_adjustment,"   ","", -100, 100, 0, 0, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_Temperature_warning,"  Temperature warning ","", 50, 100, 20, 10, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_Humidity_warning,"  Humidity warning ","", 20, 100, 20, 10, doNothing,noEvent,wrapStyle) //
+    ,EXIT("< Back")
+);
+    
     
 MENU(SUBMENU_SmartDisplay,"  SmartDisplay",doNothing,noEvent,noStyle //
     ,FIELD(tft_Default_mode_at_startup,"  Default mode at startup ","", 1, 3, 1, 1, doNothing,noEvent,wrapStyle) //
@@ -143,14 +153,6 @@ MENU(SUBMENU_SmartDisplay,"  SmartDisplay",doNothing,noEvent,noStyle //
     ,SUBMENU(tft_Pas_enabled_LIST) //
     ,SUBMENU(tft_Abs_enabled_LIST) //
     ,FIELD(tft_Display_brightness,"  Display brightness ","", 50, 100, 20, 10, doNothing,noEvent,wrapStyle) //
-    ,FIELD(tft_Temperature_warning,"  Temperature warning ","", 50, 100, 20, 10, doNothing,noEvent,wrapStyle) //
-    ,FIELD(tft_Humidity_warning,"  Humidity warning ","", 20, 100, 20, 10, doNothing,noEvent,wrapStyle) //
-    ,EXIT("< Back")
-);
-    
-MENU(SUBMENU_General,"  General",doNothing,noEvent,noStyle //
-    ,SUBMENU(tft_Speed_limiter_at_startup_LIST) //
-    ,FIELD(tft_Speed_limiter_max_speed,"  Speed limiter max speed ","", 5, 100, 5, 1, doNothing,noEvent,wrapStyle) //
     ,EXIT("< Back")
 );
     
@@ -179,7 +181,7 @@ MENU(SUBMENU_Escooter_buttons,"  Escooter buttons",doNothing,noEvent,noStyle //
     ,SUBMENU(tft_Button_1_short_press_action_LIST) //
     ,SUBMENU(tft_Button_1_long_press_action_LIST) //
     ,SUBMENU(tft_Button_2_short_press_action_LIST) //
-    ,FIELD(tft_Button_long_press_duration,"  Button long press duration ","", 2, 30, 1, 1, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_Button_long_press_duration,"  Button long press duration ","", 1, 10, 1, 1, doNothing,noEvent,wrapStyle) //
     ,EXIT("< Back")
 );
     
@@ -191,8 +193,8 @@ MENU(SUBMENU_Escooter_buttons,"  Escooter buttons",doNothing,noEvent,noStyle //
 MENU(mainMenu,"  Main menu",doNothing,noEvent,wrapStyle //
     ,SUBMENU(SUBMENU_MANUAL_status) //
     ,SUBMENU(SUBMENU_Escooter_characteristics) //
-    ,SUBMENU(SUBMENU_SmartDisplay) //
     ,SUBMENU(SUBMENU_General) //
+    ,SUBMENU(SUBMENU_SmartDisplay) //
     ,SUBMENU(SUBMENU_Electric_brake) //
     ,SUBMENU(SUBMENU_Throttle) //
     ,SUBMENU(SUBMENU_Escooter_buttons) //
@@ -210,6 +212,11 @@ void settings_menu_init_from_settings() {
     tft_Battery_minimum_voltage = app_settings->get_Battery_minimum_voltage();
     tft_Battery_maximum_voltage = app_settings->get_Battery_maximum_voltage();
     tft_Battery_maximum_distance = app_settings->get_Battery_maximum_distance();
+    tft_Speed_limiter_at_startup = app_settings->get_Speed_limiter_at_startup();
+    tft_Speed_limiter_max_speed = app_settings->get_Speed_limiter_max_speed();
+    tft_Original_display_speed_adjustment = app_settings->get_Original_display_speed_adjustment();
+    tft_Temperature_warning = app_settings->get_Temperature_warning();
+    tft_Humidity_warning = app_settings->get_Humidity_warning();
     tft_Default_mode_at_startup = app_settings->get_Default_mode_at_startup();
     tft_Default_eco_mode_at_startup = app_settings->get_Default_eco_mode_at_startup();
     tft_Default_acceleration = app_settings->get_Default_acceleration();
@@ -217,10 +224,6 @@ void settings_menu_init_from_settings() {
     tft_Pas_enabled = app_settings->get_Pas_enabled();
     tft_Abs_enabled = app_settings->get_Abs_enabled();
     tft_Display_brightness = app_settings->get_Display_brightness();
-    tft_Temperature_warning = app_settings->get_Temperature_warning();
-    tft_Humidity_warning = app_settings->get_Humidity_warning();
-    tft_Speed_limiter_at_startup = app_settings->get_Speed_limiter_at_startup();
-    tft_Speed_limiter_max_speed = app_settings->get_Speed_limiter_max_speed();
     tft_Ebrake_progressive_mode = app_settings->get_Ebrake_progressive_mode();
     tft_Ebrake_smart_brake_type = app_settings->get_Ebrake_smart_brake_type();
     tft_Ebrake_min_power_value = app_settings->get_Ebrake_min_power_value();
@@ -247,6 +250,11 @@ void settings_menu_save_to_settings() {
     app_settings->set_Battery_minimum_voltage(tft_Battery_minimum_voltage);
     app_settings->set_Battery_maximum_voltage(tft_Battery_maximum_voltage);
     app_settings->set_Battery_maximum_distance(tft_Battery_maximum_distance);
+    app_settings->set_Speed_limiter_at_startup(tft_Speed_limiter_at_startup);
+    app_settings->set_Speed_limiter_max_speed(tft_Speed_limiter_max_speed);
+    app_settings->set_Original_display_speed_adjustment(tft_Original_display_speed_adjustment);
+    app_settings->set_Temperature_warning(tft_Temperature_warning);
+    app_settings->set_Humidity_warning(tft_Humidity_warning);
     app_settings->set_Default_mode_at_startup(tft_Default_mode_at_startup);
     app_settings->set_Default_eco_mode_at_startup(tft_Default_eco_mode_at_startup);
     app_settings->set_Default_acceleration(tft_Default_acceleration);
@@ -254,10 +262,6 @@ void settings_menu_save_to_settings() {
     app_settings->set_Pas_enabled(tft_Pas_enabled);
     app_settings->set_Abs_enabled(tft_Abs_enabled);
     app_settings->set_Display_brightness(tft_Display_brightness);
-    app_settings->set_Temperature_warning(tft_Temperature_warning);
-    app_settings->set_Humidity_warning(tft_Humidity_warning);
-    app_settings->set_Speed_limiter_at_startup(tft_Speed_limiter_at_startup);
-    app_settings->set_Speed_limiter_max_speed(tft_Speed_limiter_max_speed);
     app_settings->set_Ebrake_progressive_mode(tft_Ebrake_progressive_mode);
     app_settings->set_Ebrake_smart_brake_type(tft_Ebrake_smart_brake_type);
     app_settings->set_Ebrake_min_power_value(tft_Ebrake_min_power_value);

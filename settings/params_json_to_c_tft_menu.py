@@ -49,10 +49,10 @@ TOGGLE(tft_{{ item.var_name }}, tft_{{ item.var_name }}_LIST,"  {{ item.tft_disp
             {%- endif %}
         {%- endfor %}
 
-            {%- if vars.foo == True %}
+        {%- if vars.foo == True %}
 MENU(SUBMENU_{{ key2 | replace(" ", "_")}},"  {{ key2 }}",doNothing,noEvent,noStyle //
 
-            {%- for  item in value2.settings %}
+        {%- for  item in value2.settings %}
                 {%- if item.tft_menu_visible %}
                     {%- if item.smartphone_display_type == "checkbox" %}
     ,SUBMENU(tft_{{ item.var_name }}_LIST) //
@@ -65,7 +65,7 @@ MENU(SUBMENU_{{ key2 | replace(" ", "_")}},"  {{ key2 }}",doNothing,noEvent,noSt
                     {%- else %}
                     {%- endif %}
                 {%- endif %}
-            {%- endfor %}
+        {%- endfor %}
     ,EXIT("< Back")
 );        
         {%- endif %}
@@ -155,6 +155,6 @@ with open(jsonConfigName) as json_file:
     outFile = open(outputFileName,"w")
     outFile.write(result_h)
     outFile.close()
-
+    
     print("done.")
     

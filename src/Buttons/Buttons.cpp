@@ -411,19 +411,19 @@ void Buttons::processEcoEvent(uint8_t buttonId, bool isLongPress)
         ((buttonId == 1) && (isLongPress) && (settings->get_Button_1_long_press_action() == settings->LIST_Button_1_long_press_action_Eco_switch_none_med_max)) ||
         ((buttonId == 2) && (!isLongPress) && (settings->get_Button_2_short_press_action() == settings->LIST_Button_2_short_press_action_Eco_switch_none_med_max)))
     {
-        if (shrd->ecoOrder == 3)
-        {
-            shrd->ecoOrder = 2;
-            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(2);
-        }
-        else if (shrd->ecoOrder == 2)
+        if (shrd->ecoOrder == 2)
         {
             shrd->ecoOrder = 1;
-            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(1);
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(2);
         }
         else if (shrd->ecoOrder == 1)
         {
-            shrd->ecoOrder = 3;
+            shrd->ecoOrder = 0;
+            led1.Breathe(SHORT_BREATHE_DURATION).Repeat(1);
+        }
+        else if (shrd->ecoOrder == 0)
+        {
+            shrd->ecoOrder = 2;
             led1.Breathe(SHORT_BREATHE_DURATION).Repeat(3);
         }
 
@@ -441,14 +441,14 @@ void Buttons::processEcoEvent(uint8_t buttonId, bool isLongPress)
         ((buttonId == 1) && (isLongPress) && (settings->get_Button_1_long_press_action() == settings->LIST_Button_1_long_press_action_Eco_switch_none_med)) ||
         ((buttonId == 2) && (!isLongPress) && (settings->get_Button_2_short_press_action() == settings->LIST_Button_2_short_press_action_Eco_switch_none_med)))
     {
-        if ((shrd->ecoOrder == 1) || (shrd->ecoOrder == 3))
+        if ((shrd->ecoOrder == 0) || (shrd->ecoOrder == 2))
         {
-            shrd->ecoOrder = 2;
+            shrd->ecoOrder = 1;
             led1.Breathe(SHORT_BREATHE_DURATION).Repeat(2);
         }
-        else if (shrd->ecoOrder == 2)
+        else if (shrd->ecoOrder == 1)
         {
-            shrd->ecoOrder = 3;
+            shrd->ecoOrder = 2;
             led1.Breathe(SHORT_BREATHE_DURATION).Repeat(3);
         }
 

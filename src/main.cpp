@@ -4,14 +4,9 @@
 // TODO : auto mode shift on low battery
 // TODO : reduce SHTC3 read time - brake read function in 2 parts
 // BUG : Minimo - original regulator perturbation
-
 // BUG : minimo - brake digital lever ?
 // BUG : minimo - brake controller ?
-// BUG : minimo - accel + eco KO
-// BUG : current init = false max current/power on smartphone
-// BUG : ODO ?
-// BUG : fake speed if limited KO
-
+// BUG : current init = false max current/power on smartphone ??
 //////////////////////////////////////////
 
 //////------------------------------------
@@ -555,15 +550,32 @@ void displayButton2()
 void checkAndSaveOdo()
 {
 
-  if (((shrd.speedOld != 0) && (shrd.speedCurrent == 0) && (shrd.distanceOdoInFlash != shrd.distanceOdo)) || /* save when speed become 0 */
-      (shrd.distanceOdo > shrd.distanceOdoInFlash + 10) /* save every kilometer */)
+  if ((shrd.speedOldForOdo != 0.00) && (shrd.speedCurrent == 0.00)) /* save when speed become 0 */
   {
-    shrd.distanceOdoInFlash = shrd.distanceOdo;
+#if DEBUG_DISPLAY_SAVE_ODO
+    Serial.println("Save ODO ... YES - speed condition / speedOldForOdo = " + (String)shrd.speedOldForOdo + " / speedCurrent = " + (String)shrd.speedCurrent);
+#endif
 
-    //#ifndef DEBUG_FAKE_SPEED
+    shrd.distanceOdoInFlash = shrd.distanceOdo;
     settings2.saveOdo();
-    //#endif
   }
+  else if (shrd.distanceOdo > shrd.distanceOdoInFlash + 10) /* save every kilometer */
+  {
+#if DEBUG_DISPLAY_SAVE_ODO
+    Serial.println("Save ODO ... YES - distance condition/ distanceOdo = " + (String)shrd.distanceOdo + " / distanceOdoInFlash = " + (String)shrd.distanceOdoInFlash);
+#endif
+
+    shrd.distanceOdoInFlash = shrd.distanceOdo;
+    settings2.saveOdo();
+  }
+  else
+  {
+#if DEBUG_DISPLAY_SAVE_ODO
+    Serial.println("Save ODO ... no / speedOldForOdo = " + (String)shrd.speedOldForOdo + " / speedCurrent = " + (String)shrd.speedCurrent);
+#endif
+  }
+
+  shrd.speedOldForOdo = shrd.speedCurrent;
 }
 
 void computeDistance(float speed)
@@ -709,10 +721,7 @@ void getBrakeFromAnalog()
     {
       shrd.speedLimiter = 0;
 
-      Serial.println("getBrakeFromAnalog - speedLimiter = " + (String)shrd.speedLimiter);
-
-      Serial.print("notifySpeedLimiterStatus => disabled by brake / ");
-      Serial.println(shrd.speedLimiter);
+      Serial.println("getBrakeFromAnalog - speedLimiter = " + (String)shrd.speedLimiter + " / notifySpeedLimiterStatus => disabled by brake / " + (String)shrd.speedLimiter);
 
       shrd.errorBrake = false;
 
@@ -798,11 +807,8 @@ void getBrakeFromAnalog()
     {
       shrd.speedLimiter = 0;
 
-      Serial.println("getBrakeFromAnalog - speedLimiter = " + (String)shrd.speedLimiter);
-
-      Serial.print("notifySpeedLimiterStatus => disabled by brake / ");
-      Serial.println(shrd.speedLimiter);
-
+      Serial.println("getBrakeFromAnalog - speedLimiter = " + (String)shrd.speedLimiter + " / notifySpeedLimiterStatus => disabled by brake / " + (String)shrd.speedLimiter);
+      
       shrd.errorBrake = false;
 
       return;
@@ -860,10 +866,7 @@ void getBrakeFromAnalog()
     {
       shrd.speedLimiter = 0;
 
-      Serial.println("getBrakeFromAnalog - speedLimiter = " + (String)shrd.speedLimiter);
-
-      Serial.print("notifySpeedLimiterStatus => disabled by brake / ");
-      Serial.println(shrd.speedLimiter);
+      Serial.println("getBrakeFromAnalog - speedLimiter = " + (String)shrd.speedLimiter + " / notifySpeedLimiterStatus => disabled by brake / " + (String)shrd.speedLimiter);
 
       shrd.errorBrake = false;
 
@@ -909,7 +912,7 @@ void getThrottleFromAnalog()
 
   uint32_t tInMin = settings.get_Throttle_input_min_voltage();
   uint32_t tInMax = settings.get_Throttle_input_max_voltage();
-  
+
   // Read and filter ADC
   throttleAnalogValue = analogRead(PIN_IN_ATHROTTLE);
   shrd.throttleAnalogValue = throttleAnalogValue;
@@ -945,8 +948,7 @@ void getThrottleFromAnalog()
             throttleAnalogValue,
             throttleFilter.getMean(),
             tInMax,
-            (uint32_t) (tInMax * TMAX_MARGIN)
-            );
+            (uint32_t)(tInMax * TMAX_MARGIN));
     blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
 
@@ -1061,7 +1063,8 @@ void processDacOutput()
           outputMilliv,
           dacOutput);
 
-  if (millis() % 500 == 0) {
+  if (millis() % 500 == 0)
+  {
     blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
   }
@@ -1360,12 +1363,12 @@ void processAutonomy()
       float correction = voltageDiff / currentFactor;
       uint32_t correctedVoltage = shrd.voltageFilterLongMean - correction;
       shrd.batteryLevel = batt.level(correctedVoltage);
-      
+
 #if DEBUG_DISPLAY_AUTONOMY
-  Serial.println("voltageDiff = " + (String)voltageDiff +
-                 " / currentFactor = " + (String)currentFactor +
-                 " / correction = " + (String)correction +
-                 " / correctedVoltage = " + (String)correctedVoltage);
+      Serial.println("voltageDiff = " + (String)voltageDiff +
+                     " / currentFactor = " + (String)currentFactor +
+                     " / correction = " + (String)correction +
+                     " / correctedVoltage = " + (String)correctedVoltage);
 #endif
     }
     else
@@ -1389,7 +1392,7 @@ void processAutonomy()
 
 void processCurrent()
 {
-  if (shrd.currentSensorPresent == 1)
+  if (shrd.currentSensorPresent)
   {
     int currentRead = analogRead(PIN_IN_CURRENT);
 
@@ -1414,7 +1417,9 @@ void processCurrent()
       int currentRawFilterInit2 = currentRawFilterInit.getMeanWithoutExtremes(5);
       int currentInMillamps = (currentRawFilter2 - currentRawFilterInit2) * (1000.0 / ANALOG_TO_CURRENT);
       shrd.currentActual = currentInMillamps;
-    } else {
+    }
+    else
+    {
       shrd.currentActual = 0;
     }
 
@@ -1649,6 +1654,11 @@ void loop()
     processSHTC3(false);
   }
 #endif
+
+  if (i_loop % 1000 == 99)
+  {
+    checkAndSaveOdo();
+  }
 
   // Give a time for ESP
   delay(1);

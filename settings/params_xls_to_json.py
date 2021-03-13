@@ -4,7 +4,7 @@ import xlrd
 from itertools import chain
 from collections import OrderedDict
 import simplejson as json
-import hashlib
+import hashlib, base64
 
 # Open the workbook and select the first worksheet
 wb = xlrd.open_workbook(file)
@@ -24,7 +24,12 @@ for rownum in range(1, sh.nrows):
 
     # single param
     param_param_data_sub = {}
-    param_param_data_sub[keys[0]] = int(row_values[0])
+    param_param_data_sub["ble_id"] = int(row_values[0])
+
+    # compute hash of var_name for ESP32 storage key
+    hasher = hashlib.sha1(row_values[keys.index("var_name")].encode('utf-8'))
+    val = base64.urlsafe_b64encode(hasher.digest()[:10])[:14]
+    param_param_data_sub['var_name_hash'] = val
 
     for col_idx in range(3, sh.ncols):
         if keys[col_idx] == "default" and row_values[keys.index("type")] != "float" and row_values[keys.index("type")] != "string" and row_values[col_idx] != "":

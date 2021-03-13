@@ -45,6 +45,8 @@ void saveSettings();
 
 void notifySettingsChangedWithBle();
 
+void displaySpeed();
+
 boolean restoreSettings();
 
 void setupAutonomy();

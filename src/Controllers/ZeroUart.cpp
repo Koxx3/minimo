@@ -666,10 +666,9 @@ uint8_t ZeroUart::modifyBrakeFromAnalog(char var, char data_buffer[])
 uint8_t ZeroUart::modifyEco(char var, char data_buffer[])
 {
 
-  if (ZERO_SIMULATED_DISPLAY == 0)
+  if (ZERO_SIMULATED_DISPLAY == 0) {
     shrd->ecoLcd = var - 1;
-  else
-    var = shrd->ecoOrder + 1;
+  }
 
   // override Smartphone mode with LCD mode
   if (shrd->ecoLcd != shrd->ecoLcdOld)
@@ -680,6 +679,8 @@ uint8_t ZeroUart::modifyEco(char var, char data_buffer[])
     // notify bluetooth
     blh->notifyCommandsFeedback();
   }
+
+  var = shrd->ecoOrder + 1;
 
 #if DEBUG_DISPLAY_ECO
   char print_buffer[500];
@@ -699,20 +700,16 @@ uint8_t ZeroUart::modifyAccel(char var, char data_buffer[])
   uint8_t varLeftPart = (var & 0xf8);
   uint8_t fixedAccelOrder;
 
-  shrd->accelLcd = 4 - (var & 0x07);
-
-  // ignore value below 0 to match minimotors accel modes (0 - 5 minimo / 0 - 4 zero)
-  if (shrd->accelLcd > 4)
-    shrd->accelLcd = 0;
-  if (shrd->accelLcd < 0)
-    shrd->accelLcd = 0;
-
-  /*
   if (ZERO_SIMULATED_DISPLAY == 0)
-    shrd->accelOrder = var;
-  else
-    var = shrd->accelOrder;
-*/
+  {
+    shrd->accelLcd = 4 - (var & 0x07);
+
+    // ignore value below 0 to match minimotors accel modes (0 - 5 minimo / 0 - 4 zero)
+    if (shrd->accelLcd > 4)
+      shrd->accelLcd = 0;
+    if (shrd->accelLcd < 0)
+      shrd->accelLcd = 0;
+  }
 
   // override Smartphone mode with LCD mode
   if (shrd->accelLcd != shrd->accelLcdOld)
@@ -790,7 +787,7 @@ uint8_t ZeroUart::modifySpeed(char var, char data_buffer[], uint8_t byte)
   {
     double speedToProcess = shrd->speedOld * ((settings->get_Original_display_speed_adjustment() + 100) / 100.0);
 
-    if ((shrd->speedLimiter == 1) && (speedToProcess > settings->get_Speed_limiter_max_speed()))
+    if ((shrd->speedLimiter == 1) && (speedToProcess > 25))
     {
       speedToProcess = 25;
     }
