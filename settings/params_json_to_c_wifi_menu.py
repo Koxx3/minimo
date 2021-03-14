@@ -13,29 +13,6 @@ template_h = """
 
 #include <AutoConnect.h>
 
-/*
-// In the declaration,
-// Declare AutoConnectElements for the page asf /mqtt_setting
-ACText(header, "<h2>MQTT broker settings</h2>", "text-align:center;color:#2f4f4f;padding:10px;");
-ACText(test1, "aaaaaaaaaaaaaaaaaaaaaaaaaaa", "text-align:center;color:#2f4f4f;padding:10px;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;");
-ACText(test2, "aaaaaaaaaaaaaaaaaaaaaaaaaaa", "text-align:center;color:#2f4f4f;padding:10px;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;");
-ACText(test3, "aaaaaaaaaaaaaaaaaaaaaaaaaaa", "text-align:center;color:#2f4f4f;padding:10px;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;");
-ACText(test4, "aaaaaaaaaaaaaaaaaaaaaaaaaaa", "text-align:center;color:#2f4f4f;padding:10px;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;");
-ACText(test5, "aaaaaaaaaaaaaaaaaaaaaaaaaaa", "text-align:center;color:#2f4f4f;padding:10px;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;text-align:center;color:#2f4f4f;padding:10px;text-align:center;");
-ACInput(mqttserver, "", "Server", "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$", "MQTT broker server");
-ACInput(channelid, "", "Channel ID", "^[0-9]{6}$");
-ACInput(userkey, "", "User Key");
-ACInput(apikey, "", "API Key");
-ACElement(newline, "<hr>");
-ACCheckbox(uniqueid, "unique", "Use APID unique");
-ACRadio(period, {"30 sec.", "60 sec.", "180 sec."}, "Update period", AC_Vertical, 1);
-ACSubmit(save, "Save", "/save");
-ACSubmit(discard, "Discard", "/elements");
-
-// Declare the custom Web page as /mqtt_setting and contains the AutoConnectElements
-AutoConnectAux elementsAux("/elements", "MQTT Setting", true, {header, test1, test2, test3, test4, test5, mqttserver, channelid, userkey, apikey, newline, uniqueid, period, newline, save, discard});
-
-*/
 
 //-----------------------
 // variables and lists
@@ -66,7 +43,7 @@ ACInput(ACE_{{ item.var_name }}, "{{ item.default }}", "{{ item.tft_display_name
 ACInput(ACE_{{ item.var_name }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{% else %}, "" {%- endif %}, "", AC_Tag_BR, AC_Input_Text);  
                 {%- endif %}
                 {%- if item.smartphone_display_type == "checkbox" %}
-ACCheckbox(ACE_{{ item.var_name }}, "unique", "{{ item.tft_display_name }}", {%- if item.default | int == 1 %} "checked" {%- else %} "unchecked" {%- endif %}, AC_Infront);   
+ACCheckbox(ACE_{{ item.var_name }}, "ACE_{{ item.var_name }}", "{{ item.tft_display_name }}", false, AC_Infront);   
                 {%- endif %}
                 {%- if item.smartphone_display_type | lower == "list" %}
                     {%- set list1 = item.list_strings | replace('\\n', '","') %}
@@ -97,6 +74,85 @@ AutoConnectAux elementsAux("/elements", "Setting", true, {
     ACE_Save,
     ACE_Js1 });        
 
+
+/* save */
+void saveConfig(AutoConnectAux &aux)
+{
+
+{%- for key, value in parameters.items() %}
+    {%- for key2, value2 in value.items() %}
+        {%- for  item in value2.settings %}
+
+                {%- if item.smartphone_display_type == "edit_text_number_float" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectInput>()).value.toFloat());
+                {%- elif item.smartphone_display_type == "edit_text_number_integer" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectInput>()).value.toInt());
+                {%- elif item.smartphone_display_type == "edit_text_number_integer_signed" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectInput>()).value.toInt());
+                {%- elif item.smartphone_display_type == "edit_text_string" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectInput>()).value);
+                {%- elif item.smartphone_display_type == "edit_text_password" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectInput>()).value);
+                {%- elif item.smartphone_display_type == "seek_bar" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectInput>()).value.toInt());
+                {%- elif item.smartphone_display_type == "checkbox" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectCheckbox>()).checked ? 1 : 0);
+    Serial.println("{{ item.var_name }} = " + (String) (elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectCheckbox>()).checked);
+                {%- elif item.smartphone_display_type | lower == "list" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectSelect>()).selected - 1);
+                {%- endif %}
+        {%- endfor %}
+    {%- endfor %}
+{%- endfor %}
+    WifiSettingsPortal_settings->save();
+    WifiSettingsPortal_settings->restore();
+    
+}
+
+/* load */
+
+void loadConfig(AutoConnectAux &aux)
+{
+
+
+{%- for key, value in parameters.items() %}
+    {%- for key2, value2 in value.items() %}
+        {%- for  item in value2.settings %}
+
+
+
+            {%- if item.smartphone_display_type == "edit_text_number_float" %}
+    aux.setElementValue("ACE_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
+            {%- elif item.smartphone_display_type == "edit_text_number_integer" %}
+    aux.setElementValue("ACE_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
+            {%- elif item.smartphone_display_type == "edit_text_number_integer_signed" %}
+    aux.setElementValue("ACE_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
+            {%- elif item.smartphone_display_type == "edit_text_string" %}
+    aux.setElementValue("ACE_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
+            {%- elif item.smartphone_display_type == "edit_text_password" %}
+    aux.setElementValue("ACE_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
+            {%- elif item.smartphone_display_type == "seek_bar" %}
+    aux.setElementValue("ACE_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
+            {%- elif item.smartphone_display_type == "checkbox" %}
+    aux.setElementValue("ACE_{{ item.var_name }}", WifiSettingsPortal_settings->get_{{ item.var_name }}() ? "checked" : "");
+            {%- elif item.smartphone_display_type | lower == "list" %}
+                {%- set list1 = item.list_strings.split('\\n') %}
+    uint8_t val_{{ item.var_name }} = WifiSettingsPortal_settings->get_{{ item.var_name }}();
+                {%- for item4 in list1 %}
+    if (val_{{ item.var_name }} == {{ loop.index - 1 }})
+        aux.setElementValue("ACE_{{ item.var_name }}", "{{ item4 }}");
+                {%- endfor %}
+            {%- endif %}
+        {%- endfor %}
+    {%- endfor %}
+{%- endfor %}
+
+      /*
+      aux.setElementValue("uniqueid", "checked");
+      aux.setElementValue("channelid", "15");
+      aux.setElementValue("select", "1");
+      */
+}
 
 """
 

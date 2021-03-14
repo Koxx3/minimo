@@ -486,6 +486,8 @@ void setup()
       1);              // Core
 #endif
 
+  WifiSettingsPortal_setSettings(&settings);
+
 #if ENABLE_WATCHDOG
   Serial.println(PSTR("Watchdog enabled"));
   setupWatchdog();
@@ -1722,6 +1724,12 @@ void loop()
   i_loop++;
 
   processWifi();
+
+/*
+  if (i_loop % 1000 == 0){
+    Serial.print(".");
+  }
+*/
 
 #if ENABLE_WATCHDOG
   resetWatchdog();
