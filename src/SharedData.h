@@ -117,6 +117,7 @@ public:
     // TFT settings menu status
     bool inSettingsMenu = false;
     bool oldInSettingsMenu = false;
+    bool oldInSettingsMenuWifi = false;
 
     boolean errorThrottle = false;
     boolean errorBrake = false;

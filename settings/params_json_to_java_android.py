@@ -105,6 +105,9 @@ public class SmartElecSettings {
                     {%- elif item.smartphone_display_type | lower == "edit_text_string" %}
                         {%- set java_display_type = "String" %}
                         {%- set java_default = '"' + item.default |string + '"' %}
+                    {%- elif item.smartphone_display_type | lower == "edit_text_password" %}
+                        {%- set java_display_type = "String" %}
+                        {%- set java_default = '"' + item.default |string + '"' %}
                     {%- elif item.smartphone_display_type | lower == "checkbox" %}
                         {%- set java_display_type = "Boolean" %}
                         {%- set java_default = "true" if item.default else "false" %}
@@ -239,6 +242,11 @@ public class SmartElecSettings {
             EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putString({{ key }}, EasySettings.retrieveSettingsSharedPrefs(ctx).getString({{ key }}, "") + value).commit();
         else if (packetNumber == 0)
             EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putString({{ key }}, "" + value).commit();
+                    {%- elif item.smartphone_display_type | lower == "edit_text_password" %}
+        if (packetNumber == 1)
+            EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putString({{ key }}, EasySettings.retrieveSettingsSharedPrefs(ctx).getString({{ key }}, "") + value).commit();
+        else if (packetNumber == 0)
+            EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putString({{ key }}, "" + value).commit();
                     {%- elif item.smartphone_display_type | lower == "seek_bar" %}
         EasySettings.retrieveSettingsSharedPrefs(ctx).edit().putInt({{ key }}, value).commit();
                     {%- elif item.smartphone_display_type | lower == "checkbox" %}
@@ -344,6 +352,14 @@ public class SmartElecSettings {
                     .setRegex("{{ item.regex_valid }}")
                     .setInputType(InputType.TYPE_CLASS_TEXT)
                     .setUseValueAsSummary()
+            {% endif %}
+            {%- if item.smartphone_display_type | lower == "edit_text_password" %}            
+                new EditTextSettingsObject.Builder({{ key }}, {{ display_str }}, "{{ item.default }}", "save")
+                    .setDialogTitle({{ display_str }} + " {{ item.smartphone_display_unit }}")
+                    .setUseValueAsPrefillText()
+                    .setNegativeBtnText("cancel")
+                    .setRegex("{{ item.regex_valid }}")
+                    .setInputType(InputType.TYPE_CLASS_TEXT)
             {% endif %}
             {%- if item.smartphone_display_type | lower == "seek_bar" %}
                 new SeekBarSettingsObject.Builder({{ key }}, {{ display_str }}, {{ item.default }}, {{ item.min }}, {{ item.max }}, {{ item.increment | int }})

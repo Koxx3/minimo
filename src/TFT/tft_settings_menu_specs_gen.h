@@ -41,7 +41,7 @@ TOGGLE(tft_Default_acceleration, tft_Default_acceleration_LIST,"  Default accele
     ,VALUE("Very slow", 5 ,doNothing,noEvent) //
 );
 uint8_t tft_Default_electric_brake_at_startup = 3;
-uint8_t tft_Pas_enabled = 0;
+uint8_t tft_Pas_enabled = 1;
 TOGGLE(tft_Pas_enabled, tft_Pas_enabled_LIST,"  PAS enabled ",doNothing,noEvent,noStyle //
     ,VALUE("Off",0,doNothing,noEvent) //
     ,VALUE("On",1,doNothing,noEvent) //
@@ -138,7 +138,7 @@ MENU(SUBMENU_Escooter_characteristics,"  Escooter characteristics",doNothing,noE
 MENU(SUBMENU_General,"  General",doNothing,noEvent,noStyle //
     ,SUBMENU(tft_Speed_limiter_at_startup_LIST) //
     ,FIELD(tft_Speed_limiter_max_speed,"  Speed limiter max speed ","", 5, 100, 5, 1, doNothing,noEvent,wrapStyle) //
-    ,FIELD(tft_Original_display_speed_adjustment,"   ","", -100, 100, 0, 0, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_Original_display_speed_adjustment,"  Speed adjustment (in percent) ","", -100, 100, 0, 0, doNothing,noEvent,wrapStyle) //
     ,FIELD(tft_Temperature_warning,"  Temperature warning ","", 50, 100, 20, 10, doNothing,noEvent,wrapStyle) //
     ,FIELD(tft_Humidity_warning,"  Humidity warning ","", 20, 100, 20, 10, doNothing,noEvent,wrapStyle) //
     ,EXIT("< Back")

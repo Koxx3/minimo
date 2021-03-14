@@ -83,9 +83,9 @@ BluetoothHandler::BluetoothHandler()
 {
 }
 
-void BluetoothHandler::setSettings(Settings *data)
-{
 
+void BluetoothHandler::init()
+{
     class BLEServerCallback : public NimBLEServerCallbacks
     {
         void onConnect(BLEServer *pServer)
@@ -443,9 +443,6 @@ void BluetoothHandler::setSettings(Settings *data)
 
     Serial.println("BLH - init");
 
-    // Init settings
-    settings = data;
-
     // Set firmware string
     String firmwareVersion = (String)FIRMWARE_VERSION;
     String firmwareType = (String)FIRMWARE_TYPE;
@@ -460,8 +457,9 @@ void BluetoothHandler::setSettings(Settings *data)
     sprintf(bleName, "Smart-%x",
             base_mac_addr[5]);
     Serial.println("BLH - name : " + (String)bleName);
-    NimBLEDevice::init(bleName);
 
+    NimBLEDevice::init(bleName);
+    
     NimBLEDevice::setMTU(BLE_MTU);
     NimBLEDevice::setPower(ESP_PWR_LVL_P9);
 
@@ -1091,6 +1089,12 @@ void BluetoothHandler::processBLE()
 void BluetoothHandler::setSharedData(SharedData *data)
 {
     shrd = data;
+}
+
+void BluetoothHandler::setSettings(Settings *data)
+{
+    // Init settings
+    settings = data;
 }
 
 void BluetoothHandler::deinit()

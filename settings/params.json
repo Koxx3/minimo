@@ -172,7 +172,7 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "list",
           "tft_menu_visible": 0.0,
-          "tft_display_name": "",
+          "tft_display_name": "Bluetooth lock mode",
           "tft_fast_increment": "",
           "tft_slow_increment": ""
         },
@@ -193,7 +193,7 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "edit_text_number_integer",
           "tft_menu_visible": 0.0,
-          "tft_display_name": "",
+          "tft_display_name": "PIN code",
           "tft_fast_increment": "",
           "tft_slow_increment": ""
         },
@@ -214,7 +214,7 @@
           "smartphone_display_hint": "MAC address",
           "smartphone_display_type": "edit_text_string",
           "tft_menu_visible": 0.0,
-          "tft_display_name": "",
+          "tft_display_name": "Beacon Mac Address",
           "tft_fast_increment": "",
           "tft_slow_increment": ""
         },
@@ -235,7 +235,7 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "seek_bar",
           "tft_menu_visible": 0.0,
-          "tft_display_name": "",
+          "tft_display_name": "Beacon range",
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0
         },
@@ -256,7 +256,7 @@
           "smartphone_display_hint": "write -10 to decrease speed by 10%",
           "smartphone_display_type": "edit_text_number_integer_signed",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "",
+          "tft_display_name": "Speed adjustment (in percent)",
           "tft_fast_increment": "",
           "tft_slow_increment": ""
         },
@@ -324,7 +324,7 @@
           "smartphone_display_hint": "write -10 to decrease speed by 10%",
           "smartphone_display_type": "edit_text_number_integer_signed",
           "tft_menu_visible": 0.0,
-          "tft_display_name": "",
+          "tft_display_name": "Speed adjustment (in percent)",
           "tft_fast_increment": "",
           "tft_slow_increment": ""
         },
@@ -345,7 +345,7 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "list",
           "tft_menu_visible": 0.0,
-          "tft_display_name": "",
+          "tft_display_name": "Aux relay name",
           "tft_fast_increment": "",
           "tft_slow_increment": ""
         },
@@ -366,7 +366,7 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "checkbox",
           "tft_menu_visible": 0.0,
-          "tft_display_name": "",
+          "tft_display_name": "Display GPS speed ",
           "tft_fast_increment": "",
           "tft_slow_increment": ""
         }
@@ -468,7 +468,7 @@
           "list_strings": "",
           "min": 0,
           "max": 1,
-          "default": 0,
+          "default": 1,
           "increment": "",
           "regex_valid": "",
           "smartphone_display_name": "PAS enabled",
@@ -916,7 +916,7 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "edit_text_string",
           "tft_menu_visible": 0.0,
-          "tft_display_name": "",
+          "tft_display_name": "Wifi network name",
           "tft_fast_increment": "",
           "tft_slow_increment": ""
         },
@@ -935,9 +935,9 @@
           "smartphone_display_name": "Wifi password",
           "smartphone_display_unit": "",
           "smartphone_display_hint": "",
-          "smartphone_display_type": "edit_text_string",
+          "smartphone_display_type": "edit_text_password",
           "tft_menu_visible": 0.0,
-          "tft_display_name": "",
+          "tft_display_name": "Wifi password",
           "tft_fast_increment": "",
           "tft_slow_increment": ""
         }

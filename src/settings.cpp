@@ -65,7 +65,7 @@ void Settings::restore() {
     Serial.println("  >> Default_acceleration = " + (String)Default_acceleration);
     Default_electric_brake_at_startup = prefs.getInt(SETTINGS_DEFAULT_ELECTRIC_BRAKE_AT_STARTUP_STORAGE_KEY, 3);
     Serial.println("  >> Default_electric_brake_at_startup = " + (String)Default_electric_brake_at_startup);
-    Pas_enabled = prefs.getInt(SETTINGS_PAS_ENABLED_STORAGE_KEY, 0);
+    Pas_enabled = prefs.getInt(SETTINGS_PAS_ENABLED_STORAGE_KEY, 1);
     Serial.println("  >> Pas_enabled = " + (String)Pas_enabled);
     Abs_enabled = prefs.getInt(SETTINGS_ABS_ENABLED_STORAGE_KEY, 0);
     Serial.println("  >> Abs_enabled = " + (String)Abs_enabled);

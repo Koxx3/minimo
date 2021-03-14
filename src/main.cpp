@@ -32,6 +32,7 @@
 #include <Wire.h>
 #include "Settings.h"
 #include "Settings2.h"
+#include "WifiSettingsPortal/WifiSettingsPortal.h"
 
 #include "Controllers/ControllerType.h"
 #include "Controllers/KellyUart.h"
@@ -91,7 +92,7 @@ ZeroUart zeroCntrl;
 #define SPEED_TO_DISTANCE_CORRECTION_FACTOR 1
 
 #define ENABLE_WATCHDOG 1
-#define WATCHDOG_TIMEOUT 1000 // 1s // time in ms to trigger the watchdog
+#define WATCHDOG_TIMEOUT 1000000 // 1s // time in ms to trigger the watchdog
 
 //////------------------------------------
 ////// Variables
@@ -396,6 +397,7 @@ void taskUpdateTFT(void *parameter)
         btns.setSlowButtonBehavior(true);
         settings_menu_setup();
       }
+
       settings_menu_loop();
       vTaskDelay(100);
     }
@@ -467,6 +469,7 @@ void setup()
   Serial.println("   BLE ...");
   blh.setSettings(&settings);
   blh.setSharedData(&shrd);
+  blh.init();
 
   setupVoltage();
   setupBattery();
@@ -487,6 +490,7 @@ void setup()
   Serial.println(PSTR("Watchdog enabled"));
   setupWatchdog();
 #endif
+
   // End of setup
   Serial.println("setup --- end\n");
 }
@@ -554,6 +558,15 @@ void checkAndSaveOdo()
   {
 #if DEBUG_DISPLAY_SAVE_ODO
     Serial.println("Save ODO ... YES - speed condition / speedOldForOdo = " + (String)shrd.speedOldForOdo + " / speedCurrent = " + (String)shrd.speedCurrent);
+#endif
+
+    shrd.distanceOdoInFlash = shrd.distanceOdo;
+    settings2.saveOdo();
+  }
+  else if ((shrd.speedCurrent < 10) && (shrd.distanceOdo > shrd.distanceOdoInFlash + 1)) /* save when speed < 10 km/h and 100m done */
+  {
+#if DEBUG_DISPLAY_SAVE_ODO
+    Serial.println("Save ODO ... YES - low speed condition / speedOldForOdo = " + (String)shrd.speedOldForOdo + " / speedCurrent = " + (String)shrd.speedCurrent);
 #endif
 
     shrd.distanceOdoInFlash = shrd.distanceOdo;
@@ -808,7 +821,7 @@ void getBrakeFromAnalog()
       shrd.speedLimiter = 0;
 
       Serial.println("getBrakeFromAnalog - speedLimiter = " + (String)shrd.speedLimiter + " / notifySpeedLimiterStatus => disabled by brake / " + (String)shrd.speedLimiter);
-      
+
       shrd.errorBrake = false;
 
       return;
@@ -1446,6 +1459,37 @@ void processRelay()
   }
 }
 
+void processWifi()
+{
+
+  if (shrd.inSettingsMenu)
+  {
+    if (!shrd.oldInSettingsMenuWifi)
+    {
+
+      blh.deinit();
+      delay(10);
+
+      WifiSettingsPortal_setup();
+      shrd.oldInSettingsMenuWifi = shrd.inSettingsMenu;
+    }
+
+    WifiSettingsPortal_loop();
+  }
+  else
+  {
+    if (shrd.oldInSettingsMenuWifi)
+    {
+      shrd.oldInSettingsMenuWifi = shrd.inSettingsMenu;
+
+      WifiSettingsPortal_close();
+
+      blh.init();
+      delay(10);
+    }
+  }
+}
+
 //////------------------------------------
 //////------------------------------------
 ////// Main loop
@@ -1475,13 +1519,13 @@ void loop()
     // select & launch requested OTA mode
     if (shrd.inOtaMode == OTA_SERVER)
     {
-      OTA_server_run((char*)settings.get_Wifi_ssid().c_str(), (char*)settings.get_Wifi_password().c_str(), shrd.inOtaModeVersion);
+      OTA_server_run((char *)settings.get_Wifi_ssid().c_str(), (char *)settings.get_Wifi_password().c_str(), shrd.inOtaModeVersion);
     }
     else if (shrd.inOtaMode == OTA_IDE)
     {
       while (1)
       {
-        OTA_ide_loop((char*)settings.get_Wifi_ssid().c_str(), (char*)settings.get_Wifi_password().c_str());
+        OTA_ide_loop((char *)settings.get_Wifi_ssid().c_str(), (char *)settings.get_Wifi_password().c_str());
         delay(1);
       }
     }
@@ -1676,6 +1720,8 @@ void loop()
 #endif
 
   i_loop++;
+
+  processWifi();
 
 #if ENABLE_WATCHDOG
   resetWatchdog();
