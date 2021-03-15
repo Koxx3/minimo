@@ -146,6 +146,11 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] SmartController connection security (PIN code)
     - [✅] SmartController connection with multi devices (BT device choice)
 
+- [✅] Wifi
+    - [✅] Settings
+    - [✅] Flash
+    - [ ] Dashboard
+
 - [✅] Other inputs/outputs ↔️
     - [✅] Read current with WCS1700
     - [✅] Read battery voltage
@@ -192,8 +197,6 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Custom acceleration curves (linear/expo)
     - [IN PROGRESS 🔄] Automatic ECO mode on low battery 
     - [ ] Dynamic BLE debug infos
-    - [ ] Wifi connexion for dashboard display and settings
-    - [ ] Advanced diagnosis (serial errors, throtle errors ...)
 
 - [✅] Android application 📱
     - [✅] Display : 
