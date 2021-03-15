@@ -55,7 +55,7 @@ ACSelect(ACE_SETTINGS_{{ item.var_name }}, {"{{ list1 }}"}, "{{ item.tft_display
 
 
 /* menus */
-AutoConnectAux settingsPageAux("/settingspage", "Setting", true, {
+AutoConnectAux settingsPageAux("/settingspage", "SmartElec settings", true, {
     ACE_Style1,
     ACE_Style2,
     ACE_Style3,

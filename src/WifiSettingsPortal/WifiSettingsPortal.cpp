@@ -15,9 +15,6 @@ WebServerClass server;
 AutoConnect portal(server);
 AutoConnectConfig config;
 
-#define USERNAME "admin" // For HTTP authentication
-#define PASSWORD "admin" // For HTTP authentication
-
 static const char JSPAGE[] PROGMEM = R"=====(
   
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -29,6 +26,10 @@ $.getJSON( "https://raw.githubusercontent.com/Koxx3/SmartController_SmartDisplay
 $.each(data.versions, function(id, item) {
   $("#versionslist").append('<input type="radio" name="version_selected" id="' + item.version + '" value="' + item.version + '"><label>' + item.version + " - " + EpochToDate(item.date) + '</albel></input><br>')
 });
+
+$("#versions_not_available").hide();
+$('label[for="ACE_OTA_version_manual"]').hide();
+$("#ACE_OTA_version_manual").hide();
 
 //Epoch To Date
 function EpochToDate(epoch) {
@@ -46,10 +47,11 @@ function EpochToDate(epoch) {
 )=====";
 
 // General style elements
-ACStyle(ACE_Style1, "");
+ACStyle(ACE_Style1, "label{display:inline-block;padding-right: 10px !important;padding-left: 0px !important;}");
 ACStyle(ACE_Style2, "input[type='button']{background-color:#303F9F; border-color:#303F9F}");
 ACStyle(ACE_Style3, "select{width:44%}");
 ACStyle(ACE_Style4, ".noorder{width:100%}.noorder label{display:inline-block;width:40%;cursor:pointer;padding:5px}.noorder .noorder input[type='text']{width:40%} .noorder input[type='password']{width:40%} .noorder input[type='text']{width:40%}");
+ACStyle(ACE_Style5, "input[type='text']{paddingLeft:10px}");
 
 // Settings page
 ACSubmit(ACE_SETTINGS_Save, "Save", "/settingssave");
@@ -59,21 +61,22 @@ ACElement(ACE_SETTINGS_Js1, "");
 #include "WifiSettingsPortalSpecs.h"
 
 // Settings sage
-ACText(ACE_SETTINGS_SAVE_header, "<h4>Settings has been saved.</h4>", "text-align:center;padding:10px;");
+ACText(ACE_SETTINGS_SAVE_header, "<h4>Settings has been saved.</h4>", "text-align:center");
 ACSubmit(ACE_SETTINGS_SAVE_confirm, "Ok", "/settingspage");
-AutoConnectAux settingsSaveAux("/settingssave", "SmartElec Setting", false, {ACE_Style1, ACE_Style2, ACE_Style3, ACE_Style4, ACE_SETTINGS_SAVE_header, ACE_SETTINGS_SAVE_confirm});
+AutoConnectAux settingsSaveAux("/settingssave", "SmartElec settings", false, {ACE_Style2, ACE_Style3, ACE_Style4, ACE_SETTINGS_SAVE_header, ACE_SETTINGS_SAVE_confirm});
 
 // OTA flash pages
-ACText(ACE_OTA_body, "<h4>Available versions</h4><label>If you don't see versions, this is because you need to be connected to an access point before loading this page.</label><br><div class='versionslist' id='versionslist'></div>", "");
-ACText(ACE_OTA_current_version, "<label>Current version : </label>", "");
+ACText(ACE_OTA_title, "Available versions : ", "", "", AC_Tag_BR);
+ACText(ACE_OTA_current_version, "Current version : ", "", "", AC_Tag_BR);
+ACText(ACE_OTA_versions_list, "<div class='versionslist' id='versionslist'><div id='versions_not_available' style='padding-left:20px'>Versions list not available when connected directly with the phone. Connect the SmartElec to a wifi access point to list versions or manually enter a verion number.</div>", "", "", AC_Tag_BR);
 ACInput(ACE_OTA_version_manual, "0", "Version to flash", "^[0-9]+$", "version_selected_manual", AC_Tag_BR, AC_Input_Text);
 ACSubmit(ACE_OTA_submit, "Flash this version", "/otaflash");
 ACElement(ACE_OTA_js, JSPAGE);
-AutoConnectAux otaPageAux("/otapage", "Firmware update", true, {ACE_Style2, ACE_OTA_body, ACE_OTA_current_version, ACE_OTA_version_manual, ACE_OTA_submit, ACE_OTA_js});
+AutoConnectAux otaPageAux("/otapage", "SmartElec firmware update", true, {ACE_Style1, ACE_Style2, ACE_Style5, ACE_OTA_current_version, ACE_OTA_title, ACE_OTA_versions_list, ACE_OTA_version_manual, ACE_OTA_submit, ACE_OTA_js});
 
 // OTA flash in progress
 ACText(ACE_OTA_FLASH_in_progress, "<h4>Flash in progress</h4>The SmartElec device will reboot after flash", "");
-AutoConnectAux otaFlashAux("/otaflash", "Flash in progress", true, {ACE_Style2, ACE_OTA_FLASH_in_progress});
+AutoConnectAux otaFlashAux("/otaflash", "SmartElec flash in progress", false, {ACE_Style2, ACE_OTA_FLASH_in_progress});
 
 void WifiSettingsPortal_setup()
 {
@@ -110,7 +113,7 @@ void WifiSettingsPortal_setup()
 
   otaPageAux.on([](AutoConnectAux &aux, PageArgument &arg) {
     Serial.println("flash page");
-    String versionStr = "<label>Current version : " + (String)FIRMWARE_VERSION + "</label>";
+    String versionStr = "Current version : " + (String)FIRMWARE_VERSION;
     aux.setElementValue("ACE_OTA_current_version", versionStr);
     //otaPageAux["ACE_OTA_current_version"].value = versionStr;
 
@@ -157,39 +160,32 @@ void WifiSettingsPortal_setup()
   // Join the custom Web pages and performs begin
   portal.join({settingsPageAux, settingsSaveAux, otaPageAux, otaFlashAux});
 
-  config.auth = AC_AUTH_NONE;
-  config.authScope = AC_AUTHSCOPE_AUX;
-  config.psk = "12345678";
-
-  //config.immediateStart = true;
-  //config.autoReconnect = true;
-  config.retainPortal = true;
-  config.preserveAPMode = true;
-  config.homeUri = "/settingspage";
-  //config.menuItems = AC_MENUITEM_RESET | AC_MENUITEM_UPDATE;
-
-  //config.autoRise;           /**< Automatic starting the captive portal */
-  //config.autoReset;          /**< Reset ESP8266 module automatically when WLAN disconnected. */
-  //config.autoReconnect;      /**< Automatic reconnect with past SSID */
-  //config.immediateStart;     /**< Skips WiFi.begin(), start portal immediately */
-  //config.retainPortal;       /**< Even if the captive portal times out, it maintains the portal state. */
-  //config.preserveAPMode;     /**< Keep existing AP WiFi mode if captive portal won't be started. */
-  //config.beginTimeout;   /**< Timeout value for WiFi.begin */
-  //config.portalTimeout;  /**< Timeout value for stay in the captive portal */
-  //config.reconnectInterval;  /**< Auto-reconnect attempt interval uint */
-
-  config.autoRise = true;
-
   // fix wifi name ... same as BLE
   uint8_t base_mac_addr[6] = {0};
   char bleName[20];
   esp_efuse_mac_get_default(base_mac_addr);
   sprintf(bleName, "Smart-%x",
           base_mac_addr[5]);
-  config.apid = bleName;
 
-  //config.ota;
+  config.apid = bleName;
+  config.auth = AC_AUTH_NONE;
+  config.authScope = AC_AUTHSCOPE_AUX;
+  config.psk = (String)WifiSettingsPortal_settings->get_Ble_pin_code() + (String)WifiSettingsPortal_settings->get_Ble_pin_code();
+  config.retainPortal = true; /**< Even if the captive portal times out, it maintains the portal state. */
+  config.preserveAPMode = true; /**< Keep existing AP WiFi mode if captive portal won't be started. */
+  config.homeUri = "/settingspage";
+  config.autoReset = false;          /**< Reset ESP8266 module automatically when WLAN disconnected. */
+  config.menuItems = AC_MENUITEM_CONFIGNEW | AC_MENUITEM_OPENSSIDS | AC_MENUITEM_DISCONNECT | AC_MENUITEM_RESET;
+  config.autoRise = true;/**< Automatic starting the captive portal */
   config.title = "SmartElec";
+
+  //config.immediateStart = true;
+  //config.autoReconnect = true;
+  //config.autoReconnect;      /**< Automatic reconnect with past SSID */
+  //config.immediateStart;     /**< Skips WiFi.begin(), start portal immediately */
+  //config.beginTimeout;   /**< Timeout value for WiFi.begin */
+  //config.portalTimeout;  /**< Timeout value for stay in the captive portal */
+  //config.reconnectInterval;  /**< Auto-reconnect attempt interval uint */
 
   portal.config(config);
   portal.begin();

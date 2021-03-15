@@ -69,7 +69,7 @@ ACInput(ACE_SETTINGS_Wifi_password, "", "Wifi password", "^(.{0,32})$", "edit_te
 
 
 /* menus */
-AutoConnectAux settingsPageAux("/settingspage", "Setting", true, {
+AutoConnectAux settingsPageAux("/settingspage", "SmartElec settings", true, {
     ACE_Style1,
     ACE_Style2,
     ACE_Style3,
