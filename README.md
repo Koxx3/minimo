@@ -148,7 +148,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 
 - [✅] Wifi
     - [✅] Settings
-    - [✅] Flash
+    - [✅] Flash firmware
     - [ ] Dashboard
 
 - [✅] Other inputs/outputs ↔️
