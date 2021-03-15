@@ -55,4 +55,6 @@ void setupBattery();
 void computeDistance(float);
 void checkAndSaveOdo();
 
+void processWifi();
+
 #endif

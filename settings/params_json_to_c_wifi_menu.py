@@ -21,58 +21,56 @@ template_h = """
 /* elements */
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
-ACText(ACE_{{ key2 | replace(" ", "_") | title }}, "<h2>{{ key2 }}</h2>", "color:#303F9F;padding:10px;");
+ACText(ACE_SETTINGS_{{ key2 | replace(" ", "_") | title }}, "<h2>{{ key2 }}</h2>", "color:#303F9F;padding:10px;");
         {%- for  item in value2.settings %}
 
                 {%- if item.smartphone_display_type == "edit_text_number_float" %}
-ACInput(ACE_{{ item.var_name }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_number_float", AC_Tag_BR, AC_Input_Text);   
+ACInput(ACE_SETTINGS_{{ item.var_name }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_number_float", AC_Tag_BR, AC_Input_Text);   
                 {%- endif %}
                 {%- if item.smartphone_display_type == "edit_text_number_integer" %}
-ACInput(ACE_{{ item.var_name }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_number_integer", AC_Tag_BR, AC_Input_Text);   
+ACInput(ACE_SETTINGS_{{ item.var_name }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_number_integer", AC_Tag_BR, AC_Input_Text);   
                 {%- endif %}
                 {%- if item.smartphone_display_type == "edit_text_number_integer_signed" %}
-ACInput(ACE_{{ item.var_name }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_number_integer_signed", AC_Tag_BR, AC_Input_Text);        
+ACInput(ACE_SETTINGS_{{ item.var_name }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_number_integer_signed", AC_Tag_BR, AC_Input_Text);        
                 {%- endif %}
                 {%- if item.smartphone_display_type == "edit_text_string" %}
-ACInput(ACE_{{ item.var_name }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_string", AC_Tag_BR, AC_Input_Text);     
+ACInput(ACE_SETTINGS_{{ item.var_name }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_string", AC_Tag_BR, AC_Input_Text);     
                 {%- endif %}
                 {%- if item.smartphone_display_type == "edit_text_password" %}
-ACInput(ACE_{{ item.var_name }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_password", AC_Tag_BR, AC_Input_Password);        
+ACInput(ACE_SETTINGS_{{ item.var_name }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_password", AC_Tag_BR, AC_Input_Password);        
                 {%- endif %}
                 {%- if item.smartphone_display_type == "seek_bar" %}
-ACInput(ACE_{{ item.var_name }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{% else %}, "" {%- endif %}, "", AC_Tag_BR, AC_Input_Text);  
+ACInput(ACE_SETTINGS_{{ item.var_name }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{% else %}, "" {%- endif %}, "", AC_Tag_BR, AC_Input_Text);  
                 {%- endif %}
                 {%- if item.smartphone_display_type == "checkbox" %}
-ACCheckbox(ACE_{{ item.var_name }}, "ACE_{{ item.var_name }}", "{{ item.tft_display_name }}", false, AC_Infront);   
+ACCheckbox(ACE_SETTINGS_{{ item.var_name }}, "ACE_SETTINGS_{{ item.var_name }}", "{{ item.tft_display_name }}", false, AC_Infront);   
                 {%- endif %}
                 {%- if item.smartphone_display_type | lower == "list" %}
                     {%- set list1 = item.list_strings | replace('\\n', '","') %}
-ACSelect(ACE_{{ item.var_name }}, {"{{ list1 }}"}, "{{ item.tft_display_name }}", {{ item.default }});
+ACSelect(ACE_SETTINGS_{{ item.var_name }}, {"{{ list1 }}"}, "{{ item.tft_display_name }}", {{ item.default }});
                 {%- endif %}
         {%- endfor %}
     {%- endfor %}
 {%- endfor %}
 
-ACSubmit(ACE_Save, "Save", "/save");
-ACSubmit(ACE_Discard, "Discard", "/elements");
 
 /* menus */
-AutoConnectAux elementsAux("/elements", "Setting", true, {
+AutoConnectAux settingsPageAux("/settingspage", "Setting", true, {
     ACE_Style1,
     ACE_Style2,
     ACE_Style3,
     ACE_Style4,
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
-    ACE_{{ key2 | replace(" ", "_") | title }},
+    ACE_SETTINGS_{{ key2 | replace(" ", "_") | title }},
         {%- for  item in value2.settings %}
-    ACE_{{ item.var_name }},
+    ACE_SETTINGS_{{ item.var_name }},
         {%- endfor %}
     {%- endfor %}
 {%- endfor %}
-    ACE_Discard, 
-    ACE_Save,
-    ACE_Js1 });        
+    ACE_SETTINGS_Discard, 
+    ACE_SETTINGS_Save,
+    ACE_SETTINGS_Js1 });        
 
 
 /* save */
@@ -84,22 +82,22 @@ void saveConfig(AutoConnectAux &aux)
         {%- for  item in value2.settings %}
 
                 {%- if item.smartphone_display_type == "edit_text_number_float" %}
-    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectInput>()).value.toFloat());
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACE_SETTINGS_{{ item.var_name }}"].as<AutoConnectInput>()).value.toFloat());
                 {%- elif item.smartphone_display_type == "edit_text_number_integer" %}
-    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectInput>()).value.toInt());
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACE_SETTINGS_{{ item.var_name }}"].as<AutoConnectInput>()).value.toInt());
                 {%- elif item.smartphone_display_type == "edit_text_number_integer_signed" %}
-    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectInput>()).value.toInt());
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACE_SETTINGS_{{ item.var_name }}"].as<AutoConnectInput>()).value.toInt());
                 {%- elif item.smartphone_display_type == "edit_text_string" %}
-    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectInput>()).value);
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACE_SETTINGS_{{ item.var_name }}"].as<AutoConnectInput>()).value);
                 {%- elif item.smartphone_display_type == "edit_text_password" %}
-    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectInput>()).value);
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACE_SETTINGS_{{ item.var_name }}"].as<AutoConnectInput>()).value);
                 {%- elif item.smartphone_display_type == "seek_bar" %}
-    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectInput>()).value.toInt());
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACE_SETTINGS_{{ item.var_name }}"].as<AutoConnectInput>()).value.toInt());
                 {%- elif item.smartphone_display_type == "checkbox" %}
-    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectCheckbox>()).checked ? 1 : 0);
-    Serial.println("{{ item.var_name }} = " + (String) (elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectCheckbox>()).checked);
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACE_SETTINGS_{{ item.var_name }}"].as<AutoConnectCheckbox>()).checked ? 1 : 0);
+    Serial.println("{{ item.var_name }} = " + (String) (settingsPageAux["ACE_SETTINGS_{{ item.var_name }}"].as<AutoConnectCheckbox>()).checked);
                 {%- elif item.smartphone_display_type | lower == "list" %}
-    WifiSettingsPortal_settings->set_{{ item.var_name }}((elementsAux["ACE_{{ item.var_name }}"].as<AutoConnectSelect>()).selected - 1);
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACE_SETTINGS_{{ item.var_name }}"].as<AutoConnectSelect>()).selected - 1);
                 {%- endif %}
         {%- endfor %}
     {%- endfor %}
@@ -110,48 +108,38 @@ void saveConfig(AutoConnectAux &aux)
 }
 
 /* load */
-
 void loadConfig(AutoConnectAux &aux)
 {
-
 
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
-
-
-
             {%- if item.smartphone_display_type == "edit_text_number_float" %}
-    aux.setElementValue("ACE_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
+    aux.setElementValue("ACE_SETTINGS_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
             {%- elif item.smartphone_display_type == "edit_text_number_integer" %}
-    aux.setElementValue("ACE_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
+    aux.setElementValue("ACE_SETTINGS_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
             {%- elif item.smartphone_display_type == "edit_text_number_integer_signed" %}
-    aux.setElementValue("ACE_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
+    aux.setElementValue("ACE_SETTINGS_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
             {%- elif item.smartphone_display_type == "edit_text_string" %}
-    aux.setElementValue("ACE_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
+    aux.setElementValue("ACE_SETTINGS_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
             {%- elif item.smartphone_display_type == "edit_text_password" %}
-    aux.setElementValue("ACE_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
+    aux.setElementValue("ACE_SETTINGS_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
             {%- elif item.smartphone_display_type == "seek_bar" %}
-    aux.setElementValue("ACE_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
+    aux.setElementValue("ACE_SETTINGS_{{ item.var_name }}", (String)WifiSettingsPortal_settings->get_{{ item.var_name }}());
             {%- elif item.smartphone_display_type == "checkbox" %}
-    aux.setElementValue("ACE_{{ item.var_name }}", WifiSettingsPortal_settings->get_{{ item.var_name }}() ? "checked" : "");
+    aux.setElementValue("ACE_SETTINGS_{{ item.var_name }}", WifiSettingsPortal_settings->get_{{ item.var_name }}() ? "checked" : "");
             {%- elif item.smartphone_display_type | lower == "list" %}
                 {%- set list1 = item.list_strings.split('\\n') %}
     uint8_t val_{{ item.var_name }} = WifiSettingsPortal_settings->get_{{ item.var_name }}();
                 {%- for item4 in list1 %}
     if (val_{{ item.var_name }} == {{ loop.index - 1 }})
-        aux.setElementValue("ACE_{{ item.var_name }}", "{{ item4 }}");
+        aux.setElementValue("ACE_SETTINGS_{{ item.var_name }}", "{{ item4 }}");
                 {%- endfor %}
             {%- endif %}
         {%- endfor %}
     {%- endfor %}
 {%- endfor %}
 
-      /*
-      aux.setElementValue("uniqueid", "checked");
-      aux.setElementValue("channelid", "15");
-      aux.setElementValue("select", "1");
-      */
 }
 
 """

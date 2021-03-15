@@ -404,6 +404,10 @@ void taskUpdateTFT(void *parameter)
 
     // test
     //vTaskDelay(200);
+
+    
+    processWifi();
+
   }
 }
 
@@ -487,6 +491,7 @@ void setup()
 #endif
 
   WifiSettingsPortal_setSettings(&settings);
+  WifiSettingsPortal_setSharedData(&shrd);
 
 #if ENABLE_WATCHDOG
   Serial.println(PSTR("Watchdog enabled"));
@@ -1521,6 +1526,13 @@ void loop()
     // select & launch requested OTA mode
     if (shrd.inOtaMode == OTA_SERVER)
     {
+      // wait for WifiSettingsPortal to reply
+      delay(100);
+
+      // close WifiSettingsPortal to reconfigure wifi correctly
+      WifiSettingsPortal_close();
+
+      // launch OTA
       OTA_server_run((char *)settings.get_Wifi_ssid().c_str(), (char *)settings.get_Wifi_password().c_str(), shrd.inOtaModeVersion);
     }
     else if (shrd.inOtaMode == OTA_IDE)
@@ -1723,7 +1735,6 @@ void loop()
 
   i_loop++;
 
-  processWifi();
 
 /*
   if (i_loop % 1000 == 0){
