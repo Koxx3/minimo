@@ -64,11 +64,12 @@ ACSubmit(ACE_SETTINGS_SAVE_confirm, "Ok", "/settingspage");
 AutoConnectAux settingsSaveAux("/settingssave", "SmartElec Setting", false, {ACE_Style1, ACE_Style2, ACE_Style3, ACE_Style4, ACE_SETTINGS_SAVE_header, ACE_SETTINGS_SAVE_confirm});
 
 // OTA flash pages
-ACText(ACE_OTA_body, "<h4>Available versions</h4><label>If you don't see versions, this is because you need to be connected to an accecc point before loading this page.</label><br><div class='versionslist' id='versionslist'></div>", "padding:10px;");
+ACText(ACE_OTA_body, "<h4>Available versions</h4><label>If you don't see versions, this is because you need to be connected to an access point before loading this page.</label><br><div class='versionslist' id='versionslist'></div>", "");
+ACText(ACE_OTA_current_version, "<label>Current version : </label>", "");
 ACInput(ACE_OTA_version_manual, "0", "Version to flash", "^[0-9]+$", "version_selected_manual", AC_Tag_BR, AC_Input_Text);
 ACSubmit(ACE_OTA_submit, "Flash this version", "/otaflash");
 ACElement(ACE_OTA_js, JSPAGE);
-AutoConnectAux otaPageAux("/otapage", "Firmware update", true, {ACE_Style2, ACE_OTA_body, ACE_OTA_version_manual, ACE_OTA_submit, ACE_OTA_js});
+AutoConnectAux otaPageAux("/otapage", "Firmware update", true, {ACE_Style2, ACE_OTA_body, ACE_OTA_current_version, ACE_OTA_version_manual, ACE_OTA_submit, ACE_OTA_js});
 
 // OTA flash in progress
 ACText(ACE_OTA_FLASH_in_progress, "<h4>Flash in progress</h4>The SmartElec device will reboot after flash", "");
@@ -109,6 +110,9 @@ void WifiSettingsPortal_setup()
 
   otaPageAux.on([](AutoConnectAux &aux, PageArgument &arg) {
     Serial.println("flash page");
+    String versionStr = "<label>Current version : " + (String)FIRMWARE_VERSION + "</label>";
+    aux.setElementValue("ACE_OTA_current_version", versionStr);
+    //otaPageAux["ACE_OTA_current_version"].value = versionStr;
 
     return String();
   });
@@ -137,7 +141,8 @@ void WifiSettingsPortal_setup()
 
         WifiSettingsPortal_shrd->inOtaModeVersion = arg.arg(1).toInt();
         WifiSettingsPortal_shrd->inOtaMode = OTA_SERVER;
-      } else
+      }
+      else
       {
         Serial.println("flash process : arg 0 = " + (String)arg.arg(0));
         Serial.println("flash process : argName 0 = " + (String)arg.argName(0));
