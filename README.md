@@ -140,11 +140,14 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 
 - [✅] Bluetooth 
     - [✅] Communication with Android
+    - [✅] Dashboard
     - [✅] Anti-theth with smartphone
     - [✅] Anti-theth with beacon (scan & rssi detection)
     - [✅] Lock beacon or device settings
     - [✅] SmartController connection security (PIN code)
     - [✅] SmartController connection with multi devices (BT device choice)
+    - [✅] Settings
+    - [✅] Flash firmware
 
 - [✅] Wifi
     - [✅] Settings
