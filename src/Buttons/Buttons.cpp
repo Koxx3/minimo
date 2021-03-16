@@ -55,7 +55,7 @@ void Buttons::setup(SharedData *shrd_p, BluetoothHandler *blh_p, Settings *setti
 void Buttons::processButton1Click()
 {
 
-    if (shrd->inSettingsMenu)
+    if (shrd->inSettingsMenu == SETTINGS_MENU_STATE_IN)
     {
         settings_menu_btn_click(0, 1);
     }
@@ -95,7 +95,7 @@ void Buttons::processButton1LpStart()
     sprintf(print_buffer, "processButton1LpStart : %d", shrd->button1LpDuration);
     blh->notifyBleLogs(print_buffer);
 
-    if (shrd->inSettingsMenu)
+    if (shrd->inSettingsMenu == SETTINGS_MENU_STATE_IN)
     {
         settings_menu_btn_click(1, 1);
     }
@@ -145,7 +145,7 @@ void Buttons::processButton1LpStop()
 void Buttons::processButton2Click()
 {
 
-    if (shrd->inSettingsMenu)
+    if (shrd->inSettingsMenu == SETTINGS_MENU_STATE_IN)
     {
         settings_menu_btn_click(0, 2);
     }
@@ -181,7 +181,7 @@ void Buttons::processButton2LpStart()
     Serial.print("processButton2LpStart : ");
     Serial.println(shrd->button2LpDuration);
 
-    if (shrd->inSettingsMenu)
+    if (shrd->inSettingsMenu == SETTINGS_MENU_STATE_IN)
     {
         settings_menu_btn_click(1, 2);
     }
@@ -213,9 +213,11 @@ void Buttons::processButton2LpDuring()
 
         // Enter settings panel
 #if TFT_ENABLED
-        if (!shrd->inSettingsMenu)
+        if (shrd->inSettingsMenu == SETTINGS_MENU_STATE_OUT)
         {
-            settings_menu_enter_settings();
+            shrd->inSettingsMenu = SETTINGS_MENU_STATE_ENTERING;
+
+            Serial.println("processButton2LpDuring ===> SETTINGS_MENU_STATE_ENTERING");
         }
 #endif
     }
@@ -466,10 +468,12 @@ void Buttons::setSlowButtonBehavior(bool slow)
 {
     if (slow)
     {
+        /*
         button1.setDebounceTicks(170);
         button2.setDebounceTicks(170);
         button1.setPressTicks(BUTTON_LONG_PRESS_TICK * 2);
         button2.setPressTicks(BUTTON_LONG_PRESS_TICK * 2);
+        */
     }
     else
     {

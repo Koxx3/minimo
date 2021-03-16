@@ -83,7 +83,6 @@ BluetoothHandler::BluetoothHandler()
 {
 }
 
-
 void BluetoothHandler::init()
 {
     class BLEServerCallback : public NimBLEServerCallbacks
@@ -459,7 +458,7 @@ void BluetoothHandler::init()
     Serial.println("BLH - name : " + (String)bleName);
 
     NimBLEDevice::init(bleName);
-    
+
     NimBLEDevice::setMTU(BLE_MTU);
     NimBLEDevice::setPower(ESP_PWR_LVL_P9);
 
@@ -1110,14 +1109,20 @@ void BluetoothHandler::deinit()
         pBLEScan->stop();
         Serial.println("BLH - stop scanning ... done");
 
+        delay(10);
+
+        pServer->stopAdvertising();
+
+        delay(10);
+
         // stop BLE stack
-        /*
-        esp_bluedroid_disable();
-        esp_bluedroid_deinit();
-        esp_bt_controller_disable();
-        esp_bt_controller_deinit();
-        */
+        NimBLEDevice::stopAdvertising();
+        
+        delay(10);
+        
         NimBLEDevice::deinit(true);
+
+        delay(10);
 
         Serial.println("BLH - deinit ... done");
 

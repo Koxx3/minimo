@@ -103,7 +103,7 @@ void settings_menu_init_from_settings() {
     {%- for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
             {%- if item.tft_menu_visible %}
-    tft_{{ item.var_name }} = app_settings->get_{{ item.var_name }}();
+    tft_{{ item.var_name }} = TFT_menu_settings->get_{{ item.var_name }}();
             {%- endif %}
         {%- endfor %}
     {%- endfor %}
@@ -115,12 +115,12 @@ void settings_menu_save_to_settings() {
     {%- for key2, value2 in value.items() %}
         {%- for  item in value2.settings %}
             {%- if item.tft_menu_visible %}
-    app_settings->set_{{ item.var_name }}(tft_{{ item.var_name }});
+    TFT_menu_settings->set_{{ item.var_name }}(tft_{{ item.var_name }});
             {%- endif %}
         {%- endfor %}
     {%- endfor %}
 {% endfor %}
-    app_settings->save();
+    TFT_menu_settings->save();
 }
 
 """

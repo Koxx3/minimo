@@ -20,6 +20,15 @@ typedef enum
     OTA_SERVER // OTA CLOUD - SERVER MODE
 } OTAmode;
 
+typedef enum
+{
+    SETTINGS_MENU_STATE_OUT,
+    SETTINGS_MENU_STATE_ENTERING, 
+    SETTINGS_MENU_STATE_ENTERING_SWICTH_TO_WIFI,
+    SETTINGS_MENU_STATE_IN,
+    SETTINGS_MENU_STATE_EXITING_SWICTH_TO_BLE,
+} SettingsMenuState;
+
 class SharedData
 {
 public:
@@ -115,9 +124,7 @@ public:
     boolean button2LpProcessed = false;
 
     // TFT settings menu status
-    bool inSettingsMenu = false;
-    bool oldInSettingsMenu = false;
-    bool oldInSettingsMenuWifi = false;
+    uint8_t inSettingsMenu = SETTINGS_MENU_STATE_OUT;
 
     boolean errorThrottle = false;
     boolean errorBrake = false;

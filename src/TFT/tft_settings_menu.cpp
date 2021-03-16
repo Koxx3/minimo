@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 /***************************************************************************************************************************************
 LILYGO TTGO T-DISPLAY DEMO
 Created at August 29th, 2019 by Jeroen Maathuis (j [dot] maathuis [at] gmail [dot] com) to support the LilyGo TTGO T-display
@@ -30,6 +28,8 @@ you when you have improved the sketch. You can mail me at j [dot] maathuis [at] 
 
 ****************************************************************************************************************************************/
 
+#include <Arduino.h>
+
 #include <TFT_eSPI.h>
 
 #include "tft_settings_menu.h"
@@ -45,6 +45,7 @@ you when you have improved the sketch. You can mail me at j [dot] maathuis [at] 
 
 #include "main.h"
 #include "Settings.h"
+#include "SharedData.h"
 
 // Easily remembered name for the font
 #define FONT_FORCED_SQUARE6pt7b &FORCED_SQUARE6pt7b
@@ -61,8 +62,8 @@ you when you have improved the sketch. You can mail me at j [dot] maathuis [at] 
 using namespace Menu;
 extern TFT_eSPI tft;
 serialIn serial(Serial);
-Settings *app_settings;
-extern bool isInMenu;
+Settings *TFT_menu_settings;
+SharedData *TFT_menu_shrd;
 
 result doAlert(eventMask e, prompt &item);
 
@@ -84,18 +85,20 @@ TFT_eSPIOut eSpiOut(tft, colors, eSpiTops, pList, fontW, fontH);
 menuOut *constMEM outputs[] MEMMODE = {&eSpiOut};              //list of output devices
 outputsList out(outputs, sizeof(outputs) / sizeof(menuOut *)); //outputs list controller
 
-
 NAVROOT(nav, mainMenu, MAX_DEPTH, serial, out);
 
-bool isInMenu = false;
+constexpr int menuFPS = 1000 / 2;
+static unsigned long lastMenuFrame = -menuFPS;
 
-bool settings_menu_enabled()
-{
-  return isInMenu;
-}
+int nTasks = 2;
+SemaphoreHandle_t barrierSemaphore = xSemaphoreCreateMutex();;
 
 void settings_menu_btn_click(uint8_t pressType, uint8_t btnNum)
 {
+
+  xSemaphoreTake(barrierSemaphore, portMAX_DELAY);
+
+
   if ((btnNum == 1) && (pressType == 0))
   {
     nav.doNav(upCmd);
@@ -113,11 +116,16 @@ void settings_menu_btn_click(uint8_t pressType, uint8_t btnNum)
     if (nav.level > 0)
       nav.doNav(escCmd);
   }
+
+  xSemaphoreGive(barrierSemaphore);
+
+  // Serial.println("settings_menu_btn_click : btnNum " + (String)btnNum + " / pressType = " + (String)pressType);
 }
 
 void settings_menu_setup()
 {
-  isInMenu = true;
+
+  //barrierSemaphore = xSemaphoreCreateMutex();
 
   //options=&myOptions;//can customize options
 
@@ -136,24 +144,31 @@ void settings_menu_setup()
 
   tft.fillScreen(Black);
 
+  mainMenu.dirty = true; // Force the main menu to redraw itself
+
   eSpiOut.fontMarginY = 17;
 
   Serial.println("settings_menu_set_settings");
   settings_menu_init_from_settings();
-
+  
+  xSemaphoreGive(barrierSemaphore);
 }
 
 void settings_menu_loop()
 {
-  nav.poll(); //this device only draws when needed
-}
+  xSemaphoreTake(barrierSemaphore, portMAX_DELAY);
 
-void settings_menu_enter_settings()
-{
-  isInMenu = true;
+  nav.poll();
+  
+  xSemaphoreGive(barrierSemaphore);
+
 }
 
 void settings_menu_set_settings(Settings *set)
 {
-  app_settings = set;
+  TFT_menu_settings = set;
+}
+void settings_menu_set_shared_datas(SharedData *set)
+{
+  TFT_menu_shrd = set;
 }

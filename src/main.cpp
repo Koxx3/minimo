@@ -360,54 +360,112 @@ void taskUpdateTFT(void *parameter)
   // infinite loop
   for (;;)
   {
-    shrd.oldInSettingsMenu = shrd.inSettingsMenu;
-    shrd.inSettingsMenu = settings_menu_enabled();
-    //Serial.println("oldInSettingsMenu = " + (String)oldInSettingsMenu + " / inSettingsMenu = " + (String)inSettingsMenu);
 
     // not currently in settings menu
-    if (!shrd.inSettingsMenu)
+    if (shrd.inSettingsMenu == SETTINGS_MENU_STATE_ENTERING)
     {
 
-      // was in settings menu
-      if (shrd.oldInSettingsMenu)
-      {
-        // force main display reset
-        i = -1;
+      Serial.println("taskUpdateTFT / SETTINGS_MENU_STATE_ENTERING");
 
-        btns.setSlowButtonBehavior(false);
-      }
-      else
-      {
-        tftUpdateData(i);
-        i++;
+      // force main display reset for next time in SETTINGS_MENU_STATE_OUT
+      i = -1;
 
-        if (i >= 20)
-        {
-          i = 0;
-          vTaskDelay(200);
-        }
-      }
+      Serial.println("settings_menu_setup");
+      btns.setSlowButtonBehavior(true);
+      settings_menu_setup();
+
+      shrd.inSettingsMenu = SETTINGS_MENU_STATE_ENTERING_SWICTH_TO_WIFI;
+      Serial.println("taskUpdateTFT ===> SETTINGS_MENU_STATE_ENTERING_SWICTH_TO_WIFI");
     }
-    else
+    else if (shrd.inSettingsMenu == SETTINGS_MENU_STATE_IN)
     {
-      // entering in settings menu
-      if (!shrd.oldInSettingsMenu)
-      {
-        Serial.println("settings_menu_setup");
-        btns.setSlowButtonBehavior(true);
-        settings_menu_setup();
-      }
+
+      // Serial.println("taskUpdateTFT / SETTINGS_MENU_STATE_IN");
 
       settings_menu_loop();
-      vTaskDelay(100);
+
+      vTaskDelay(10);
+
+      // Serial.println("taskUpdateTFT ===> SETTINGS_MENU_STATE_IN");
+    }
+    else if (shrd.inSettingsMenu == SETTINGS_MENU_STATE_OUT)
+    {
+
+      //Serial.println("taskUpdateTFT / SETTINGS_MENU_STATE_OUT");
+
+      tftUpdateData(i);
+      i++;
+
+      //Serial.println("taskUpdateTFT ===> SETTINGS_MENU_STATE_OUT");
+
+      if (i >= 20)
+      {
+        i = 0;
+        vTaskDelay(200);
+      }
+    }
+    else if (shrd.inSettingsMenu == SETTINGS_MENU_STATE_EXITING_SWICTH_TO_BLE)
+    {
+
+      Serial.println("taskUpdateTFT / SETTINGS_MENU_STATE_EXITING_SWICTH_TO_BLE");
+
+      btns.setSlowButtonBehavior(false);
+
+      WifiSettingsPortal_close();
+
+      vTaskDelay(10);
+
+      blh.init();
+
+      vTaskDelay(10);
+
+      shrd.inSettingsMenu = SETTINGS_MENU_STATE_OUT;
+      Serial.println("taskUpdateTFT ===> SETTINGS_MENU_STATE_OUT");
+    }
+  }
+}
+
+void taskProcessWifiBlocking(void *parameter)
+{
+  // infinite loop
+  for (;;)
+  {
+
+    if (shrd.inSettingsMenu == SETTINGS_MENU_STATE_ENTERING_SWICTH_TO_WIFI)
+    {
+      Serial.println("taskProcessWifiBlocking / SETTINGS_MENU_STATE_ENTERING_SWICTH_TO_WIFI");
+
+      blh.deinit();
+
+      vTaskDelay(10);
+
+      shrd.inSettingsMenu = SETTINGS_MENU_STATE_IN;
+      Serial.println("taskProcessWifiBlocking ===> SETTINGS_MENU_STATE_IN");
+
+      // change state before ... blocking while waiting to connect to an access point
+      WifiSettingsPortal_setup();
+    }
+    else if (shrd.inSettingsMenu == SETTINGS_MENU_STATE_IN)
+    {
+      // loop when connected to an access point
+      WifiSettingsPortal_loop();
+
+      // Serial.println("taskProcessWifiBlocking ===> SETTINGS_MENU_STATE_IN");
     }
 
-    // test
-    //vTaskDelay(200);
+    vTaskDelay(10);
+  }
+}
 
-    
-    processWifi();
+void taskProcessButtons(void *parameter)
+{
+  // infinite loop
+  for (;;)
+  {
 
+    btns.processTicks();
+
+    vTaskDelay(10);
   }
 }
 
@@ -466,7 +524,7 @@ void setup()
   Serial.println("   settings ...");
   settings.restore();
   settings_menu_set_settings(&settings);
-
+  settings_menu_set_shared_datas(&shrd);
   Serial.println("   init data with settings... ");
   initSharedDataWithSettings();
 
@@ -489,6 +547,25 @@ void setup()
       NULL,            // Task handle,
       1);              // Core
 #endif
+
+  xTaskCreatePinnedToCore(
+      taskProcessWifiBlocking,   // Function that should be called
+      "taskProcessWifiBlocking", // Name of the task (for debugging)
+      10000,             // Stack size (bytes)
+      NULL,              // Parameter to pass
+      0,                 // Task priority
+      NULL,              // Task handle,
+      1);                // Core
+
+  xTaskCreatePinnedToCore(
+      taskProcessButtons,   // Function that should be called
+      "taskProcessButtons", // Name of the task (for debugging)
+      10000,             // Stack size (bytes)
+      NULL,              // Parameter to pass
+      0,                 // Task priority
+      NULL,              // Task handle,
+      1);                // Core
+
 
   WifiSettingsPortal_setSettings(&settings);
   WifiSettingsPortal_setSharedData(&shrd);
@@ -1466,37 +1543,6 @@ void processRelay()
   }
 }
 
-void processWifi()
-{
-
-  if (shrd.inSettingsMenu)
-  {
-    if (!shrd.oldInSettingsMenuWifi)
-    {
-
-      blh.deinit();
-      delay(10);
-
-      WifiSettingsPortal_setup();
-      shrd.oldInSettingsMenuWifi = shrd.inSettingsMenu;
-    }
-
-    WifiSettingsPortal_loop();
-  }
-  else
-  {
-    if (shrd.oldInSettingsMenuWifi)
-    {
-      shrd.oldInSettingsMenuWifi = shrd.inSettingsMenu;
-
-      WifiSettingsPortal_close();
-
-      blh.init();
-      delay(10);
-    }
-  }
-}
-
 //////------------------------------------
 //////------------------------------------
 ////// Main loop
@@ -1651,7 +1697,7 @@ void loop()
 
   if (i_loop % 10 == 1)
   {
-    btns.processTicks();
+   // btns.processTicks();
   }
   if (i_loop % 10 == 2)
   {
@@ -1681,7 +1727,7 @@ void loop()
 
 #if HAS_I2C
   // avoid reading throttle in settings menu
-  if ((settings.get_Throttle_regeneration()) && (!shrd.inSettingsMenu))
+  if (settings.get_Throttle_regeneration())
   {
     // 1000 Hz read loop
     getThrottleFromAnalog();
@@ -1735,8 +1781,7 @@ void loop()
 
   i_loop++;
 
-
-/*
+  /*
   if (i_loop % 1000 == 0){
     Serial.print(".");
   }
