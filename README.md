@@ -70,7 +70,7 @@ The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/proje
 
 ## Applications
 ### Android 
-[Minimo App - Github repo](https://github.com/Koxx3/minimo_android)
+[SmartElec Application - Google play](https://play.google.com/store/apps/details?id=org.koxx.smartcntrl)
 
 ### iPhone
 I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
