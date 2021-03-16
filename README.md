@@ -13,16 +13,16 @@ The electronic board will interract with most of the e-scooter electronic when y
 You simply place the little box inside the deck and connect it to the controller (and other electric parts if you want more features)
 
 ### Requirements
-- An e-scooter with minimotors controllers (single or dual)
+- An e-scooter with any supported controllers (single or dual)
 - An power supply between 12V and 80V... (possible with external DC-DC providing 12V or 5V if you have 20S or more)
 - If you want to use progressive brake feature, you must ensure no more than 60V pass in the brake handle (issue noted only for Kaabo)
 - The electronics (ESP32 Dev KitC V4 + SmartController shield + JST SM/PH connectors)
 - Some electronic skills
 
 ### What can be done ?
-I suggest you to have a look at all planed features in the image below.
+I suggest you to have a look at all planed/added features in the image below.
 There is almost no limit in custom features.
-The controller power cannot exceed the nominal power, but with a shunt, you can go upper and still have a current control loop to limit the current by software (and avoid burning the controller).
+The controller power cannot exceed the nominal power, but with a shunt, you can increase the acceleration and still have a current control loop to limit the current by software (and avoid burning the controller).
 
 Most settings will be configurable by the smartphone, and additionnal hardware buttons will allow you to control specific features.
 
@@ -31,11 +31,15 @@ Some examples :
 
 - You find the acceleration trigger to agressive at low speed ? you can change the acceleration curve for smooth trigger at low speed, and still have the beast once you push the trigger harder
 
-- You want a mode for some weather conditions like 'rainy' with less torque ? no problem. Use the customized "mode Z" in addition to mode 1/2/3 with special P7/P8/P9/PA
+- You want a mode for some weather conditions like 'rainy' with less torque ? no problem. Use fast settings access on the application dashboard or configuration hardware buttons.
 
 - You feel the electric brake too strong at full power ? the progressive electric braking adjust the brake power in real time.
 
-- You find the throttle too sensitive ? change the acceleration curve to an exponential for a slow start but quick ramp-up.
+- You want an anti-theeth locking system ? It can lock the scooter when the smartphone is not connected or when a proximity bluetooth device is not visible.
+
+- You can to limit speed to legal limits at startup ? Simply enable the option, and the speed limit can be removed with a brake pressure at startup or the smartphone.
+
+
 
 **>>> [Check all detailed features here](/documents/FEATURES.md) <<<**
 
