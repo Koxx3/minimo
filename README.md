@@ -27,21 +27,19 @@ The controller power cannot exceed the nominal power, but with a shunt, you can 
 Most settings will be configurable by the smartphone, and additionnal hardware buttons will allow you to control specific features.
 
 Some examples : 
-- It can lock the escooter with bluetooth proximity (with a beacon, the smartphone or any bluetooth device). When locked, the power is so reduced that nobody can ride it is you aren't close enouth
+- It can lock the escooter with bluetooth proximity (with a beacon, the smartphone or any bluetooth device). When locked, the power is so reduced that nobody can ride it is you aren't close enouth. You can also manually lock the scooter with the Smartphone.
 
 - You find the acceleration trigger to agressive at low speed ? you can change the acceleration curve for smooth trigger at low speed, and still have the beast once you push the trigger harder
 
 - You want a mode for some weather conditions like 'rainy' with less torque ? no problem. Use fast settings access on the application dashboard or configuration hardware buttons.
 
-- You feel the electric brake too strong at full power ? the progressive electric braking adjust the brake power in real time.
-
-- You want an anti-theeth locking system ? It can lock the scooter when the smartphone is not connected or when a proximity bluetooth device is not visible.
+- You feel the electric brake too strong at full power ? The progressive electric braking adjust the brake power with digital, or better, analog brake lever pressure sensor in real time.
 
 - You can to limit speed to legal limits at startup ? Simply enable the option, and the speed limit can be removed with a brake pressure at startup or the smartphone.
 
 - You want to control all settings for the Smartphone ? Use the Android native application or you can connect any device to the SmartElec in Wifi
 
-- You want to know if the is not issue inside you escooter deck ? Temperature and humidity sensors will tell you is water entered inside the deck or if the ESC/battery is overheating.
+- You want to know if there is not issue inside you escooter deck ? Temperature and humidity sensors will tell you is water entered inside the deck or if the ESC/battery is overheating.
 
 
 **>>> [Check all detailed features here](/documents/FEATURES.md) <<<**
