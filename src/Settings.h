@@ -562,7 +562,7 @@ public:
     uint8_t Button_1_short_press_action;
     typedef enum LIST_Button_1_short_press_action {
         LIST_Button_1_short_press_action_None,
-        LIST_Button_1_short_press_action_Speed_limitation_on_off,
+        LIST_Button_1_short_press_action_Speed_limit_on_off,
         LIST_Button_1_short_press_action_Aux_on_off,
         LIST_Button_1_short_press_action_Mode_switch_1_2_3,
         LIST_Button_1_short_press_action_Mode_switch_2_3,

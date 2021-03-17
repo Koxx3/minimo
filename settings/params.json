@@ -118,7 +118,7 @@
           "var_name_hash": "oUDdidbc76pNTg",
           "type": "uint8_t",
           "var_name": "Speed_limiter_at_startup",
-          "valid_config": "^sd_.*",
+          "valid_config": "",
           "list_strings": "",
           "min": 0,
           "max": 1,

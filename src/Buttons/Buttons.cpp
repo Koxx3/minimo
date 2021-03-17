@@ -297,7 +297,7 @@ void Buttons::processSpeedLimiterEvent(uint8_t buttonId, bool isLongPress)
 {
 
     // process SpeedLimiter
-    if (((buttonId == 1) && (!isLongPress) && (settings->get_Button_1_short_press_action() == settings->LIST_Button_1_short_press_action_Speed_limitation_on_off)) ||
+    if (((buttonId == 1) && (!isLongPress) && (settings->get_Button_1_short_press_action() == settings->LIST_Button_1_short_press_action_Speed_limit_on_off)) ||
         ((buttonId == 1) && (isLongPress) && (settings->get_Button_1_long_press_action() == settings->LIST_Button_1_long_press_action_Speed_limitation_on_off)) ||
         ((buttonId == 2) && (!isLongPress) && (settings->get_Button_2_short_press_action() == settings->LIST_Button_2_short_press_action_Speed_limitation_on_off)))
     {
