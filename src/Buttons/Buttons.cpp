@@ -462,3 +462,12 @@ void Buttons::processEcoEvent(uint8_t buttonId, bool isLongPress)
         Serial.println("processEcoEvent => new ecoOrder = " + (String)shrd->ecoOrder);
     }
 }
+
+void Buttons::processTicks()
+{
+    button1.tick();
+    button2.tick();
+
+    led1.Update();
+
+}
