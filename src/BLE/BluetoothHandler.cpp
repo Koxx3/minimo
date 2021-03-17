@@ -64,7 +64,6 @@ NimBLECharacteristic *BluetoothHandler::pCharacteristicFirmware;
 
 //int8_t BluetoothHandler::bleLockStatus;
 int8_t BluetoothHandler::bleBeaconVisible;
-int8_t BluetoothHandler::bleBeaconRSSI;
 int8_t BluetoothHandler::bleLockForced;
 int8_t BluetoothHandler::fastUpdate;
 
@@ -637,14 +636,14 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
         if (addressBeaconSettings.equals(addressStr))
         {
             beaconFound = true;
-            bleBeaconRSSI = RSSI;
+            shrd->beaconRSSI = RSSI;
 
-            if (bleBeaconRSSI < settings->get_Ble_beacon_range())
+            if (shrd->beaconRSSI < settings->get_Ble_beacon_range())
             {
 
 #if DEBUG_DISPLAY_BLE_SCAN
                 Serial.print("BLH -  ==> Beacon found ... but too far away / RSSI = ");
-                Serial.print(bleBeaconRSSI);
+                Serial.print(shrd->beaconRSSI);
                 Serial.print(" / min RSSI required = ");
                 Serial.print(settings->get_Ble_beacon_range());
                 Serial.println(" ==> lock from scan");
@@ -671,7 +670,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
 
     // reset RSSI
     if (!beaconFound)
-        bleBeaconRSSI = -1;
+        shrd->beaconRSSI = -1;
 
     // count beacon invible times
     if (!newBleBeaconVisible)
@@ -1008,7 +1007,7 @@ void BluetoothHandler::notifyBleLock()
         byte value[4];
         value[0] = shrd->isLocked;
         value[1] = bleBeaconVisible;
-        value[2] = bleBeaconRSSI;
+        value[2] = shrd->beaconRSSI;
         value[3] = bleLockForced;
         pCharacteristicBtlockStatus->setValue((uint8_t *)&value, 4);
         pCharacteristicBtlockStatus->notify();
@@ -1019,7 +1018,7 @@ void BluetoothHandler::notifyBleLock()
         Serial.print(" / bleBeaconVisible = ");
         Serial.print(bleBeaconVisible);
         Serial.print(" / bleBeaconRSSI = ");
-        Serial.print(bleBeaconRSSI);
+        Serial.print(shrd->beaconRSSI);
 
         Serial.print(" / bleLockForced = ");
         Serial.print(bleLockForced);

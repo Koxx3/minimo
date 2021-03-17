@@ -40,7 +40,8 @@ public:
     uint16_t inOtaModeVersion = 0;
 
     float currentHumidity = 0.0;
-    float currentTemperature = 0.0;
+    float currentTemperature = -45.0;
+    float maxTemperature = 0.0;
 
     uint8_t speedLimiter = 1;
     uint8_t speedLimiterOld = -1;
@@ -131,6 +132,9 @@ public:
     boolean errorSerialFromDisplay = false;
     boolean errorSerialFromContrl = false;
     boolean errorContrl = false;
+
+    int16_t beaconRSSI = -1;
+
 };
 
 #endif

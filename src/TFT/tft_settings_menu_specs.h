@@ -15,27 +15,182 @@
 #include <menuIO/esp8266Out.h> //must include this even if not doing web output...
 #include "SharedData.h"
 
-class discard_exit_item : public prompt
+class currrent_temperature_item : public prompt
 {
 public:
-  discard_exit_item(constMEM promptShadow &p) : prompt(p) {}
+  currrent_temperature_item(constMEM promptShadow &p) : prompt(p) {}
   Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
   {
-    return out.printRaw(F("< Discard & exit"), len);
-    ;
+    String val = "  Current temperature : " + (String)(TFT_menu_shrd->currentTemperature) + " °C";
+    return out.printRaw(F(val.c_str()), len);
   }
 };
 
-class save_exit_item : public prompt
+class max_temperature_item : public prompt
 {
 public:
-  save_exit_item(constMEM promptShadow &p) : prompt(p) {}
+  max_temperature_item(constMEM promptShadow &p) : prompt(p) {}
   Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
   {
-    return out.printRaw(F("< Save & exit"), len);
-    ;
+    String val = "  Max temperature : " + (String)(TFT_menu_shrd->maxTemperature) + " °C";
+    return out.printRaw(F(val.c_str()), len);
   }
 };
+
+class humidity_item : public prompt
+{
+public:
+  humidity_item(constMEM promptShadow &p) : prompt(p) {}
+  Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
+  {
+    String val = "  Humidity : " + (String)((int)TFT_menu_shrd->currentHumidity) + " RH";
+    return out.printRaw(F(val.c_str()), len);
+  }
+};
+
+class errors_item : public prompt
+{
+public:
+  errors_item(constMEM promptShadow &p) : prompt(p) {}
+  Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
+  {
+    String val = "  Errors : ";
+    int count = 0;
+    if (TFT_menu_shrd->errorBrake)
+    {
+      val += "1 ";
+      count++;
+    }
+    if (TFT_menu_shrd->errorThrottle)
+    {
+      val += "2 ";
+      count++;
+    }
+    if (TFT_menu_shrd->errorContrl)
+    {
+      val += "3 ";
+      count++;
+    }
+    if (TFT_menu_shrd->errorSerialFromContrl)
+    {
+      val += "4 ";
+      count++;
+    }
+    if (TFT_menu_shrd->errorSerialFromDisplay)
+    {
+      val += "5 ";
+      count++;
+    }
+    if (count == 0)
+    {
+      val += "none";
+    }
+    return out.printRaw(F(val.c_str()), len);
+  }
+};
+
+class firmware_type_item : public prompt
+{
+public:
+  firmware_type_item(constMEM promptShadow &p) : prompt(p) {}
+  Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
+  {
+    String val = "  Firmware type : " + (String)FIRMWARE_TYPE;
+    return out.printRaw(F(val.c_str()), len);
+  }
+};
+
+class firmware_version_item : public prompt
+{
+public:
+  firmware_version_item(constMEM promptShadow &p) : prompt(p) {}
+  Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
+  {
+    String val = "  Firmware version : " + (String)FIRMWARE_VERSION;
+    return out.printRaw(F(val.c_str()), len);
+  }
+};
+
+class beacon_rssi_item : public prompt
+{
+public:
+  beacon_rssi_item(constMEM promptShadow &p) : prompt(p) {}
+  Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
+  {
+    String val = "  Beacon RSSI : " + (String)TFT_menu_shrd->beaconRSSI;
+    return out.printRaw(F(val.c_str()), len);
+  }
+};
+
+class beacon_mac_item : public prompt
+{
+public:
+  beacon_mac_item(constMEM promptShadow &p) : prompt(p) {}
+  Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
+  {
+    String val = "  Beacon MAC : " + (String)TFT_menu_settings->Ble_beacon_mac_address;
+    return out.printRaw(F(val.c_str()), len);
+  }
+};
+
+class ble_pin_code_item : public prompt
+{
+public:
+  ble_pin_code_item(constMEM promptShadow &p) : prompt(p) {}
+  Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
+  {
+    String val = "  Bluetooth PIN code : " + (String)TFT_menu_settings->Ble_pin_code;
+    return out.printRaw(F(val.c_str()), len);
+  }
+};
+
+class wifi_conf_ap_ssid_item : public prompt
+{
+public:
+  wifi_conf_ap_ssid_item(constMEM promptShadow &p) : prompt(p) {}
+  Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
+  {
+    String val = "  Wifi access point SSID : " + (String)TFT_menu_settings->Wifi_ssid;
+    return out.printRaw(F(val.c_str()), len);
+  }
+};
+
+class wifi_conf_ap_pwd_item : public prompt
+{
+public:
+  wifi_conf_ap_pwd_item(constMEM promptShadow &p) : prompt(p) {}
+  Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
+  {
+    String val = "  Wifi access point pwd : " + (String)TFT_menu_settings->Wifi_password;
+    return out.printRaw(F(val.c_str()), len);
+  }
+};
+
+class wifi_connect_item : public prompt
+{
+public:
+  wifi_connect_item(constMEM promptShadow &p) : prompt(p) {}
+  Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
+  {
+    String val = "  Wifi connect password : " + (String)TFT_menu_settings->Ble_pin_code + (String)TFT_menu_settings->Ble_pin_code;
+    return out.printRaw(F(val.c_str()), len);
+  }
+};
+
+result reset_ble_pin_code_item()
+{
+  TFT_menu_settings->Ble_pin_code = 147258;
+  TFT_menu_settings->save();
+
+  return proceed;
+}
+
+result ota_update_pio()
+{
+  TFT_menu_shrd->inOtaMode = OTA_IDE;
+
+  return proceed;
+}
 
 ////////////////////////////////////////////////
 // Simple processing functions
@@ -62,16 +217,25 @@ result save_exit()
   return proceed;
 }
 
-result resetBlePinCode()
-{
-  return proceed;
-}
+MENU(SUBMENU_MANUAL_status, "  Status", doNothing, noEvent, noStyle,
+     altOP(currrent_temperature_item, "", doNothing, updateEvent), // updateEvent
+     altOP(max_temperature_item, "", doNothing, updateEvent),      // updateEvent
+     altOP(humidity_item, "", doNothing, updateEvent),             // updateEvent
+     altOP(errors_item, "", doNothing, updateEvent),               // updateEvent
+     EXIT("< Back"));
 
-double dummy = 0.0;
-
-MENU(SUBMENU_MANUAL_status, "  Status", doNothing, noEvent, noStyle, altFIELD(decPlaces<1>::menuField, dummy, "  ODO", "", 0, 10.0, 0.5, 0.01, doNothing, anyEvent, wrapStyle), altFIELD(decPlaces<1>::menuField, dummy, "  Temperature", "", 0, 10.0, 0.5, 0.01, doNothing, anyEvent, wrapStyle), altFIELD(decPlaces<1>::menuField, dummy, "  Humidity", "", 0, 10.0, 0.5, 0.01, doNothing, anyEvent, wrapStyle), altFIELD(decPlaces<1>::menuField, dummy, "  Errors", "", 0, 10.0, 0.5, 0.01, doNothing, anyEvent, wrapStyle), EXIT("< Back"));
-
-MENU(SUBMENU_MANUAL_more, "  More", doNothing, noEvent, noStyle, OP("  Type", doNothing, noEvent), OP("  Version", doNothing, noEvent), altFIELD(decPlaces<1>::menuField, dummy, "  Beacon RSSI", "", 0, 10.0, 0.5, 0.01, doNothing, anyEvent, wrapStyle), altFIELD(decPlaces<1>::menuField, dummy, "  Beacon MAC address", "", 0, 10.0, 0.5, 0.01, doNothing, anyEvent, wrapStyle), OP("  Reset PIN code to 147258", resetBlePinCode, enterEvent), OP("  OTA update through PlatformIO", doNothing, noEvent), OP("  OTA update through Github server", doNothing, noEvent), EXIT("< Back"));
+MENU(SUBMENU_MANUAL_more, "  More", doNothing, noEvent, noStyle,
+     altOP(firmware_type_item, "", doNothing, updateEvent), // updateEvent
+     altOP(firmware_version_item, "", doNothing, updateEvent), // updateEvent
+     altOP(beacon_rssi_item, "", doNothing, updateEvent), // updateEvent
+     altOP(beacon_mac_item, "", doNothing, updateEvent), // updateEvent
+     altOP(ble_pin_code_item, "", doNothing, updateEvent), // updateEvent
+     OP("  Bluetooth reset PIN code to 147258", reset_ble_pin_code_item, enterEvent),
+     altOP(wifi_conf_ap_ssid_item, "", doNothing, updateEvent), // updateEvent
+     altOP(wifi_conf_ap_pwd_item, "", doNothing, updateEvent), // updateEvent
+     altOP(wifi_connect_item, "", doNothing, updateEvent), // updateEvent
+     OP("  OTA update through PlatformIO", ota_update_pio, noEvent),
+     EXIT("< Back"));
 
 #include "tft_settings_menu_specs_gen.h"
 

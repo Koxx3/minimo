@@ -19,7 +19,6 @@ public:
     Buttons();
     static void setup(SharedData *shrd_p, BluetoothHandler *blh_p, Settings *settings_p);
     static void processTicks();
-    static void setSlowButtonBehavior(bool slow);
 
 private:
     static SharedData *shrd;

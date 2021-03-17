@@ -77,8 +77,7 @@ void Buttons::processButton1Click()
         processEcoEvent(1, false);
     }
 
-    Serial.print("processButton1Click : ");
-    Serial.println(shrd->button1ClickStatus);
+    Serial.println("processButton1Click : " + (String) shrd->button1ClickStatus);
 
     char print_buffer[500];
     sprintf(print_buffer, "processButton1Click : %d", shrd->button1ClickStatus);
@@ -462,56 +461,4 @@ void Buttons::processEcoEvent(uint8_t buttonId, bool isLongPress)
 
         Serial.println("processEcoEvent => new ecoOrder = " + (String)shrd->ecoOrder);
     }
-}
-
-void Buttons::setSlowButtonBehavior(bool slow)
-{
-    if (slow)
-    {
-        /*
-        button1.setDebounceTicks(170);
-        button2.setDebounceTicks(170);
-        button1.setPressTicks(BUTTON_LONG_PRESS_TICK * 2);
-        button2.setPressTicks(BUTTON_LONG_PRESS_TICK * 2);
-        */
-    }
-    else
-    {
-        button1.setDebounceTicks(50);
-        button2.setDebounceTicks(50);
-        button1.setPressTicks(BUTTON_LONG_PRESS_TICK);
-        button2.setPressTicks(BUTTON_LONG_PRESS_TICK);
-    }
-}
-
-void Buttons::processTicks()
-{
-    button1.tick();
-    button2.tick();
-
-    /*
-    processButton1();
-#if DEBUG_DISPLAY_BUTTON1
-    displayButton1();
-#endif
-
-    processButton2();
-#if DEBUG_DISPLAY_BUTTON2
-    displayButton2();
-#endif
-*/
-
-    /*
-    extern uint32_t i_loop;
-    uint32_t timeBefore = micros();
-    */
-
-    led1.Update();
-
-    /*
-    if (i_loop % 10 == 6)
-    {
-     Serial.println("led update = " + (String)(micros() - timeBefore));
-    }
-    */
 }

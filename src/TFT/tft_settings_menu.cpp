@@ -87,9 +87,6 @@ outputsList out(outputs, sizeof(outputs) / sizeof(menuOut *)); //outputs list co
 
 NAVROOT(nav, mainMenu, MAX_DEPTH, serial, out);
 
-constexpr int menuFPS = 1000 / 2;
-static unsigned long lastMenuFrame = -menuFPS;
-
 int nTasks = 2;
 SemaphoreHandle_t barrierSemaphore = xSemaphoreCreateMutex();;
 

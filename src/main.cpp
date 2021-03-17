@@ -371,7 +371,6 @@ void taskUpdateTFT(void *parameter)
       i = -1;
 
       Serial.println("settings_menu_setup");
-      btns.setSlowButtonBehavior(true);
       settings_menu_setup();
 
       shrd.inSettingsMenu = SETTINGS_MENU_STATE_ENTERING_SWICTH_TO_WIFI;
@@ -408,8 +407,6 @@ void taskUpdateTFT(void *parameter)
     {
 
       Serial.println("taskUpdateTFT / SETTINGS_MENU_STATE_EXITING_SWICTH_TO_BLE");
-
-      btns.setSlowButtonBehavior(false);
 
       WifiSettingsPortal_close();
 
@@ -551,21 +548,20 @@ void setup()
   xTaskCreatePinnedToCore(
       taskProcessWifiBlocking,   // Function that should be called
       "taskProcessWifiBlocking", // Name of the task (for debugging)
-      10000,             // Stack size (bytes)
-      NULL,              // Parameter to pass
-      0,                 // Task priority
-      NULL,              // Task handle,
-      1);                // Core
+      10000,                     // Stack size (bytes)
+      NULL,                      // Parameter to pass
+      0,                         // Task priority
+      NULL,                      // Task handle,
+      1);                        // Core
 
   xTaskCreatePinnedToCore(
       taskProcessButtons,   // Function that should be called
       "taskProcessButtons", // Name of the task (for debugging)
-      10000,             // Stack size (bytes)
-      NULL,              // Parameter to pass
-      0,                 // Task priority
-      NULL,              // Task handle,
-      1);                // Core
-
+      10000,                // Stack size (bytes)
+      NULL,                 // Parameter to pass
+      0,                    // Task priority
+      NULL,                 // Task handle,
+      1);                   // Core
 
   WifiSettingsPortal_setSettings(&settings);
   WifiSettingsPortal_setSharedData(&shrd);
@@ -1208,6 +1204,8 @@ void processVescSerial()
     shrd.voltageActual = vescCntrl.data.inpVoltage * 1000;
     shrd.currentActual = vescCntrl.data.avgInputCurrent * 1000;
     shrd.currentTemperature = vescCntrl.data.tempMosfet;
+    if (shrd.currentTemperature > shrd.maxTemperature)
+      shrd.maxTemperature = shrd.currentTemperature;
 
     //Serial.println("voltageFilterMean = " + (String)shrd.voltageFilterMean + " / currentActual = " + (String)shrd.currentActual);
 
@@ -1222,6 +1220,8 @@ void processKellySerial1()
 
   shrd.voltageFilterMean = kellyCntrl.data1.B_Voltage * 1000;
   shrd.currentTemperature = kellyCntrl.data1.Controller_temperature;
+  if (shrd.currentTemperature > shrd.maxTemperature)
+    shrd.maxTemperature = shrd.currentTemperature;
 
   shrd.brakePressedStatus = kellyCntrl.data1.BRK_SW;
 
@@ -1261,6 +1261,9 @@ void processSmartEscSerial()
   shrd.voltageFilterMean = (uint32_t)(smartEscCntrl.data.Controller_Voltage) * 10;
   shrd.currentActual = (uint32_t)(smartEscCntrl.data.Controller_Current) * 10 / 3.5;
   shrd.currentTemperature = smartEscCntrl.data.MOSFET_temperature;
+  if (shrd.currentTemperature > shrd.maxTemperature)
+    shrd.maxTemperature = shrd.currentTemperature;
+
   if (smartEscCntrl.data.ERPM < 0)
     smartEscCntrl.data.ERPM = 0;
   shrd.speedCurrent = RpmToKmh(&settings, smartEscCntrl.data.ERPM);
@@ -1302,6 +1305,9 @@ void processDHT()
 #endif
 
       shrd.currentTemperature = temperature;
+      if (shrd.currentTemperature > shrd.maxTemperature)
+        shrd.maxTemperature = shrd.currentTemperature;
+
       shrd.currentHumidity = humidity;
     }
   }
@@ -1327,7 +1333,10 @@ void processSHTC3(bool requestRead)
 
 #if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
     shrd.currentTemperature = mySHTC3.toDegC();
+    if (shrd.currentTemperature > shrd.maxTemperature)
+      shrd.maxTemperature = shrd.currentTemperature;
 #endif
+
     shrd.currentHumidity = mySHTC3.toPercent();
   }
 }
@@ -1583,6 +1592,7 @@ void loop()
     }
     else if (shrd.inOtaMode == OTA_IDE)
     {
+      Serial.println("OTA IDE");
       while (1)
       {
         OTA_ide_loop((char *)settings.get_Wifi_ssid().c_str(), (char *)settings.get_Wifi_password().c_str());
@@ -1697,7 +1707,7 @@ void loop()
 
   if (i_loop % 10 == 1)
   {
-   // btns.processTicks();
+    // btns.processTicks();
   }
   if (i_loop % 10 == 2)
   {
