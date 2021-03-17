@@ -39,6 +39,9 @@ Some examples :
 
 - You can to limit speed to legal limits at startup ? Simply enable the option, and the speed limit can be removed with a brake pressure at startup or the smartphone.
 
+- You want to control all settings for the Smartphone ? Use the Android native application or you can connect any device to the SmartElec in Wifi
+
+- You want to know if the is not issue inside you escooter deck ? Temperature and humidity sensors will tell you is water entered inside the deck or if the ESC/battery is overheating.
 
 
 **>>> [Check all detailed features here](/documents/FEATURES.md) <<<**
