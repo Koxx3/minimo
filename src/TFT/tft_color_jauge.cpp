@@ -24,8 +24,7 @@ byte rgbtable[34][3]{
     {255, 96, 0},
     {255, 64, 0},
     {255, 32, 0},
-    {255, 0, 0}
-    };
+    {255, 0, 0}};
 
 byte rgbtableInv[34][3]{
     {255, 0, 0},
@@ -50,8 +49,7 @@ byte rgbtableInv[34][3]{
     {0, 255, 96},
     {0, 255, 128},
     {0, 255, 160},
-    {0, 255, 192}
-    };
+    {0, 255, 192}};
 
 void drawColorBar(TFT_eSPI *tft, int value, int spotx, int spoty, int pix, uint16_t height, uint8_t nbBars)
 {
@@ -66,12 +64,12 @@ void drawColorBar(TFT_eSPI *tft, int value, int spotx, int spoty, int pix, uint1
         {
             color = ILI_DIGIT_DARK_DISABLED;
         }
-        tft->fillRect(spotx + (i * pix), spoty, pix - 2 , height, color);
+        tft->fillRect(spotx + (i * pix), spoty, pix - 2, height, color);
     }
 }
 
 void drawBatteryJauge(TFT_eSPI *tft, uint8_t batteryPercent, uint16_t xStart, uint16_t yStart, uint16_t witdh, uint16_t height, uint8_t nbBars)
 {
-    int8_t bars = batteryPercent * nbBars / 100.0;    
-    drawColorBar(tft, bars , xStart, yStart, witdh, height, nbBars);
+    int8_t bars = batteryPercent * nbBars / 100.0;
+    drawColorBar(tft, bars, xStart, yStart, witdh, height, nbBars);
 }

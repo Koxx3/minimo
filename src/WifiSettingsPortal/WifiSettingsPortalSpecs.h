@@ -28,40 +28,41 @@ ACSelect(ACE_SETTINGS_Bluetooth_lock_mode, {"None","Smartphone connected","Smart
 ACInput(ACE_SETTINGS_Ble_pin_code, "147258", "PIN code", "^[0-9]{6,6}$", "edit_text_number_integer", AC_Tag_BR, AC_Input_Text);
 ACInput(ACE_SETTINGS_Ble_beacon_mac_address, "aa:bb:cc:dd:ee:ff", "Beacon Mac Address", "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$", "edit_text_string", AC_Tag_BR, AC_Input_Text);
 ACInput(ACE_SETTINGS_Ble_beacon_range, "-80", "Beacon range", "", "", AC_Tag_BR, AC_Input_Text);
-ACInput(ACE_SETTINGS_Original_display_speed_adjustment, "0", "Speed adjustment (in percent)", "^[-]?[0-9]+$", "edit_text_number_integer_signed", AC_Tag_BR, AC_Input_Text);
+ACInput(ACE_SETTINGS_Original_display_speed_adjustment, "0", "Speed adjustment", "^[-]?[0-9]+$", "edit_text_number_integer_signed", AC_Tag_BR, AC_Input_Text);
 ACInput(ACE_SETTINGS_Temperature_warning, "70", "Temperature warning", "", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACE_SETTINGS_Humidity_warning, "80", "Humidity warning", "", "", AC_Tag_BR, AC_Input_Text);
 ACText(ACE_SETTINGS_Smartphone_display, "<h2>Smartphone display</h2>", "color:#303F9F;padding:10px;");
-ACInput(ACE_SETTINGS_Smartdisplay_speed_adjustment, "0", "Speed adjustment (in percent)", "^[-]?[0-9]+$", "edit_text_number_integer_signed", AC_Tag_BR, AC_Input_Text);
+ACInput(ACE_SETTINGS_Smartdisplay_speed_adjustment, "0", "Speed adjustment", "^[-]?[0-9]+$", "edit_text_number_integer_signed", AC_Tag_BR, AC_Input_Text);
 ACSelect(ACE_SETTINGS_Aux_relay_name, {"AUX","DUAL","LIGHTS","HORN","RELAY"}, "Aux relay name", 0);
 ACCheckbox(ACE_SETTINGS_Display_gps_speed_instead_of_escooter_speed, "ACE_SETTINGS_Display_gps_speed_instead_of_escooter_speed", "Display GPS speed ", false, AC_Infront);
 ACText(ACE_SETTINGS_Smartdisplay, "<h2>SmartDisplay</h2>", "color:#303F9F;padding:10px;");
-ACInput(ACE_SETTINGS_Default_mode_at_startup, "3", "Default mode at startup", "", "", AC_Tag_BR, AC_Input_Text);
-ACSelect(ACE_SETTINGS_Default_eco_mode_at_startup, {"Max","Medium","None"}, "Default eco mode at startup", 2);
-ACSelect(ACE_SETTINGS_Default_acceleration, {"Maximum","Very fast","Fast","Medium","Slow","Very slow"}, "Default acceleration", 0);
-ACInput(ACE_SETTINGS_Default_electric_brake_at_startup, "3", "Default electric brake at startup", "", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACE_SETTINGS_Default_mode_at_startup, "3", "Startup mode ", "", "", AC_Tag_BR, AC_Input_Text);
+ACSelect(ACE_SETTINGS_Default_eco_mode_at_startup, {"Max","Medium","None"}, "Startup eco mode", 2);
+ACSelect(ACE_SETTINGS_Default_acceleration, {"Maximum","Very fast","Fast","Medium","Slow","Very slow"}, "Startup acceleration", 0);
+ACInput(ACE_SETTINGS_Default_electric_brake_at_startup, "3", "Startup  ebrake", "", "", AC_Tag_BR, AC_Input_Text);
 ACCheckbox(ACE_SETTINGS_Pas_enabled, "ACE_SETTINGS_Pas_enabled", "PAS enabled", false, AC_Infront);
 ACCheckbox(ACE_SETTINGS_Abs_enabled, "ACE_SETTINGS_Abs_enabled", "ABS enabled", false, AC_Infront);
 ACInput(ACE_SETTINGS_Display_brightness, "100", "Display brightness", "", "", AC_Tag_BR, AC_Input_Text);
+ACCheckbox(ACE_SETTINGS_Display_splash_screen, "ACE_SETTINGS_Display_splash_screen", "Display splash screen", false, AC_Infront);
 ACText(ACE_SETTINGS_Electric_brake, "<h2>Electric brake</h2>", "color:#303F9F;padding:10px;");
 ACCheckbox(ACE_SETTINGS_Ebrake_progressive_mode, "ACE_SETTINGS_Ebrake_progressive_mode", "Progressive mode", false, AC_Infront);
 ACSelect(ACE_SETTINGS_Ebrake_smart_brake_type, {"Controller","Smart - Digital brake lever","Smart - Analog brake lever","Smart - Digital brake + throttle (exp)"}, "Type", 0);
 ACInput(ACE_SETTINGS_Ebrake_min_power_value, "1", "Min value", "", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACE_SETTINGS_Ebrake_max_power_value, "5", "Max value", "", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACE_SETTINGS_Ebrake_time_between_mode_shift, "500", "Time between mode shift", "", "", AC_Tag_BR, AC_Input_Text);
-ACCheckbox(ACE_SETTINGS_Ebrake_disabled_on_high_battery_voltage, "ACE_SETTINGS_Ebrake_disabled_on_high_battery_voltage", "Disabled on high battery voltage", false, AC_Infront);
-ACInput(ACE_SETTINGS_Ebrake_disabled_percent_limit, "100", "Disabled percent limit", "", "", AC_Tag_BR, AC_Input_Text);
+ACCheckbox(ACE_SETTINGS_Ebrake_disabled_on_high_battery_voltage, "ACE_SETTINGS_Ebrake_disabled_on_high_battery_voltage", "Disabled with bat, HV", false, AC_Infront);
+ACInput(ACE_SETTINGS_Ebrake_disabled_percent_limit, "100", "Disabled with bat. HV", "", "", AC_Tag_BR, AC_Input_Text);
 ACText(ACE_SETTINGS_Throttle, "<h2>Throttle</h2>", "color:#303F9F;padding:10px;");
 ACCheckbox(ACE_SETTINGS_Throttle_regeneration, "ACE_SETTINGS_Throttle_regeneration", "Throttle regeneration", false, AC_Infront);
-ACInput(ACE_SETTINGS_Throttle_input_min_voltage, "650", "Input min voltage (in millivolts)", "", "", AC_Tag_BR, AC_Input_Text);
-ACInput(ACE_SETTINGS_Throttle_input_max_voltage, "3950", "Input max voltage (in millivolts)", "", "", AC_Tag_BR, AC_Input_Text);
-ACInput(ACE_SETTINGS_Throttle_output_min_voltage, "800", "Output min voltage (in millivolts)", "", "", AC_Tag_BR, AC_Input_Text);
-ACInput(ACE_SETTINGS_Throttle_output_max_voltage, "3350", "Output max voltage (in millivolts)", "", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACE_SETTINGS_Throttle_input_min_voltage, "650", "Input min voltage", "", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACE_SETTINGS_Throttle_input_max_voltage, "3950", "Input max voltage", "", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACE_SETTINGS_Throttle_output_min_voltage, "800", "Output min voltage", "", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACE_SETTINGS_Throttle_output_max_voltage, "3350", "Output max voltage", "", "", AC_Tag_BR, AC_Input_Text);
 ACSelect(ACE_SETTINGS_Throttle_output_curve, {"Linear","Exponential 1","Exponential 2","Exponential 3","Exponential 4"}, "Output curve", 2);
 ACText(ACE_SETTINGS_Escooter_buttons, "<h2>Escooter buttons</h2>", "color:#303F9F;padding:10px;");
-ACSelect(ACE_SETTINGS_Button_1_short_press_action, {"None","Speed limit ON/OFF","Aux ON/OFF","Mode switch 1/2/3","Mode switch 2/3","Eco switch NONE/MED/MAX","Eco switch NONE/MED"}, "B1 short press action", 0);
-ACSelect(ACE_SETTINGS_Button_1_long_press_action, {"None","Speed limitation ON/OFF","Aux ON/OFF","Mode switch 1/2/3","Mode switch 2/3","Eco switch NONE/MED/MAX","Eco switch NONE/MED","Anti-theft manual lock ON","Nitro boost continuous"}, "B1 long press action", 0);
-ACSelect(ACE_SETTINGS_Button_2_short_press_action, {"None","Speed limitation ON/OFF","Aux ON/OFF","Mode switch 1/2/3","Mode switch 2/3","Eco switch NONE/MED/MAX","Eco switch NONE/MED"}, "B2 short press action", 0);
+ACSelect(ACE_SETTINGS_Button_1_short_press_action, {"None","Speed limit ON/OFF","Aux ON/OFF","Mode switch 1/2/3","Mode switch 2/3","Eco switch NONE/MED/MAX","Eco switch NONE/MED"}, "B1 short press ", 0);
+ACSelect(ACE_SETTINGS_Button_1_long_press_action, {"None","Speed limitation ON/OFF","Aux ON/OFF","Mode switch 1/2/3","Mode switch 2/3","Eco switch NONE/MED/MAX","Eco switch NONE/MED","Anti-theft manual lock ON","Nitro boost continuous"}, "B1 long press ", 0);
+ACSelect(ACE_SETTINGS_Button_2_short_press_action, {"None","Speed limitation ON/OFF","Aux ON/OFF","Mode switch 1/2/3","Mode switch 2/3","Eco switch NONE/MED/MAX","Eco switch NONE/MED"}, "B2 short press ", 0);
 ACInput(ACE_SETTINGS_Button_long_press_duration, "3", "Button long press duration", "", "", AC_Tag_BR, AC_Input_Text);
 ACText(ACE_SETTINGS_Ota_update, "<h2>OTA update</h2>", "color:#303F9F;padding:10px;");
 ACInput(ACE_SETTINGS_Wifi_ssid, "", "Wifi network name", "^(.{0,32})$", "edit_text_string", AC_Tag_BR, AC_Input_Text);
@@ -102,6 +103,7 @@ AutoConnectAux settingsPageAux("/settingspage", "SmartElec settings", true, {
     ACE_SETTINGS_Pas_enabled,
     ACE_SETTINGS_Abs_enabled,
     ACE_SETTINGS_Display_brightness,
+    ACE_SETTINGS_Display_splash_screen,
     ACE_SETTINGS_Electric_brake,
     ACE_SETTINGS_Ebrake_progressive_mode,
     ACE_SETTINGS_Ebrake_smart_brake_type,
@@ -161,6 +163,8 @@ void saveConfig(AutoConnectAux &aux)
     WifiSettingsPortal_settings->set_Abs_enabled((settingsPageAux["ACE_SETTINGS_Abs_enabled"].as<AutoConnectCheckbox>()).checked ? 1 : 0);
     Serial.println("Abs_enabled = " + (String) (settingsPageAux["ACE_SETTINGS_Abs_enabled"].as<AutoConnectCheckbox>()).checked);
     WifiSettingsPortal_settings->set_Display_brightness((settingsPageAux["ACE_SETTINGS_Display_brightness"].as<AutoConnectInput>()).value.toInt());
+    WifiSettingsPortal_settings->set_Display_splash_screen((settingsPageAux["ACE_SETTINGS_Display_splash_screen"].as<AutoConnectCheckbox>()).checked ? 1 : 0);
+    Serial.println("Display_splash_screen = " + (String) (settingsPageAux["ACE_SETTINGS_Display_splash_screen"].as<AutoConnectCheckbox>()).checked);
     WifiSettingsPortal_settings->set_Ebrake_progressive_mode((settingsPageAux["ACE_SETTINGS_Ebrake_progressive_mode"].as<AutoConnectCheckbox>()).checked ? 1 : 0);
     Serial.println("Ebrake_progressive_mode = " + (String) (settingsPageAux["ACE_SETTINGS_Ebrake_progressive_mode"].as<AutoConnectCheckbox>()).checked);
     WifiSettingsPortal_settings->set_Ebrake_smart_brake_type((settingsPageAux["ACE_SETTINGS_Ebrake_smart_brake_type"].as<AutoConnectSelect>()).selected - 1);
@@ -251,6 +255,7 @@ void loadConfig(AutoConnectAux &aux)
     aux.setElementValue("ACE_SETTINGS_Pas_enabled", WifiSettingsPortal_settings->get_Pas_enabled() ? "checked" : "");
     aux.setElementValue("ACE_SETTINGS_Abs_enabled", WifiSettingsPortal_settings->get_Abs_enabled() ? "checked" : "");
     aux.setElementValue("ACE_SETTINGS_Display_brightness", (String)WifiSettingsPortal_settings->get_Display_brightness());
+    aux.setElementValue("ACE_SETTINGS_Display_splash_screen", WifiSettingsPortal_settings->get_Display_splash_screen() ? "checked" : "");
     aux.setElementValue("ACE_SETTINGS_Ebrake_progressive_mode", WifiSettingsPortal_settings->get_Ebrake_progressive_mode() ? "checked" : "");
     uint8_t val_Ebrake_smart_brake_type = WifiSettingsPortal_settings->get_Ebrake_smart_brake_type();
     if (val_Ebrake_smart_brake_type == 0)

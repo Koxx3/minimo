@@ -26,13 +26,13 @@ uint8_t tft_Temperature_warning = 70;
 uint8_t tft_Humidity_warning = 80;
 uint8_t tft_Default_mode_at_startup = 3;
 uint8_t tft_Default_eco_mode_at_startup = 2;
-TOGGLE(tft_Default_eco_mode_at_startup, tft_Default_eco_mode_at_startup_LIST,"  Default eco mode at startup ",doNothing,noEvent,noStyle //
+TOGGLE(tft_Default_eco_mode_at_startup, tft_Default_eco_mode_at_startup_LIST,"  Startup eco mode ",doNothing,noEvent,noStyle //
     ,VALUE("Max", 0 ,doNothing,noEvent) //
     ,VALUE("Medium", 1 ,doNothing,noEvent) //
     ,VALUE("None", 2 ,doNothing,noEvent) //
 );
 uint8_t tft_Default_acceleration = 0;
-TOGGLE(tft_Default_acceleration, tft_Default_acceleration_LIST,"  Default acceleration ",doNothing,noEvent,noStyle //
+TOGGLE(tft_Default_acceleration, tft_Default_acceleration_LIST,"  Startup acceleration ",doNothing,noEvent,noStyle //
     ,VALUE("Maximum", 0 ,doNothing,noEvent) //
     ,VALUE("Very fast", 1 ,doNothing,noEvent) //
     ,VALUE("Fast", 2 ,doNothing,noEvent) //
@@ -52,6 +52,11 @@ TOGGLE(tft_Abs_enabled, tft_Abs_enabled_LIST,"  ABS enabled ",doNothing,noEvent,
     ,VALUE("On",1,doNothing,noEvent) //
 );
 uint8_t tft_Display_brightness = 100;
+uint8_t tft_Display_splash_screen = 1;
+TOGGLE(tft_Display_splash_screen, tft_Display_splash_screen_LIST,"  Display splash screen ",doNothing,noEvent,noStyle //
+    ,VALUE("Off",0,doNothing,noEvent) //
+    ,VALUE("On",1,doNothing,noEvent) //
+);
 uint8_t tft_Ebrake_progressive_mode = 0;
 TOGGLE(tft_Ebrake_progressive_mode, tft_Ebrake_progressive_mode_LIST,"  Progressive mode ",doNothing,noEvent,noStyle //
     ,VALUE("Off",0,doNothing,noEvent) //
@@ -68,7 +73,7 @@ uint8_t tft_Ebrake_min_power_value = 1;
 uint8_t tft_Ebrake_max_power_value = 5;
 uint32_t tft_Ebrake_time_between_mode_shift = 500;
 uint8_t tft_Ebrake_disabled_on_high_battery_voltage = 0;
-TOGGLE(tft_Ebrake_disabled_on_high_battery_voltage, tft_Ebrake_disabled_on_high_battery_voltage_LIST,"  Disabled on high battery voltage ",doNothing,noEvent,noStyle //
+TOGGLE(tft_Ebrake_disabled_on_high_battery_voltage, tft_Ebrake_disabled_on_high_battery_voltage_LIST,"  Disabled with bat, HV ",doNothing,noEvent,noStyle //
     ,VALUE("Off",0,doNothing,noEvent) //
     ,VALUE("On",1,doNothing,noEvent) //
 );
@@ -91,7 +96,7 @@ TOGGLE(tft_Throttle_output_curve, tft_Throttle_output_curve_LIST,"  Output curve
     ,VALUE("Exponential 4", 4 ,doNothing,noEvent) //
 );
 uint8_t tft_Button_1_short_press_action = 0;
-TOGGLE(tft_Button_1_short_press_action, tft_Button_1_short_press_action_LIST,"  B1 short press action ",doNothing,noEvent,noStyle //
+TOGGLE(tft_Button_1_short_press_action, tft_Button_1_short_press_action_LIST,"  B1 short press  ",doNothing,noEvent,noStyle //
     ,VALUE("None", 0 ,doNothing,noEvent) //
     ,VALUE("Speed limit ON/OFF", 1 ,doNothing,noEvent) //
     ,VALUE("Aux ON/OFF", 2 ,doNothing,noEvent) //
@@ -101,7 +106,7 @@ TOGGLE(tft_Button_1_short_press_action, tft_Button_1_short_press_action_LIST,"  
     ,VALUE("Eco switch NONE/MED", 6 ,doNothing,noEvent) //
 );
 uint8_t tft_Button_1_long_press_action = 0;
-TOGGLE(tft_Button_1_long_press_action, tft_Button_1_long_press_action_LIST,"  B1 long press action ",doNothing,noEvent,noStyle //
+TOGGLE(tft_Button_1_long_press_action, tft_Button_1_long_press_action_LIST,"  B1 long press  ",doNothing,noEvent,noStyle //
     ,VALUE("None", 0 ,doNothing,noEvent) //
     ,VALUE("Speed limitation ON/OFF", 1 ,doNothing,noEvent) //
     ,VALUE("Aux ON/OFF", 2 ,doNothing,noEvent) //
@@ -113,7 +118,7 @@ TOGGLE(tft_Button_1_long_press_action, tft_Button_1_long_press_action_LIST,"  B1
     ,VALUE("Nitro boost continuous", 8 ,doNothing,noEvent) //
 );
 uint8_t tft_Button_2_short_press_action = 0;
-TOGGLE(tft_Button_2_short_press_action, tft_Button_2_short_press_action_LIST,"  B2 short press action ",doNothing,noEvent,noStyle //
+TOGGLE(tft_Button_2_short_press_action, tft_Button_2_short_press_action_LIST,"  B2 short press  ",doNothing,noEvent,noStyle //
     ,VALUE("None", 0 ,doNothing,noEvent) //
     ,VALUE("Speed limitation ON/OFF", 1 ,doNothing,noEvent) //
     ,VALUE("Aux ON/OFF", 2 ,doNothing,noEvent) //
@@ -127,52 +132,53 @@ uint8_t tft_Button_long_press_duration = 3;
 
 /* submenus */
 MENU(SUBMENU_Escooter_characteristics,"  Escooter characteristics",doNothing,noEvent,noStyle //
-    ,altFIELD(decPlaces<1>::menuField, tft_Wheel_size, "  Wheel size " ,"", 8.0, 20.0, 0.5, 0.1, doNothing,anyEvent,wrapStyle) //
-    ,FIELD(tft_Number_of_poles_pairs,"  Number of poles pairs ","", 10, 30, 1, 1, doNothing,noEvent,wrapStyle) //
-    ,altFIELD(decPlaces<1>::menuField, tft_Battery_minimum_voltage, "  Battery minimum voltage " ,"", 30.0, 100.0, 1.0, 0.1, doNothing,anyEvent,wrapStyle) //
-    ,altFIELD(decPlaces<1>::menuField, tft_Battery_maximum_voltage, "  Battery maximum voltage " ,"", 30.0, 100.0, 1.0, 0.1, doNothing,anyEvent,wrapStyle) //
-    ,FIELD(tft_Battery_maximum_distance,"  Battery maximum distance ","", 10, 100, 5, 1, doNothing,noEvent,wrapStyle) //
+    ,altFIELD(decPlaces<1>::menuField, tft_Wheel_size, "  Wheel size " ," inch", 8.0, 20.0, 0.5, 0.1, doNothing,anyEvent,noStyle) //
+    ,FIELD(tft_Number_of_poles_pairs,"  Number of poles pairs "," ", 10, 30, 1, 1, doNothing,noEvent,noStyle) //
+    ,altFIELD(decPlaces<1>::menuField, tft_Battery_minimum_voltage, "  Battery minimum voltage " ," V", 30.0, 100.0, 1.0, 0.1, doNothing,anyEvent,noStyle) //
+    ,altFIELD(decPlaces<1>::menuField, tft_Battery_maximum_voltage, "  Battery maximum voltage " ," V", 30.0, 100.0, 1.0, 0.1, doNothing,anyEvent,noStyle) //
+    ,FIELD(tft_Battery_maximum_distance,"  Battery maximum distance "," Km", 10, 100, 5, 1, doNothing,noEvent,noStyle) //
     ,EXIT("< Back")
 );
     
 MENU(SUBMENU_General,"  General",doNothing,noEvent,noStyle //
     ,SUBMENU(tft_Speed_limiter_at_startup_LIST) //
-    ,FIELD(tft_Speed_limiter_max_speed,"  Speed limiter max speed ","", 5, 100, 5, 1, doNothing,noEvent,wrapStyle) //
-    ,FIELD(tft_Original_display_speed_adjustment,"  Speed adjustment (in percent) ","", -100, 100, 0, 0, doNothing,noEvent,wrapStyle) //
-    ,FIELD(tft_Temperature_warning,"  Temperature warning ","", 50, 100, 20, 10, doNothing,noEvent,wrapStyle) //
-    ,FIELD(tft_Humidity_warning,"  Humidity warning ","", 20, 100, 20, 10, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_Speed_limiter_max_speed,"  Speed limiter max speed "," %", 5, 100, 5, 1, doNothing,noEvent,noStyle) //
+    ,FIELD(tft_Original_display_speed_adjustment,"  Speed adjustment "," %", -100, 100, 5, 1, doNothing,noEvent,noStyle) //
+    ,FIELD(tft_Temperature_warning,"  Temperature warning "," °C", 50, 100, 10, 5, doNothing,noEvent,noStyle) //
+    ,FIELD(tft_Humidity_warning,"  Humidity warning "," RH", 20, 100, 10, 5, doNothing,noEvent,noStyle) //
     ,EXIT("< Back")
 );
     
     
 MENU(SUBMENU_SmartDisplay,"  SmartDisplay",doNothing,noEvent,noStyle //
-    ,FIELD(tft_Default_mode_at_startup,"  Default mode at startup ","", 1, 3, 1, 1, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_Default_mode_at_startup,"  Startup mode  "," ", 1, 3, 1, 1, doNothing,noEvent,noStyle) //
     ,SUBMENU(tft_Default_eco_mode_at_startup_LIST) //
     ,SUBMENU(tft_Default_acceleration_LIST) //
-    ,FIELD(tft_Default_electric_brake_at_startup,"  Default electric brake at startup ","", 1, 5, 1, 1, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_Default_electric_brake_at_startup,"  Startup  ebrake "," ", 1, 5, 1, 1, doNothing,noEvent,noStyle) //
     ,SUBMENU(tft_Pas_enabled_LIST) //
     ,SUBMENU(tft_Abs_enabled_LIST) //
-    ,FIELD(tft_Display_brightness,"  Display brightness ","", 50, 100, 10, 5, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_Display_brightness,"  Display brightness "," ", 50, 100, 10, 5, doNothing,noEvent,noStyle) //
+    ,SUBMENU(tft_Display_splash_screen_LIST) //
     ,EXIT("< Back")
 );
     
 MENU(SUBMENU_Electric_brake,"  Electric brake",doNothing,noEvent,noStyle //
     ,SUBMENU(tft_Ebrake_progressive_mode_LIST) //
     ,SUBMENU(tft_Ebrake_smart_brake_type_LIST) //
-    ,FIELD(tft_Ebrake_min_power_value,"  Min value ","", 0, 5, 1, 1, doNothing,noEvent,wrapStyle) //
-    ,FIELD(tft_Ebrake_max_power_value,"  Max value ","", 0, 5, 1, 1, doNothing,noEvent,wrapStyle) //
-    ,FIELD(tft_Ebrake_time_between_mode_shift,"  Time between mode shift ","", 100, 2000, 100, 50, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_Ebrake_min_power_value,"  Min value "," ", 0, 5, 1, 1, doNothing,noEvent,noStyle) //
+    ,FIELD(tft_Ebrake_max_power_value,"  Max value "," ", 0, 5, 1, 1, doNothing,noEvent,noStyle) //
+    ,FIELD(tft_Ebrake_time_between_mode_shift,"  Time between mode shift "," ms", 100, 2000, 100, 50, doNothing,noEvent,noStyle) //
     ,SUBMENU(tft_Ebrake_disabled_on_high_battery_voltage_LIST) //
-    ,FIELD(tft_Ebrake_disabled_percent_limit,"  Disabled percent limit ","", 80, 100, 5, 1, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_Ebrake_disabled_percent_limit,"  Disabled with bat. HV "," %", 80, 100, 5, 1, doNothing,noEvent,noStyle) //
     ,EXIT("< Back")
 );
     
 MENU(SUBMENU_Throttle,"  Throttle",doNothing,noEvent,noStyle //
     ,SUBMENU(tft_Throttle_regeneration_LIST) //
-    ,FIELD(tft_Throttle_input_min_voltage,"  Input min voltage (in millivolts) ","", 500, 1500, 100, 50, doNothing,noEvent,wrapStyle) //
-    ,FIELD(tft_Throttle_input_max_voltage,"  Input max voltage (in millivolts) ","", 2500, 5000, 100, 50, doNothing,noEvent,wrapStyle) //
-    ,FIELD(tft_Throttle_output_min_voltage,"  Output min voltage (in millivolts) ","", 500, 2000, 100, 50, doNothing,noEvent,wrapStyle) //
-    ,FIELD(tft_Throttle_output_max_voltage,"  Output max voltage (in millivolts) ","", 2500, 5000, 100, 50, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_Throttle_input_min_voltage,"  Input min voltage "," mV", 500, 1500, 100, 50, doNothing,noEvent,noStyle) //
+    ,FIELD(tft_Throttle_input_max_voltage,"  Input max voltage "," mV", 2500, 5000, 100, 50, doNothing,noEvent,noStyle) //
+    ,FIELD(tft_Throttle_output_min_voltage,"  Output min voltage "," mV", 500, 2000, 100, 50, doNothing,noEvent,noStyle) //
+    ,FIELD(tft_Throttle_output_max_voltage,"  Output max voltage "," mV", 2500, 5000, 100, 50, doNothing,noEvent,noStyle) //
     ,SUBMENU(tft_Throttle_output_curve_LIST) //
     ,EXIT("< Back")
 );
@@ -181,7 +187,7 @@ MENU(SUBMENU_Escooter_buttons,"  Escooter buttons",doNothing,noEvent,noStyle //
     ,SUBMENU(tft_Button_1_short_press_action_LIST) //
     ,SUBMENU(tft_Button_1_long_press_action_LIST) //
     ,SUBMENU(tft_Button_2_short_press_action_LIST) //
-    ,FIELD(tft_Button_long_press_duration,"  Button long press duration ","", 1, 10, 1, 1, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_Button_long_press_duration,"  Button long press duration "," s", 1, 10, 1, 1, doNothing,noEvent,noStyle) //
     ,EXIT("< Back")
 );
     
@@ -190,7 +196,7 @@ MENU(SUBMENU_Escooter_buttons,"  Escooter buttons",doNothing,noEvent,noStyle //
 //-----------------------
 // menu
 //-----------------------
-MENU(mainMenu,"  Main menu",doNothing,noEvent,wrapStyle //
+MENU(mainMenu,"  Main menu",doNothing,noEvent,noStyle //
     ,SUBMENU(SUBMENU_MANUAL_status) //
     ,SUBMENU(SUBMENU_Escooter_characteristics) //
     ,SUBMENU(SUBMENU_General) //
@@ -224,6 +230,7 @@ void settings_menu_init_from_settings() {
     tft_Pas_enabled = TFT_menu_settings->get_Pas_enabled();
     tft_Abs_enabled = TFT_menu_settings->get_Abs_enabled();
     tft_Display_brightness = TFT_menu_settings->get_Display_brightness();
+    tft_Display_splash_screen = TFT_menu_settings->get_Display_splash_screen();
     tft_Ebrake_progressive_mode = TFT_menu_settings->get_Ebrake_progressive_mode();
     tft_Ebrake_smart_brake_type = TFT_menu_settings->get_Ebrake_smart_brake_type();
     tft_Ebrake_min_power_value = TFT_menu_settings->get_Ebrake_min_power_value();
@@ -262,6 +269,7 @@ void settings_menu_save_to_settings() {
     TFT_menu_settings->set_Pas_enabled(tft_Pas_enabled);
     TFT_menu_settings->set_Abs_enabled(tft_Abs_enabled);
     TFT_menu_settings->set_Display_brightness(tft_Display_brightness);
+    TFT_menu_settings->set_Display_splash_screen(tft_Display_splash_screen);
     TFT_menu_settings->set_Ebrake_progressive_mode(tft_Ebrake_progressive_mode);
     TFT_menu_settings->set_Ebrake_smart_brake_type(tft_Ebrake_smart_brake_type);
     TFT_menu_settings->set_Ebrake_min_power_value(tft_Ebrake_min_power_value);

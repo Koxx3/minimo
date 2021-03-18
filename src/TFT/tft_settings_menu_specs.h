@@ -95,7 +95,10 @@ public:
   firmware_type_item(constMEM promptShadow &p) : prompt(p) {}
   Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
   {
-    String val = "  Firmware type : " + (String)FIRMWARE_TYPE;
+    String firmType = (String)FIRMWARE_TYPE;
+    firmType.replace("smartdisplay", "sd");
+    firmType.replace("smartcontroller", "sc");
+    String val = "  Firm. Type : " + firmType;
     return out.printRaw(F(val.c_str()), len);
   }
 };
@@ -106,7 +109,7 @@ public:
   firmware_version_item(constMEM promptShadow &p) : prompt(p) {}
   Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
   {
-    String val = "  Firmware version : " + (String)FIRMWARE_VERSION;
+    String val = "  Firm. version : " + (String)FIRMWARE_VERSION;
     return out.printRaw(F(val.c_str()), len);
   }
 };
@@ -150,7 +153,7 @@ public:
   wifi_conf_ap_ssid_item(constMEM promptShadow &p) : prompt(p) {}
   Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
   {
-    String val = "  Wifi access point SSID : " + (String)TFT_menu_settings->Wifi_ssid;
+    String val = "  Wifi AP SSID : " + (String)TFT_menu_settings->Wifi_ssid;
     return out.printRaw(F(val.c_str()), len);
   }
 };
@@ -161,7 +164,7 @@ public:
   wifi_conf_ap_pwd_item(constMEM promptShadow &p) : prompt(p) {}
   Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
   {
-    String val = "  Wifi access point pwd : " + (String)TFT_menu_settings->Wifi_password;
+    String val = "  Wifi AP pwd : " + (String)TFT_menu_settings->Wifi_password;
     return out.printRaw(F(val.c_str()), len);
   }
 };
@@ -246,6 +249,7 @@ MENU(SUBMENU_MANUAL_more, "  More", doNothing, noEvent, noStyle,
 #define Green RGB565(0, 255, 0)
 #define Blue RGB565(0, 0, 255)
 #define Gray RGB565(128, 128, 128)
+#define LighterSelected RGB565(50, 50, 50)
 #define LighterRed RGB565(255, 150, 150)
 #define LighterGreen RGB565(150, 255, 150)
 #define LighterBlue RGB565(150, 150, 255)
@@ -257,14 +261,18 @@ MENU(SUBMENU_MANUAL_more, "  More", doNothing, noEvent, noStyle,
 #define Yellow RGB565(255, 255, 0)
 #define White RGB565(255, 255, 255)
 #define GreenAndroid RGB565(0x66, 0x99, 0x00)
+#define TitleDarkAndroid RGB565(0x66, 0x3F, 0x9F)
+#define LineSelectAndroid RGB565(0x9e, 0x5f, 0xff)
+
 
 //  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
 const colorDef<uint16_t> colors[6] MEMMODE = {
-    {{(uint16_t)Black,
-      (uint16_t)Black},
-     {(uint16_t)Black,
-      (uint16_t)GreenAndroid,
-      (uint16_t)GreenAndroid}}, //bgColor
+    {
+        {(uint16_t)Black,
+        (uint16_t)Black},
+        {(uint16_t)Black,
+        (uint16_t)LineSelectAndroid,
+        (uint16_t)LineSelectAndroid}}, //bgColor
     {
         {(uint16_t)Gray,
          (uint16_t)Gray},
@@ -275,14 +283,14 @@ const colorDef<uint16_t> colors[6] MEMMODE = {
         {(uint16_t)White,
          (uint16_t)Black},
         {(uint16_t)LighterBlue,
-         (uint16_t)White,
+         (uint16_t)LighterSelected,
          (uint16_t)Red}}, //valColor
     {
         {(uint16_t)White,
          (uint16_t)Black},
-        {(uint16_t)White,
-         (uint16_t)White,
-         (uint16_t)LighterBlue}}, //unitColor
+        {(uint16_t)LighterBlue,
+         (uint16_t)LighterSelected,
+         (uint16_t)Red}}, //unitColor
     {
         {(uint16_t)White,
          (uint16_t)Gray},
@@ -292,7 +300,7 @@ const colorDef<uint16_t> colors[6] MEMMODE = {
     {
         {(uint16_t)White,
          (uint16_t)LighterBlue},
-        {(uint16_t)Red,
+        {(uint16_t)TitleDarkAndroid,
          (uint16_t)White,
          (uint16_t)White}}, //titleColor
 };

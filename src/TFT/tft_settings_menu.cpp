@@ -77,7 +77,7 @@ idx_t serialTops[MAX_DEPTH] = {0};
 #define fontW 10
 #define fontH 26
 
-const panel panels[] MEMMODE = {{0, 0, GFX_WIDTH / fontW, GFX_HEIGHT / fontH}};
+const panel panels[] MEMMODE = {{0, 0, (int)(GFX_WIDTH / fontW * 1.3), GFX_HEIGHT / fontH}};
 navNode *nodes[sizeof(panels) / sizeof(panel)]; //navNodes to store navigation status
 panelsList pList(panels, nodes, 1);             //a list of panels and nodes
 idx_t eSpiTops[MAX_DEPTH] = {0};

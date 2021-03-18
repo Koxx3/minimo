@@ -59,9 +59,9 @@ MENU(SUBMENU_{{ key2 | replace(" ", "_")}},"  {{ key2 }}",doNothing,noEvent,noSt
                     {%- elif item.smartphone_display_type | lower == "list" %}
     ,SUBMENU(tft_{{ item.var_name }}_LIST) //
                     {%- elif item.type | lower == "float" %}
-    ,altFIELD(decPlaces<1>::menuField, tft_{{ item.var_name }}, "  {{ item.tft_display_name }} " ,"", {{ item.min }}, {{ item.max }}, {{ item.tft_fast_increment }}, {{ item.tft_slow_increment }}, doNothing,anyEvent,wrapStyle) //
+    ,altFIELD(decPlaces<1>::menuField, tft_{{ item.var_name }}, "  {{ item.tft_display_name }} " ," {{ item.tft_unit }}", {{ item.min }}, {{ item.max }}, {{ item.tft_fast_increment }}, {{ item.tft_slow_increment }}, doNothing,anyEvent,noStyle) //
                     {%- elif 'int' in item.type %}
-    ,FIELD(tft_{{ item.var_name }},"  {{ item.tft_display_name }} ","", {{ item.min }}, {{ item.max }}, {{ item.tft_fast_increment | int }}, {{ item.tft_slow_increment | int }}, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_{{ item.var_name }},"  {{ item.tft_display_name }} "," {{ item.tft_unit }}", {{ item.min }}, {{ item.max }}, {{ item.tft_fast_increment | int }}, {{ item.tft_slow_increment | int }}, doNothing,noEvent,noStyle) //
                     {%- else %}
                     {%- endif %}
                 {%- endif %}
@@ -75,7 +75,7 @@ MENU(SUBMENU_{{ key2 | replace(" ", "_")}},"  {{ key2 }}",doNothing,noEvent,noSt
 //-----------------------
 // menu
 //-----------------------
-MENU(mainMenu,"  Main menu",doNothing,noEvent,wrapStyle //
+MENU(mainMenu,"  Main menu",doNothing,noEvent,noStyle //
     ,SUBMENU(SUBMENU_MANUAL_status) //
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}

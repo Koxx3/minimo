@@ -22,7 +22,8 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Wheel size",
           "tft_fast_increment": 0.5,
-          "tft_slow_increment": 0.1
+          "tft_slow_increment": 0.1,
+          "tft_unit": "inch"
         },
         {
           "ble_id": 2,
@@ -43,7 +44,8 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Number of poles pairs",
           "tft_fast_increment": 1.0,
-          "tft_slow_increment": 1.0
+          "tft_slow_increment": 1.0,
+          "tft_unit": ""
         },
         {
           "ble_id": 3,
@@ -64,7 +66,8 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Battery minimum voltage",
           "tft_fast_increment": 1.0,
-          "tft_slow_increment": 0.1
+          "tft_slow_increment": 0.1,
+          "tft_unit": "V"
         },
         {
           "ble_id": 4,
@@ -85,7 +88,8 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Battery maximum voltage",
           "tft_fast_increment": 1.0,
-          "tft_slow_increment": 0.1
+          "tft_slow_increment": 0.1,
+          "tft_unit": "V"
         },
         {
           "ble_id": 5,
@@ -106,7 +110,8 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Battery maximum distance",
           "tft_fast_increment": 5.0,
-          "tft_slow_increment": 1.0
+          "tft_slow_increment": 1.0,
+          "tft_unit": "Km"
         }
       ]
     },
@@ -132,7 +137,8 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Speed limiter at startup",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
           "ble_id": 7,
@@ -153,7 +159,8 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Speed limiter max speed",
           "tft_fast_increment": 5.0,
-          "tft_slow_increment": 1.0
+          "tft_slow_increment": 1.0,
+          "tft_unit": "%"
         },
         {
           "ble_id": 8,
@@ -174,7 +181,8 @@
           "tft_menu_visible": 0.0,
           "tft_display_name": "Bluetooth lock mode",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
           "ble_id": 9,
@@ -195,7 +203,8 @@
           "tft_menu_visible": 0.0,
           "tft_display_name": "PIN code",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
           "ble_id": 10,
@@ -216,7 +225,8 @@
           "tft_menu_visible": 0.0,
           "tft_display_name": "Beacon Mac Address",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
           "ble_id": 11,
@@ -237,7 +247,8 @@
           "tft_menu_visible": 0.0,
           "tft_display_name": "Beacon range",
           "tft_fast_increment": 5.0,
-          "tft_slow_increment": 1.0
+          "tft_slow_increment": 1.0,
+          "tft_unit": "dB"
         },
         {
           "ble_id": 12,
@@ -256,9 +267,10 @@
           "smartphone_display_hint": "write -10 to decrease speed by 10%",
           "smartphone_display_type": "edit_text_number_integer_signed",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "Speed adjustment (in percent)",
-          "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_display_name": "Speed adjustment",
+          "tft_fast_increment": 5.0,
+          "tft_slow_increment": 1.0,
+          "tft_unit": "%"
         },
         {
           "ble_id": 13,
@@ -278,8 +290,9 @@
           "smartphone_display_type": "seek_bar",
           "tft_menu_visible": 1.0,
           "tft_display_name": "Temperature warning",
-          "tft_fast_increment": 20.0,
-          "tft_slow_increment": 10.0
+          "tft_fast_increment": 10.0,
+          "tft_slow_increment": 5.0,
+          "tft_unit": "\u00b0C"
         },
         {
           "ble_id": 14,
@@ -299,8 +312,9 @@
           "smartphone_display_type": "seek_bar",
           "tft_menu_visible": 1.0,
           "tft_display_name": "Humidity warning",
-          "tft_fast_increment": 20.0,
-          "tft_slow_increment": 10.0
+          "tft_fast_increment": 10.0,
+          "tft_slow_increment": 5.0,
+          "tft_unit": "RH"
         }
       ]
     },
@@ -324,9 +338,10 @@
           "smartphone_display_hint": "write -10 to decrease speed by 10%",
           "smartphone_display_type": "edit_text_number_integer_signed",
           "tft_menu_visible": 0.0,
-          "tft_display_name": "Speed adjustment (in percent)",
+          "tft_display_name": "Speed adjustment",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
           "ble_id": 16,
@@ -347,7 +362,8 @@
           "tft_menu_visible": 0.0,
           "tft_display_name": "Aux relay name",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
           "ble_id": 17,
@@ -368,7 +384,8 @@
           "tft_menu_visible": 0.0,
           "tft_display_name": "Display GPS speed ",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         }
       ]
     },
@@ -392,9 +409,10 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "seek_bar",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "Default mode at startup",
+          "tft_display_name": "Startup mode ",
           "tft_fast_increment": 1.0,
-          "tft_slow_increment": 1.0
+          "tft_slow_increment": 1.0,
+          "tft_unit": ""
         },
         {
           "ble_id": 19,
@@ -413,9 +431,10 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "list",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "Default eco mode at startup",
+          "tft_display_name": "Startup eco mode",
           "tft_fast_increment": 1.0,
-          "tft_slow_increment": 1.0
+          "tft_slow_increment": 1.0,
+          "tft_unit": ""
         },
         {
           "ble_id": 20,
@@ -434,9 +453,10 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "list",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "Default acceleration",
+          "tft_display_name": "Startup acceleration",
           "tft_fast_increment": 1.0,
-          "tft_slow_increment": 1.0
+          "tft_slow_increment": 1.0,
+          "tft_unit": ""
         },
         {
           "ble_id": 21,
@@ -455,9 +475,10 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "seek_bar",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "Default electric brake at startup",
+          "tft_display_name": "Startup  ebrake",
           "tft_fast_increment": 1.0,
-          "tft_slow_increment": 1.0
+          "tft_slow_increment": 1.0,
+          "tft_unit": ""
         },
         {
           "ble_id": 22,
@@ -478,7 +499,8 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "PAS enabled",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
           "ble_id": 23,
@@ -499,7 +521,8 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "ABS enabled",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
           "ble_id": 24,
@@ -520,7 +543,30 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Display brightness",
           "tft_fast_increment": 10.0,
-          "tft_slow_increment": 5.0
+          "tft_slow_increment": 5.0,
+          "tft_unit": ""
+        },
+        {
+          "ble_id": 25,
+          "var_name_hash": "1pXvAC8qa_Ymwg",
+          "type": "uint8_t",
+          "var_name": "Display_splash_screen",
+          "valid_config": "^sd_.*",
+          "list_strings": "",
+          "min": 0,
+          "max": 1,
+          "default": 1,
+          "increment": 1.0,
+          "regex_valid": "",
+          "smartphone_display_name": "Display splash screen",
+          "smartphone_display_unit": "",
+          "smartphone_display_hint": "",
+          "smartphone_display_type": "checkbox",
+          "tft_menu_visible": 1.0,
+          "tft_display_name": "Display splash screen",
+          "tft_fast_increment": 1.0,
+          "tft_slow_increment": 1.0,
+          "tft_unit": ""
         }
       ]
     },
@@ -528,7 +574,7 @@
       "class_order": 6,
       "settings": [
         {
-          "ble_id": 25,
+          "ble_id": 26,
           "var_name_hash": "dqixKA5YCyLprg",
           "type": "uint8_t",
           "var_name": "Ebrake_progressive_mode",
@@ -546,10 +592,11 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Progressive mode",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
-          "ble_id": 26,
+          "ble_id": 27,
           "var_name_hash": "4KrpLh-wBGfnRw",
           "type": "uint8_t",
           "var_name": "Ebrake_smart_brake_type",
@@ -567,10 +614,11 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Type",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
-          "ble_id": 27,
+          "ble_id": 28,
           "var_name_hash": "oPjAXerdrPc6rA",
           "type": "uint8_t",
           "var_name": "Ebrake_min_power_value",
@@ -588,10 +636,11 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Min value",
           "tft_fast_increment": 1.0,
-          "tft_slow_increment": 1.0
+          "tft_slow_increment": 1.0,
+          "tft_unit": ""
         },
         {
-          "ble_id": 28,
+          "ble_id": 29,
           "var_name_hash": "wfn4a-aqj7FMYg",
           "type": "uint8_t",
           "var_name": "Ebrake_max_power_value",
@@ -609,10 +658,11 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Max value",
           "tft_fast_increment": 1.0,
-          "tft_slow_increment": 1.0
+          "tft_slow_increment": 1.0,
+          "tft_unit": ""
         },
         {
-          "ble_id": 29,
+          "ble_id": 30,
           "var_name_hash": "M4yE0fJWGLFwQw",
           "type": "uint32_t",
           "var_name": "Ebrake_time_between_mode_shift",
@@ -630,10 +680,11 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Time between mode shift",
           "tft_fast_increment": 100.0,
-          "tft_slow_increment": 50.0
+          "tft_slow_increment": 50.0,
+          "tft_unit": "ms"
         },
         {
-          "ble_id": 30,
+          "ble_id": 31,
           "var_name_hash": "wCje0ujd4SQWFQ",
           "type": "uint8_t",
           "var_name": "Ebrake_disabled_on_high_battery_voltage",
@@ -649,12 +700,13 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "checkbox",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "Disabled on high battery voltage",
+          "tft_display_name": "Disabled with bat, HV",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
-          "ble_id": 31,
+          "ble_id": 32,
           "var_name_hash": "Gyp9piayhP9y7g",
           "type": "uint8_t",
           "var_name": "Ebrake_disabled_percent_limit",
@@ -670,9 +722,10 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "seek_bar",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "Disabled percent limit",
+          "tft_display_name": "Disabled with bat. HV",
           "tft_fast_increment": 5.0,
-          "tft_slow_increment": 1.0
+          "tft_slow_increment": 1.0,
+          "tft_unit": "%"
         }
       ]
     },
@@ -680,7 +733,7 @@
       "class_order": 7,
       "settings": [
         {
-          "ble_id": 32,
+          "ble_id": 33,
           "var_name_hash": "kON5g2lRLCoJfg",
           "type": "uint8_t",
           "var_name": "Throttle_regeneration",
@@ -698,10 +751,11 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Throttle regeneration",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
-          "ble_id": 33,
+          "ble_id": 34,
           "var_name_hash": "JhnqCyEvRZ5EKA",
           "type": "uint32_t",
           "var_name": "Throttle_input_min_voltage",
@@ -717,12 +771,13 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "seek_bar",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "Input min voltage (in millivolts)",
+          "tft_display_name": "Input min voltage",
           "tft_fast_increment": 100.0,
-          "tft_slow_increment": 50.0
+          "tft_slow_increment": 50.0,
+          "tft_unit": "mV"
         },
         {
-          "ble_id": 34,
+          "ble_id": 35,
           "var_name_hash": "MyYB6rUwNZQHqA",
           "type": "uint32_t",
           "var_name": "Throttle_input_max_voltage",
@@ -738,12 +793,13 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "seek_bar",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "Input max voltage (in millivolts)",
+          "tft_display_name": "Input max voltage",
           "tft_fast_increment": 100.0,
-          "tft_slow_increment": 50.0
+          "tft_slow_increment": 50.0,
+          "tft_unit": "mV"
         },
         {
-          "ble_id": 35,
+          "ble_id": 36,
           "var_name_hash": "hRFUQhYwaQyP3w",
           "type": "uint32_t",
           "var_name": "Throttle_output_min_voltage",
@@ -759,12 +815,13 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "seek_bar",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "Output min voltage (in millivolts)",
+          "tft_display_name": "Output min voltage",
           "tft_fast_increment": 100.0,
-          "tft_slow_increment": 50.0
+          "tft_slow_increment": 50.0,
+          "tft_unit": "mV"
         },
         {
-          "ble_id": 36,
+          "ble_id": 37,
           "var_name_hash": "jNprjtFWKfqMKg",
           "type": "uint32_t",
           "var_name": "Throttle_output_max_voltage",
@@ -780,12 +837,13 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "seek_bar",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "Output max voltage (in millivolts)",
+          "tft_display_name": "Output max voltage",
           "tft_fast_increment": 100.0,
-          "tft_slow_increment": 50.0
+          "tft_slow_increment": 50.0,
+          "tft_unit": "mV"
         },
         {
-          "ble_id": 37,
+          "ble_id": 38,
           "var_name_hash": "Zi3am2e2yjJkIg",
           "type": "uint8_t",
           "var_name": "Throttle_output_curve",
@@ -803,7 +861,8 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Output curve",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         }
       ]
     },
@@ -811,7 +870,7 @@
       "class_order": 8,
       "settings": [
         {
-          "ble_id": 38,
+          "ble_id": 39,
           "var_name_hash": "Jg9Th1FiYt9IbQ",
           "type": "uint8_t",
           "var_name": "Button_1_short_press_action",
@@ -827,12 +886,13 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "list",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "B1 short press action",
+          "tft_display_name": "B1 short press ",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
-          "ble_id": 39,
+          "ble_id": 40,
           "var_name_hash": "5pKoBj-3jeLA-A",
           "type": "uint8_t",
           "var_name": "Button_1_long_press_action",
@@ -848,12 +908,13 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "list",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "B1 long press action",
+          "tft_display_name": "B1 long press ",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
-          "ble_id": 40,
+          "ble_id": 41,
           "var_name_hash": "-BvNzY5AGUrFcA",
           "type": "uint8_t",
           "var_name": "Button_2_short_press_action",
@@ -869,12 +930,13 @@
           "smartphone_display_hint": "",
           "smartphone_display_type": "list",
           "tft_menu_visible": 1.0,
-          "tft_display_name": "B2 short press action",
+          "tft_display_name": "B2 short press ",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
-          "ble_id": 41,
+          "ble_id": 42,
           "var_name_hash": "JihyhJE7d1zFLA",
           "type": "uint8_t",
           "var_name": "Button_long_press_duration",
@@ -892,7 +954,8 @@
           "tft_menu_visible": 1.0,
           "tft_display_name": "Button long press duration",
           "tft_fast_increment": 1.0,
-          "tft_slow_increment": 1.0
+          "tft_slow_increment": 1.0,
+          "tft_unit": "s"
         }
       ]
     },
@@ -900,7 +963,7 @@
       "class_order": 10,
       "settings": [
         {
-          "ble_id": 42,
+          "ble_id": 43,
           "var_name_hash": "Wn-QV78YSMANWA",
           "type": "string",
           "var_name": "Wifi_ssid",
@@ -918,10 +981,11 @@
           "tft_menu_visible": 0.0,
           "tft_display_name": "Wifi network name",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         },
         {
-          "ble_id": 43,
+          "ble_id": 44,
           "var_name_hash": "WtL1vHxqARIB1A",
           "type": "string",
           "var_name": "Wifi_password",
@@ -939,7 +1003,8 @@
           "tft_menu_visible": 0.0,
           "tft_display_name": "Wifi password",
           "tft_fast_increment": "",
-          "tft_slow_increment": ""
+          "tft_slow_increment": "",
+          "tft_unit": ""
         }
       ]
     }

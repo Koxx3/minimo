@@ -208,12 +208,18 @@ void tftUpdateData(uint32_t i_loop)
     // Swap the colour byte order when rendering
     tft.setSwapBytes(true);
 
-#if TFT_DISPLAY_SPLASH
-    // draw splash screen
-    tft.pushImage((TFT_HEIGHT - smart_splash_logoWidth) / 2, (TFT_WIDTH - smart_splash_logoHeight) / 2, smart_splash_logoWidth, smart_splash_logoHeight, smart_splash);
+    if (settings.get_Display_splash_screen())
+    {
+      // draw splash screen
+      tft.pushImage((TFT_HEIGHT - smart_splash_logoWidth) / 2, (TFT_WIDTH - smart_splash_logoHeight) / 2, smart_splash_logoWidth, smart_splash_logoHeight, smart_splash);
 
-    delay(3000);
-#endif
+      uint32_t whiteColor = tft.color565(0xff, 0xff, 0xff);
+      for (int i = 0; i < 100; i++)
+      {
+        tft.fillRect(i * (TFT_HEIGHT / 100), 0, (TFT_HEIGHT / 100) + 1, 7, whiteColor);
+        delay(30);
+      }
+    }
   }
   else
       // init fix datas after
@@ -294,7 +300,7 @@ void tftUpdateData(uint32_t i_loop)
       tft_util_draw_number(&tft, fmt, COLUMN5, LINE_3Y, TFT_WHITE, TFT_BLACK, 5, BIG_FONT_SIZE);
       break;
     }
-    
+
     case 1:
     {
       sprintf(fmt, "%02.0f", shrd.speedMax);
