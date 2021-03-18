@@ -152,7 +152,7 @@ MENU(SUBMENU_SmartDisplay,"  SmartDisplay",doNothing,noEvent,noStyle //
     ,FIELD(tft_Default_electric_brake_at_startup,"  Default electric brake at startup ","", 1, 5, 1, 1, doNothing,noEvent,wrapStyle) //
     ,SUBMENU(tft_Pas_enabled_LIST) //
     ,SUBMENU(tft_Abs_enabled_LIST) //
-    ,FIELD(tft_Display_brightness,"  Display brightness ","", 50, 100, 20, 10, doNothing,noEvent,wrapStyle) //
+    ,FIELD(tft_Display_brightness,"  Display brightness ","", 50, 100, 10, 5, doNothing,noEvent,wrapStyle) //
     ,EXIT("< Back")
 );
     

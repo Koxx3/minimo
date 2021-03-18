@@ -519,8 +519,8 @@
           "smartphone_display_type": "seek_bar",
           "tft_menu_visible": 1.0,
           "tft_display_name": "Display brightness",
-          "tft_fast_increment": 20.0,
-          "tft_slow_increment": 10.0
+          "tft_fast_increment": 10.0,
+          "tft_slow_increment": 5.0
         }
       ]
     },
