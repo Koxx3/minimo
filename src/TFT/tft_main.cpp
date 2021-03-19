@@ -121,7 +121,7 @@ const char *txt_aux = "AUX";
 const char *txt_kmh = "Km/h";
 const char *txt_km = "Km";
 const char *txt_max = "Max";
-const char *txt_w = "W";
+const char *txt_w = "W ";
 const char *txt_v = "V";
 
 uint8_t oldShrdPasEnabled = 255;
@@ -317,10 +317,38 @@ void tftUpdateData(uint32_t i_loop)
 
     case 3:
     {
-      int32_t power = ((shrd.currentActual / 1000.0) * (shrd.voltageActual / 1000.0));
-      power = constrain(power, 0, 65535);
-      sprintf(fmt, "%05.0f", power);
-      tft_util_draw_number(&tft, fmt, COLUMN2, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE);
+      float power;
+      String txt_pow = "POWER";
+      String txt_unit = "W";
+      if (shrd.currentSensorPresent == 1 || TFT_MODEL == 2){                                  // CASE POWER (With current sensor or with 3.5 display)
+        power = ((shrd.currentActual / 1000.0) * (shrd.voltageActual / 1000.0));
+      }
+
+      else if (shrd.speedCurrent == 0 && shrd.brakePressedStatus == 1) {    // CASE ODO (Without current sensor)
+        txt_pow = "   ODO  ";
+        txt_unit = "Km";
+        power = shrd.distanceOdo / 10;
+      }
+      else{                                                                 // CASE TEMP (Without current sensor, by default)
+        txt_pow = "   TEMP.";
+        txt_unit = " C  ";
+        power = shrd.currentTemperature;
+      }
+
+      tft.setTextColor(TFT_RED, TFT_BLACK);             //LABEL
+      tft.setTextDatum(BR_DATUM);                       //LABEL
+      tft.setFreeFont(FONT_FORCED_SQUARE6pt7b);         //LABEL SIZE/FONT
+      tft.drawString(txt_pow, COLUMN2, LINE_4Y - LINE_TEXT_OFFSET, GFXFF); //DRAW LABEL ON DISPLAY
+
+      tft.setTextColor(TFT_WHITE, TFT_BLACK);           //UNIT
+      tft.setTextDatum(BL_DATUM);                       //UNIT
+      tft.setFreeFont(FONT_FORCED_SQUARE7pt7b);         //UNIT SIZE/FONT
+      tft.drawString(txt_unit, COLUMN2 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF); //DRAW UNIT ON DISPLAY
+
+      tft.setFreeFont(FONT_FORCED_SQUARE14pt7b);        //SET FONT FOR DATA
+      power = constrain(power, -50, 65535);
+      sprintf(fmt, "%05.0f", power);                    
+      tft_util_draw_number(&tft, fmt, COLUMN2, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE); //DRAW DATA
       break;
     }
 
