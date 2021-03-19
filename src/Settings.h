@@ -244,7 +244,7 @@ public:
     typedef enum LIST_Aux_relay_name {
         LIST_Aux_relay_name_Aux,
         LIST_Aux_relay_name_Dual,
-        LIST_Aux_relay_name_Lights,
+        LIST_Aux_relay_name_Light,
         LIST_Aux_relay_name_Horn,
         LIST_Aux_relay_name_Relay, 
     } tAux_relay_name;

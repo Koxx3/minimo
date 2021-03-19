@@ -151,10 +151,10 @@ MENU(SUBMENU_General,"  General",doNothing,noEvent,noStyle //
     
     
 MENU(SUBMENU_SmartDisplay,"  SmartDisplay",doNothing,noEvent,noStyle //
-    ,FIELD(tft_Default_mode_at_startup,"  Startup mode  "," ", 1, 3, 1, 1, doNothing,noEvent,noStyle) //
+    ,FIELD(tft_Default_mode_at_startup,"  Startup mode "," ", 1, 3, 1, 1, doNothing,noEvent,noStyle) //
     ,SUBMENU(tft_Default_eco_mode_at_startup_LIST) //
     ,SUBMENU(tft_Default_acceleration_LIST) //
-    ,FIELD(tft_Default_electric_brake_at_startup,"  Startup  ebrake "," ", 1, 5, 1, 1, doNothing,noEvent,noStyle) //
+    ,FIELD(tft_Default_electric_brake_at_startup,"  Startup  ebrake "," ", 0, 5, 1, 1, doNothing,noEvent,noStyle) //
     ,SUBMENU(tft_Pas_enabled_LIST) //
     ,SUBMENU(tft_Abs_enabled_LIST) //
     ,FIELD(tft_Display_brightness,"  Display brightness "," ", 50, 100, 10, 5, doNothing,noEvent,noStyle) //

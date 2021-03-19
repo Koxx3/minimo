@@ -33,10 +33,10 @@ ACInput(ACE_SETTINGS_Temperature_warning, "70", "Temperature warning", "", "", A
 ACInput(ACE_SETTINGS_Humidity_warning, "80", "Humidity warning", "", "", AC_Tag_BR, AC_Input_Text);
 ACText(ACE_SETTINGS_Smartphone_display, "<h2>Smartphone display</h2>", "color:#303F9F;padding:10px;");
 ACInput(ACE_SETTINGS_Smartdisplay_speed_adjustment, "0", "Speed adjustment", "^[-]?[0-9]+$", "edit_text_number_integer_signed", AC_Tag_BR, AC_Input_Text);
-ACSelect(ACE_SETTINGS_Aux_relay_name, {"AUX","DUAL","LIGHTS","HORN","RELAY"}, "Aux relay name", 0);
+ACSelect(ACE_SETTINGS_Aux_relay_name, {"AUX","DUAL","LIGHT","HORN","RELAY"}, "Aux relay name", 0);
 ACCheckbox(ACE_SETTINGS_Display_gps_speed_instead_of_escooter_speed, "ACE_SETTINGS_Display_gps_speed_instead_of_escooter_speed", "Display GPS speed ", false, AC_Infront);
 ACText(ACE_SETTINGS_Smartdisplay, "<h2>SmartDisplay</h2>", "color:#303F9F;padding:10px;");
-ACInput(ACE_SETTINGS_Default_mode_at_startup, "3", "Startup mode ", "", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACE_SETTINGS_Default_mode_at_startup, "3", "Startup mode", "", "", AC_Tag_BR, AC_Input_Text);
 ACSelect(ACE_SETTINGS_Default_eco_mode_at_startup, {"Max","Medium","None"}, "Startup eco mode", 2);
 ACSelect(ACE_SETTINGS_Default_acceleration, {"Maximum","Very fast","Fast","Medium","Slow","Very slow"}, "Startup acceleration", 0);
 ACInput(ACE_SETTINGS_Default_electric_brake_at_startup, "3", "Startup  ebrake", "", "", AC_Tag_BR, AC_Input_Text);
@@ -224,7 +224,7 @@ void loadConfig(AutoConnectAux &aux)
     if (val_Aux_relay_name == 1)
         aux.setElementValue("ACE_SETTINGS_Aux_relay_name", "DUAL");
     if (val_Aux_relay_name == 2)
-        aux.setElementValue("ACE_SETTINGS_Aux_relay_name", "LIGHTS");
+        aux.setElementValue("ACE_SETTINGS_Aux_relay_name", "LIGHT");
     if (val_Aux_relay_name == 3)
         aux.setElementValue("ACE_SETTINGS_Aux_relay_name", "HORN");
     if (val_Aux_relay_name == 4)
