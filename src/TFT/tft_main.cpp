@@ -35,6 +35,18 @@
 #define FONT_FORCED_SQUARE14pt7b &FORCED_SQUARE14pt7b
 #define FONT_FORCED_SQUARE18pt7b &FORCED_SQUARE18pt7b
 
+#if (TFT_MODEL == 2) // 3.5"
+#define FONT_LABEL FONT_FORCED_SQUARE10pt7b
+#define FONT_LABEL_HEIGH 10
+#define FONT_NUMBER FONT_FORCED_SQUARE18pt7b
+#define FONT_NUMBER_HEIGHT 18
+#else
+#define FONT_LABEL FONT_FORCED_SQUARE7pt7b
+#define FONT_LABEL_HEIGH 7
+#define FONT_NUMBER FONT_FORCED_SQUARE14pt7b
+#define FONT_NUMBER_HEIGHT 14
+#endif
+
 #define SEP_LINE 2 * SCALE_FACTOR_X
 #define UNIT_LEFT_MARGIN 5 * SCALE_FACTOR_X
 
@@ -123,6 +135,7 @@ const char *txt_km = "Km";
 const char *txt_max = "Max";
 const char *txt_w = "W ";
 const char *txt_v = "V";
+const char *txt_c = "C";
 
 uint8_t oldShrdPasEnabled = 255;
 uint8_t oldShrdBrakePressedStatus = 255;
@@ -131,6 +144,9 @@ uint8_t oldShrdCurrentHumidity = 255;
 uint8_t oldError = 255;
 uint8_t oldShrdIsLocked = 255;
 uint8_t oldAuxOrder = 255;
+
+uint8_t old_substate_case3 = 0;
+uint8_t old_substate_case6 = 0;
 
 void tftSetupBacklight()
 {
@@ -256,11 +272,7 @@ void tftUpdateData(uint32_t i_loop)
     tft.drawString(txt_trip, COLUMN9, LINE_4Y - LINE_TEXT_OFFSET, GFXFF);
 
     // draw interface - units
-#if (TFT_MODEL == 2) // 3.5"
-    tft.setFreeFont(FONT_FORCED_SQUARE10pt7b);
-#else
-    tft.setFreeFont(FONT_FORCED_SQUARE7pt7b);
-#endif
+    tft.setFreeFont(FONT_LABEL);
     tft.setTextColor(TFT_WHITE, TFT_BLACK);
     tft.setTextDatum(BL_DATUM);
     tft.drawString(txt_km, COLUMN3 + UNIT_LEFT_MARGIN, LINE_2Y_UNIT, GFXFF);
@@ -270,11 +282,7 @@ void tftUpdateData(uint32_t i_loop)
     tft.drawString(txt_w, COLUMN2 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF);
     tft.drawString(txt_km, COLUMN9 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF);
 
-#if (TFT_MODEL == 2) // 3.5"
-    tft.setFreeFont(FONT_FORCED_SQUARE18pt7b);
-#else
-    tft.setFreeFont(FONT_FORCED_SQUARE14pt7b);
-#endif
+    tft.setFreeFont(FONT_NUMBER);
     tft.drawString(txt_kmh, COLUMN5 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT1, GFXFF);
 
     // draw grid
@@ -317,37 +325,64 @@ void tftUpdateData(uint32_t i_loop)
 
     case 3:
     {
-      float power;
-      String txt_pow = "POWER";
-      String txt_unit = "W";
-      if (shrd.currentSensorPresent == 1 || TFT_MODEL == 2){                                  // CASE POWER (With current sensor or with 3.5 display)
-        power = ((shrd.currentActual / 1000.0) * (shrd.voltageActual / 1000.0));
+      float data;
+      String txt_label;
+      String txt_unit;
+      bool shouldClear = false;
+
+      if ((shrd.currentSensorPresent == 1) && (!(shrd.speedCurrent == 0 && shrd.brakePressedStatus == 1)))
+      {
+        // CASE POWER (With current sensor)
+        txt_label = "  " + (String)txt_power;
+        txt_unit = "W ";
+        data = ((shrd.currentActual / 1000.0) * (shrd.voltageActual / 1000.0));
+        data = constrain(data, -50, 65535);
+        sprintf(fmt, "%05.0f", data);
+
+        // check substate change
+        if (old_substate_case3 == 1)
+        {
+          shouldClear = true;
+          old_substate_case3 = 0;
+        }
+      }
+      else
+      {
+        // CASE TEMP (Without current sensor, by default)
+        txt_label = "       " + (String)txt_temp;
+        txt_unit = "C ";
+        data = shrd.currentTemperature;
+        sprintf(fmt, "%02.0f", data);
+
+        // check substate change
+        if (old_substate_case3 == 0)
+        {
+          shouldClear = true;
+          old_substate_case3 = 1;
+        }
       }
 
-      else if (shrd.speedCurrent == 0 && shrd.brakePressedStatus == 1) {    // CASE ODO (Without current sensor)
-        txt_pow = "   ODO  ";
-        txt_unit = "Km";
-        power = shrd.distanceOdo / 10;
+      if (shouldClear)
+      {
+        // Clear number space
+        tft.fillRect(0, LINE_4Y, COLUMN2, (SMALLEST_FONT_SIZE * 5), TFT_BLACK);
+
+        // Draw label
+        tft.setTextColor(TFT_RED, TFT_BLACK);                                  //LABEL
+        tft.setTextDatum(BR_DATUM);                                            //LABEL
+        tft.setFreeFont(FONT_LABEL);                                           //LABEL SIZE/FONT
+        tft.drawString(txt_label, COLUMN2, LINE_4Y - LINE_TEXT_OFFSET, GFXFF); //DRAW LABEL ON DISPLAY
+
+        // Draw unit
+        tft.setTextColor(TFT_WHITE, TFT_BLACK);                                    //UNIT
+        tft.setTextDatum(BL_DATUM);                                                //UNIT
+        tft.setFreeFont(FONT_LABEL);                                               //UNIT SIZE/FONT
+        tft.drawString(txt_unit, COLUMN2 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF); //DRAW UNIT ON DISPLAY
+
+        // Switch font back
+        tft.setFreeFont(FONT_NUMBER); //SET FONT FOR DATA
       }
-      else{                                                                 // CASE TEMP (Without current sensor, by default)
-        txt_pow = "   TEMP.";
-        txt_unit = " C  ";
-        power = shrd.currentTemperature;
-      }
 
-      tft.setTextColor(TFT_RED, TFT_BLACK);             //LABEL
-      tft.setTextDatum(BR_DATUM);                       //LABEL
-      tft.setFreeFont(FONT_FORCED_SQUARE6pt7b);         //LABEL SIZE/FONT
-      tft.drawString(txt_pow, COLUMN2, LINE_4Y - LINE_TEXT_OFFSET, GFXFF); //DRAW LABEL ON DISPLAY
-
-      tft.setTextColor(TFT_WHITE, TFT_BLACK);           //UNIT
-      tft.setTextDatum(BL_DATUM);                       //UNIT
-      tft.setFreeFont(FONT_FORCED_SQUARE7pt7b);         //UNIT SIZE/FONT
-      tft.drawString(txt_unit, COLUMN2 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF); //DRAW UNIT ON DISPLAY
-
-      tft.setFreeFont(FONT_FORCED_SQUARE14pt7b);        //SET FONT FOR DATA
-      power = constrain(power, -50, 65535);
-      sprintf(fmt, "%05.0f", power);                    
       tft_util_draw_number(&tft, fmt, COLUMN2, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE); //DRAW DATA
       break;
     }
@@ -369,9 +404,58 @@ void tftUpdateData(uint32_t i_loop)
 
     case 6:
     {
-      float distance = shrd.distanceTrip / 10000.0;
-      sprintf(fmt, "%s", Dfmt2_1(distance));
-      tft_util_draw_number(&tft, fmt, COLUMN9, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE);
+      float data;
+      String txt_label;
+      bool shouldClear = false;
+
+      if (shrd.speedCurrent == 0 && shrd.brakePressedStatus == 1)
+      { // CASE ODO
+        txt_label = "   ODO";
+        data = shrd.distanceOdo / 10;
+#if (TFT_MODEL == 1) // 2.4"
+        data = constrain(data, 0, 9999);
+#else        
+        data = constrain(data, 0, 99999);
+#endif        
+        sprintf(fmt, "%04.0f", data);
+
+        // check substate change
+        if (old_substate_case6 == 1)
+        {
+          shouldClear = true;
+          old_substate_case6 = 0;
+        }
+      }
+      else
+      { // CASE TRIP
+        txt_label = "  TRIP";
+        data = shrd.distanceTrip / 10000.0;
+        sprintf(fmt, "%s", Dfmt2_1(data));
+
+        // check substate change
+        if (old_substate_case6 == 0)
+        {
+          shouldClear = true;
+          old_substate_case6 = 1;
+        }
+      }
+
+      if (shouldClear)
+      {
+        // Clear number space
+        tft.fillRect(COLUMN6, LINE_4Y, COLUMN9 - COLUMN6, (SMALLEST_FONT_SIZE * 5), TFT_BLACK);
+
+        // Draw label
+        tft.setTextColor(TFT_RED, TFT_BLACK);                                  //LABEL
+        tft.setTextDatum(BR_DATUM);                                            //LABEL
+        tft.setFreeFont(FONT_LABEL);                                           //LABEL SIZE/FONT
+        tft.drawString(txt_label, COLUMN9, LINE_4Y - LINE_TEXT_OFFSET, GFXFF); //DRAW LABEL ON DISPLAY
+
+        // Switch font back
+        tft.setFreeFont(FONT_NUMBER); //SET FONT FOR DATA
+      }
+
+      tft_util_draw_number(&tft, fmt, COLUMN9, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE); //DRAW DATA
       break;
     }
     case 7:

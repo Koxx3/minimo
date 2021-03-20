@@ -1506,7 +1506,7 @@ void processCurrent()
     {
       if (currentRead < ANALOG_CURRENT_MIN_RAW_READING)
       {
-        shrd.currentSensorPresent = false;
+        shrd.currentSensorPresent = 0;
         Serial.println("Current sensor is not detected -> disable reading");
       }
       else
@@ -1720,11 +1720,13 @@ void loop()
     blh.processBLE();
   }
 
-#if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
+#if ((CONTROLLER_TYPE == CONTROLLER_MINIMOTORS) || (CONTROLLER_TYPE == CONTROLLER_ZERO))
   if (i_loop % 100 == 5)
   {
     processCurrent();
   }
+#else
+  shrd.currentSensorPresent = 1;
 #endif
 
 // keep it fast (/100 not working)
