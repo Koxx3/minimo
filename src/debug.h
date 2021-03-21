@@ -8,7 +8,7 @@
 #define DEBUG_BLE_DISPLAY_COMMANDSFEEDBACK          0
 #define DEBUG_BLE_DISPLAY_SETTINGSCHANGED           0
 #define DEBUG_BLE_DISPLAY_VOLTAGE_TOO_HIGH          0
-#define DEBUG_BLE_DISPLAY_SCAN                      1
+#define DEBUG_BLE_DISPLAY_SCAN                      0
 
 // Serial general debugs
 #define DEBUG_TIMELOOP_MS                           0
