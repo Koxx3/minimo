@@ -547,7 +547,7 @@
           "tft_unit": ""
         },
         {
-          "ble_id": 25,
+          "ble_id": 44,
           "var_name_hash": "1pXvAC8qa_Ymwg",
           "type": "uint8_t",
           "var_name": "Display_splash_screen",
@@ -574,7 +574,7 @@
       "class_order": 6,
       "settings": [
         {
-          "ble_id": 26,
+          "ble_id": 25,
           "var_name_hash": "dqixKA5YCyLprg",
           "type": "uint8_t",
           "var_name": "Ebrake_progressive_mode",
@@ -596,7 +596,7 @@
           "tft_unit": ""
         },
         {
-          "ble_id": 27,
+          "ble_id": 26,
           "var_name_hash": "4KrpLh-wBGfnRw",
           "type": "uint8_t",
           "var_name": "Ebrake_smart_brake_type",
@@ -618,7 +618,7 @@
           "tft_unit": ""
         },
         {
-          "ble_id": 28,
+          "ble_id": 27,
           "var_name_hash": "oPjAXerdrPc6rA",
           "type": "uint8_t",
           "var_name": "Ebrake_min_power_value",
@@ -640,7 +640,7 @@
           "tft_unit": ""
         },
         {
-          "ble_id": 29,
+          "ble_id": 28,
           "var_name_hash": "wfn4a-aqj7FMYg",
           "type": "uint8_t",
           "var_name": "Ebrake_max_power_value",
@@ -662,7 +662,7 @@
           "tft_unit": ""
         },
         {
-          "ble_id": 30,
+          "ble_id": 29,
           "var_name_hash": "M4yE0fJWGLFwQw",
           "type": "uint32_t",
           "var_name": "Ebrake_time_between_mode_shift",
@@ -684,7 +684,7 @@
           "tft_unit": "ms"
         },
         {
-          "ble_id": 31,
+          "ble_id": 30,
           "var_name_hash": "wCje0ujd4SQWFQ",
           "type": "uint8_t",
           "var_name": "Ebrake_disabled_on_high_battery_voltage",
@@ -706,7 +706,7 @@
           "tft_unit": ""
         },
         {
-          "ble_id": 32,
+          "ble_id": 31,
           "var_name_hash": "Gyp9piayhP9y7g",
           "type": "uint8_t",
           "var_name": "Ebrake_disabled_percent_limit",
@@ -733,7 +733,7 @@
       "class_order": 7,
       "settings": [
         {
-          "ble_id": 33,
+          "ble_id": 32,
           "var_name_hash": "kON5g2lRLCoJfg",
           "type": "uint8_t",
           "var_name": "Throttle_regeneration",
@@ -755,7 +755,7 @@
           "tft_unit": ""
         },
         {
-          "ble_id": 34,
+          "ble_id": 33,
           "var_name_hash": "JhnqCyEvRZ5EKA",
           "type": "uint32_t",
           "var_name": "Throttle_input_min_voltage",
@@ -777,7 +777,7 @@
           "tft_unit": "mV"
         },
         {
-          "ble_id": 35,
+          "ble_id": 34,
           "var_name_hash": "MyYB6rUwNZQHqA",
           "type": "uint32_t",
           "var_name": "Throttle_input_max_voltage",
@@ -799,7 +799,7 @@
           "tft_unit": "mV"
         },
         {
-          "ble_id": 36,
+          "ble_id": 35,
           "var_name_hash": "hRFUQhYwaQyP3w",
           "type": "uint32_t",
           "var_name": "Throttle_output_min_voltage",
@@ -821,7 +821,7 @@
           "tft_unit": "mV"
         },
         {
-          "ble_id": 37,
+          "ble_id": 36,
           "var_name_hash": "jNprjtFWKfqMKg",
           "type": "uint32_t",
           "var_name": "Throttle_output_max_voltage",
@@ -843,7 +843,7 @@
           "tft_unit": "mV"
         },
         {
-          "ble_id": 38,
+          "ble_id": 37,
           "var_name_hash": "Zi3am2e2yjJkIg",
           "type": "uint8_t",
           "var_name": "Throttle_output_curve",
@@ -870,7 +870,7 @@
       "class_order": 8,
       "settings": [
         {
-          "ble_id": 39,
+          "ble_id": 38,
           "var_name_hash": "Jg9Th1FiYt9IbQ",
           "type": "uint8_t",
           "var_name": "Button_1_short_press_action",
@@ -892,7 +892,7 @@
           "tft_unit": ""
         },
         {
-          "ble_id": 40,
+          "ble_id": 39,
           "var_name_hash": "5pKoBj-3jeLA-A",
           "type": "uint8_t",
           "var_name": "Button_1_long_press_action",
@@ -914,7 +914,7 @@
           "tft_unit": ""
         },
         {
-          "ble_id": 41,
+          "ble_id": 40,
           "var_name_hash": "-BvNzY5AGUrFcA",
           "type": "uint8_t",
           "var_name": "Button_2_short_press_action",
@@ -936,7 +936,7 @@
           "tft_unit": ""
         },
         {
-          "ble_id": 42,
+          "ble_id": 41,
           "var_name_hash": "JihyhJE7d1zFLA",
           "type": "uint8_t",
           "var_name": "Button_long_press_duration",
@@ -963,7 +963,7 @@
       "class_order": 10,
       "settings": [
         {
-          "ble_id": 43,
+          "ble_id": 42,
           "var_name_hash": "Wn-QV78YSMANWA",
           "type": "string",
           "var_name": "Wifi_ssid",
@@ -985,7 +985,7 @@
           "tft_unit": ""
         },
         {
-          "ble_id": 44,
+          "ble_id": 43,
           "var_name_hash": "WtL1vHxqARIB1A",
           "type": "string",
           "var_name": "Wifi_password",

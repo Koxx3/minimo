@@ -195,7 +195,6 @@ void saveConfig(AutoConnectAux &aux)
 void loadConfig(AutoConnectAux &aux)
 {
     aux.setElementValue("ACE_SETTINGS_Wheel_size", (String)WifiSettingsPortal_settings->get_Wheel_size());
-    Serial.println("get_Wheel_size = " + (String)WifiSettingsPortal_settings->get_Wheel_size());
     aux.setElementValue("ACE_SETTINGS_Number_of_poles_pairs", (String)WifiSettingsPortal_settings->get_Number_of_poles_pairs());
     aux.setElementValue("ACE_SETTINGS_Battery_minimum_voltage", (String)WifiSettingsPortal_settings->get_Battery_minimum_voltage());
     aux.setElementValue("ACE_SETTINGS_Battery_maximum_voltage", (String)WifiSettingsPortal_settings->get_Battery_maximum_voltage());

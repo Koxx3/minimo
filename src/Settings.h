@@ -373,7 +373,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_DISPLAY_SPLASH_SCREEN_BLE_ID 25
+    #define SETTINGS_DISPLAY_SPLASH_SCREEN_BLE_ID 44
     #define SETTINGS_DISPLAY_SPLASH_SCREEN_STORAGE_KEY "1pXvAC8qa_Ymwg"
     #define SETTINGS_DISPLAY_SPLASH_SCREEN_NAME "Display_splash_screen"
 
@@ -386,7 +386,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_EBRAKE_PROGRESSIVE_MODE_BLE_ID 26
+    #define SETTINGS_EBRAKE_PROGRESSIVE_MODE_BLE_ID 25
     #define SETTINGS_EBRAKE_PROGRESSIVE_MODE_STORAGE_KEY "dqixKA5YCyLprg"
     #define SETTINGS_EBRAKE_PROGRESSIVE_MODE_NAME "Ebrake_progressive_mode"
 
@@ -399,7 +399,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_EBRAKE_SMART_BRAKE_TYPE_BLE_ID 27
+    #define SETTINGS_EBRAKE_SMART_BRAKE_TYPE_BLE_ID 26
     #define SETTINGS_EBRAKE_SMART_BRAKE_TYPE_STORAGE_KEY "4KrpLh-wBGfnRw"
     #define SETTINGS_EBRAKE_SMART_BRAKE_TYPE_NAME "Ebrake_smart_brake_type"
 
@@ -418,7 +418,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_EBRAKE_MIN_POWER_VALUE_BLE_ID 28
+    #define SETTINGS_EBRAKE_MIN_POWER_VALUE_BLE_ID 27
     #define SETTINGS_EBRAKE_MIN_POWER_VALUE_STORAGE_KEY "oPjAXerdrPc6rA"
     #define SETTINGS_EBRAKE_MIN_POWER_VALUE_NAME "Ebrake_min_power_value"
 
@@ -431,7 +431,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_EBRAKE_MAX_POWER_VALUE_BLE_ID 29
+    #define SETTINGS_EBRAKE_MAX_POWER_VALUE_BLE_ID 28
     #define SETTINGS_EBRAKE_MAX_POWER_VALUE_STORAGE_KEY "wfn4a-aqj7FMYg"
     #define SETTINGS_EBRAKE_MAX_POWER_VALUE_NAME "Ebrake_max_power_value"
 
@@ -444,7 +444,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_EBRAKE_TIME_BETWEEN_MODE_SHIFT_BLE_ID 30
+    #define SETTINGS_EBRAKE_TIME_BETWEEN_MODE_SHIFT_BLE_ID 29
     #define SETTINGS_EBRAKE_TIME_BETWEEN_MODE_SHIFT_STORAGE_KEY "M4yE0fJWGLFwQw"
     #define SETTINGS_EBRAKE_TIME_BETWEEN_MODE_SHIFT_NAME "Ebrake_time_between_mode_shift"
 
@@ -457,7 +457,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_EBRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_BLE_ID 31
+    #define SETTINGS_EBRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_BLE_ID 30
     #define SETTINGS_EBRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_STORAGE_KEY "wCje0ujd4SQWFQ"
     #define SETTINGS_EBRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_NAME "Ebrake_disabled_on_high_battery_voltage"
 
@@ -470,7 +470,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_EBRAKE_DISABLED_PERCENT_LIMIT_BLE_ID 32
+    #define SETTINGS_EBRAKE_DISABLED_PERCENT_LIMIT_BLE_ID 31
     #define SETTINGS_EBRAKE_DISABLED_PERCENT_LIMIT_STORAGE_KEY "Gyp9piayhP9y7g"
     #define SETTINGS_EBRAKE_DISABLED_PERCENT_LIMIT_NAME "Ebrake_disabled_percent_limit"
 
@@ -483,7 +483,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_THROTTLE_REGENERATION_BLE_ID 33
+    #define SETTINGS_THROTTLE_REGENERATION_BLE_ID 32
     #define SETTINGS_THROTTLE_REGENERATION_STORAGE_KEY "kON5g2lRLCoJfg"
     #define SETTINGS_THROTTLE_REGENERATION_NAME "Throttle_regeneration"
 
@@ -496,7 +496,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_BLE_ID 34
+    #define SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_BLE_ID 33
     #define SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_STORAGE_KEY "JhnqCyEvRZ5EKA"
     #define SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_NAME "Throttle_input_min_voltage"
 
@@ -509,7 +509,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_BLE_ID 35
+    #define SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_BLE_ID 34
     #define SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_STORAGE_KEY "MyYB6rUwNZQHqA"
     #define SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_NAME "Throttle_input_max_voltage"
 
@@ -522,7 +522,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_BLE_ID 36
+    #define SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_BLE_ID 35
     #define SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_STORAGE_KEY "hRFUQhYwaQyP3w"
     #define SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_NAME "Throttle_output_min_voltage"
 
@@ -535,7 +535,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_BLE_ID 37
+    #define SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_BLE_ID 36
     #define SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_STORAGE_KEY "jNprjtFWKfqMKg"
     #define SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_NAME "Throttle_output_max_voltage"
 
@@ -548,7 +548,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_THROTTLE_OUTPUT_CURVE_BLE_ID 38
+    #define SETTINGS_THROTTLE_OUTPUT_CURVE_BLE_ID 37
     #define SETTINGS_THROTTLE_OUTPUT_CURVE_STORAGE_KEY "Zi3am2e2yjJkIg"
     #define SETTINGS_THROTTLE_OUTPUT_CURVE_NAME "Throttle_output_curve"
 
@@ -568,7 +568,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_BLE_ID 39
+    #define SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_BLE_ID 38
     #define SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_STORAGE_KEY "Jg9Th1FiYt9IbQ"
     #define SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_NAME "Button_1_short_press_action"
 
@@ -590,7 +590,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_BUTTON_1_LONG_PRESS_ACTION_BLE_ID 40
+    #define SETTINGS_BUTTON_1_LONG_PRESS_ACTION_BLE_ID 39
     #define SETTINGS_BUTTON_1_LONG_PRESS_ACTION_STORAGE_KEY "5pKoBj-3jeLA-A"
     #define SETTINGS_BUTTON_1_LONG_PRESS_ACTION_NAME "Button_1_long_press_action"
 
@@ -614,7 +614,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_BLE_ID 41
+    #define SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_BLE_ID 40
     #define SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_STORAGE_KEY "-BvNzY5AGUrFcA"
     #define SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_NAME "Button_2_short_press_action"
 
@@ -636,7 +636,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_BUTTON_LONG_PRESS_DURATION_BLE_ID 42
+    #define SETTINGS_BUTTON_LONG_PRESS_DURATION_BLE_ID 41
     #define SETTINGS_BUTTON_LONG_PRESS_DURATION_STORAGE_KEY "JihyhJE7d1zFLA"
     #define SETTINGS_BUTTON_LONG_PRESS_DURATION_NAME "Button_long_press_duration"
 
@@ -649,7 +649,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_WIFI_SSID_BLE_ID 43
+    #define SETTINGS_WIFI_SSID_BLE_ID 42
     #define SETTINGS_WIFI_SSID_STORAGE_KEY "Wn-QV78YSMANWA"
     #define SETTINGS_WIFI_SSID_NAME "Wifi_ssid"
 
@@ -662,7 +662,7 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_WIFI_PASSWORD_BLE_ID 44
+    #define SETTINGS_WIFI_PASSWORD_BLE_ID 43
     #define SETTINGS_WIFI_PASSWORD_STORAGE_KEY "WtL1vHxqARIB1A"
     #define SETTINGS_WIFI_PASSWORD_NAME "Wifi_password"
 
