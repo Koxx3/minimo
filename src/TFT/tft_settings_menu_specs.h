@@ -188,6 +188,23 @@ result reset_ble_pin_code_item()
   return proceed;
 }
 
+result calibration_brake_min_item()
+{
+
+  TFT_menu_shrd->brakeMinPressureRaw = TFT_menu_shrd->brakeAnalogValue;
+  saveBrakeMinPressure();
+
+  return proceed;
+}
+
+result calibration_brake_max_item()
+{
+
+  TFT_menu_shrd->brakeMaxPressureRaw = TFT_menu_shrd->brakeAnalogValue;
+  saveBrakeMaxPressure();
+  return proceed;
+}
+
 result ota_update_pio()
 {
   TFT_menu_shrd->inOtaMode = OTA_IDE;
@@ -201,8 +218,8 @@ result discard_exit()
 {
   Serial.print("\n\nEXIT - discard_exit!!!!\n\n");
 
-  TFT_menu_shrd->inSettingsMenu = SETTINGS_MENU_STATE_EXITING_SWICTH_TO_BLE;
-  Serial.println("discard_exit_item ===> SETTINGS_MENU_STATE_EXITING_SWICTH_TO_BLE");
+  TFT_menu_shrd->inSettingsMenu = SETTINGS_MENU_STATE_OUT;
+  Serial.println("discard_exit_item ===> SETTINGS_MENU_STATE_OUT");
 
   return proceed;
 }
@@ -211,8 +228,8 @@ result save_exit()
 {
   Serial.print("\n\nEXIT - save_exit!!!!\n\n");
 
-  TFT_menu_shrd->inSettingsMenu = SETTINGS_MENU_STATE_EXITING_SWICTH_TO_BLE;
-  Serial.println("discard_exit_item ===> SETTINGS_MENU_STATE_EXITING_SWICTH_TO_BLE");
+  TFT_menu_shrd->inSettingsMenu = SETTINGS_MENU_STATE_OUT;
+  Serial.println("discard_exit_item ===> SETTINGS_MENU_STATE_OUT");
 
   settings_menu_save_to_settings();
   notifySettingsChangedWithBle();
@@ -225,6 +242,11 @@ MENU(SUBMENU_MANUAL_status, "  Status", doNothing, noEvent, noStyle,
      altOP(max_temperature_item, "", doNothing, updateEvent),      // updateEvent
      altOP(humidity_item, "", doNothing, updateEvent),             // updateEvent
      altOP(errors_item, "", doNothing, updateEvent),               // updateEvent
+     EXIT("< Back"));
+
+MENU(SUBMENU_MANUAL_calibrations, "  Calibrations", doNothing, noEvent, noStyle,
+     OP("  Calibrate ebrake min position", calibration_brake_min_item, enterEvent),
+     OP("  Calibrate ebrake max position", calibration_brake_max_item, enterEvent),
      EXIT("< Back"));
 
 MENU(SUBMENU_MANUAL_more, "  More", doNothing, noEvent, noStyle,
@@ -249,10 +271,9 @@ MENU(SUBMENU_MANUAL_more, "  More", doNothing, noEvent, noStyle,
 #define Green RGB565(0, 255, 0)
 #define Blue RGB565(0, 0, 255)
 #define Gray RGB565(128, 128, 128)
-#define LighterSelected RGB565(50, 50, 50)
+#define LighterSelected RGB565(230, 230, 255)
 #define LighterRed RGB565(255, 150, 150)
-#define LighterGreen RGB565(150, 255, 150)
-#define LighterBlue RGB565(150, 150, 255)
+#define LighterBlue RGB565(200, 200, 255)
 #define DarkerRed RGB565(150, 0, 0)
 #define DarkerGreen RGB565(0, 150, 0)
 #define DarkerBlue RGB565(0, 0, 150)

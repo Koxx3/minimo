@@ -92,7 +92,7 @@ ZeroUart zeroCntrl;
 #define SPEED_TO_DISTANCE_CORRECTION_FACTOR 1
 
 #define ENABLE_WATCHDOG 1
-#define WATCHDOG_TIMEOUT 1000000 // 1s // time in ms to trigger the watchdog
+#define WATCHDOG_TIMEOUT 1000 // 1s // time in ms to trigger the watchdog
 
 //////------------------------------------
 ////// Variables
@@ -373,8 +373,8 @@ void taskUpdateTFT(void *parameter)
       Serial.println("settings_menu_setup");
       settings_menu_setup();
 
-      shrd.inSettingsMenu = SETTINGS_MENU_STATE_ENTERING_SWICTH_TO_WIFI;
-      Serial.println("taskUpdateTFT ===> SETTINGS_MENU_STATE_ENTERING_SWICTH_TO_WIFI");
+      shrd.inSettingsMenu = SETTINGS_MENU_STATE_IN;
+      Serial.println("taskUpdateTFT ===> SETTINGS_MENU_STATE_IN");
     }
     else if (shrd.inSettingsMenu == SETTINGS_MENU_STATE_IN)
     {
@@ -403,22 +403,6 @@ void taskUpdateTFT(void *parameter)
         vTaskDelay(200);
       }
     }
-    else if (shrd.inSettingsMenu == SETTINGS_MENU_STATE_EXITING_SWICTH_TO_BLE)
-    {
-
-      Serial.println("taskUpdateTFT / SETTINGS_MENU_STATE_EXITING_SWICTH_TO_BLE");
-
-      WifiSettingsPortal_close();
-
-      vTaskDelay(10);
-
-      blh.init();
-
-      vTaskDelay(10);
-
-      shrd.inSettingsMenu = SETTINGS_MENU_STATE_OUT;
-      Serial.println("taskUpdateTFT ===> SETTINGS_MENU_STATE_OUT");
-    }
   }
 }
 
@@ -428,29 +412,9 @@ void taskProcessWifiBlocking(void *parameter)
   for (;;)
   {
 
-    if (shrd.inSettingsMenu == SETTINGS_MENU_STATE_ENTERING_SWICTH_TO_WIFI)
-    {
-      Serial.println("taskProcessWifiBlocking / SETTINGS_MENU_STATE_ENTERING_SWICTH_TO_WIFI");
+    WifiSettingsPortal_loop();
 
-      blh.deinit();
-
-      vTaskDelay(10);
-
-      shrd.inSettingsMenu = SETTINGS_MENU_STATE_IN;
-      Serial.println("taskProcessWifiBlocking ===> SETTINGS_MENU_STATE_IN");
-
-      // change state before ... blocking while waiting to connect to an access point
-      WifiSettingsPortal_setup();
-    }
-    else if (shrd.inSettingsMenu == SETTINGS_MENU_STATE_IN)
-    {
-      // loop when connected to an access point
-      WifiSettingsPortal_loop();
-
-      // Serial.println("taskProcessWifiBlocking ===> SETTINGS_MENU_STATE_IN");
-    }
-
-    vTaskDelay(10);
+    vTaskDelay(50);
   }
 }
 
@@ -534,6 +498,14 @@ void setup()
   setupBattery();
   setupAutonomy();
 
+  // Setup wifi portal
+  Serial.println("   Wifi portal ...");
+  WifiSettingsPortal_setSettings(&settings);
+  WifiSettingsPortal_setSharedData(&shrd);
+  WifiSettingsPortal_setBluetoothHandler(&blh);
+  WifiSettingsPortal_setup();
+  WifiSettingsPortal_begin();
+
 #if TFT_ENABLED
   xTaskCreatePinnedToCore(
       taskUpdateTFT,   // Function that should be called
@@ -563,8 +535,6 @@ void setup()
       NULL,                 // Task handle,
       1);                   // Core
 
-  WifiSettingsPortal_setSettings(&settings);
-  WifiSettingsPortal_setSharedData(&shrd);
 
 #if ENABLE_WATCHDOG
   Serial.println(PSTR("Watchdog enabled"));

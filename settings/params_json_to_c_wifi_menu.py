@@ -103,7 +103,6 @@ void saveConfig(AutoConnectAux &aux)
     {%- endfor %}
 {%- endfor %}
     WifiSettingsPortal_settings->save();
-    WifiSettingsPortal_settings->restore();
     
 }
 

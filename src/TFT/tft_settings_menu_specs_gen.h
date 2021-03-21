@@ -204,6 +204,7 @@ MENU(mainMenu,"  Main menu",doNothing,noEvent,noStyle //
     ,SUBMENU(SUBMENU_Electric_brake) //
     ,SUBMENU(SUBMENU_Throttle) //
     ,SUBMENU(SUBMENU_Escooter_buttons) //
+    ,SUBMENU(SUBMENU_MANUAL_calibrations) //
     ,SUBMENU(SUBMENU_MANUAL_more) //
     ,OP("< Discard & exit", discard_exit,enterEvent) //
     ,OP("< Save & exit", save_exit,enterEvent) //

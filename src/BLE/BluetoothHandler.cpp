@@ -77,6 +77,7 @@ uint32_t bleBeaconInvisibleCount = 0;
 uint32_t errCounter = 0;
 
 String firmwareString;
+bool bleScanActive = false;
 
 BluetoothHandler::BluetoothHandler()
 {
@@ -360,6 +361,9 @@ void BluetoothHandler::init()
                 {
                     settings->save();
                     Serial.println("BLH - save");
+
+                    startBleScan();
+                    Serial.println("BLH - startBleScan");
                 }
             }
             else
@@ -590,19 +594,42 @@ void BluetoothHandler::init()
     pSecurity->setInitEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
     pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND);
 
-    // Start scanning
-    pBLEScan = BLEDevice::getScan(); //create new scan
-    pBLEScan->setActiveScan(true);   //active scan uses more power, but get results faster
-    pBLEScan->setInterval(100);
-    pBLEScan->setWindow(99); // less or equal setInterval value
-    pBLEScan->start(BEACON_SCAN_PERIOD_IN_SECONDS, &bleOnScanResults, false);
+    // Scan if configuration is ok
+    startBleScan();
+
     Serial.println("BLH - init end");
+}
+
+bool BluetoothHandler::isBleScanActive()
+{
+    return bleScanActive;
+}
+
+void BluetoothHandler::startBleScan()
+{
+
+    // start scan only if different from dummy mac address
+    if ((!bleScanActive) && (settings->get_Ble_beacon_mac_address() != "aa:bb:cc:dd:ee:ff"))
+    {
+        bleScanActive = true;
+
+        // Start scanning
+        pBLEScan = BLEDevice::getScan(); //create new scan
+        pBLEScan->setActiveScan(true);   //active scan uses more power, but get results faster
+        pBLEScan->setInterval(100);
+        pBLEScan->setWindow(20); // less or equal setInterval value
+        pBLEScan->start(BEACON_SCAN_PERIOD_IN_SECONDS, &bleOnScanResults, false);
+    }
+    else
+    {
+        bleScanActive = false;
+    }
 }
 
 void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
 {
 
-#if DEBUG_DISPLAY_BLE_SCAN
+#if DEBUG_BLE_DISPLAY_SCAN
     Serial.print("BLH - BLE Scan Device found: ");
     Serial.println(scanResults.getCount());
 #endif
@@ -622,7 +649,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
         addressBeaconSettings.toLowerCase();
         addressBeaconSettings = addressBeaconSettings.substring(0, 17);
 
-#if DEBUG_DISPLAY_BLE_SCAN
+#if DEBUG_BLE_DISPLAY_SCAN
         Serial.print("BLH - BLE device : address : ");
         Serial.print(addressStr);
         Serial.print(" / name : ");
@@ -641,7 +668,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
             if (shrd->beaconRSSI < settings->get_Ble_beacon_range())
             {
 
-#if DEBUG_DISPLAY_BLE_SCAN
+#if DEBUG_BLE_DISPLAY_SCAN
                 Serial.print("BLH -  ==> Beacon found ... but too far away / RSSI = ");
                 Serial.print(shrd->beaconRSSI);
                 Serial.print(" / min RSSI required = ");
@@ -656,9 +683,9 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
                 bleBeaconInvisibleCount = 0;
                 newBleBeaconVisible = true;
 
-#if DEBUG_DISPLAY_BLE_SCAN
+#if DEBUG_BLE_DISPLAY_SCAN
                 Serial.print("BLH -  ==> Beacon found  / RSSI = ");
-                Serial.print(bleBeaconRSSI);
+                Serial.print(shrd->beaconRSSI);
                 Serial.print(" / min RSSI required = ");
                 Serial.print(settings->get_Ble_beacon_range());
                 Serial.println(" ==> unlock from scan");
@@ -679,14 +706,14 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
         if (bleBeaconInvisibleCount >= MAX_BEACON_INVISIBLE_COUNT)
         {
             newBleBeaconVisible = false;
-#if DEBUG_DISPLAY_BLE_SCAN
+#if DEBUG_BLE_DISPLAY_SCAN
             Serial.printf("BLH -  ==> Beacon not found  / bleBeaconInvisibleCount = %d / newBleBeaconVisible = %d\n", bleBeaconInvisibleCount, newBleBeaconVisible);
 #endif
         }
         else
         {
             newBleBeaconVisible = true;
-#if DEBUG_DISPLAY_BLE_SCAN
+#if DEBUG_BLE_DISPLAY_SCAN
             Serial.printf("BLH -  ==> Beacon not found  / bleBeaconInvisibleCount = %d / newBleBeaconVisible = %d ... until lock\n", bleBeaconInvisibleCount, newBleBeaconVisible);
 #endif
         }
@@ -695,7 +722,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
     // store beacon status
     bleBeaconVisible = newBleBeaconVisible;
 
-#if DEBUG_DISPLAY_BLE_SCAN
+#if DEBUG_BLE_DISPLAY_SCAN
     Serial.printf("BLH - bleLockForced = %d / settings->getS1F().Bluetooth_lock_mode = %d / bleBeaconVisible = %d / deviceStatus = %d \n", bleLockForced, settings->get_Bluetooth_lock_mode(), bleBeaconVisible, deviceStatus);
 #endif
 
@@ -708,7 +735,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
             {
                 shrd->isLocked = 1;
 
-#if DEBUG_DISPLAY_BLE_SCAN
+#if DEBUG_BLE_DISPLAY_SCAN
                 Serial.println(" ==> Beacon not visible // smartphone not connected ==> LOCK decision");
                 Serial.println("-------------------------------------");
                 Serial.println();
@@ -718,7 +745,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
             {
                 shrd->isLocked = 0;
 
-#if DEBUG_DISPLAY_BLE_SCAN
+#if DEBUG_BLE_DISPLAY_SCAN
                 Serial.println(" ==> Beacon visible // smartphone connected ==> UNLOCK decision");
                 Serial.println("-------------------------------------");
                 Serial.println();
@@ -737,7 +764,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
             {
                 shrd->isLocked = 1;
 
-#if DEBUG_DISPLAY_BLE_SCAN
+#if DEBUG_BLE_DISPLAY_SCAN
                 Serial.println(" ==> Beacon not visible ==> LOCK decision");
                 Serial.println("-------------------------------------");
 #endif
@@ -746,7 +773,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
             {
                 shrd->isLocked = 0;
 
-#if DEBUG_DISPLAY_BLE_SCAN
+#if DEBUG_BLE_DISPLAY_SCAN
                 Serial.println(" ==> Beacon visible ==> UNLOCK decision");
                 Serial.println("-------------------------------------");
 #endif
@@ -1116,9 +1143,9 @@ void BluetoothHandler::deinit()
 
         // stop BLE stack
         NimBLEDevice::stopAdvertising();
-        
+
         delay(10);
-        
+
         NimBLEDevice::deinit(true);
 
         delay(10);

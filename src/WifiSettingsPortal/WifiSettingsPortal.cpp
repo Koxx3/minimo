@@ -5,11 +5,14 @@
 #include "Settings.h"
 #include <time.h>
 #include "SharedData.h"
+#include "BLE/BluetoothHandler.h"
 
 using WebServerClass = WebServer;
 
 Settings *WifiSettingsPortal_settings;
 SharedData *WifiSettingsPortal_shrd;
+BluetoothHandler *WifiSettingsPortal_blh;
+  
 
 WebServerClass server;
 AutoConnect portal(server);
@@ -108,6 +111,8 @@ void WifiSettingsPortal_setup()
 
     saveConfig(aux);
 
+    WifiSettingsPortal_blh->startBleScan();
+
     return String();
   });
 
@@ -171,38 +176,48 @@ void WifiSettingsPortal_setup()
   config.auth = AC_AUTH_NONE;
   config.authScope = AC_AUTHSCOPE_AUX;
   config.psk = (String)WifiSettingsPortal_settings->get_Ble_pin_code() + (String)WifiSettingsPortal_settings->get_Ble_pin_code();
-  config.retainPortal = true; /**< Even if the captive portal times out, it maintains the portal state. */
+  config.retainPortal = true;   /**< Even if the captive portal times out, it maintains the portal state. */
   config.preserveAPMode = true; /**< Keep existing AP WiFi mode if captive portal won't be started. */
   config.homeUri = "/settingspage";
-  config.autoReset = false;          /**< Reset ESP8266 module automatically when WLAN disconnected. */
+  config.autoReset = false; /**< Reset ESP8266 module automatically when WLAN disconnected. */
   config.menuItems = AC_MENUITEM_CONFIGNEW | AC_MENUITEM_OPENSSIDS | AC_MENUITEM_DISCONNECT | AC_MENUITEM_RESET;
-  config.autoRise = true;/**< Automatic starting the captive portal */
+  config.autoRise = true; /**< Automatic starting the captive portal */
   config.title = "SmartElec";
 
   //config.immediateStart = true;
   //config.autoReconnect = true;
   //config.autoReconnect;      /**< Automatic reconnect with past SSID */
   //config.immediateStart;     /**< Skips WiFi.begin(), start portal immediately */
-  //config.beginTimeout;   /**< Timeout value for WiFi.begin */
-  //config.portalTimeout;  /**< Timeout value for stay in the captive portal */
+  config.beginTimeout = 5000;  /**< Timeout value for WiFi.begin */
+  config.portalTimeout = 5000; /**< Timeout value for stay in the captive portal */
   //config.reconnectInterval;  /**< Auto-reconnect attempt interval uint */
+  
+
+}
+
+void WifiSettingsPortal_begin()
+{
 
   portal.config(config);
   portal.begin();
-
+  //server.begin(80);
   Serial.println("wifi portal open !");
 }
 
 void WifiSettingsPortal_loop()
 {
+  //Serial.println("wifi portal loop - begin ----------------");
   portal.handleClient();
+  //Serial.print(".");
 }
 
 void WifiSettingsPortal_close()
 {
   portal.end();
-  server.close();
+  //server.close();
   Serial.println("Wifi portal closed");
+  //WiFi.disconnect(true, false);
+  WiFi.mode(WIFI_MODE_NULL);
 }
 
 void WifiSettingsPortal_setSettings(Settings *set)
@@ -213,4 +228,9 @@ void WifiSettingsPortal_setSettings(Settings *set)
 void WifiSettingsPortal_setSharedData(SharedData *set)
 {
   WifiSettingsPortal_shrd = set;
+}
+
+void WifiSettingsPortal_setBluetoothHandler(BluetoothHandler *set)
+{
+  WifiSettingsPortal_blh = set;
 }

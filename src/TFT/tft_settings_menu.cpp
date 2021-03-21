@@ -139,7 +139,7 @@ void settings_menu_setup()
   tft.setTextDatum(BL_DATUM);
   tft.setFreeFont(FONT_FORCED_SQUARE10pt7b);
 
-  tft.fillScreen(Black);
+  tft.fillScreen(TFT_BLACK);
 
   mainMenu.dirty = true; // Force the main menu to redraw itself
 
@@ -165,6 +165,7 @@ void settings_menu_set_settings(Settings *set)
 {
   TFT_menu_settings = set;
 }
+
 void settings_menu_set_shared_datas(SharedData *set)
 {
   TFT_menu_shrd = set;

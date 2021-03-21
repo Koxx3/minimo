@@ -28,6 +28,8 @@ public:
     static void deinit();
     static void setSettings(Settings *);
     static void setSharedData(SharedData *);
+    static void startBleScan();
+    static bool isBleScanActive();
     static void bleOnScanResults(BLEScanResults);
     static void notifyBleLock();
     static void notifyBleLogs(char *);
