@@ -1132,7 +1132,8 @@ void BluetoothHandler::deinit()
 
         Serial.println("BLH - stop advertising ... done");
         // stop scanning
-        pBLEScan->stop();
+        if (pBLEScan != NULL)
+            pBLEScan->stop();
         Serial.println("BLH - stop scanning ... done");
 
         delay(10);
