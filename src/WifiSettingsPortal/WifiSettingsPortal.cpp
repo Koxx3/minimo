@@ -6,13 +6,13 @@
 #include <time.h>
 #include "SharedData.h"
 #include "BLE/BluetoothHandler.h"
+#include "main.h"
 
 using WebServerClass = WebServer;
 
 Settings *WifiSettingsPortal_settings;
 SharedData *WifiSettingsPortal_shrd;
 BluetoothHandler *WifiSettingsPortal_blh;
-  
 
 WebServerClass server;
 AutoConnect portal(server);
@@ -68,6 +68,14 @@ ACText(ACE_SETTINGS_SAVE_header, "<h4>Settings has been saved.</h4>", "text-alig
 ACSubmit(ACE_SETTINGS_SAVE_confirm, "Ok", "/settingspage");
 AutoConnectAux settingsSaveAux("/settingssave", "SmartElec settings", false, {ACE_Style2, ACE_Style3, ACE_Style4, ACE_SETTINGS_SAVE_header, ACE_SETTINGS_SAVE_confirm});
 
+// Calibration page
+ACText(ACE_CALIB_title, "<h2>Brake calibrations</h2>", "", "", AC_Tag_BR);
+ACText(ACE_CALIB_text1, "Use only if you have an analog brake lever like Xiaomi.", "", "", AC_Tag_BR);
+ACText(ACE_CALIB_text2, "Press and maintain brake lever a fix position and press the page button. It will determine the minimal pressure to start electric brake and maximal pressure for maximum brake.", "", "", AC_Tag_BR);
+ACSubmit(ACE_CALIB_submit_min, "Min position", "/calibpage?min=1");
+ACSubmit(ACE_CALIB_submit_max, "Max position", "/calibpage?max=1");
+AutoConnectAux calibPageAux("/calibpage", "SmartElec calibrations", true, {ACE_Style1, ACE_Style2, ACE_Style4, ACE_Style5, ACE_CALIB_title, ACE_CALIB_text1, ACE_CALIB_text2, ACE_CALIB_submit_min, ACE_CALIB_submit_max});
+
 // OTA flash pages
 ACText(ACE_OTA_title, "Available versions : ", "", "", AC_Tag_BR);
 ACText(ACE_OTA_current_version, "Current version : ", "", "", AC_Tag_BR);
@@ -102,6 +110,10 @@ void WifiSettingsPortal_setup()
 
       loadConfig(aux);
     }
+    else
+    {
+      Serial.println("where reject : " + (String)portal.where());
+    }
     Serial.println("load end");
     return String();
   });
@@ -112,6 +124,29 @@ void WifiSettingsPortal_setup()
     saveConfig(aux);
 
     WifiSettingsPortal_blh->startBleScan();
+
+    return String();
+  });
+
+  calibPageAux.on([](AutoConnectAux &aux, PageArgument &arg) {
+    Serial.println("calib page");
+
+    if ((arg.size() >= 2) && (arg.argName(0) == "max"))
+    {
+      WifiSettingsPortal_shrd->brakeMaxPressureRaw = WifiSettingsPortal_shrd->brakeAnalogValue;
+      saveBrakeMaxPressure();
+      Serial.println("save max pressure");
+    }
+    else if ((arg.size() >= 2) && (arg.argName(0) == "min"))
+    {
+      WifiSettingsPortal_shrd->brakeMinPressureRaw = WifiSettingsPortal_shrd->brakeAnalogValue;
+      saveBrakeMinPressure();
+      Serial.println("save min pressure");
+    }
+    else
+    {
+      Serial.println("calib : no arg match");
+    }
 
     return String();
   });
@@ -163,7 +198,7 @@ void WifiSettingsPortal_setup()
 
   // In the setup(),
   // Join the custom Web pages and performs begin
-  portal.join({settingsPageAux, settingsSaveAux, otaPageAux, otaFlashAux});
+  portal.join({settingsPageAux, settingsSaveAux, calibPageAux, otaPageAux, otaFlashAux});
 
   // fix wifi name ... same as BLE
   uint8_t base_mac_addr[6] = {0};
@@ -191,8 +226,6 @@ void WifiSettingsPortal_setup()
   config.beginTimeout = 5000;  /**< Timeout value for WiFi.begin */
   config.portalTimeout = 5000; /**< Timeout value for stay in the captive portal */
   //config.reconnectInterval;  /**< Auto-reconnect attempt interval uint */
-  
-
 }
 
 void WifiSettingsPortal_begin()
