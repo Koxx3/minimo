@@ -617,7 +617,7 @@ void BluetoothHandler::startBleScan()
         pBLEScan = BLEDevice::getScan(); //create new scan
         pBLEScan->setActiveScan(true);   //active scan uses more power, but get results faster
         pBLEScan->setInterval(100);
-        pBLEScan->setWindow(20); // less or equal setInterval value
+        pBLEScan->setWindow(50); // less or equal setInterval value
         pBLEScan->start(BEACON_SCAN_PERIOD_IN_SECONDS, &bleOnScanResults, false);
     }
     else

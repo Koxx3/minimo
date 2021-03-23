@@ -386,6 +386,25 @@ public:
             
     /*-------------------------------------------------------*/
 
+    #define SETTINGS_ROTATE_SCREEN_BLE_ID 45
+    #define SETTINGS_ROTATE_SCREEN_STORAGE_KEY "30RLQMAmM3xHfw"
+    #define SETTINGS_ROTATE_SCREEN_NAME "Rotate_screen"
+
+    uint8_t Rotate_screen;
+    typedef enum LIST_Rotate_screen {
+        LIST_Rotate_screen_0,
+        LIST_Rotate_screen_1,
+        LIST_Rotate_screen_2,
+        LIST_Rotate_screen_3, 
+    } tRotate_screen;
+
+    void set_Rotate_screen (uint8_t value);
+    uint8_t get_Rotate_screen();
+    void display_Rotate_screen();
+    void save_Rotate_screen(uint8_t value);
+            
+    /*-------------------------------------------------------*/
+
     #define SETTINGS_EBRAKE_PROGRESSIVE_MODE_BLE_ID 25
     #define SETTINGS_EBRAKE_PROGRESSIVE_MODE_STORAGE_KEY "dqixKA5YCyLprg"
     #define SETTINGS_EBRAKE_PROGRESSIVE_MODE_NAME "Ebrake_progressive_mode"

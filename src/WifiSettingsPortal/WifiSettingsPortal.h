@@ -9,5 +9,6 @@ void WifiSettingsPortal_begin();
 void WifiSettingsPortal_setSettings(Settings *);
 void WifiSettingsPortal_setSharedData(SharedData *set);
 void WifiSettingsPortal_setBluetoothHandler(BluetoothHandler *set);
+void WifiSettingsPortal_sendTemperature();
 
 #endif

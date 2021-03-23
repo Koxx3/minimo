@@ -567,6 +567,28 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": ""
+        },
+        {
+          "ble_id": 45,
+          "var_name_hash": "30RLQMAmM3xHfw",
+          "type": "uint8_t",
+          "var_name": "Rotate_screen",
+          "valid_config": "^sd_.*",
+          "list_strings": "0\n1\n2\n3",
+          "min": 0,
+          "max": 3,
+          "default": 1,
+          "increment": 1.0,
+          "regex_valid": "",
+          "smartphone_display_name": "Rotate screen",
+          "smartphone_display_unit": "",
+          "smartphone_display_hint": "",
+          "smartphone_display_type": "list",
+          "tft_menu_visible": 1.0,
+          "tft_display_name": "Rotate screen",
+          "tft_fast_increment": 1.0,
+          "tft_slow_increment": 1.0,
+          "tft_unit": ""
         }
       ]
     },

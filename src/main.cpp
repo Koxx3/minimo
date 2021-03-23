@@ -408,6 +408,14 @@ void taskUpdateTFT(void *parameter)
 
 void taskProcessWifiBlocking(void *parameter)
 {
+
+  // setup
+  WifiSettingsPortal_setSettings(&settings);
+  WifiSettingsPortal_setSharedData(&shrd);
+  WifiSettingsPortal_setBluetoothHandler(&blh);
+  WifiSettingsPortal_setup();
+  WifiSettingsPortal_begin();
+
   // infinite loop
   for (;;)
   {
@@ -500,11 +508,6 @@ void setup()
 
   // Setup wifi portal
   Serial.println("   Wifi portal ...");
-  WifiSettingsPortal_setSettings(&settings);
-  WifiSettingsPortal_setSharedData(&shrd);
-  WifiSettingsPortal_setBluetoothHandler(&blh);
-  WifiSettingsPortal_setup();
-  WifiSettingsPortal_begin();
 
 #if TFT_ENABLED
   xTaskCreatePinnedToCore(
@@ -534,7 +537,6 @@ void setup()
       0,                    // Task priority
       NULL,                 // Task handle,
       1);                   // Core
-
 
 #if ENABLE_WATCHDOG
   Serial.println(PSTR("Watchdog enabled"));
@@ -1738,6 +1740,11 @@ void loop()
   if (i_loop % 1000 == 99)
   {
     checkAndSaveOdo();
+  }
+
+  if (i_loop % 1000 == 99)
+  {
+    WifiSettingsPortal_sendTemperature();
   }
 
   // Give a time for ESP

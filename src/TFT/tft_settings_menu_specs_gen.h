@@ -57,6 +57,13 @@ TOGGLE(tft_Display_splash_screen, tft_Display_splash_screen_LIST,"  Display spla
     ,VALUE("Off",0,doNothing,noEvent) //
     ,VALUE("On",1,doNothing,noEvent) //
 );
+uint8_t tft_Rotate_screen = 1;
+TOGGLE(tft_Rotate_screen, tft_Rotate_screen_LIST,"  Rotate screen ",doNothing,noEvent,noStyle //
+    ,VALUE("0", 0 ,doNothing,noEvent) //
+    ,VALUE("1", 1 ,doNothing,noEvent) //
+    ,VALUE("2", 2 ,doNothing,noEvent) //
+    ,VALUE("3", 3 ,doNothing,noEvent) //
+);
 uint8_t tft_Ebrake_progressive_mode = 0;
 TOGGLE(tft_Ebrake_progressive_mode, tft_Ebrake_progressive_mode_LIST,"  Progressive mode ",doNothing,noEvent,noStyle //
     ,VALUE("Off",0,doNothing,noEvent) //
@@ -159,6 +166,7 @@ MENU(SUBMENU_SmartDisplay,"  SmartDisplay",doNothing,noEvent,noStyle //
     ,SUBMENU(tft_Abs_enabled_LIST) //
     ,FIELD(tft_Display_brightness,"  Display brightness "," ", 50, 100, 10, 5, doNothing,noEvent,noStyle) //
     ,SUBMENU(tft_Display_splash_screen_LIST) //
+    ,SUBMENU(tft_Rotate_screen_LIST) //
     ,EXIT("< Back")
 );
     
@@ -232,6 +240,7 @@ void settings_menu_init_from_settings() {
     tft_Abs_enabled = TFT_menu_settings->get_Abs_enabled();
     tft_Display_brightness = TFT_menu_settings->get_Display_brightness();
     tft_Display_splash_screen = TFT_menu_settings->get_Display_splash_screen();
+    tft_Rotate_screen = TFT_menu_settings->get_Rotate_screen();
     tft_Ebrake_progressive_mode = TFT_menu_settings->get_Ebrake_progressive_mode();
     tft_Ebrake_smart_brake_type = TFT_menu_settings->get_Ebrake_smart_brake_type();
     tft_Ebrake_min_power_value = TFT_menu_settings->get_Ebrake_min_power_value();
@@ -271,6 +280,7 @@ void settings_menu_save_to_settings() {
     TFT_menu_settings->set_Abs_enabled(tft_Abs_enabled);
     TFT_menu_settings->set_Display_brightness(tft_Display_brightness);
     TFT_menu_settings->set_Display_splash_screen(tft_Display_splash_screen);
+    TFT_menu_settings->set_Rotate_screen(tft_Rotate_screen);
     TFT_menu_settings->set_Ebrake_progressive_mode(tft_Ebrake_progressive_mode);
     TFT_menu_settings->set_Ebrake_smart_brake_type(tft_Ebrake_smart_brake_type);
     TFT_menu_settings->set_Ebrake_min_power_value(tft_Ebrake_min_power_value);

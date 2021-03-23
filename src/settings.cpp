@@ -73,6 +73,8 @@ void Settings::restore() {
     Serial.println("  >> Display_brightness = " + (String)Display_brightness);
     Display_splash_screen = prefs.getInt(SETTINGS_DISPLAY_SPLASH_SCREEN_STORAGE_KEY, 1);
     Serial.println("  >> Display_splash_screen = " + (String)Display_splash_screen);
+    Rotate_screen = prefs.getInt(SETTINGS_ROTATE_SCREEN_STORAGE_KEY, 1);
+    Serial.println("  >> Rotate_screen = " + (String)Rotate_screen);
     Ebrake_progressive_mode = prefs.getInt(SETTINGS_EBRAKE_PROGRESSIVE_MODE_STORAGE_KEY, 0);
     Serial.println("  >> Ebrake_progressive_mode = " + (String)Ebrake_progressive_mode);
     Ebrake_smart_brake_type = prefs.getInt(SETTINGS_EBRAKE_SMART_BRAKE_TYPE_STORAGE_KEY, 0);
@@ -143,6 +145,7 @@ void Settings::save() {
     prefs.putInt(SETTINGS_ABS_ENABLED_STORAGE_KEY, Abs_enabled);
     prefs.putInt(SETTINGS_DISPLAY_BRIGHTNESS_STORAGE_KEY, Display_brightness);
     prefs.putInt(SETTINGS_DISPLAY_SPLASH_SCREEN_STORAGE_KEY, Display_splash_screen);
+    prefs.putInt(SETTINGS_ROTATE_SCREEN_STORAGE_KEY, Rotate_screen);
     prefs.putInt(SETTINGS_EBRAKE_PROGRESSIVE_MODE_STORAGE_KEY, Ebrake_progressive_mode);
     prefs.putInt(SETTINGS_EBRAKE_SMART_BRAKE_TYPE_STORAGE_KEY, Ebrake_smart_brake_type);
     prefs.putInt(SETTINGS_EBRAKE_MIN_POWER_VALUE_STORAGE_KEY, Ebrake_min_power_value);
@@ -307,6 +310,11 @@ void Settings::unpack_setting_packet(uint8_t* packet, uint8_t length) {
     case SETTINGS_DISPLAY_SPLASH_SCREEN_BLE_ID :
         set_Display_splash_screen(buffer_get_uint8(packet, &ind));
         Serial.print("unpack_setting_packet - Display_splash_screen : " + (String) Display_splash_screen + " / ");
+        buffer_display("", packet, length);
+        break;
+    case SETTINGS_ROTATE_SCREEN_BLE_ID :
+        set_Rotate_screen(buffer_get_uint8(packet, &ind));
+        Serial.print("unpack_setting_packet - Rotate_screen : " + (String) Rotate_screen + " / ");
         buffer_display("", packet, length);
         break;
     case SETTINGS_EBRAKE_PROGRESSIVE_MODE_BLE_ID :
@@ -572,6 +580,11 @@ bool Settings::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, ui
     case SETTINGS_DISPLAY_SPLASH_SCREEN_BLE_ID :
         buffer_append_uint8(packet, Display_splash_screen, ind);
         Serial.print("pack_setting_packet - Display_splash_screen : " + (String) Display_splash_screen + " / ");
+        buffer_display("", packet, *ind);
+        break;
+    case SETTINGS_ROTATE_SCREEN_BLE_ID :
+        buffer_append_uint8(packet, Rotate_screen, ind);
+        Serial.print("pack_setting_packet - Rotate_screen : " + (String) Rotate_screen + " / ");
         buffer_display("", packet, *ind);
         break;
     case SETTINGS_EBRAKE_PROGRESSIVE_MODE_BLE_ID :
@@ -1227,6 +1240,27 @@ void Settings::display_Display_splash_screen() {
 void Settings::save_Display_splash_screen(uint8_t value) {
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_DISPLAY_SPLASH_SCREEN_STORAGE_KEY, Display_splash_screen);
+    prefs.end();
+}
+                
+
+/*-------------------------------------------------------*/
+
+void Settings::set_Rotate_screen(uint8_t value) {
+    Rotate_screen = value;
+}
+
+uint8_t Settings::get_Rotate_screen() {
+    return Rotate_screen ;
+}
+
+void Settings::display_Rotate_screen() {
+    Serial.println("  Rotate_screen = " + (String) Rotate_screen);
+}
+
+void Settings::save_Rotate_screen(uint8_t value) {
+    prefs.begin(SETTINGS_STORAGE, false);
+    prefs.putInt(SETTINGS_ROTATE_SCREEN_STORAGE_KEY, Rotate_screen);
     prefs.end();
 }
                 
