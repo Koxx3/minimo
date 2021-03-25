@@ -78,12 +78,6 @@ ws.onmessage = function(event) {
 
 };
 
-function Scrolldown() {
-     window.scroll(0,58); 
-}
-
-window.onload = Scrolldown;
-
 </script>
 )=====";
 
@@ -291,6 +285,9 @@ static const char HTML_DASHBOARD_PAGE[] PROGMEM = R"=====(
 )=====";
 
 
+#define ADDONPAGEFILE "/dashboard.html"
+
+
 // General style elements
 ACStyle(ACE_Style1, "label{display:inline-block;padding-right: 10px !important;padding-left: 0px !important;}");
 ACStyle(ACE_Style2, "input[type='button']{background-color:#303F9F; border-color:#303F9F}");
@@ -324,7 +321,7 @@ AutoConnectAux calibPageAux("/calibpage", "SmartElec calibrations", true, {ACE_S
 ACElement(ACE_DASHBOARD_html_body, HTML_DASHBOARD_PAGE);
 //ACButton(ACE_DASHBOARD_btn, "btn", "SendText()");
 ACElement(ACE_DASHBOARD_js, JS_DASHBOARD_PAGE);
-AutoConnectAux dashboardPageAux("/dashboardpage", "SmartElec Dashboard", true, {/*ACE_Style1, ACE_Style2, ACE_Style4, ACE_Style5,*/ ACE_Style6, /*ACE_DASHBOARD_text1,*/ ACE_DASHBOARD_html_body, /*ACE_DASHBOARD_btn, */ ACE_DASHBOARD_js});
+AutoConnectAux dashboardPageAux("/dashboardpage", "SmartElec dashboard", true, {/*ACE_Style1, ACE_Style2, ACE_Style4, ACE_Style5,*/ ACE_Style6, /*ACE_DASHBOARD_text1,*/ ACE_DASHBOARD_html_body, /*ACE_DASHBOARD_btn, */ ACE_DASHBOARD_js});
 
 // OTA flash pages
 ACText(ACE_OTA_title, "Available versions : ", "", "", AC_Tag_BR);
@@ -338,6 +335,27 @@ AutoConnectAux otaPageAux("/otapage", "SmartElec firmware update", true, {ACE_St
 // OTA flash in progress
 ACText(ACE_OTA_FLASH_in_progress, "<h4>Flash in progress</h4>The SmartElec device will reboot after flash", "");
 AutoConnectAux otaFlashAux("/otaflash", "SmartElec flash in progress", false, {ACE_Style2, ACE_OTA_FLASH_in_progress});
+
+/*
+bool loadAddonPage(const char* path) {
+  bool  rc = false;
+  Serial.printf("Page %s requested, ", path);
+  File  addonPage = SPIFFS.open(path, "r");
+  if (addonPage) {
+    if (!addonPage.isDirectory()) {
+      server.streamFile(addonPage, "text/html");
+      Serial.println("successfully loaded");
+      rc = true;
+    }
+    else
+      Serial.println("it's directory");
+    addonPage.close();
+  }
+  else
+    Serial.println("open failed, probably does not exist.");
+  return rc;
+}
+*/
 
 void WifiSettingsPortal_setup()
 {
@@ -382,6 +400,14 @@ void WifiSettingsPortal_setup()
 
     return String();
   });
+
+/*
+  server.on("/dashboard2page", HTTP_GET, []() {
+    if (!loadAddonPage(ADDONPAGEFILE))
+      server.send(404, "text/plain", "File not found");
+      Serial.println("error loading page");
+  });
+*/
 
   calibPageAux.on([](AutoConnectAux &aux, PageArgument &arg) {
     Serial.println("calib page");
@@ -484,6 +510,7 @@ void WifiSettingsPortal_setup()
 void WifiSettingsPortal_begin()
 {
 
+  SPIFFS.begin(true);
   portal.config(config);
   if (portal.begin())
   {
