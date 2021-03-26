@@ -112,8 +112,7 @@
 
 #define LINE_TEXT_OFFSET 6
 
-#define JPG_PATH "/smart_splash2.jpg"
-//#define JPG_PATH "/panda.jpg"
+#define JPG_PATH "/smart_splash.jpg"
 
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
 TFT_eSPI tft = TFT_eSPI();
@@ -151,7 +150,6 @@ uint8_t oldAuxOrder = 255;
 
 uint8_t old_substate_case3 = 0;
 uint8_t old_substate_case6 = 0;
-
 
 // This next function will be called during decoding of the jpeg file to
 // render each block to the TFT.  If you use a different TFT library
@@ -244,41 +242,44 @@ void tftUpdateData(uint32_t i_loop)
     tft.fillScreen(TFT_BLACK);
 
     // Initialise SPIFFS
-    if (!SPIFFS.begin())
+    bool spiffs = SPIFFS.begin();
+    if (!spiffs)
     {
       Serial.println("SPIFFS initialisation failed!");
-      while (1)
-        yield(); // Stay here twiddling thumbs waiting
     }
-
-/*
-    listFiles(); // Lists the files so you can see what is in the SPIFFS
-*/
-    // The jpeg image can be scaled by a factor of 1, 2, 4, or 8
-    TJpgDec.setJpgScale(1);
-
-    // The decoder must be given the exact name of the rendering function above
-    TJpgDec.setCallback(tft_output);
-    
-    tftBacklightFull();
-
-    // Swap the colour byte order when rendering
-    tft.setSwapBytes(true);
-
-    if (settings.get_Display_splash_screen())
+    else
     {
-      // Get the width and height in pixels of the jpeg if you wish
-      uint16_t w = 0, h = 0;
-      TJpgDec.getFsJpgSize(&w, &h, JPG_PATH); // Note name preceded with "/"
+      // The jpeg image can be scaled by a factor of 1, 2, 4, or 8
+      TJpgDec.setJpgScale(1);
 
-      // Draw the image, top left at 0,0
-      TJpgDec.drawFsJpg((TFT_HEIGHT - w) / 2, (TFT_WIDTH - h) / 2, JPG_PATH);
+      // The decoder must be given the exact name of the rendering function above
+      TJpgDec.setCallback(tft_output);
 
-      uint32_t whiteColor = tft.color565(0xff, 0xff, 0xff);
-      for (int i = 0; i < 10; i++)
+      tftBacklightFull();
+
+      // Swap the colour byte order when rendering
+      tft.setSwapBytes(true);
+
+      if (settings.get_Display_splash_screen())
       {
-        tft.fillRect(i * (TFT_HEIGHT / 10), 0, (TFT_HEIGHT / 10) - 5, 6 * SCALE_FACTOR_Y, whiteColor);
-        delay(200);
+        // Get the width and height in pixels of the jpeg if you wish
+        uint16_t w = 0, h = 0;
+        TJpgDec.getFsJpgSize(&w, &h, JPG_PATH); // Note name preceded with "/"
+
+        // Draw the image, top left at 0,0
+        TJpgDec.drawFsJpg((TFT_HEIGHT - w) / 2, (TFT_WIDTH - h) / 2, JPG_PATH);
+
+        // Show loading progress
+        uint32_t whiteColor = tft.color565(0xff, 0xff, 0xff);
+        for (int i = 0; i < 10; i++)
+        {
+          tft.fillRect(i * (TFT_HEIGHT / 10), 0, (TFT_HEIGHT / 10) - 5, 6 * SCALE_FACTOR_Y, whiteColor);
+          delay(250);
+        }
+      }
+      else
+      {
+        Serial.println("no splash screen display");
       }
     }
   }

@@ -99,6 +99,7 @@ ZeroUart zeroCntrl;
 
 // Time
 unsigned long timeLoop = 0;
+unsigned long timeLoopMax = 0;
 
 // Watchdog
 hw_timer_t *timer = NULL;
@@ -1727,11 +1728,11 @@ void loop()
 #endif
 
 #if HAS_I2C && TEMPERATURE_INT_READ
-  if (i_loop % 100 == 8)
+  if (i_loop % 1000 == 8)
   {
     processSHTC3(true);
   }
-  if (i_loop % 100 == 16)
+  if (i_loop % 1000 == 16)
   {
     processSHTC3(false);
   }
@@ -1753,18 +1754,40 @@ void loop()
   //yield();
 
 #if DEBUG_TIMELOOP_NS
-  Serial.print("> ");
-  Serial.print(micros() - timeLoop);
-  Serial.print(" / i_loop : ");
-  Serial.println(i_loop);
+  if (micros() - timeLoop > timeLoopMax)
+  {
+    timeLoopMax = micros() - timeLoop;
+    if (timeLoopMax > 1)
+    {
+      Serial.print("> timeLoopMax = ");
+      Serial.print(timeLoopMax);
+      Serial.print(" / i_loop : ");
+      Serial.println(i_loop);
+    }
+  }
+  if (i_loop % 10000 == 0)
+  {
+    timeLoopMax = 0;
+  }
   timeLoop = micros();
 #endif
 
 #if DEBUG_TIMELOOP_MS
-  Serial.print("> ");
-  Serial.print(millis() - timeLoop);
-  Serial.print(" / i_loop : ");
-  Serial.println(i_loop);
+  if (millis() - timeLoop > timeLoopMax)
+  {
+    timeLoopMax = millis() - timeLoop;
+    if (timeLoopMax > 1)
+    {
+      Serial.print("> timeLoopMax = ");
+      Serial.print(timeLoopMax);
+      Serial.print(" / i_loop : ");
+      Serial.println(i_loop);
+    }
+  }
+  if (i_loop % 10000 == 0)
+  {
+    timeLoopMax = 0;
+  }
   timeLoop = millis();
 #endif
 
