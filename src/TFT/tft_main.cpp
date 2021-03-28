@@ -1,9 +1,9 @@
 #include <SPI.h>
 
 #include <TFT_eSPI.h>
-#include <TJpg_Decoder.h>
 
-#include "SPIFFS.h" // ESP32 only
+#include <TJpg_Decoder.h>
+#include "SPIFFS.h"
 
 #include "TFT/text_screen.h"
 #include "TFT/tft_color_jauge.h"
