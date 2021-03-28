@@ -95,7 +95,6 @@ void saveConfig(AutoConnectAux &aux)
     WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACE_SETTINGS_{{ item.var_name }}"].as<AutoConnectInput>()).value.toInt());
                 {%- elif item.smartphone_display_type == "checkbox" %}
     WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACE_SETTINGS_{{ item.var_name }}"].as<AutoConnectCheckbox>()).checked ? 1 : 0);
-    Serial.println("{{ item.var_name }} = " + (String) (settingsPageAux["ACE_SETTINGS_{{ item.var_name }}"].as<AutoConnectCheckbox>()).checked);
                 {%- elif item.smartphone_display_type | lower == "list" %}
     WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACE_SETTINGS_{{ item.var_name }}"].as<AutoConnectSelect>()).selected - 1);
                 {%- endif %}
