@@ -1,6 +1,5 @@
 #include <SPI.h>
 
-
 #include <TJpg_Decoder.h>
 #include "SPIFFS.h"
 
@@ -252,8 +251,6 @@ void tftUpdateData(uint32_t i_loop)
       // The decoder must be given the exact name of the rendering function above
       TJpgDec.setCallback(tft_output);
 
-      tftBacklightFull();
-
       // Swap the colour byte order when rendering
       tft.setSwapBytes(true);
 
@@ -266,6 +263,8 @@ void tftUpdateData(uint32_t i_loop)
         // Draw the image, top left at 0,0
         TJpgDec.drawFsJpg((TFT_HEIGHT - w) / 2, (TFT_WIDTH - h) / 2, JPG_PATH);
 
+        tftBacklightFull();
+
         // Show loading progress
         for (int i = 0; i < 10; i++)
         {
@@ -276,6 +275,8 @@ void tftUpdateData(uint32_t i_loop)
       else
       {
         Serial.println("no splash screen display");
+
+        tftBacklightFull();
       }
     }
   }
@@ -416,7 +417,7 @@ void tftUpdateData(uint32_t i_loop)
         tft.drawString(txt_label, COLUMN2, LINE_4Y - LINE_TEXT_OFFSET, GFXFF); //DRAW LABEL ON DISPLAY
 
         // Draw unit
-        tft.setTextColor(MY_TFT_WHITE, TFT_BLACK);                                    //UNIT
+        tft.setTextColor(MY_TFT_WHITE, TFT_BLACK);                                 //UNIT
         tft.setTextDatum(BL_DATUM);                                                //UNIT
         tft.setFreeFont(FONT_LABEL);                                               //UNIT SIZE/FONT
         tft.drawString(txt_unit, COLUMN2 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF); //DRAW UNIT ON DISPLAY
