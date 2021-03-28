@@ -1,4 +1,5 @@
 #include "tft_util.h"
+#include "tft_main.h"
 
 // TODO: PROGMEM
 const bool FONT_DIGITS_3x5[10][5][3] = {
@@ -123,22 +124,22 @@ void tft_util_draw_number(
             //Serial.println("i = " + (String)i + " / ch = " + (String)ch + " / nextCharsHasOnlyZeros = " + nextCharsHasOnlyZeros + " / activeDigit = " + activeDigit);
 
             width = 3 * magnify;
-            tft_util_draw_digit(tft, ch - '0', cursor_x - width, y, activeDigit ? fg_color : ILI_DIGIT_DARK_DIGIT, bg_color, magnify);
+            tft_util_draw_digit(tft, ch - '0', cursor_x - width, y, activeDigit ? fg_color : MY_TFT_DARK_DIGIT, bg_color, magnify);
             cursor_x -= width + spacing;
         }
         else if (ch == '.')
         {
             width = magnify;
             tft->fillRect(cursor_x - width, y, magnify - 1, 5 * magnify - 1, bg_color);
-            tft->fillRect(cursor_x - width, y + 4 * magnify, magnify - 1, magnify - 1, TFT_RED);
+            tft->fillRect(cursor_x - width, y + 4 * magnify, magnify - 1, magnify - 1, MY_TFT_RED);
             cursor_x -= width + spacing;
         }
         else if (ch == ':')
         {
             width = magnify;
             tft->fillRect(cursor_x - width, y, magnify - 1, 5 * magnify - 1, bg_color);
-            tft->fillRect(cursor_x - width, y + 4 * magnify, magnify - 1, magnify - 1, activeDigit ? TFT_RED : ILI_DIGIT_DARK_DIGIT);
-            tft->fillRect(cursor_x - width, y + 2 * magnify, magnify - 1, magnify - 1, activeDigit ? TFT_RED : ILI_DIGIT_DARK_DIGIT);
+            tft->fillRect(cursor_x - width, y + 4 * magnify, magnify - 1, magnify - 1, activeDigit ? MY_TFT_RED : MY_TFT_DARK_DIGIT);
+            tft->fillRect(cursor_x - width, y + 2 * magnify, magnify - 1, magnify - 1, activeDigit ? MY_TFT_RED : MY_TFT_DARK_DIGIT);
             cursor_x -= magnify + spacing;
         }
         else if (ch == '-')

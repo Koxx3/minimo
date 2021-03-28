@@ -1312,12 +1312,20 @@ void processSHTC3(bool requestRead)
 
     shrd.currentHumidity = mySHTC3.toPercent();
   }
+
+#if DEBUG_FAKE_TEMPERATURE
+  shrd.currentTemperature = 26;
+#endif
 }
 
 void processVoltage()
 {
 
   voltageRaw = analogRead(PIN_IN_VOLTAGE);
+
+#if DEBUG_FAKE_VOLTAGE
+  voltageRaw = 2500;
+#endif
 
   // eject false reading
   if (voltageRaw == 4095)
@@ -1474,6 +1482,10 @@ void processCurrent()
   if (shrd.currentSensorPresent)
   {
     int currentRead = analogRead(PIN_IN_CURRENT);
+
+#if DEBUG_FAKE_CURRENT
+    currentRead = 2048;
+#endif
 
     if (shrd.speedCurrent == 0)
     {

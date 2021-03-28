@@ -2,21 +2,7 @@
 #define TFT_UTIL_H
 
 #include <TFT_eSPI.h>
-
-// 170 : 0xAD55
-// 150 : 0x94B2
-// 130 : 0x8410 
-// 110 : 0x6B6D 
-// 90 : 0x5ACB 
-// 70 : 0x4228 
-// 50 : 0x3186
-#if (TFT_MODEL == 1) // 2.4"
-#define ILI_DIGIT_DARK_DISABLED 0x3186 
-#else
-#define ILI_DIGIT_DARK_DISABLED 0x8410
-#endif
-
-#define ILI_DIGIT_DARK_DIGIT TFT_BLACK
+#include "tft_colors.h"
 
 #if (TFT_MODEL == 1) // 2.4"
 #define SCALE_FACTOR_X 1

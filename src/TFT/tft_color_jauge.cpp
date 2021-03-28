@@ -62,7 +62,7 @@ void drawColorBar(TFT_eSPI *tft, int value, int spotx, int spoty, int pix, uint1
         }
         else
         {
-            color = ILI_DIGIT_DARK_DISABLED;
+            color = MY_TFT_DARK_DIGIT_DISABLED;
         }
         tft->fillRect(spotx + (i * pix), spoty, pix - 2, height, color);
     }

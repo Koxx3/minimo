@@ -1,14 +1,11 @@
 #include <SPI.h>
 
-#include <TFT_eSPI.h>
 
 #include <TJpg_Decoder.h>
 #include "SPIFFS.h"
 
-#include "TFT/text_screen.h"
-#include "TFT/tft_color_jauge.h"
-#include "TFT/tft_main.h"
-#include "TFT/tft_util.h"
+#include "tft_main.h"
+#include "tft_colors.h"
 
 #include "Settings.h"
 #include "SharedData.h"
@@ -36,7 +33,7 @@
 #define FONT_FORCED_SQUARE14pt7b &FORCED_SQUARE14pt7b
 #define FONT_FORCED_SQUARE18pt7b &FORCED_SQUARE18pt7b
 
-#if (TFT_MODEL == 2) // 3.5"
+#if ((TFT_MODEL == 2) || (TFT_MODEL == 3)) // 3.5"
 #define FONT_LABEL FONT_FORCED_SQUARE10pt7b
 #define FONT_LABEL_HEIGH 10
 #define FONT_NUMBER FONT_FORCED_SQUARE18pt7b
@@ -270,10 +267,9 @@ void tftUpdateData(uint32_t i_loop)
         TJpgDec.drawFsJpg((TFT_HEIGHT - w) / 2, (TFT_WIDTH - h) / 2, JPG_PATH);
 
         // Show loading progress
-        uint32_t whiteColor = tft.color565(0xff, 0xff, 0xff);
         for (int i = 0; i < 10; i++)
         {
-          tft.fillRect(i * (TFT_HEIGHT / 10), 0, (TFT_HEIGHT / 10) - 5, 6 * SCALE_FACTOR_Y, whiteColor);
+          tft.fillRect(i * (TFT_HEIGHT / 10), 0, (TFT_HEIGHT / 10) - 5, 6 * SCALE_FACTOR_Y, MY_TFT_WHITE);
           delay(250);
         }
       }
@@ -302,7 +298,7 @@ void tftUpdateData(uint32_t i_loop)
     // init TFT settings
     tft.setTextSize(1);
 
-#if (TFT_MODEL == 2) // 3.5"
+#if ((TFT_MODEL == 2) || (TFT_MODEL == 3)) // 3.5"
     tft.setFreeFont(FONT_FORCED_SQUARE10pt7b);
 #else
     tft.setFreeFont(FONT_FORCED_SQUARE6pt7b);
@@ -319,7 +315,7 @@ void tftUpdateData(uint32_t i_loop)
 
     // draw interface - units
     tft.setFreeFont(FONT_LABEL);
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    tft.setTextColor(MY_TFT_WHITE, TFT_BLACK);
     tft.setTextDatum(BL_DATUM);
     tft.drawString(txt_km, COLUMN3 + UNIT_LEFT_MARGIN, LINE_2Y_UNIT, GFXFF);
     tft.drawString(txt_v, COLUMN4 + UNIT_LEFT_MARGIN, LINE_2Y_UNIT, GFXFF);
@@ -332,14 +328,14 @@ void tftUpdateData(uint32_t i_loop)
     tft.drawString(txt_kmh, COLUMN5 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT1, GFXFF);
 
     // draw grid
-    tft.drawLine(0, LINE_POINT1Y, LINE_POINT1X, LINE_POINT1Y, ILI_DIGIT_DARK_DISABLED);
-    tft.drawLine(LINE_POINT1X, LINE_POINT1Y, LINE_POINT2X, LINE_POINT2Y, ILI_DIGIT_DARK_DISABLED);
-    tft.drawLine(LINE_POINT2X, LINE_POINT2Y, LINE_POINT3X, LINE_POINT3Y, ILI_DIGIT_DARK_DISABLED);
-    tft.drawLine(LINE_POINT3X, LINE_POINT3Y, LINE_POINT4X, LINE_POINT4Y, ILI_DIGIT_DARK_DISABLED);
-    tft.drawLine(LINE_POINT4X, LINE_POINT4Y, 0, LINE_POINT4Y, ILI_DIGIT_DARK_DISABLED);
+    tft.drawLine(0, LINE_POINT1Y, LINE_POINT1X, LINE_POINT1Y, MY_TFT_DARK_DIGIT_DISABLED);
+    tft.drawLine(LINE_POINT1X, LINE_POINT1Y, LINE_POINT2X, LINE_POINT2Y, MY_TFT_DARK_DIGIT_DISABLED);
+    tft.drawLine(LINE_POINT2X, LINE_POINT2Y, LINE_POINT3X, LINE_POINT3Y, MY_TFT_DARK_DIGIT_DISABLED);
+    tft.drawLine(LINE_POINT3X, LINE_POINT3Y, LINE_POINT4X, LINE_POINT4Y, MY_TFT_DARK_DIGIT_DISABLED);
+    tft.drawLine(LINE_POINT4X, LINE_POINT4Y, 0, LINE_POINT4Y, MY_TFT_DARK_DIGIT_DISABLED);
 
-    tft.drawLine(LINE_POINT5X, LINE_POINT5Y, TFT_HEIGHT, LINE_POINT5Y, ILI_DIGIT_DARK_DISABLED);
-    tft.drawLine(LINE_POINT6X, LINE_POINT6Y, TFT_HEIGHT, LINE_POINT6Y, ILI_DIGIT_DARK_DISABLED);
+    tft.drawLine(LINE_POINT5X, LINE_POINT5Y, TFT_HEIGHT, LINE_POINT5Y, MY_TFT_DARK_DIGIT_DISABLED);
+    tft.drawLine(LINE_POINT6X, LINE_POINT6Y, TFT_HEIGHT, LINE_POINT6Y, MY_TFT_DARK_DIGIT_DISABLED);
   }
   else
   {
@@ -351,21 +347,21 @@ void tftUpdateData(uint32_t i_loop)
       if (speed > 199)
         speed = 199;
       sprintf(fmt, "%3d", (int)speed);
-      tft_util_draw_number(&tft, fmt, COLUMN5, LINE_3Y, TFT_WHITE, TFT_BLACK, 5, BIG_FONT_SIZE);
+      tft_util_draw_number(&tft, fmt, COLUMN5, LINE_3Y, MY_TFT_WHITE, TFT_BLACK, 5, BIG_FONT_SIZE);
       break;
     }
 
     case 1:
     {
       sprintf(fmt, "%02.0f", shrd.speedMax);
-      tft_util_draw_number(&tft, fmt, COLUMN8, LINE_3Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
+      tft_util_draw_number(&tft, fmt, COLUMN8, LINE_3Y, MY_TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
 
     case 2:
     {
       sprintf(fmt, "%01.0f", (float)shrd.modeOrder);
-      tft_util_draw_number(&tft, fmt, COLUMN1, LINE_1Y, TFT_WHITE, TFT_BLACK, 5, MEDIUM_FONT_SIZE);
+      tft_util_draw_number(&tft, fmt, COLUMN1, LINE_1Y, MY_TFT_WHITE, TFT_BLACK, 5, MEDIUM_FONT_SIZE);
       break;
     }
 
@@ -420,7 +416,7 @@ void tftUpdateData(uint32_t i_loop)
         tft.drawString(txt_label, COLUMN2, LINE_4Y - LINE_TEXT_OFFSET, GFXFF); //DRAW LABEL ON DISPLAY
 
         // Draw unit
-        tft.setTextColor(TFT_WHITE, TFT_BLACK);                                    //UNIT
+        tft.setTextColor(MY_TFT_WHITE, TFT_BLACK);                                    //UNIT
         tft.setTextDatum(BL_DATUM);                                                //UNIT
         tft.setFreeFont(FONT_LABEL);                                               //UNIT SIZE/FONT
         tft.drawString(txt_unit, COLUMN2 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF); //DRAW UNIT ON DISPLAY
@@ -429,14 +425,14 @@ void tftUpdateData(uint32_t i_loop)
         tft.setFreeFont(FONT_NUMBER); //SET FONT FOR DATA
       }
 
-      tft_util_draw_number(&tft, fmt, COLUMN2, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE); //DRAW DATA
+      tft_util_draw_number(&tft, fmt, COLUMN2, LINE_4Y, MY_TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE); //DRAW DATA
       break;
     }
 
     case 4:
     {
       timeToString().toCharArray(fmt, 9);
-      tft_util_draw_number(&tft, fmt, COLUMN6, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE);
+      tft_util_draw_number(&tft, fmt, COLUMN6, LINE_4Y, MY_TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE);
       break;
     }
 
@@ -444,7 +440,7 @@ void tftUpdateData(uint32_t i_loop)
     {
       float voltage = shrd.voltageFilterMean / 1000.0;
       sprintf(fmt, "%s", Dfmt2_1(voltage));
-      tft_util_draw_number(&tft, fmt, COLUMN4, LINE_2Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
+      tft_util_draw_number(&tft, fmt, COLUMN4, LINE_2Y, MY_TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
 
@@ -501,7 +497,7 @@ void tftUpdateData(uint32_t i_loop)
         tft.setFreeFont(FONT_NUMBER); //SET FONT FOR DATA
       }
 
-      tft_util_draw_number(&tft, fmt, COLUMN9, LINE_4Y, TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE); //DRAW DATA
+      tft_util_draw_number(&tft, fmt, COLUMN9, LINE_4Y, MY_TFT_WHITE, TFT_BLACK, 5, SMALLEST_FONT_SIZE); //DRAW DATA
       break;
     }
     case 7:
@@ -509,7 +505,7 @@ void tftUpdateData(uint32_t i_loop)
       float autonomy = shrd.autonomyLeft;
       autonomy = constrain(autonomy, 0, 999);
       sprintf(fmt, "%03.0f", autonomy);
-      tft_util_draw_number(&tft, fmt, COLUMN3, LINE_2Y, TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
+      tft_util_draw_number(&tft, fmt, COLUMN3, LINE_2Y, MY_TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
     case 8:
@@ -524,7 +520,7 @@ void tftUpdateData(uint32_t i_loop)
     case 9:
     {
       // draw interface - indicators
-#if (TFT_MODEL == 2) // 3.5"
+#if ((TFT_MODEL == 2) || (TFT_MODEL == 3)) // 3.5"
       tft.setFreeFont(FONT_FORCED_SQUARE12pt7b);
 #else
       tft.setFreeFont(FONT_FORCED_SQUARE9pt7b);
@@ -535,7 +531,7 @@ void tftUpdateData(uint32_t i_loop)
       int i = -10 * SCALE_FACTOR_Y;
       if (oldShrdPasEnabled != shrd.pasEnabled)
       {
-        tft.setTextColor(shrd.pasEnabled ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.setTextColor(shrd.pasEnabled ? MY_TFT_WHITE : MY_TFT_DARK_DIGIT_DISABLED, TFT_BLACK);
         tft.drawString(txt_pas, COLUMN0, LINE_3Y + i, GFXFF);
         oldShrdPasEnabled = shrd.pasEnabled;
       }
@@ -543,7 +539,7 @@ void tftUpdateData(uint32_t i_loop)
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
       if (oldShrdBrakePressedStatus != shrd.brakePressedStatus)
       {
-        tft.setTextColor(shrd.brakePressedStatus ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.setTextColor(shrd.brakePressedStatus ? MY_TFT_WHITE : MY_TFT_DARK_DIGIT_DISABLED, TFT_BLACK);
         tft.drawString(txt_brk, COLUMN0, LINE_3Y + i, GFXFF);
         oldShrdBrakePressedStatus = shrd.brakePressedStatus;
       }
@@ -551,7 +547,7 @@ void tftUpdateData(uint32_t i_loop)
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
       if (oldAuxOrder != shrd.auxOrder)
       {
-        tft.setTextColor(shrd.auxOrder ? TFT_WHITE : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.setTextColor(shrd.auxOrder ? MY_TFT_WHITE : MY_TFT_DARK_DIGIT_DISABLED, TFT_BLACK);
         tft.drawString(txt_aux, COLUMN0, LINE_3Y + i, GFXFF);
         oldAuxOrder = shrd.auxOrder;
       }
@@ -560,7 +556,7 @@ void tftUpdateData(uint32_t i_loop)
       uint8_t currentTemperatureStatus = (shrd.currentTemperature > settings.get_Temperature_warning());
       if (oldShrdCurrentTemperature != currentTemperatureStatus)
       {
-        tft.setTextColor(currentTemperatureStatus ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.setTextColor(currentTemperatureStatus ? TFT_RED : MY_TFT_DARK_DIGIT_DISABLED, TFT_BLACK);
         tft.drawString(txt_temp, COLUMN0, LINE_3Y + i, GFXFF);
         oldShrdCurrentTemperature = currentTemperatureStatus;
       }
@@ -569,7 +565,7 @@ void tftUpdateData(uint32_t i_loop)
       uint8_t currentHumidityStatus = (shrd.currentHumidity > settings.get_Humidity_warning());
       if (oldShrdCurrentHumidity != currentHumidityStatus)
       {
-        tft.setTextColor(currentHumidityStatus ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.setTextColor(currentHumidityStatus ? TFT_RED : MY_TFT_DARK_DIGIT_DISABLED, TFT_BLACK);
         tft.drawString(txt_hr, COLUMN0, LINE_3Y + i, GFXFF);
         oldShrdCurrentHumidity = currentHumidityStatus;
       }
@@ -583,7 +579,7 @@ void tftUpdateData(uint32_t i_loop)
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
       if (oldError != error)
       {
-        tft.setTextColor(error ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.setTextColor(error ? TFT_RED : MY_TFT_DARK_DIGIT_DISABLED, TFT_BLACK);
         tft.drawString(txt_err, COLUMN0, LINE_3Y + i, GFXFF);
         oldError = error;
       }
@@ -591,7 +587,7 @@ void tftUpdateData(uint32_t i_loop)
       i = i + (SPACE_INDICATORS_Y * SCALE_FACTOR_Y);
       if (oldShrdIsLocked != shrd.isLocked)
       {
-        tft.setTextColor(shrd.isLocked ? TFT_RED : ILI_DIGIT_DARK_DISABLED, TFT_BLACK);
+        tft.setTextColor(shrd.isLocked ? TFT_RED : MY_TFT_DARK_DIGIT_DISABLED, TFT_BLACK);
         tft.drawString(txt_lck, COLUMN0, LINE_3Y + i, GFXFF);
         oldShrdIsLocked = shrd.isLocked;
       }
