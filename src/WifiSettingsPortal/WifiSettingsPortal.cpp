@@ -79,12 +79,6 @@ ws.onmessage = function(event) {
 
 };
 
-function Scrolldown() {
-     window.scroll(0,58); 
-}
-
-window.onload = Scrolldown;
-
 </script>
 )=====";
 
@@ -295,7 +289,7 @@ static const char HTML_DASHBOARD_PAGE[] PROGMEM = R"=====(
 // General style elements
 ACStyle(ACE_Style1, "label{display:inline-block;padding-right: 10px !important;padding-left: 0px !important;}");
 ACStyle(ACE_Style2, "input[type='button']{background-color:#303F9F; border-color:#303F9F}");
-ACStyle(ACE_Style3, "select{width:44%}");
+ACStyle(ACE_Style3, "select{width:44%} h2{ color:#303F9F;padding:10px; }");
 ACStyle(ACE_Style4, ".noorder{width:100%}.noorder label{display:inline-block;width:40%;cursor:pointer;padding:5px}.noorder .noorder input[type='text']{width:40%} .noorder input[type='password']{width:40%} .noorder input[type='text']{width:40%}");
 ACStyle(ACE_Style5, "input[type='text']{paddingLeft:10px}");
 ACStyle(ACE_Style6, CSS_DASHBOARD_PAGE);
@@ -469,8 +463,6 @@ void WifiSettingsPortal_setup()
   config.autoRise = true; /**< Automatic starting the captive portal */
   config.title = "SmartElec";
 
-  //config.immediateStart = true;
-  //config.autoReconnect = true;
   //config.autoReconnect;      /**< Automatic reconnect with past SSID */
   //config.immediateStart;     /**< Skips WiFi.begin(), start portal immediately */
   config.beginTimeout = 5000;  /**< Timeout value for WiFi.begin */

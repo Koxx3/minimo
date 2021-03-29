@@ -524,7 +524,7 @@ void setup()
   xTaskCreatePinnedToCore(
       taskProcessWifiBlocking,   // Function that should be called
       "taskProcessWifiBlocking", // Name of the task (for debugging)
-      15000,                     // Stack size (bytes)
+      10000,                     // Stack size (bytes)
       NULL,                      // Parameter to pass
       0,                         // Task priority
       NULL,                      // Task handle,
