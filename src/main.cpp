@@ -484,8 +484,6 @@ void setup()
   tftSetup(&shrd, &settings);
 #endif
 
-  // force BLE lock mode
-  blh.setBleLock(false);
 
   Serial.println("   prefs... ");
   settings2.setSharedData(&shrd);
@@ -501,6 +499,7 @@ void setup()
   Serial.println("   BLE ...");
   blh.setSettings(&settings);
   blh.setSharedData(&shrd);
+  blh.setBleLock(false); // force BLE lock mode
   blh.init();
 
   setupVoltage();
@@ -1755,9 +1754,9 @@ void loop()
     checkAndSaveOdo();
   }
 
-  if (i_loop % 1000 == 99)
+  if (i_loop % 100 == 99)
   {
-    WifiSettingsPortal_sendTemperature();
+    WifiSettingsPortal_sendValues();
   }
 
   // Give a time for ESP

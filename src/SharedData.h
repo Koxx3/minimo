@@ -132,6 +132,10 @@ public:
     boolean errorSerialFromContrl = false;
     boolean errorContrl = false;
 
+
+    int8_t bleBeaconVisible = 1;
+    int8_t bleLockForced = 0;
+    int8_t fastUpdate = 0;
     int16_t beaconRSSI = -1;
 
 };

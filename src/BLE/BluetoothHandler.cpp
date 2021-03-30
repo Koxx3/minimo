@@ -62,11 +62,6 @@ NimBLECharacteristic *BluetoothHandler::pCharacteristicSettingsAction;
 // firmware services
 NimBLECharacteristic *BluetoothHandler::pCharacteristicFirmware;
 
-//int8_t BluetoothHandler::bleLockStatus;
-int8_t BluetoothHandler::bleBeaconVisible;
-int8_t BluetoothHandler::bleLockForced;
-int8_t BluetoothHandler::fastUpdate;
-
 BleStatus BluetoothHandler::deviceStatus;
 BleStatus BluetoothHandler::oldDeviceStatus;
 
@@ -93,7 +88,7 @@ void BluetoothHandler::init()
 
             deviceStatus = BLE_STATUS_CONNECTED_AND_AUTHENTIFYING;
 
-            if (bleLockForced == 0)
+            if (shrd->bleLockForced == 0)
             {
                 if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Smartphone_connected)
                 {
@@ -115,7 +110,7 @@ void BluetoothHandler::init()
             Serial.println("BLH - BLE disconnected");
             deviceStatus = BLE_STATUS_DISCONNECTED;
 
-            if (bleLockForced == 0)
+            if (shrd->bleLockForced == 0)
             {
                 if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Smartphone_connected)
                 {
@@ -125,7 +120,7 @@ void BluetoothHandler::init()
                 }
                 if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Smartphone_connected_or_beacon_visible)
                 {
-                    if (!bleBeaconVisible)
+                    if (!shrd->bleBeaconVisible)
                     {
                         shrd->isLocked = true;
                         Serial.println(" ==> device disconnected / Beacon not visible ==> LOCK decision");
@@ -286,14 +281,14 @@ void BluetoothHandler::init()
             else if (pCharacteristic->getUUID().toString() == BTLOCK_STATUS_CHARACTERISTIC_UUID)
             {
                 std::string rxValue = pCharacteristic->getValue();
-                bleLockForced = rxValue[3];
+                shrd->bleLockForced = rxValue[3];
 
                 char print_buffer[500];
-                sprintf(print_buffer, "%02x", bleLockForced);
+                sprintf(print_buffer, "%02x", shrd->bleLockForced);
                 Serial.print("BLH - Write bleLockForced : ");
                 Serial.println(print_buffer);
 
-                shrd->isLocked = bleLockForced;
+                shrd->isLocked = shrd->bleLockForced;
 
                 notifyBleLock();
                 saveBleLockForced();
@@ -720,18 +715,18 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
     }
 
     // store beacon status
-    bleBeaconVisible = newBleBeaconVisible;
+    shrd->bleBeaconVisible = newBleBeaconVisible;
 
 #if DEBUG_BLE_DISPLAY_SCAN
     Serial.printf("BLH - bleLockForced = %d / settings->getS1F().Bluetooth_lock_mode = %d / bleBeaconVisible = %d / deviceStatus = %d \n", bleLockForced, settings->get_Bluetooth_lock_mode(), bleBeaconVisible, deviceStatus);
 #endif
 
-    if (bleLockForced <= 0)
+    if (shrd->bleLockForced <= 0)
     {
 
         if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Smartphone_connected_or_beacon_visible)
         {
-            if ((!bleBeaconVisible) && (deviceStatus != BLE_STATUS_DISCONNECTED))
+            if ((!shrd->bleBeaconVisible) && (deviceStatus != BLE_STATUS_DISCONNECTED))
             {
                 shrd->isLocked = 1;
 
@@ -741,7 +736,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
                 Serial.println();
 #endif
             }
-            else if ((!bleBeaconVisible) && (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED))
+            else if ((!shrd->bleBeaconVisible) && (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED))
             {
                 shrd->isLocked = 0;
 
@@ -760,7 +755,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
         }
         if (settings->get_Bluetooth_lock_mode() == settings->LIST_Bluetooth_lock_mode_Beacon_visible)
         {
-            if (!bleBeaconVisible)
+            if (!shrd->bleBeaconVisible)
             {
                 shrd->isLocked = 1;
 
@@ -769,7 +764,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
                 Serial.println("-------------------------------------");
 #endif
             }
-            else if (bleBeaconVisible)
+            else if (shrd->bleBeaconVisible)
             {
                 shrd->isLocked = 0;
 
@@ -855,7 +850,7 @@ uint8_t BluetoothHandler::setCommandsDataPacket()
         buffer_append_uint8(txValue, shrd->brakeSentOrderFromBLE, &ind);
         buffer_append_uint8(txValue, shrd->brakePressedStatus, &ind);
         buffer_append_uint8(txValue, shrd->brakeFordidenHighVoltage, &ind);
-        buffer_append_uint8(txValue, fastUpdate, &ind);
+        buffer_append_uint8(txValue, shrd->fastUpdate, &ind);
 
         //#if (MINIMO_SIMULATED_DISPLAY == 0)
         // copy values
@@ -924,7 +919,7 @@ void BluetoothHandler::getCommandsDataPacket(uint8_t *rxValue)
     shrd->brakeSentOrderFromBLE = buffer_get_uint8(rxValue, &ind);
     buffer_get_uint8(rxValue, &ind); /*shrd->brakePressedStatus*/
     buffer_get_uint8(rxValue, &ind); /*shrd->brakeFordidenHighVoltage*/
-    fastUpdate = buffer_get_uint8(rxValue, &ind);
+    shrd->fastUpdate = buffer_get_uint8(rxValue, &ind);
 
 #if DEBUG_BLE_DISPLAY_COMMANDSFEEDBACK
     Serial.println("getCommandsDataPacket - modeOrder = " + (String)shrd->modeOrder);
@@ -1033,9 +1028,9 @@ void BluetoothHandler::notifyBleLock()
     {
         byte value[4];
         value[0] = shrd->isLocked;
-        value[1] = bleBeaconVisible;
+        value[1] = shrd->bleBeaconVisible;
         value[2] = shrd->beaconRSSI;
-        value[3] = bleLockForced;
+        value[3] = shrd->bleLockForced;
         pCharacteristicBtlockStatus->setValue((uint8_t *)&value, 4);
         pCharacteristicBtlockStatus->notify();
 
@@ -1059,12 +1054,12 @@ void BluetoothHandler::setBleLock(bool force)
     // force locking
     if (force)
     {
-        bleLockForced = 1;
+        shrd->bleLockForced = 1;
         saveBleLockForced();
     }
 
     // update lock status
-    if (bleLockForced == 1)
+    if (shrd->bleLockForced == 1)
         shrd->isLocked = 1;
 }
 
@@ -1077,7 +1072,7 @@ void BluetoothHandler::processBLE()
     if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
         uint16_t period = 250;
-        if (fastUpdate)
+        if (shrd->fastUpdate)
             period = 100;
 
         /*

@@ -61,11 +61,6 @@ public:
 
     static BLECharacteristic *pCharacteristicFirmware;
 
-//    static int8_t bleLockStatus;
-    static int8_t bleBeaconVisible;
-    static int8_t bleLockForced;
-    static int8_t fastUpdate;
-
     static BleStatus deviceStatus;
     static BleStatus oldDeviceStatus;
 
