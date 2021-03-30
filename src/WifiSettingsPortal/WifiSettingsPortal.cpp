@@ -2,11 +2,13 @@
 #include <WebServer.h>
 #include <SPIFFS.h>
 #include <AutoConnect.h>
+#include <WebSocketsServer.h>
 #include "Settings.h"
 #include <time.h>
 #include "SharedData.h"
 #include "BLE/BluetoothHandler.h"
 #include "main.h"
+#include "ArduinoJson.h"
 
 using WebServerClass = WebServer;
 
@@ -15,10 +17,11 @@ SharedData *WifiSettingsPortal_shrd;
 BluetoothHandler *WifiSettingsPortal_blh;
 
 WebServerClass server;
+WebSocketsServer webSocket = WebSocketsServer(81);
 AutoConnect portal(server);
 AutoConnectConfig config;
 
-static const char JSPAGE[] PROGMEM = R"=====(
+static const char JS_VERSION_PAGE[] PROGMEM = R"=====(
   
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type='text/javascript'>
@@ -49,12 +52,252 @@ function EpochToDate(epoch) {
 
 )=====";
 
+static const char JS_DASHBOARD_PAGE[] PROGMEM = R"=====(
+<script type="text/javascript">
+
+var ws = new WebSocket("ws://" + location.host +":81");
+
+function SendText() {
+  ws.send('Hello, world');
+}
+
+ws.onmessage = function(event) {
+  var msg = JSON.parse(event.data);
+
+  switch(msg.id) {
+    case 1:
+      document.getElementById("ACE_DASHBOARD_text1").innerHTML = 'Init' + msg.value;
+      break;
+    case 2:
+      document.getElementById("ACE_DASHBOARD_text1").innerHTML = 'Reply : ' + msg.value;
+      break;
+    case 3:
+      document.getElementById("ACE_DASHBOARD_text1").innerHTML = 'Temperature : ' + msg.value;
+      break;
+  }
+
+};
+
+function Scrolldown() {
+     window.scroll(0,58); 
+}
+
+window.onload = Scrolldown;
+
+</script>
+)=====";
+
+
+static const char CSS_DASHBOARD_PAGE[] PROGMEM = R"=====(
+html {
+  background-color: #00013D !important;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  font-family: Helvetica, sans-serif;
+  color: #fff;
+}
+
+h1 {
+  text-align: center;
+  /*text-transform: uppercase;*/
+  letter-spacing: 3px;
+  color: #eee;
+  position: relative;
+  z-index: 100;
+}
+h1 a {
+  letter-spacing: 1px;
+  text-transform: lowercase;
+  color: #3F51B5;
+  font-size: 30px;
+  transition: all 0.5s ease;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  -ms-transition: all 0.5s ease;
+}
+h1 a:hover {
+  color: #F44336;
+}
+
+main.wrap {
+  position: absolute;
+  top: 0;
+  /* height: 70%; */
+  /* transform: translateY(-50%); */
+  /* -webkit-transform: translateY(-50%); */
+  /* -moz-transform: translateY(-50%); */
+  /* -o-transform: translateY(-50%); */
+  /* -ms-transform: translateY(-50%); */
+  width: 100%;
+  left: 5px;
+}
+main.wrap .tile-wrap {
+  display: inline-block;
+  margin: 0;
+  max-width: 50%;
+}
+main.wrap .tile-wrap h3 {
+  margin: 0;
+  padding: 0;
+  color: #aaa;
+  text-align: center;
+}
+
+.tile {
+  display: inline-block;
+  width: 100%;
+  height: 125px;
+  background-color: #7E3FF3;
+  outline: none;
+  
+  cursor: pointer;
+  border: 5px solid #00013D;
+  padding: 0;
+  float: left;
+  transition: all 0.5s ease;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  -ms-transition: all 0.5s ease;
+}
+.tile .icon {
+  font-size: 60px;
+}
+.tile .name {
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  -webkit-transform: translateY(20px);
+  -moz-transform: translateY(20px);
+  -o-transform: translateY(20px);
+  -ms-transform: translateY(20px);
+  transition: all 0.5s ease;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  -ms-transition: all 0.5s ease;
+}
+.tile:hover {
+  border-color: #fff;
+}
+.tile:hover > .name {
+  transform: translateY(0px);
+  -webkit-transform: translateY(0px);
+  -moz-transform: translateY(0px);
+  -o-transform: translateY(0px);
+  -ms-transform: translateY(0px);
+  opacity: 1;
+}
+
+.short {
+  width: 50%;
+}
+
+)=====";
+
+
+static const char HTML_DASHBOARD_PAGE[] PROGMEM = R"=====(
+<div class='content-wrapper'>
+	<main class='wrap'>
+		<h2 style="color:grey;font-weight: normal;">Smart-e sd_minimo_35 v38</h2>
+		<div class='tile-wrap'>
+			<h3>Bloc N°1</h3>
+			
+			<button class='tile'>
+				<h3 style="text-align:left; color: white;">Speed (M)</h3>
+				<h1>0 km/h</h1>
+				<div class='name'>Description</div>
+			</button>
+			
+			<button class='tile'>
+				<h3 style="text-align:left; color: white;">Mode</h3>
+				<h1>1 2 3</h1>
+				<div class='name'>Description</div>
+			</button>
+			
+			<button class='tile'>
+				<h3 style="text-align:left; color: white;">Brake</h3>
+				<h1>1 2 3 4 5</h1>
+				<div class='name'>Description</div>
+			</button>
+			
+			<button class='tile short'>
+				<h3 style="text-align:left; color: white;">ECO</h3>
+				<h1>NONE</h1>
+				<div class='name'>Description</div>
+			</button>
+			
+			<button class='tile short'>
+				<h3 style="text-align:left; color: white;">ACCEL.</h3>
+				<h1>MAX</h1>
+				<div class='name'>Description</div>
+			</button>
+			
+			<button class='tile short'>
+				<h3 style="text-align:left; color: white;">LOCK</h3>
+				<h1>OFF</h1>
+				<div class='name'>Description</div>
+			</button>
+			
+			<button class='tile short'>
+				<h3 style="text-align:left; color: white;">SPD. LMT.</h3>
+				<h1>OFF</h1>
+				<div class='name'>Description</div>
+			</button>
+			
+			<button class='tile'>
+				<h3 style="text-align:left; color: white;">AUX</h3>
+				<h1>OFF</h1>
+				<div class='name'>Description</div>
+			</button>
+			
+		</div>
+		<div class='tile-wrap'>
+			<h3>Bloc N°2</h3>
+			<button class='tile'>
+				<div class='icon'>&#x2601;</div>
+				<div class='name'>Description</div>
+			</button>
+			<button class='tile short'>
+				<div class='icon'>&#x20A4;</div>
+				<div class='name'>Description</div>
+			</button>
+			<button class='tile'>
+				<div class='icon'>&#x266B;</div>
+				<div class='name'>Description</div>
+			</button>
+			<button class='tile short'>
+				<div class='icon'>&#x25B7;</div>
+				<div class='name'>Description</div>
+			</button>
+			<button class='tile short'>
+				<div class='icon'>&#x2753;</div>
+				<div class='name'>Description</div>
+			</button>
+		</div>
+	</main>
+</div>
+<!-- footer -->
+
+</body>
+</html>
+)=====";
+
+
 // General style elements
 ACStyle(ACE_Style1, "label{display:inline-block;padding-right: 10px !important;padding-left: 0px !important;}");
 ACStyle(ACE_Style2, "input[type='button']{background-color:#303F9F; border-color:#303F9F}");
 ACStyle(ACE_Style3, "select{width:44%}");
 ACStyle(ACE_Style4, ".noorder{width:100%}.noorder label{display:inline-block;width:40%;cursor:pointer;padding:5px}.noorder .noorder input[type='text']{width:40%} .noorder input[type='password']{width:40%} .noorder input[type='text']{width:40%}");
 ACStyle(ACE_Style5, "input[type='text']{paddingLeft:10px}");
+ACStyle(ACE_Style6, CSS_DASHBOARD_PAGE);
 
 // Settings page
 ACSubmit(ACE_SETTINGS_Save, "Save", "/settingssave");
@@ -76,13 +319,20 @@ ACSubmit(ACE_CALIB_submit_min, "Min position", "/calibpage?min=1");
 ACSubmit(ACE_CALIB_submit_max, "Max position", "/calibpage?max=1");
 AutoConnectAux calibPageAux("/calibpage", "SmartElec calibrations", true, {ACE_Style1, ACE_Style2, ACE_Style4, ACE_Style5, ACE_CALIB_title, ACE_CALIB_text1, ACE_CALIB_text2, ACE_CALIB_submit_min, ACE_CALIB_submit_max});
 
+// Status page
+//ACText(ACE_DASHBOARD_text1, "Test.", "", "", AC_Tag_BR);
+ACElement(ACE_DASHBOARD_html_body, HTML_DASHBOARD_PAGE);
+//ACButton(ACE_DASHBOARD_btn, "btn", "SendText()");
+ACElement(ACE_DASHBOARD_js, JS_DASHBOARD_PAGE);
+AutoConnectAux dashboardPageAux("/dashboardpage", "SmartElec Dashboard", true, {/*ACE_Style1, ACE_Style2, ACE_Style4, ACE_Style5,*/ ACE_Style6, /*ACE_DASHBOARD_text1,*/ ACE_DASHBOARD_html_body, /*ACE_DASHBOARD_btn, */ ACE_DASHBOARD_js});
+
 // OTA flash pages
 ACText(ACE_OTA_title, "Available versions : ", "", "", AC_Tag_BR);
 ACText(ACE_OTA_current_version, "Current version : ", "", "", AC_Tag_BR);
 ACText(ACE_OTA_versions_list, "<div class='versionslist' id='versionslist'><div id='versions_not_available' style='padding-left:20px'>Versions list not available when connected directly with the phone. Connect the SmartElec to a wifi access point to list versions or manually enter a verion number.</div>", "", "", AC_Tag_BR);
 ACInput(ACE_OTA_version_manual, "0", "Version to flash", "^[0-9]+$", "version_selected_manual", AC_Tag_BR, AC_Input_Text);
 ACSubmit(ACE_OTA_submit, "Flash this version", "/otaflash");
-ACElement(ACE_OTA_js, JSPAGE);
+ACElement(ACE_OTA_js, JS_VERSION_PAGE);
 AutoConnectAux otaPageAux("/otapage", "SmartElec firmware update", true, {ACE_Style1, ACE_Style2, ACE_Style5, ACE_OTA_current_version, ACE_OTA_title, ACE_OTA_versions_list, ACE_OTA_version_manual, ACE_OTA_submit, ACE_OTA_js});
 
 // OTA flash in progress
@@ -96,7 +346,6 @@ void WifiSettingsPortal_setup()
   server.on("/_ac", []() {
     server.sendHeader("Location", "/settingspage", true);
     server.send(302, "text/plain", "");
-    //server.client().stop();
   });
 
   // Load a custom web page described in JSON as PAGE_ELEMENT and
@@ -124,6 +373,12 @@ void WifiSettingsPortal_setup()
     saveConfig(aux);
 
     WifiSettingsPortal_blh->startBleScan();
+
+    return String();
+  });
+
+  dashboardPageAux.on([](AutoConnectAux &aux, PageArgument &arg) {
+    Serial.println("dashboard");
 
     return String();
   });
@@ -198,7 +453,7 @@ void WifiSettingsPortal_setup()
 
   // In the setup(),
   // Join the custom Web pages and performs begin
-  portal.join({settingsPageAux, settingsSaveAux, calibPageAux, otaPageAux, otaFlashAux});
+  portal.join({dashboardPageAux, settingsPageAux, settingsSaveAux, calibPageAux, otaPageAux, otaFlashAux});
 
   // fix wifi name ... same as BLE
   uint8_t base_mac_addr[6] = {0};
@@ -219,8 +474,6 @@ void WifiSettingsPortal_setup()
   config.autoRise = true; /**< Automatic starting the captive portal */
   config.title = "SmartElec";
 
-  //config.immediateStart = true;
-  //config.autoReconnect = true;
   //config.autoReconnect;      /**< Automatic reconnect with past SSID */
   //config.immediateStart;     /**< Skips WiFi.begin(), start portal immediately */
   config.beginTimeout = 5000;  /**< Timeout value for WiFi.begin */
@@ -232,7 +485,44 @@ void WifiSettingsPortal_begin()
 {
 
   portal.config(config);
-  portal.begin();
+  if (portal.begin())
+  {
+
+    webSocket.begin(); // <--- After AutoConnect::begin
+    webSocket.onEvent([](uint8_t num, WStype_t type, uint8_t *payload, size_t length) {
+      switch (type)
+      {
+      case WStype_DISCONNECTED:
+        Serial.printf("[%u] Disconnected!\n", num);
+        break;
+      case WStype_CONNECTED:
+      {
+        IPAddress ip = webSocket.remoteIP(num);
+        Serial.printf("[%u] Connected from %s\n", num, ip.toString().c_str());
+        DynamicJsonDocument doc(1024);
+        String str;
+        doc["id"] = 1;
+        doc["value"] = "hello";
+        serializeJson(doc, str);
+        webSocket.sendTXT(num, str);
+      }
+      break;
+      case WStype_TEXT:
+        Serial.printf("[%u] get Text: %s\n", num, payload);
+        // send some response to the client
+
+        DynamicJsonDocument doc(1024);
+        String str;
+        doc["id"] = 2;
+        doc["value"] = "reply : " + (String)(millis());
+        serializeJson(doc, str);
+        Serial.println("str : " + (String)str);
+        webSocket.sendTXT(num, str);
+        break;
+      }
+    });
+  }
+
   //server.begin(80);
   Serial.println("wifi portal open !");
 }
@@ -240,6 +530,7 @@ void WifiSettingsPortal_begin()
 void WifiSettingsPortal_loop()
 {
   //Serial.println("wifi portal loop - begin ----------------");
+  webSocket.loop();
   portal.handleClient();
   //Serial.print(".");
 }
@@ -266,4 +557,17 @@ void WifiSettingsPortal_setSharedData(SharedData *set)
 void WifiSettingsPortal_setBluetoothHandler(BluetoothHandler *set)
 {
   WifiSettingsPortal_blh = set;
+}
+
+void WifiSettingsPortal_sendTemperature()
+{
+  /*
+  DynamicJsonDocument doc(1024);
+  String str;
+  doc["id"] = 3;
+  doc["value"] = WifiSettingsPortal_shrd->currentTemperature;
+  serializeJson(doc, str);
+  Serial.println("str : " + (String)str);
+  webSocket.sendTXT(0, str);
+  */
 }

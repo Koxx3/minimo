@@ -215,7 +215,7 @@ void tftUpdateData(uint32_t i_loop)
     // init TFT
     tft.begin();
     tft.invertDisplay(1);
-    tft.setRotation(1);
+    tft.setRotation(settings.get_Rotate_screen());
 
     tft.fillScreen(TFT_BLACK);
 
@@ -230,10 +230,10 @@ void tftUpdateData(uint32_t i_loop)
       tft.pushImage((TFT_HEIGHT - smart_splash_logoWidth) / 2, (TFT_WIDTH - smart_splash_logoHeight) / 2, smart_splash_logoWidth, smart_splash_logoHeight, smart_splash);
 
       uint32_t whiteColor = tft.color565(0xff, 0xff, 0xff);
-      for (int i = 0; i < 100; i++)
+      for (int i = 0; i < 10; i++)
       {
-        tft.fillRect(i * (TFT_HEIGHT / 100), 0, (TFT_HEIGHT / 100) + 1, 7, whiteColor);
-        delay(30);
+        tft.fillRect(i * (TFT_HEIGHT / 10), 0, (TFT_HEIGHT / 10) - 5 , 6 * SCALE_FACTOR_Y, whiteColor);
+        delay(200);
       }
     }
   }

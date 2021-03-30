@@ -1,0 +1,38 @@
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #00013D;
+    font-family: Sans-Serif;
+}
+.app-title {
+    padding: 15px;
+}
+h1 {
+    color: #ffffff;
+    margin: 0 0 5px;
+}
+h3 {
+    color: #b0b0d4;
+    margin: 0;
+    font-weight: normal;
+    font-size: 12pt;
+}
+.container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.block-info {
+    width: 45%;
+    padding: 8px 5px;
+    margin: 10px 8px;
+    color: #ffffff;
+    background-color: #7643ea;
+}
+.block-info > .legend {
+    text-transform: uppercase;
+    font-weight: bold;
+}

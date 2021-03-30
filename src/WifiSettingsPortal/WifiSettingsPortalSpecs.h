@@ -44,6 +44,7 @@ ACCheckbox(ACE_SETTINGS_Pas_enabled, "ACE_SETTINGS_Pas_enabled", "PAS enabled", 
 ACCheckbox(ACE_SETTINGS_Abs_enabled, "ACE_SETTINGS_Abs_enabled", "ABS enabled", false, AC_Infront);
 ACInput(ACE_SETTINGS_Display_brightness, "100", "Display brightness", "", "", AC_Tag_BR, AC_Input_Text);
 ACCheckbox(ACE_SETTINGS_Display_splash_screen, "ACE_SETTINGS_Display_splash_screen", "Display splash screen", false, AC_Infront);
+ACSelect(ACE_SETTINGS_Rotate_screen, {"0","1","2","3"}, "Rotate screen", 1);
 ACText(ACE_SETTINGS_Electric_brake, "<h2>Electric brake</h2>", "color:#303F9F;padding:10px;");
 ACCheckbox(ACE_SETTINGS_Ebrake_progressive_mode, "ACE_SETTINGS_Ebrake_progressive_mode", "Progressive mode", false, AC_Infront);
 ACSelect(ACE_SETTINGS_Ebrake_smart_brake_type, {"Controller","Smart - Digital brake lever","Smart - Analog brake lever","Smart - Digital brake + throttle (exp)"}, "Type", 0);
@@ -104,6 +105,7 @@ AutoConnectAux settingsPageAux("/settingspage", "SmartElec settings", true, {
     ACE_SETTINGS_Abs_enabled,
     ACE_SETTINGS_Display_brightness,
     ACE_SETTINGS_Display_splash_screen,
+    ACE_SETTINGS_Rotate_screen,
     ACE_SETTINGS_Electric_brake,
     ACE_SETTINGS_Ebrake_progressive_mode,
     ACE_SETTINGS_Ebrake_smart_brake_type,
@@ -165,6 +167,7 @@ void saveConfig(AutoConnectAux &aux)
     WifiSettingsPortal_settings->set_Display_brightness((settingsPageAux["ACE_SETTINGS_Display_brightness"].as<AutoConnectInput>()).value.toInt());
     WifiSettingsPortal_settings->set_Display_splash_screen((settingsPageAux["ACE_SETTINGS_Display_splash_screen"].as<AutoConnectCheckbox>()).checked ? 1 : 0);
     Serial.println("Display_splash_screen = " + (String) (settingsPageAux["ACE_SETTINGS_Display_splash_screen"].as<AutoConnectCheckbox>()).checked);
+    WifiSettingsPortal_settings->set_Rotate_screen((settingsPageAux["ACE_SETTINGS_Rotate_screen"].as<AutoConnectSelect>()).selected - 1);
     WifiSettingsPortal_settings->set_Ebrake_progressive_mode((settingsPageAux["ACE_SETTINGS_Ebrake_progressive_mode"].as<AutoConnectCheckbox>()).checked ? 1 : 0);
     Serial.println("Ebrake_progressive_mode = " + (String) (settingsPageAux["ACE_SETTINGS_Ebrake_progressive_mode"].as<AutoConnectCheckbox>()).checked);
     WifiSettingsPortal_settings->set_Ebrake_smart_brake_type((settingsPageAux["ACE_SETTINGS_Ebrake_smart_brake_type"].as<AutoConnectSelect>()).selected - 1);
@@ -255,6 +258,15 @@ void loadConfig(AutoConnectAux &aux)
     aux.setElementValue("ACE_SETTINGS_Abs_enabled", WifiSettingsPortal_settings->get_Abs_enabled() ? "checked" : "");
     aux.setElementValue("ACE_SETTINGS_Display_brightness", (String)WifiSettingsPortal_settings->get_Display_brightness());
     aux.setElementValue("ACE_SETTINGS_Display_splash_screen", WifiSettingsPortal_settings->get_Display_splash_screen() ? "checked" : "");
+    uint8_t val_Rotate_screen = WifiSettingsPortal_settings->get_Rotate_screen();
+    if (val_Rotate_screen == 0)
+        aux.setElementValue("ACE_SETTINGS_Rotate_screen", "0");
+    if (val_Rotate_screen == 1)
+        aux.setElementValue("ACE_SETTINGS_Rotate_screen", "1");
+    if (val_Rotate_screen == 2)
+        aux.setElementValue("ACE_SETTINGS_Rotate_screen", "2");
+    if (val_Rotate_screen == 3)
+        aux.setElementValue("ACE_SETTINGS_Rotate_screen", "3");
     aux.setElementValue("ACE_SETTINGS_Ebrake_progressive_mode", WifiSettingsPortal_settings->get_Ebrake_progressive_mode() ? "checked" : "");
     uint8_t val_Ebrake_smart_brake_type = WifiSettingsPortal_settings->get_Ebrake_smart_brake_type();
     if (val_Ebrake_smart_brake_type == 0)

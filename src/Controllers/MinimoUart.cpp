@@ -240,7 +240,7 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
 
   float voltage = shrd->voltageFilterMean / 1000.0;
   float bat_min = settings->get_Battery_minimum_voltage();
-  float bat_max = settings->get_Battery_maximum_voltage();
+  //float bat_max = settings->get_Battery_maximum_voltage();
   //float bat_med_save = settings->getS3F().Battery_saving_medium_voltage;
 
   //float bat_med_save_voltage = ((bat_max - bat_min) * settings->get_Battery_saving_medium_voltage() / 100.0) + bat_min;
@@ -588,6 +588,10 @@ uint8_t MinimoUart::modifyBrakeFromAnalog(char var, char data_buffer[])
     if (settings->get_Ebrake_max_power_value() - settings->get_Ebrake_min_power_value() > 0)
     {
       step = (shrd->brakeMaxPressureRaw - shrd->brakeMinPressureRaw) / (settings->get_Ebrake_max_power_value() - settings->get_Ebrake_min_power_value());
+
+      // fix invalid parameters 
+      if (step <= 0)
+        step = 1;
 
       if (shrd->brakeFilterMeanErr > shrd->brakeMinPressureRaw)
       {
