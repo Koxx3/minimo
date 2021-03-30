@@ -166,8 +166,8 @@ void setupPins()
   pinMode(PIN_OUT_LED_BUTTON1, OUTPUT);
   pinMode(PIN_IN_ABRAKE, INPUT);
   pinMode(PIN_IN_ATHROTTLE, INPUT);
-  pinMode(PIN_OUT_FREE, OUTPUT);
-  //digitalWrite(PIN_OUT_FREE, 0);
+  pinMode(PIN_OUT_POWER_LATCH, OUTPUT);
+  pinMode(PIN_IN_BUTTON_PWR, INPUT);
 }
 
 #if HAS_I2C
@@ -533,7 +533,7 @@ void setup()
   xTaskCreatePinnedToCore(
       taskProcessButtons,   // Function that should be called
       "taskProcessButtons", // Name of the task (for debugging)
-      5000,                // Stack size (bytes)
+      5000,                 // Stack size (bytes)
       NULL,                 // Parameter to pass
       0,                    // Task priority
       NULL,                 // Task handle,
@@ -1802,6 +1802,17 @@ void loop()
   }
   timeLoop = millis();
 #endif
+/*
+  if (i_loop == 5000) {
+    digitalWrite(PIN_OUT_POWER_LATCH, 1);
+    Serial.println("shutdown !!!");
+  }
+
+  if (i_loop % 500 == 0) {
+    int var = digitalRead(PIN_IN_BUTTON_PWR);
+    Serial.println("btn = " + (String) var);
+  }
+*/
 
   i_loop++;
 

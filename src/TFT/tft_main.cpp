@@ -147,6 +147,8 @@ uint8_t oldAuxOrder = 255;
 uint8_t old_substate_case3 = 0;
 uint8_t old_substate_case6 = 0;
 
+bool lock = false;
+
 // This next function will be called during decoding of the jpeg file to
 // render each block to the TFT.  If you use a different TFT library
 // you will need to adapt this function to suit.
@@ -178,13 +180,15 @@ void tftSetupBacklight()
 
 void tftBacklightFull()
 {
+  if (!lock) {
   uint16_t brigtness = map(settings.get_Display_brightness(), 0, 100, 0, 1023);
   ledcWrite(0, brigtness);
+  }
 }
 
-void tftBacklightLow()
+void tftBacklightLow(bool lock_p)
 {
-
+  lock = lock_p;
   ledcWrite(0, 0);
 }
 
@@ -195,7 +199,7 @@ void tftSetup(SharedData *shrd_p, Settings *settings_p)
   //settings = settings_p;
 
   // dim screen for init
-  tftBacklightLow();
+  tftBacklightLow(false);
 }
 
 static char *Dfmt2_1(double v)

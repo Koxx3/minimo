@@ -37,6 +37,13 @@ private:
     static void processButton2LpStop();
     static void processButton2();
 
+
+    static void processButton3Click();
+    static void processButton3LpStart();
+    static void processButton3LpDuring();
+    static void processButton3LpStop();
+    static void processButton3();
+
     static void processAuxEvent(uint8_t buttonId, bool isLongPress);
     static void processSpeedLimiterEvent(uint8_t buttonId, bool isLongPress);
     static void processLockEvent(uint8_t buttonId, bool isLongPress);

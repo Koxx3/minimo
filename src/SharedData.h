@@ -121,6 +121,7 @@ public:
     uint32_t button2LpDuration = 0;
     boolean button1LpProcessed = false;
     boolean button2LpProcessed = false;
+    uint32_t button3LpDuration = 0;
 
     // TFT settings menu status
     uint8_t inSettingsMenu = SETTINGS_MENU_STATE_OUT;

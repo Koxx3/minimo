@@ -15,5 +15,7 @@
 void tftSetupBacklight();
 void tftSetup(SharedData *shrd, Settings *settings);
 void tftUpdateData(uint32_t);
+void tftBacklightFull();
+void tftBacklightLow(bool);
 
 #endif

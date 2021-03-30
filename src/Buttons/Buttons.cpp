@@ -2,6 +2,7 @@
 #include "TFT/tft_settings_menu.h"
 #include <jled.h>
 #include "debug.h"
+#include "TFT/tft_main.h"
 
 #define SINGLE_LED 0
 #define ENABLE_LED 1
@@ -11,6 +12,7 @@
 
 OneButton button1(PIN_IN_BUTTON1, true, true);
 OneButton button2(PIN_IN_BUTTON2, true, true);
+OneButton button3(PIN_IN_BUTTON_PWR, true, true);
 
 Settings *Buttons::settings;
 SharedData *Buttons::shrd;
@@ -45,6 +47,13 @@ void Buttons::setup(SharedData *shrd_p, BluetoothHandler *blh_p, Settings *setti
     button2.setDebounceTicks(50);
     button2.setPressTicks(BUTTON_LONG_PRESS_TICK);
 
+    button3.attachClick(processButton3Click);
+    button3.attachLongPressStart(processButton3LpStart);
+    button3.attachDuringLongPress(processButton3LpDuring);
+    button3.attachLongPressStop(processButton3LpStop);
+    button3.setDebounceTicks(50);
+    button3.setPressTicks(BUTTON_LONG_PRESS_TICK);
+
 #if ENABLE_LED
     led1.Stop();
 #endif
@@ -77,7 +86,7 @@ void Buttons::processButton1Click()
         processEcoEvent(1, false);
     }
 
-    Serial.println("processButton1Click : " + (String) shrd->button1ClickStatus);
+    Serial.println("processButton1Click : " + (String)shrd->button1ClickStatus);
 
     char print_buffer[500];
     sprintf(print_buffer, "processButton1Click : %d", shrd->button1ClickStatus);
@@ -233,6 +242,39 @@ void Buttons::processButton2LpStop()
 
     shrd->button2LpProcessed = false;
     shrd->button2LpDuration = 0;
+}
+
+////////////////////////////////////////////
+
+void Buttons::processButton3Click()
+{
+    Serial.println("processButton3Click");
+}
+
+void Buttons::processButton3LpStart()
+{
+    Serial.println("processButton3LpStart");
+}
+
+void Buttons::processButton3LpDuring()
+{
+    Serial.println("processButton3LpDuring");
+
+    shrd->button3LpDuration = button3.getPressedTicks();
+
+    if (shrd->button3LpDuration > settings->get_Button_long_press_duration() * 1000)
+    {
+        digitalWrite(PIN_OUT_POWER_LATCH, 1);
+        Serial.println("processButton3LpDuring : SHUTDOWN");
+        led1.Stop();
+        led1.On().Forever();
+        tftBacklightLow(true);
+    }
+}
+
+void Buttons::processButton3LpStop()
+{
+    Serial.println("processButton3LpStop");
 }
 
 //////////////////////////
@@ -467,7 +509,7 @@ void Buttons::processTicks()
 {
     button1.tick();
     button2.tick();
+    button3.tick();
 
     led1.Update();
-
 }
