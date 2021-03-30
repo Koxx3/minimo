@@ -20,19 +20,52 @@ h3 {
     font-weight: normal;
     font-size: 12pt;
 }
+.clearfix {
+    clear: both;
+}
 .container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    width: 100%;
+}
+.blocks-left,
+.blocks-right {
+    width: 50%;
+    float: left;
 }
 .block-info {
-    width: 45%;
-    padding: 8px 5px;
-    margin: 10px 8px;
+    margin: 10px;
     color: #ffffff;
     background-color: #7643ea;
 }
-.block-info > .legend {
+.block-info > .block-middle {
+    width: 50%;
+    float: left;
+}
+.block-info > .block-middle > .content > .data {
+    font-size: 14pt;
     text-transform: uppercase;
+}
+.block-info .content {
+    text-align: center;
+    padding: 10px 8px;
+}
+.block-info .content > .legend {
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 10pt;
+    text-align: left;
+}
+.block-info .content > .data {
+    font-size: 22pt;
+    font-weight: bold;
+}
+.block-info .content > .data > .select-mode {
+    color: #9796a4;
+}
+.block-info .content > .data > .select-mode.selected {
+    color: #ffffff;
+}
+.block-info .content > .sub-data {
+    font-size: 16pt;
     font-weight: bold;
 }
