@@ -166,8 +166,10 @@ void setupPins()
   pinMode(PIN_OUT_LED_BUTTON1, OUTPUT);
   pinMode(PIN_IN_ABRAKE, INPUT);
   pinMode(PIN_IN_ATHROTTLE, INPUT);
+#if (PCB >= 142)
   pinMode(PIN_OUT_POWER_LATCH, OUTPUT);
   pinMode(PIN_IN_BUTTON_PWR, INPUT);
+#endif
 }
 
 #if HAS_I2C
