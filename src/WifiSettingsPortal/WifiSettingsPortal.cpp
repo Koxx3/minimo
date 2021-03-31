@@ -83,9 +83,7 @@ ACSubmit(ACE_CALIB_submit_max, "Max position", "/calibpage?max=1");
 AutoConnectAux calibPageAux("/calibpage", "SmartElec calibrations", true, {ACE_Style1, ACE_Style2, ACE_Style4, ACE_Style5, ACE_CALIB_title, ACE_CALIB_text1, ACE_CALIB_text2, ACE_CALIB_submit_min, ACE_CALIB_submit_max});
 
 // Dashboard page
-//ACText(ACE_DASHBOARD_text1, "Test.", "", "", AC_Tag_BR);
 ACElement(ACE_DASHBOARD_html_body, HTML_DASHBOARD_PAGE);
-//ACButton(ACE_DASHBOARD_btn, "btn", "SendText()");
 ACElement(ACE_DASHBOARD_js, JS_DASHBOARD_PAGE);
 AutoConnectAux dashboardPageAux("/dashboardpage", "SmartElec dashboard", true, {ACE_Style6, ACE_DASHBOARD_html_body, ACE_DASHBOARD_js});
 
