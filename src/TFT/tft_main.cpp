@@ -257,6 +257,7 @@ void tftUpdateData(uint32_t i_loop)
 
       // Swap the colour byte order when rendering
       tft.setSwapBytes(true);
+      
 
       if (settings.get_Display_splash_screen())
       {

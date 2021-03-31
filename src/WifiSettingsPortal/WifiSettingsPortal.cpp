@@ -85,7 +85,7 @@ AutoConnectAux calibPageAux("/calibpage", "SmartElec calibrations", true, {ACE_S
 // Dashboard page
 ACElement(ACE_DASHBOARD_html_body, HTML_DASHBOARD_PAGE);
 ACElement(ACE_DASHBOARD_js, JS_DASHBOARD_PAGE);
-AutoConnectAux dashboardPageAux("/dashboardpage", "SmartElec dashboard", true, {ACE_Style6, ACE_DASHBOARD_html_body, ACE_DASHBOARD_js});
+AutoConnectAux dashboardPageAux("/dashboardpage", "SmartElec dashboard", true, {ACE_Style6, ACE_DASHBOARD_js, ACE_DASHBOARD_html_body});
 
 // OTA flash pages
 ACText(ACE_OTA_title, "Available versions : ", "", "", AC_Tag_BR);
