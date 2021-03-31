@@ -152,6 +152,12 @@ h3 {
 .clearfix {
     clear: both;
 }
+.base-panel {
+    margin: 0 !important;
+}
+.noorder {
+    display: block !important;
+}
 .container {
     width: 100%;
 }
@@ -223,8 +229,8 @@ h3 {
 }
 /* Battery level */
 #battery-gauge {
-    /*background: linear-gradient(90deg, #ff0000 0%, #fcfd1d 50%, #64fc45 100%);*/
-    background-color: #ffffff;
+    background: linear-gradient(90deg, #ff0000 0%, #fcfd1d 50%, #64fc45 100%);
+    /*background-color: #ffffff;*/
     height: 10px;
     width: 80%;
     margin: 8px auto 0 auto;
@@ -257,6 +263,7 @@ h3 {
 #battery-mask-container td:nth-child(10) {
     border-right: 0;
 }
+
 )=====";
 
 
