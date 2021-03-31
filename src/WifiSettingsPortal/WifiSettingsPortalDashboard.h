@@ -270,10 +270,6 @@ h3 {
 static const char HTML_DASHBOARD_PAGE[] PROGMEM = R"=====(
 	<div class="content-wrapper">
 		<main class="wrap">
-			<div class="app-title">
-				<h3 id="version">Smart-e8 sd_minimo_35 v38</h3>
-			</div>
-
 			<div class="container">
 				<div class="blocks-left">
 					<div class="block-info">
