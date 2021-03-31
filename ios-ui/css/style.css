@@ -19,6 +19,12 @@ h3 {
 .clearfix {
     clear: both;
 }
+.base-panel {
+    margin: 0 !important;
+}
+.noorder {
+    display: block !important;
+}
 .container {
     width: 100%;
 }
