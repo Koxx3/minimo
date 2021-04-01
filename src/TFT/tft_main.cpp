@@ -33,13 +33,15 @@
 #define FONT_FORCED_SQUARE18pt7b &FORCED_SQUARE18pt7b
 
 #if ((TFT_MODEL == 2) || (TFT_MODEL == 3)) // 3.5"
-#define FONT_LABEL FONT_FORCED_SQUARE10pt7b
-#define FONT_LABEL_HEIGH 10
+#define FONT_RED_LABEL FONT_FORCED_SQUARE10pt7b
+#define FONT_UNIT FONT_FORCED_SQUARE10pt7b
+#define FONT_UNIT_HEIGH 10
 #define FONT_NUMBER FONT_FORCED_SQUARE18pt7b
 #define FONT_NUMBER_HEIGHT 18
 #else
-#define FONT_LABEL FONT_FORCED_SQUARE7pt7b
-#define FONT_LABEL_HEIGH 7
+#define FONT_RED_LABEL FONT_FORCED_SQUARE6pt7b
+#define FONT_UNIT FONT_FORCED_SQUARE7pt7b
+#define FONT_UNIT_HEIGH 7
 #define FONT_NUMBER FONT_FORCED_SQUARE14pt7b
 #define FONT_NUMBER_HEIGHT 14
 #endif
@@ -145,6 +147,7 @@ uint8_t oldShrdIsLocked = 255;
 uint8_t oldAuxOrder = 255;
 
 uint8_t old_substate_case3 = 0;
+uint8_t old_substate_case7 = 0;
 uint8_t old_substate_case6 = 0;
 
 bool lock = false;
@@ -303,12 +306,7 @@ void tftUpdateData(uint32_t i_loop)
     // init TFT settings
     tft.setTextSize(1);
 
-#if ((TFT_MODEL == 2) || (TFT_MODEL == 3)) // 3.5"
-    tft.setFreeFont(FONT_FORCED_SQUARE10pt7b);
-#else
-    tft.setFreeFont(FONT_FORCED_SQUARE6pt7b);
-#endif
-
+    tft.setFreeFont(FONT_RED_LABEL);
     // draw interface - labels
     tft.setTextColor(TFT_RED, TFT_BLACK);
     tft.setTextDatum(BR_DATUM);
@@ -319,15 +317,18 @@ void tftUpdateData(uint32_t i_loop)
     tft.drawString(txt_trip, COLUMN9, LINE_4Y - LINE_TEXT_OFFSET, GFXFF);
 
     // draw interface - units
-    tft.setFreeFont(FONT_LABEL);
+    tft.setFreeFont(FONT_UNIT);
     tft.setTextColor(MY_TFT_WHITE, TFT_BLACK);
     tft.setTextDatum(BL_DATUM);
     tft.drawString(txt_km, COLUMN3 + UNIT_LEFT_MARGIN, LINE_2Y_UNIT, GFXFF);
     tft.drawString(txt_v, COLUMN4 + UNIT_LEFT_MARGIN, LINE_2Y_UNIT, GFXFF);
     tft.drawString(txt_kmh, COLUMN8 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT2, GFXFF);
-    tft.drawString(txt_max, COLUMN8 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT3, GFXFF);
+ 
     tft.drawString(txt_w, COLUMN2 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF);
     tft.drawString(txt_km, COLUMN9 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF);
+
+    tft.setFreeFont(FONT_RED_LABEL);
+    tft.drawString(txt_max, COLUMN8 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT3, GFXFF);
 
     tft.setFreeFont(FONT_NUMBER);
     tft.drawString(txt_kmh, COLUMN5 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT1, GFXFF);
@@ -417,13 +418,13 @@ void tftUpdateData(uint32_t i_loop)
         // Draw label
         tft.setTextColor(TFT_RED, TFT_BLACK);                                  //LABEL
         tft.setTextDatum(BR_DATUM);                                            //LABEL
-        tft.setFreeFont(FONT_LABEL);                                           //LABEL SIZE/FONT
+        tft.setFreeFont(FONT_RED_LABEL);                                       //LABEL SIZE/FONT
         tft.drawString(txt_label, COLUMN2, LINE_4Y - LINE_TEXT_OFFSET, GFXFF); //DRAW LABEL ON DISPLAY
 
         // Draw unit
         tft.setTextColor(MY_TFT_WHITE, TFT_BLACK);                                 //UNIT
         tft.setTextDatum(BL_DATUM);                                                //UNIT
-        tft.setFreeFont(FONT_LABEL);                                               //UNIT SIZE/FONT
+        tft.setFreeFont(FONT_UNIT);                                               //UNIT SIZE/FONT
         tft.drawString(txt_unit, COLUMN2 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF); //DRAW UNIT ON DISPLAY
 
         // Switch font back
@@ -495,7 +496,7 @@ void tftUpdateData(uint32_t i_loop)
         // Draw label
         tft.setTextColor(TFT_RED, TFT_BLACK);                                  //LABEL
         tft.setTextDatum(BR_DATUM);                                            //LABEL
-        tft.setFreeFont(FONT_LABEL);                                           //LABEL SIZE/FONT
+        tft.setFreeFont(FONT_RED_LABEL);                                       //LABEL SIZE/FONT
         tft.drawString(txt_label, COLUMN9, LINE_4Y - LINE_TEXT_OFFSET, GFXFF); //DRAW LABEL ON DISPLAY
 
         // Switch font back
@@ -507,9 +508,53 @@ void tftUpdateData(uint32_t i_loop)
     }
     case 7:
     {
-      float autonomy = shrd.autonomyLeft;
-      autonomy = constrain(autonomy, 0, 999);
-      sprintf(fmt, "%03.0f", autonomy);
+      float data;
+      String txt_unit;
+      bool shouldClear = false;
+
+      if (shrd.speedCurrent == 0 && shrd.brakePressedStatus == 1)
+      { // CASE PERCENTAGE
+        data = shrd.batteryLevel;
+        sprintf(fmt, "%03.0f", data);
+        txt_unit = "%   ";
+
+        // check substate change
+        if (old_substate_case7 == 1)
+        {
+          shouldClear = true;
+          old_substate_case7 = 0;
+        }
+      }
+      
+      else
+      { // CASE AUTONOMY
+        txt_unit = "Km";
+        float autonomy = shrd.autonomyLeft;
+        autonomy = constrain(autonomy, 0, 999);
+        sprintf(fmt, "%03.0f", autonomy);
+        // check substate change
+        if (old_substate_case7 == 0)
+        {
+          shouldClear = true;
+          old_substate_case7 = 1;
+        }
+      }
+
+      if (shouldClear)
+      {
+        // Clear number space
+        //tft.fillRect(COLUMN4, LINE_2Y, COLUMN4 - COLUMN6, (SMALLEST_FONT_SIZE * 5), TFT_BLACK); //broken
+
+        // Draw unit
+        tft.setTextColor(MY_TFT_WHITE, TFT_BLACK);                                 //UNIT
+        tft.setTextDatum(BL_DATUM);                                                //UNIT
+        tft.setFreeFont(FONT_UNIT);                                               //UNIT SIZE/FONT
+        tft.drawString(txt_unit, COLUMN3 + UNIT_LEFT_MARGIN, LINE_2Y_UNIT, GFXFF); //DRAW UNIT ON DISPLAY
+
+        // Switch font back
+        tft.setFreeFont(FONT_NUMBER); //SET FONT FOR DATA
+      }
+      
       tft_util_draw_number(&tft, fmt, COLUMN3, LINE_2Y, MY_TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
