@@ -2,13 +2,13 @@
 
 uint16_t RpmToKmh(Settings *settings, uint16_t rpm)
 {
-    float coef = settings->get_Wheel_size() / settings->get_Number_of_poles_pairs() / 10.46;
+    float coef = settings->get_Wheel_size() / settings->get_Number_of_poles_pairs() / 10;
     return rpm * coef;
 }
 
 uint16_t KmhToRpm(Settings *settings, float kmh)
 {
-    float coef = settings->get_Wheel_size() / settings->get_Number_of_poles_pairs() / 10.46;
+    float coef = settings->get_Wheel_size() / settings->get_Number_of_poles_pairs() / 10;
     return kmh / coef;
 }
 
