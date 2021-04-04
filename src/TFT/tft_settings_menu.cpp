@@ -98,11 +98,11 @@ void settings_menu_btn_click(uint8_t pressType, uint8_t btnNum)
 
   if ((btnNum == 1) && (pressType == 0))
   {
-    nav.doNav(upCmd);
+    nav.doNav(downCmd);
   }
   if ((btnNum == 2) && (pressType == 0))
   {
-    nav.doNav(downCmd);
+    nav.doNav(upCmd);
   }
   if ((btnNum == 1) && (pressType == 1))
   {
