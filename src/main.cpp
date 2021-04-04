@@ -166,8 +166,8 @@ void setupPins()
   pinMode(PIN_OUT_LED_BUTTON1, OUTPUT);
   pinMode(PIN_IN_ABRAKE, INPUT);
   pinMode(PIN_IN_ATHROTTLE, INPUT);
-#if (PCB >= 142)
   pinMode(PIN_OUT_POWER_LATCH, OUTPUT);
+#if (PCB >= 142)
   pinMode(PIN_IN_BUTTON_PWR, INPUT);
 #endif
 }
@@ -486,7 +486,6 @@ void setup()
   tftSetup(&shrd, &settings);
 #endif
 
-
   Serial.println("   prefs... ");
   settings2.setSharedData(&shrd);
   settings2.restore();
@@ -799,7 +798,7 @@ void getBrakeFromAnalog()
     else if (shrd.brakeAnalogValue < ANALOG_BRAKE_MIN_ERR_VALUE)
     {
 #if DEBUG_DISPLAY_ANALOG_BRAKE
-      Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE");
+      Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE : " + (String)shrd.brakeAnalogValue);
 #endif
       /*
       char print_buffer[500];
@@ -824,7 +823,7 @@ void getBrakeFromAnalog()
     if (shrd.brakeAnalogValue > ANALOG_BRAKE_MAX_ERR_VALUE)
     {
 #if DEBUG_DISPLAY_ANALOG_BRAKE
-      Serial.println("brake ANALOG_BRAKE_MAX_ERR_VALUE");
+      Serial.println("brake ANALOG_BRAKE_MAX_ERR_VALUE : " + (String)shrd.brakeAnalogValue);
       char print_buffer[500];
       sprintf(print_buffer, "brake ANALOG_BRAKE_MAX_ERR_VALUE / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d",
               shrd.brakeFilterMeanErr,
@@ -1045,13 +1044,39 @@ void processDacOutput()
 
   // apply exponential curve
   if (settings.get_Throttle_output_curve() == settings.LIST_Throttle_output_curve_Exponential_1)
+  {
     throttlePercent = (exp(throttlePercent / 100.0) - 1) / (exp(1) - 1) * 100;
+  }
   else if (settings.get_Throttle_output_curve() == settings.LIST_Throttle_output_curve_Exponential_2)
+  {
     throttlePercent = (exp(throttlePercent / 100.0 * 2) - 1) / (exp(2) - 1) * 100;
+  }
   else if (settings.get_Throttle_output_curve() == settings.LIST_Throttle_output_curve_Exponential_3)
+  {
     throttlePercent = (exp(throttlePercent / 100.0 * 3) - 1) / (exp(3) - 1) * 100;
+  }
   else if (settings.get_Throttle_output_curve() == settings.LIST_Throttle_output_curve_Exponential_4)
+  {
     throttlePercent = (exp(throttlePercent / 100.0 * 4) - 1) / (exp(4) - 1) * 100;
+  }
+  else if (settings.get_Throttle_output_curve() == settings.LIST_Throttle_output_curve_Custom_6_points)
+  {
+    int8_t index = 4;
+    uint16_t low = 0;
+    uint16_t high = 1000;
+    uint16_t throttlePercentInt = throttlePercent * 10;
+    if ((throttlePercentInt > 0) && (throttlePercentInt < 1000))
+    {
+      index = (throttlePercentInt / 200) - 1;
+      if (index >= 0)
+        low = getValueFromString(settings.get_Throttle_output_curve_custom(), ',', index) * 10;
+      if (index < 3)
+        high = getValueFromString(settings.get_Throttle_output_curve_custom(), ',', index + 1) * 10;
+      float throttlePercentNew = map(throttlePercentInt, (index + 1) * 200, (index + 2) * 200, low, high) / 10.0;
+      //Serial.println("throttlePercentInt = " + (String)throttlePercentInt + " / index = " + (String)index + " / low = " + (String)low + " / high = " + (String)high + " / throttlePercentNew = " + (String)throttlePercentNew);
+      shrd.throttlePercent = throttlePercentNew;
+    }
+  }
 
   shrd.throttlePercent = throttlePercent;
 
@@ -1803,7 +1828,7 @@ void loop()
   }
   timeLoop = millis();
 #endif
-/*
+  /*
   if (i_loop == 5000) {
     digitalWrite(PIN_OUT_POWER_LATCH, 1);
     Serial.println("shutdown !!!");

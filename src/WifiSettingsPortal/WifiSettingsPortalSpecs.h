@@ -59,7 +59,8 @@ ACInput(ACS6_2, "650", "Input min voltage", "", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACS6_3, "3950", "Input max voltage", "", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACS6_4, "800", "Output min voltage", "", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACS6_5, "3350", "Output max voltage", "", "", AC_Tag_BR, AC_Input_Text);
-ACSelect(ACS6_6, {"Linear","Exponential 1","Exponential 2","Exponential 3","Exponential 4"}, "Output curve", 2);
+ACSelect(ACS6_6, {"Linear","Exponential 1","Exponential 2","Exponential 3","Exponential 4","Custom 6 points"}, "Output curve", 2);
+ACInput(ACS6_7, "20,40,60,80", "Custom output curve points", "^[0-9]+(,[0-9]+){3}$", "edit_text_string", AC_Tag_BR, AC_Input_Text);
 ACText(ACS7, "<h2>Escooter buttons</h2>", "");
 ACSelect(ACS7_1, {"None","Speed limit ON/OFF","Aux ON/OFF","Mode switch 1/2/3","Mode switch 2/3","Eco switch NONE/MED/MAX","Eco switch NONE/MED"}, "B1 short press ", 0);
 ACSelect(ACS7_2, {"None","Speed limitation ON/OFF","Aux ON/OFF","Mode switch 1/2/3","Mode switch 2/3","Eco switch NONE/MED/MAX","Eco switch NONE/MED","Anti-theft manual lock ON","Nitro boost continuous"}, "B1 long press ", 0);
@@ -127,6 +128,7 @@ AutoConnectAux settingsPageAux("/settingspage", "SmartElec settings", true, {
     ACS6_4,
     ACS6_5,
     ACS6_6,
+    ACS6_7,
         
     ACS7,
     ACS7_1,
@@ -184,6 +186,7 @@ void saveConfig(AutoConnectAux &aux)
     WifiSettingsPortal_settings->set_Throttle_output_min_voltage((settingsPageAux["ACS6_4"].as<AutoConnectInput>()).value.toInt());
     WifiSettingsPortal_settings->set_Throttle_output_max_voltage((settingsPageAux["ACS6_5"].as<AutoConnectInput>()).value.toInt());
     WifiSettingsPortal_settings->set_Throttle_output_curve((settingsPageAux["ACS6_6"].as<AutoConnectSelect>()).selected - 1);
+    WifiSettingsPortal_settings->set_Throttle_output_curve_custom((settingsPageAux["ACS6_7"].as<AutoConnectInput>()).value);
     WifiSettingsPortal_settings->set_Button_1_short_press_action((settingsPageAux["ACS7_1"].as<AutoConnectSelect>()).selected - 1);
     WifiSettingsPortal_settings->set_Button_1_long_press_action((settingsPageAux["ACS7_2"].as<AutoConnectSelect>()).selected - 1);
     WifiSettingsPortal_settings->set_Button_2_short_press_action((settingsPageAux["ACS7_3"].as<AutoConnectSelect>()).selected - 1);
@@ -298,6 +301,9 @@ void loadConfig(AutoConnectAux &aux)
         aux.setElementValue("ACS6_6", "Exponential 3");
     if (val_Throttle_output_curve == 4)
         aux.setElementValue("ACS6_6", "Exponential 4");
+    if (val_Throttle_output_curve == 5)
+        aux.setElementValue("ACS6_6", "Custom 6 points");
+    aux.setElementValue("ACS6_7", (String)WifiSettingsPortal_settings->get_Throttle_output_curve_custom());
     uint8_t val_Button_1_short_press_action = WifiSettingsPortal_settings->get_Button_1_short_press_action();
     if (val_Button_1_short_press_action == 0)
         aux.setElementValue("ACS7_1", "None");

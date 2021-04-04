@@ -101,6 +101,7 @@ TOGGLE(tft_Throttle_output_curve, tft_Throttle_output_curve_LIST,"  Output curve
     ,VALUE("Exponential 2", 2 ,doNothing,noEvent) //
     ,VALUE("Exponential 3", 3 ,doNothing,noEvent) //
     ,VALUE("Exponential 4", 4 ,doNothing,noEvent) //
+    ,VALUE("Custom 6 points", 5 ,doNothing,noEvent) //
 );
 uint8_t tft_Button_1_short_press_action = 0;
 TOGGLE(tft_Button_1_short_press_action, tft_Button_1_short_press_action_LIST,"  B1 short press  ",doNothing,noEvent,noStyle //

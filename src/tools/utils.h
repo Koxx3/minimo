@@ -10,4 +10,6 @@ uint16_t KmhToRpm(Settings *settings, float kmh);
 uint16_t ErpmToKmh2(Settings *settings, uint16_t rpm);
 uint16_t KmhToErpm2(Settings *settings, uint16_t kmh);
 
+int getValueFromString(String data, char separator, int index);
+
 #endif

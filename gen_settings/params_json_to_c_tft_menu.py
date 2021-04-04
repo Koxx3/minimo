@@ -139,7 +139,7 @@ tmpl_h = env.from_string(template_h)
 
 
 # load json from file
-jsonConfigName = "settings\\params.json"
+jsonConfigName = "gen_settings\\params.json"
 print ("jsonConfigName: " + jsonConfigName)
 
 with open(jsonConfigName) as json_file:

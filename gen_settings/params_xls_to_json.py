@@ -1,5 +1,5 @@
 #%%
-file = 'settings\\params.xls'
+file = 'gen_settings\\params.xls'
 import xlrd
 from itertools import chain
 from collections import OrderedDict
@@ -67,7 +67,7 @@ data_list = {'parameters': param_classes_sub_list} # Added line
 j = json.dumps(data_list, indent=2)
 
 # Write to file
-with open('settings\\params.json', 'w') as f:
+with open('gen_settings\\params.json', 'w') as f:
     f.write(j)
 
     print("done.")

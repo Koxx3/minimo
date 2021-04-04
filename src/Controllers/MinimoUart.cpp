@@ -612,8 +612,9 @@ uint8_t MinimoUart::modifyBrakeFromAnalog(char var, char data_buffer[])
 #if DEBUG_DISPLAY_ANALOG_BRAKE
 
     char print_buffer[500];
-    sprintf(print_buffer, "brakeFilter : %d / brakePercent : %d / brakeSentOrder : %d  / brakeSentOrderOld : %d / shrd->brakeStatus : %d / step : %d ",
+    sprintf(print_buffer, "brakeFilter : %d / brakeAnalogValue : %d / brakePercent : %d / brakeSentOrder : %d  / brakeSentOrderOld : %d / shrd->brakeStatus : %d / step : %d ",
             shrd->brakeFilterMeanErr,
+            shrd->brakeAnalogValue,
             shrd->brakePercent,
             shrd->brakeSentOrder,
             shrd->brakeSentOrderOld,

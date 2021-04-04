@@ -101,6 +101,8 @@ void Settings::restore() {
     Serial.println("  >> Throttle_output_max_voltage = " + (String)Throttle_output_max_voltage);
     Throttle_output_curve = prefs.getInt(SETTINGS_THROTTLE_OUTPUT_CURVE_STORAGE_KEY, 2);
     Serial.println("  >> Throttle_output_curve = " + (String)Throttle_output_curve);
+    Throttle_output_curve_custom = prefs.getString(SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_STORAGE_KEY, "20,40,60,80");
+    Serial.println("  >> Throttle_output_curve_custom = " + (String)Throttle_output_curve_custom);
     Button_1_short_press_action = prefs.getInt(SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_STORAGE_KEY, 0);
     Serial.println("  >> Button_1_short_press_action = " + (String)Button_1_short_press_action);
     Button_1_long_press_action = prefs.getInt(SETTINGS_BUTTON_1_LONG_PRESS_ACTION_STORAGE_KEY, 0);
@@ -159,6 +161,7 @@ void Settings::save() {
     prefs.putInt(SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_STORAGE_KEY, Throttle_output_min_voltage);
     prefs.putInt(SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_STORAGE_KEY, Throttle_output_max_voltage);
     prefs.putInt(SETTINGS_THROTTLE_OUTPUT_CURVE_STORAGE_KEY, Throttle_output_curve);
+    prefs.putString(SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_STORAGE_KEY, Throttle_output_curve_custom);
     prefs.putInt(SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_STORAGE_KEY, Button_1_short_press_action);
     prefs.putInt(SETTINGS_BUTTON_1_LONG_PRESS_ACTION_STORAGE_KEY, Button_1_long_press_action);
     prefs.putInt(SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_STORAGE_KEY, Button_2_short_press_action);
@@ -380,6 +383,18 @@ void Settings::unpack_setting_packet(uint8_t* packet, uint8_t length) {
     case SETTINGS_THROTTLE_OUTPUT_CURVE_BLE_ID :
         set_Throttle_output_curve(buffer_get_uint8(packet, &ind));
         Serial.print("unpack_setting_packet - Throttle_output_curve : " + (String) Throttle_output_curve + " / ");
+        buffer_display("", packet, length);
+        break;
+    case SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_BLE_ID :
+        char Throttle_output_curve_custom_part[17];
+        memset(Throttle_output_curve_custom_part, 0, 17 );
+        if (packetNumber == 0) {
+            Throttle_output_curve_custom = "";
+        }
+        memcpy(Throttle_output_curve_custom_part, &packet[ind], length  - 4);
+        Throttle_output_curve_custom =  Throttle_output_curve_custom + Throttle_output_curve_custom_part;
+        set_Throttle_output_curve_custom( Throttle_output_curve_custom);
+        Serial.print("unpack_setting_packet - Throttle_output_curve_custom : " + (String) Throttle_output_curve_custom + " / ");
         buffer_display("", packet, length);
         break;
     case SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_BLE_ID :
@@ -650,6 +665,25 @@ bool Settings::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, ui
     case SETTINGS_THROTTLE_OUTPUT_CURVE_BLE_ID :
         buffer_append_uint8(packet, Throttle_output_curve, ind);
         Serial.print("pack_setting_packet - Throttle_output_curve : " + (String) Throttle_output_curve + " / ");
+        buffer_display("", packet, *ind);
+        break;
+    case SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_BLE_ID :
+        if (packetNumber == 0) {
+            if (Throttle_output_curve_custom.length() > 16) {
+                hasNextPacket = true;
+                memcpy(&packet[*ind], &Throttle_output_curve_custom[0], 16);
+                *ind = *ind + 16;
+            }
+            else {
+                memcpy(&packet[*ind], &Throttle_output_curve_custom[0], Throttle_output_curve_custom.length());
+                *ind = *ind + Throttle_output_curve_custom.length();
+            }
+        }
+        else if (packetNumber == 1) {
+            memcpy(&packet[*ind], &Throttle_output_curve_custom[16], Throttle_output_curve_custom.length() - 16);
+            *ind = *ind + Throttle_output_curve_custom.length() - 16;
+        }
+        Serial.print("pack_setting_packet - Throttle_output_curve_custom : " + (String) Throttle_output_curve_custom + " / ");
         buffer_display("", packet, *ind);
         break;
     case SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_BLE_ID :
@@ -1534,6 +1568,27 @@ void Settings::display_Throttle_output_curve() {
 void Settings::save_Throttle_output_curve(uint8_t value) {
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_THROTTLE_OUTPUT_CURVE_STORAGE_KEY, Throttle_output_curve);
+    prefs.end();
+}
+                
+
+/*-------------------------------------------------------*/
+
+void Settings::set_Throttle_output_curve_custom(String value) {
+    Throttle_output_curve_custom = value;
+}
+
+String Settings::get_Throttle_output_curve_custom() {
+    return Throttle_output_curve_custom ;
+}
+
+void Settings::display_Throttle_output_curve_custom() {
+    Serial.println("  Throttle_output_curve_custom = " + (String) Throttle_output_curve_custom);
+}
+
+void Settings::save_Throttle_output_curve_custom(String value) {
+    prefs.begin(SETTINGS_STORAGE, false);
+    prefs.putString(SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_STORAGE_KEY, Throttle_output_curve_custom);
     prefs.end();
 }
                 
