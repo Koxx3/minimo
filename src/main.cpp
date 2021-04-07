@@ -1074,7 +1074,7 @@ void processDacOutput()
         high = getValueFromString(settings.get_Throttle_output_curve_custom(), ',', index + 1) * 10;
       float throttlePercentNew = map(throttlePercentInt, (index + 1) * 200, (index + 2) * 200, low, high) / 10.0;
       //Serial.println("throttlePercentInt = " + (String)throttlePercentInt + " / index = " + (String)index + " / low = " + (String)low + " / high = " + (String)high + " / throttlePercentNew = " + (String)throttlePercentNew);
-      shrd.throttlePercent = throttlePercentNew;
+      throttlePercent = throttlePercentNew;
     }
   }
 
