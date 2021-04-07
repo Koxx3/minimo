@@ -114,7 +114,8 @@
 #define NORMAL_SPEED // Comment out for rame rate for render speed test
 
 #define NB_LOOP_ANIM_GIF 1
-#define GIF_PATH_SPLASH "/gifs/smart_splash2.gif"
+#define GIF_PATH_SPLASH "/gifs/splash.gif"
+#define GIF_PATH_OTA "/gifs/update.gif"
 
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
 TFT_eSPI tft = TFT_eSPI();
@@ -153,6 +154,7 @@ uint8_t oldAuxOrder = 255;
 uint8_t old_substate_case3 = 0;
 uint8_t old_substate_case7 = 0;
 uint8_t old_substate_case6 = 0;
+uint8_t old_substate_ota = 0;
 
 bool lock = false;
 
@@ -162,8 +164,6 @@ bool lock = false;
 //
 //-------------------------------------------------------
 #define DISPLAY_WIDTH tft.width()
-
-AnimatedGIF gif;
 
 // rule: loop GIF at least during 3s, maximum 5 times, and don't loop/animate longer than 30s per GIF
 const int maxLoopIterations = 5;   // stop after this amount of loops
@@ -310,34 +310,33 @@ void GIFDraw(GIFDRAW *pDraw)
   }
 } /* GIFDraw() */
 
-int gifPlay(char *gifPath)
+int gifPlay(AnimatedGIF *gif, char *gifPath, int16_t y_offset)
 { // 0=infinite
 
-  gif.begin(BIG_ENDIAN_PIXELS);
+  gif->begin(BIG_ENDIAN_PIXELS);
 
-  if (!gif.open(gifPath, GIFOpenFile, GIFCloseFile, GIFReadFile, GIFSeekFile, GIFDraw))
+  if (!gif->open(gifPath, GIFOpenFile, GIFCloseFile, GIFReadFile, GIFSeekFile, GIFDraw))
   {
-    log_n("Could not open gif %s", gifPath);
+    Serial.printf("Could not open gif %s", gifPath);
     return maxLoopsDuration;
   }
 
   int frameDelay = 0; // store delay for the last frame
   int then = 0;       // store overall delay
-  bool showcomment = false;
 
   // center the GIF !!
-  int w = gif.getCanvasWidth();
-  int h = gif.getCanvasHeight();
+  int w = gif->getCanvasWidth();
+  int h = gif->getCanvasHeight();
   xOffset = (tft.width() - w) / 2;
-  yOffset = (tft.height() - h) / 2;
+  yOffset = ((tft.height() - h) / 2) + y_offset;
 
   if (lastFile != currentFile)
   {
-    log_n("Playing %s [%d,%d] with offset [%d,%d]", gifPath, w, h, xOffset, yOffset);
+    Serial.printf("Playing %s [%d,%d] with offset [%d,%d]", gifPath, w, h, xOffset, yOffset);
     lastFile = currentFile;
   }
 
-  while (gif.playFrame(true, &frameDelay))
+  while (gif->playFrame(true, &frameDelay))
   {
     then += frameDelay;
     if (then > maxGifDuration)
@@ -347,7 +346,7 @@ int gifPlay(char *gifPath)
     }
   }
 
-  gif.close();
+  gif->close();
 
   return then;
 }
@@ -433,8 +432,7 @@ void tftUpdateData(uint32_t i_loop)
 {
   char fmt[10];
 
-  // -2 / show splash screen
-  if (i_loop == -2)
+  if (i_loop == -2) // -2 / show splash screen
   {
     Serial.print("step -2");
 
@@ -453,12 +451,14 @@ void tftUpdateData(uint32_t i_loop)
     }
     else
     {
+
       // Display GIF image
       int loops = maxLoopIterations;          // max loops
       int durationControl = maxLoopsDuration; // force break loop after xxx ms
+      AnimatedGIF gif;
       while (loops-- > 0 && durationControl > 0)
       {
-        durationControl -= gifPlay((char *)GIF_PATH_SPLASH);
+        durationControl -= gifPlay(&gif, (char *)GIF_PATH_SPLASH, 0);
         gif.reset();
       }
 
@@ -525,6 +525,57 @@ void tftUpdateData(uint32_t i_loop)
 
     tft.drawLine(LINE_POINT5X, LINE_POINT5Y, TFT_HEIGHT, LINE_POINT5Y, MY_TFT_DARK_DIGIT_DISABLED);
     tft.drawLine(LINE_POINT6X, LINE_POINT6Y, TFT_HEIGHT, LINE_POINT6Y, MY_TFT_DARK_DIGIT_DISABLED);
+  }
+  else if (shrd.inOtaMode) // OTA BLE/Wifi
+  {
+
+    if (old_substate_ota == 0)
+    {
+      // Clear screen
+      tft.fillScreen(TFT_BLACK);
+
+      old_substate_ota++;
+    }
+    else if (old_substate_ota == 1)
+    {
+      // Display GIF image
+      int loops = maxLoopIterations;          // max loops
+      int durationControl = maxLoopsDuration; // force break loop after xxx ms
+      AnimatedGIF gif;
+      while (loops-- > 0 && durationControl > 0)
+      {
+        durationControl -= gifPlay(&gif, (char *)GIF_PATH_OTA, -20);
+        gif.reset();
+      }
+
+      old_substate_ota++;
+    }
+    else if (old_substate_ota == 2)
+    {
+
+      // Display flashing informations
+#if ((TFT_MODEL == 2) || (TFT_MODEL == 3)) // 3.5"
+      tft.setFreeFont(FONT_FORCED_SQUARE12pt7b);
+#else
+      tft.setFreeFont(FONT_FORCED_SQUARE9pt7b);
+#endif
+      tft.setTextColor(MY_TFT_WHITE, TFT_BLACK);
+      tft.setTextDatum(BC_DATUM);
+      String str_ota_mode;
+      if (shrd.inOtaMode == OTA_IDE)
+      {
+        str_ota_mode = "Mode : IDE server";
+      }
+      else
+      {
+        str_ota_mode = "Mode : Wifi server / Version : " + (String)shrd.inOtaModeVersion;
+      }
+      tft.drawString("Downloading and flashing", TFT_HEIGHT / 2, 180, GFXFF);
+      tft.drawString(str_ota_mode, TFT_HEIGHT / 2, 200, GFXFF);
+      tft.drawString("Wifi : " + settings.get_Wifi_ssid(), TFT_HEIGHT / 2, 220, GFXFF);
+
+      old_substate_ota++;
+    }
   }
   else
   {

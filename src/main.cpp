@@ -514,7 +514,7 @@ void setup()
   xTaskCreatePinnedToCore(
       taskUpdateTFT,   // Function that should be called
       "taskUpdateTFT", // Name of the task (for debugging)
-      10000,           // Stack size (bytes)
+      33000,           // Stack size (bytes)
       NULL,            // Parameter to pass
       0,               // Task priority
       NULL,            // Task handle,
@@ -524,7 +524,7 @@ void setup()
   xTaskCreatePinnedToCore(
       taskProcessWifiBlocking,   // Function that should be called
       "taskProcessWifiBlocking", // Name of the task (for debugging)
-      10000,                     // Stack size (bytes)
+      8000,                      // Stack size (bytes)
       NULL,                      // Parameter to pass
       0,                         // Task priority
       NULL,                      // Task handle,
@@ -533,7 +533,7 @@ void setup()
   xTaskCreatePinnedToCore(
       taskProcessButtons,   // Function that should be called
       "taskProcessButtons", // Name of the task (for debugging)
-      5000,                 // Stack size (bytes)
+      1000,                 // Stack size (bytes)
       NULL,                 // Parameter to pass
       0,                    // Task priority
       NULL,                 // Task handle,
@@ -1842,11 +1842,10 @@ void loop()
 
   i_loop++;
 
-  /*
-  if (i_loop % 1000 == 0){
-    Serial.print(".");
+  if (i_loop % 10000 == 0)
+  {
+    Serial.printf("RAM left %d\n", esp_get_free_heap_size());
   }
-*/
 
 #if ENABLE_WATCHDOG
   resetWatchdog();
