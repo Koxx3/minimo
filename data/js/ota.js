@@ -1,0 +1,21 @@
+$.getJSON( "https://raw.githubusercontent.com/Koxx3/SmartController_SmartDisplay_ESP32/master/ota_updates/smartcontroller_minimo/firmware.json", function( data ) {
+  var items = [];
+
+$.each(data.versions, function(id, item) {
+  $("#versionslist").append('<input type="radio" name="version_selected" id="' + item.version + '" value="' + item.version + '"><label>' + item.version + " - " + EpochToDate(item.date) + '</albel></input><br>')
+});
+
+$("#versions_not_available").hide();
+$('label[for="ACE_OTA_version_manual"]').hide();
+$("#ACE_OTA_version_manual").hide();
+
+//Epoch To Date
+function EpochToDate(epoch) {
+    if (epoch < 10000000000)
+        epoch *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but Javascript uses Milliseconds)
+    var epoch = epoch + (new Date().getTimezoneOffset() * -1); //for timeZone        
+    var dat = new Date(epoch);
+    //return dat.toLocaleDateString(undefined, options);
+    return dat.toLocaleString();
+}
+});

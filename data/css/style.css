@@ -4,7 +4,7 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: #00013D;
+    background-color: #fff;
     font-family: Sans-Serif;
 }
 .app-title {
@@ -35,23 +35,23 @@ h3 {
 }
 .block-info {
     margin: 10px;
-    color: #ffffff;
-    background-color: #7643ea;
+    color: #000;
+    background-color: #eee;
 }
 .block-info-double {
     margin: 10px;
-    color: #ffffff;
+    color: #000;
 }
 .block-info-double > .block-middle {
     width: 50%;
     float: left;
-    background-color: #7643ea;
+    background-color: #eee;
 }
 .block-info-double > .block-middle:nth-child(1) {
-    border-right: 3px solid #00013d
+    border-right: 3px solid #fff
 }
 .block-info-double > .block-middle:nth-child(2) {
-    border-left: 3px solid #00013d
+    border-left: 3px solid #fff
 }
 .block-info > .block-middle > .content > .data,
 .block-info-double > .block-middle > .content > .data {
@@ -88,7 +88,7 @@ h3 {
     color: #9796a4;
 }
 .block-info .content > .data > .select-mode.selected {
-    color: #ffffff;
+    color: #000;
 }
 .block-info .content > .sub-data {
     font-size: 16pt;
@@ -124,7 +124,7 @@ h3 {
     border-bottom: 0;
     border-left: 0;
     border-style: solid;
-    border-color: #7643ea;
+    border-color: #eee;
     width: 10%;
 }
 #battery-mask-container td:nth-child(10) {

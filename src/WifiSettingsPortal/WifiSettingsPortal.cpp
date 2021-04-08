@@ -22,34 +22,8 @@ AutoConnect portal(server);
 AutoConnectConfig config;
 
 static const char JSPAGE[] PROGMEM = R"=====(
-  
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script type='text/javascript'>
-
-$.getJSON( "https://raw.githubusercontent.com/Koxx3/SmartController_SmartDisplay_ESP32/master/ota_updates/smartcontroller_minimo/firmware.json", function( data ) {
-  var items = [];
-
-$.each(data.versions, function(id, item) {
-  $("#versionslist").append('<input type="radio" name="version_selected" id="' + item.version + '" value="' + item.version + '"><label>' + item.version + " - " + EpochToDate(item.date) + '</albel></input><br>')
-});
-
-$("#versions_not_available").hide();
-$('label[for="ACE_OTA_version_manual"]').hide();
-$("#ACE_OTA_version_manual").hide();
-
-//Epoch To Date
-function EpochToDate(epoch) {
-    if (epoch < 10000000000)
-        epoch *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but Javascript uses Milliseconds)
-    var epoch = epoch + (new Date().getTimezoneOffset() * -1); //for timeZone        
-    var dat = new Date(epoch);
-    //return dat.toLocaleDateString(undefined, options);
-    return dat.toLocaleString();
-}
-});
-
-</script>
-
+<script type="text/javascript" src="/js/jquery-3.3.1.min.js.gz"></script>
+<script src="/js/ota.js"></script>
 )=====";
 
 // General style elements
@@ -136,6 +110,8 @@ String getContentType(String filename) {
     return "application/x-pdf";
   } else if (filename.endsWith(".zip")) {
     return "application/x-zip";
+  } else if (filename.endsWith(".js.gz")) {
+    return "application/javascript";
   } else if (filename.endsWith(".gz")) {
     return "application/x-gzip";
   }
@@ -199,6 +175,12 @@ void WifiSettingsPortal_setup()
 
   server.on("/dashboardpage", HTTP_GET, []() {
     if (!handleFileRead("/dash.html")) {
+      server.send(404, "text/plain", "FileNotFound");
+    }
+  });
+
+  server.on("/settings2page", HTTP_GET, []() {
+    if (!handleFileRead("/settings.html")) {
       server.send(404, "text/plain", "FileNotFound");
     }
   });
@@ -316,6 +298,7 @@ void WifiSettingsPortal_setup()
   // In the setup(),
   // Join the custom Web pages and performs begin
   portal.append("/dashboardpage", "SmartElec dashboard");
+  portal.append("/settings2page", "SmartElec settings2");
   portal.join({settingsPageAux, settingsSaveAux, calibPageAux, otaPageAux, otaFlashAux});
 
 
@@ -453,6 +436,7 @@ void WifiSettingsPortal_sendValues()
     doc["brakeSentOrderFromBLE"] = WifiSettingsPortal_shrd->brakeSentOrderFromBLE;
     doc["brakePressedStatus"] = WifiSettingsPortal_shrd->brakePressedStatus;
     doc["brakeFordidenHighVoltage"] = WifiSettingsPortal_shrd->brakeFordidenHighVoltage;
+    doc["time"] = millis();
 
     serializeJson(doc, str);
     //Serial.println("str : " + (String)str);
