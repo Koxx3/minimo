@@ -97,6 +97,11 @@ ZeroUart zeroCntrl;
 //////------------------------------------
 ////// Variables
 
+// Tasks handlers
+TaskHandle_t htaskUpdateTFT;
+TaskHandle_t htaskProcessWifiBlocking;
+TaskHandle_t htaskProcessButtons;
+
 // Time
 unsigned long timeLoop = 0;
 unsigned long timeLoopMax = 0;
@@ -514,10 +519,10 @@ void setup()
   xTaskCreatePinnedToCore(
       taskUpdateTFT,   // Function that should be called
       "taskUpdateTFT", // Name of the task (for debugging)
-      33000,           // Stack size (bytes)
+      30000,           // Stack size (bytes)
       NULL,            // Parameter to pass
       0,               // Task priority
-      NULL,            // Task handle,
+      &htaskUpdateTFT, // Task handle,
       1);              // Core
 #endif
 
@@ -527,16 +532,16 @@ void setup()
       8000,                      // Stack size (bytes)
       NULL,                      // Parameter to pass
       0,                         // Task priority
-      NULL,                      // Task handle,
+      &htaskProcessWifiBlocking, // Task handle,
       1);                        // Core
 
   xTaskCreatePinnedToCore(
       taskProcessButtons,   // Function that should be called
       "taskProcessButtons", // Name of the task (for debugging)
-      1000,                 // Stack size (bytes)
+      3000,                 // Stack size (bytes)
       NULL,                 // Parameter to pass
       0,                    // Task priority
-      NULL,                 // Task handle,
+      &htaskProcessButtons, // Task handle,
       1);                   // Core
 
 #if ENABLE_WATCHDOG
@@ -1844,7 +1849,11 @@ void loop()
 
   if (i_loop % 10000 == 0)
   {
-    Serial.printf("RAM left %d\n", esp_get_free_heap_size());
+    uint32_t hm1 = uxTaskGetStackHighWaterMark(NULL);
+    uint32_t hm2 = uxTaskGetStackHighWaterMark(htaskUpdateTFT);
+    uint32_t hm3 = uxTaskGetStackHighWaterMark(htaskProcessWifiBlocking);
+    uint32_t hm4 = uxTaskGetStackHighWaterMark(htaskProcessButtons);
+    Serial.printf("RAM left = %d / HM idle = %d / HM tft = %d / HM wifi = %d / HM btn = %d\n", esp_get_free_heap_size(), hm1, hm2, hm3, hm4);
   }
 
 #if ENABLE_WATCHDOG
