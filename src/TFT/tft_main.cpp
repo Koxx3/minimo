@@ -442,33 +442,41 @@ void tftUpdateData(uint32_t i_loop)
 
     tft.fillScreen(TFT_BLACK);
 
-    // Initialise SPIFFS
-    bool spiffs = SPIFFS.begin();
-    if (!spiffs)
+    // Only if splash is enabled ...
+    if (settings.get_Display_splash_screen() == 1)
     {
-      Serial.println("SPIFFS initialisation failed!");
+      // Initialise SPIFFS
+      bool spiffs = SPIFFS.begin();
+      if (!spiffs)
+      {
+        Serial.println("SPIFFS initialisation failed!");
+      }
+      else
+      {
+
+        // Display GIF image
+        int loops = maxLoopIterations;          // max loops
+        int durationControl = maxLoopsDuration; // force break loop after xxx ms
+        AnimatedGIF gif;
+        while (loops-- > 0 && durationControl > 0)
+        {
+          durationControl -= gifPlay(&gif, (char *)GIF_PATH_SPLASH, 0);
+          gif.reset();
+        }
+
+        tftBacklightFull();
+
+        // Show loading progress
+        for (int i = 0; i < 10; i++)
+        {
+          tft.fillRect(i * (TFT_HEIGHT / 10), 0, (TFT_HEIGHT / 10) - 5, 6 * SCALE_FACTOR_Y, MY_TFT_WHITE);
+          delay(250);
+        }
+      }
     }
     else
     {
-
-      // Display GIF image
-      int loops = maxLoopIterations;          // max loops
-      int durationControl = maxLoopsDuration; // force break loop after xxx ms
-      AnimatedGIF gif;
-      while (loops-- > 0 && durationControl > 0)
-      {
-        durationControl -= gifPlay(&gif, (char *)GIF_PATH_SPLASH, 0);
-        gif.reset();
-      }
-
       tftBacklightFull();
-
-      // Show loading progress
-      for (int i = 0; i < 10; i++)
-      {
-        tft.fillRect(i * (TFT_HEIGHT / 10), 0, (TFT_HEIGHT / 10) - 5, 6 * SCALE_FACTOR_Y, MY_TFT_WHITE);
-        delay(250);
-      }
     }
   }
   else if (i_loop == -1) // init fix datas after
