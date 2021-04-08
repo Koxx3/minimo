@@ -36,7 +36,6 @@ ACStyle(ACE_Style5, "input[type='text']{paddingLeft:10px}");
 // Settings page
 ACSubmit(ACE_SETTINGS_Save, "Save", "/settingssave");
 ACSubmit(ACE_SETTINGS_Discard, "Discard", "/settingspage");
-//ACElement(ACE_SETTINGS_Js1, "<script type=\"text/javascript\">window.onload=function(){var t=document.querySelectorAll(\"input[type='text']\");for(i=0;i<t.length;i++){var e=t[i].getAttribute(\"placeholder\");e&&t[i].setAttribute(\"class\",e)}};</script>");
 ACElement(ACE_SETTINGS_Js1, "");
 #include "WifiSettingsPortalSpecs.h"
 
@@ -66,80 +65,116 @@ AutoConnectAux otaPageAux("/otapage", "SmartElec firmware update", true, {ACE_St
 ACText(ACE_OTA_FLASH_in_progress, "<h4>Flash in progress</h4>The SmartElec device will reboot after flash", "");
 AutoConnectAux otaFlashAux("/otaflash", "SmartElec flash in progress", false, {ACE_Style2, ACE_OTA_FLASH_in_progress});
 
-// You only need to format the filesystem once
-#define FORMAT_FILESYSTEM false
-#define DBG_OUTPUT_PORT Serial
-#define FILESYSTEM SPIFFS
-#include <SPIFFS.h>
-
 //format bytes
-String formatBytes(size_t bytes) {
-  if (bytes < 1024) {
+String formatBytes(size_t bytes)
+{
+  if (bytes < 1024)
+  {
     return String(bytes) + "B";
-  } else if (bytes < (1024 * 1024)) {
+  }
+  else if (bytes < (1024 * 1024))
+  {
     return String(bytes / 1024.0) + "KB";
-  } else if (bytes < (1024 * 1024 * 1024)) {
+  }
+  else if (bytes < (1024 * 1024 * 1024))
+  {
     return String(bytes / 1024.0 / 1024.0) + "MB";
-  } else {
+  }
+  else
+  {
     return String(bytes / 1024.0 / 1024.0 / 1024.0) + "GB";
   }
 }
 
-String getContentType(String filename) {
-  if (server.hasArg("download")) {
+String getContentType(String filename)
+{
+  if (server.hasArg("download"))
+  {
     return "application/octet-stream";
-  } else if (filename.endsWith(".htm")) {
+  }
+  else if (filename.endsWith(".htm"))
+  {
     return "text/html";
-  } else if (filename.endsWith(".html")) {
+  }
+  else if (filename.endsWith(".html"))
+  {
     return "text/html";
-  } else if (filename.endsWith(".css")) {
+  }
+  else if (filename.endsWith(".css"))
+  {
     return "text/css";
-  } else if (filename.endsWith(".js")) {
+  }
+  else if (filename.endsWith(".js"))
+  {
     return "application/javascript";
-  } else if (filename.endsWith(".png")) {
+  }
+  else if (filename.endsWith(".png"))
+  {
     return "image/png";
-  } else if (filename.endsWith(".gif")) {
+  }
+  else if (filename.endsWith(".gif"))
+  {
     return "image/gif";
-  } else if (filename.endsWith(".jpg")) {
+  }
+  else if (filename.endsWith(".jpg"))
+  {
     return "image/jpeg";
-  } else if (filename.endsWith(".ico")) {
+  }
+  else if (filename.endsWith(".ico"))
+  {
     return "image/x-icon";
-  } else if (filename.endsWith(".xml")) {
+  }
+  else if (filename.endsWith(".xml"))
+  {
     return "text/xml";
-  } else if (filename.endsWith(".pdf")) {
+  }
+  else if (filename.endsWith(".pdf"))
+  {
     return "application/x-pdf";
-  } else if (filename.endsWith(".zip")) {
+  }
+  else if (filename.endsWith(".zip"))
+  {
     return "application/x-zip";
-  } else if (filename.endsWith(".js.gz")) {
+  }
+  else if (filename.endsWith(".js.gz"))
+  {
     return "application/javascript";
-  } else if (filename.endsWith(".gz")) {
+  }
+  else if (filename.endsWith(".gz"))
+  {
     return "application/x-gzip";
   }
   return "text/plain";
 }
 
-bool exists(String path){
+bool exists(String path)
+{
   bool yes = false;
-  File file = FILESYSTEM.open(path, "r");
-  if(!file.isDirectory()){
+  File file = SPIFFS.open(path, "r");
+  if (!file.isDirectory())
+  {
     yes = true;
   }
   file.close();
   return yes;
 }
 
-bool handleFileRead(String path) {
-  DBG_OUTPUT_PORT.println("handleFileRead: " + path);
-  if (path.endsWith("/")) {
+bool handleFileRead(String path)
+{
+  Serial.println("handleFileRead: " + path);
+  if (path.endsWith("/"))
+  {
     path += "index.htm";
   }
   String contentType = getContentType(path);
   String pathWithGz = path + ".gz";
-  if (exists(pathWithGz) || exists(path)) {
-    if (exists(pathWithGz)) {
+  if (exists(pathWithGz) || exists(path))
+  {
+    if (exists(pathWithGz))
+    {
       path += ".gz";
     }
-    File file = FILESYSTEM.open(path, "r");
+    File file = SPIFFS.open(path, "r");
     server.streamFile(file, contentType);
     file.close();
     return true;
@@ -150,22 +185,20 @@ bool handleFileRead(String path) {
 void WifiSettingsPortal_setup()
 {
 
-  
-  DBG_OUTPUT_PORT.setDebugOutput(true);
-  if (FORMAT_FILESYSTEM) FILESYSTEM.format();
-  FILESYSTEM.begin();
+  Serial.setDebugOutput(true);
+  SPIFFS.begin();
   {
-      File root = FILESYSTEM.open("/");
-      File file = root.openNextFile();
-      while(file){
-          String fileName = file.name();
-          size_t fileSize = file.size();
-          DBG_OUTPUT_PORT.printf("FS File: %s, size: %s\n", fileName.c_str(), formatBytes(fileSize).c_str());
-          file = root.openNextFile();
-      }
-      DBG_OUTPUT_PORT.printf("\n");
+    File root = SPIFFS.open("/");
+    File file = root.openNextFile();
+    while (file)
+    {
+      String fileName = file.name();
+      size_t fileSize = file.size();
+      Serial.printf("FS File: %s, size: %s\n", fileName.c_str(), formatBytes(fileSize).c_str());
+      file = root.openNextFile();
+    }
+    Serial.printf("\n");
   }
-
 
   // Responder of root page handled directly from WebServer class.
   server.on("/_ac", []() {
@@ -174,16 +207,36 @@ void WifiSettingsPortal_setup()
   });
 
   server.on("/dashboardpage", HTTP_GET, []() {
-    if (!handleFileRead("/dash.html")) {
+    if (!handleFileRead("/dash.html"))
+    {
       server.send(404, "text/plain", "FileNotFound");
     }
   });
 
+  /*
   server.on("/settings2page", HTTP_GET, []() {
-    if (!handleFileRead("/settings.html")) {
+    if (!handleFileRead("/settings.html"))
+    {
       server.send(404, "text/plain", "FileNotFound");
     }
   });
+
+  server.on("/settingsdata.json", HTTP_GET, []() {
+    DynamicJsonDocument doc(1024);
+    String str;
+
+    doc["ACS1_1"] = 1;
+    doc["ACS1_2"] = 2;
+    doc["ACS1_3"] = 3;
+    doc["ACS1_4"] = 4;
+    doc["ACS1_5"] = 5;
+    doc["ACS2_1"] = "checked";
+
+    serializeJson(doc, str);
+
+    server.send(200, "application/json", str);
+  });
+*/
 
   // Load a custom web page described in JSON as PAGE_ELEMENT and
   // register a handler. This handler will be invoked from
@@ -250,8 +303,9 @@ void WifiSettingsPortal_setup()
     Serial.println("flash process");
     if (arg.hasArg("version_selected") && (arg.arg(0) != "") && (arg.argName(0) == "version_selected"))
     {
+      /*
       Serial.println("flash process : version_selected = " + (String)arg.arg(0));
-
+      */
       WifiSettingsPortal_shrd->inOtaModeVersion = arg.arg(0).toInt();
       WifiSettingsPortal_shrd->inOtaMode = OTA_SERVER;
     }
@@ -259,38 +313,42 @@ void WifiSettingsPortal_setup()
     {
       if (arg.hasArg("ACE_OTA_version_manual") && (arg.arg(0) != "") && (arg.argName(0) == "ACE_OTA_version_manual"))
       {
+        /*
         Serial.println("flash process ACE_OTA_version_manual 0  : arg = " + (String)arg.arg(0));
-
+        */
         WifiSettingsPortal_shrd->inOtaModeVersion = arg.arg(0).toInt();
         WifiSettingsPortal_shrd->inOtaMode = OTA_SERVER;
       }
       else if (arg.hasArg("ACE_OTA_version_manual") && (arg.arg(1) != "") && (arg.argName(1) == "ACE_OTA_version_manual"))
       {
+        /*
         Serial.println("flash process : ACE_OTA_version_manual 1 = " + (String)arg.arg(1));
-
+        */
         WifiSettingsPortal_shrd->inOtaModeVersion = arg.arg(1).toInt();
         WifiSettingsPortal_shrd->inOtaMode = OTA_SERVER;
       }
       else
       {
+        /*
         Serial.println("flash process : arg 0 = " + (String)arg.arg(0));
         Serial.println("flash process : argName 0 = " + (String)arg.argName(0));
         Serial.println("flash process : arg 1 = " + (String)arg.arg(1));
         Serial.println("flash process : argName 1 = " + (String)arg.argName(1));
+        */
       }
     }
     return String();
   });
 
-
   // Default handler for all URIs not defined above
-  // Use it to read files from filesystem
+  // Use it to read files from SPIFFS
   // To make AutoConnect recognize the 404 handler, replace it with:
   //called when the url is not defined here
-  //use it to load content from FILESYSTEM
+  //use it to load content from SPIFFS
   // server.onNotFound([]() {
   portal.onNotFound([]() {
-    if (!handleFileRead(server.uri())) {
+    if (!handleFileRead(server.uri()))
+    {
       server.send(404, "text/plain", "FileNotFound");
     }
   });
@@ -300,7 +358,6 @@ void WifiSettingsPortal_setup()
   portal.append("/dashboardpage", "SmartElec dashboard");
   portal.append("/settings2page", "SmartElec settings2");
   portal.join({settingsPageAux, settingsSaveAux, calibPageAux, otaPageAux, otaFlashAux});
-
 
   // fix wifi name ... same as BLE
   uint8_t base_mac_addr[6] = {0};
