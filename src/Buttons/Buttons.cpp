@@ -453,8 +453,6 @@ void Buttons::processModeEvent(uint8_t buttonId, bool isLongPress)
 void Buttons::processEcoEvent(uint8_t buttonId, bool isLongPress)
 {
 
-    Serial.println("processEcoEvent => ecoOrder = " + (String)shrd->ecoOrder);
-
     // process mode switch 1/2/3
     if (((buttonId == 1) && (!isLongPress) && (settings->get_Button_1_short_press_action() == settings->LIST_Button_1_short_press_action_Eco_switch_none_med_max)) ||
         ((buttonId == 1) && (isLongPress) && (settings->get_Button_1_long_press_action() == settings->LIST_Button_1_long_press_action_Eco_switch_none_med_max)) ||
