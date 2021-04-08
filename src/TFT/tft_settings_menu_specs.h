@@ -15,6 +15,35 @@
 #include <menuIO/esp8266Out.h> //must include this even if not doing web output...
 #include "SharedData.h"
 
+
+
+////////////////////////////////////////////////
+// Simple processing functions
+result discard_exit()
+{
+  Serial.print("\n\nEXIT - discard_exit!!!!\n\n");
+
+  TFT_menu_shrd->inSettingsMenu = SETTINGS_MENU_STATE_OUT;
+  Serial.println("discard_exit_item ===> SETTINGS_MENU_STATE_OUT");
+
+  return proceed;
+}
+
+result save_exit()
+{
+  Serial.print("\n\nEXIT - save_exit!!!!\n\n");
+
+  TFT_menu_shrd->inSettingsMenu = SETTINGS_MENU_STATE_OUT;
+  Serial.println("discard_exit_item ===> SETTINGS_MENU_STATE_OUT");
+
+  settings_menu_save_to_settings();
+  notifySettingsChangedWithBle();
+
+  return proceed;
+}
+
+////////////////////////////////////////////////
+// Menu processing functions
 class currrent_temperature_item : public prompt
 {
 public:
@@ -153,7 +182,11 @@ public:
   wifi_conf_ap_ssid_item(constMEM promptShadow &p) : prompt(p) {}
   Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
   {
-    String val = "  Wifi AP SSID : " + (String)TFT_menu_settings->Wifi_ssid;
+    String val = "  Wifi AP SSID : ";
+    if (TFT_menu_settings->Wifi_ssid.length() == 0)
+      val = val + "<empty>";
+    else
+      val = val + (String)TFT_menu_settings->Wifi_ssid;
     return out.printRaw(F(val.c_str()), len);
   }
 };
@@ -164,7 +197,18 @@ public:
   wifi_conf_ap_pwd_item(constMEM promptShadow &p) : prompt(p) {}
   Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
   {
-    String val = "  Wifi AP pwd : " + (String)TFT_menu_settings->Wifi_password;
+    String pwd_hidden_str = "";
+    Serial.printf("wifi pwd length  = %d\n", TFT_menu_settings->Wifi_password.length());
+    if (TFT_menu_settings->Wifi_password.length() == 0)
+    {
+      pwd_hidden_str = "<empty>";
+    }
+    else
+    {
+      for (int i = 0; i < TFT_menu_settings->Wifi_password.length(); i++)
+        pwd_hidden_str = pwd_hidden_str + "*";
+    }
+    String val = "  Wifi AP pwd : " + (String)pwd_hidden_str;
     return out.printRaw(F(val.c_str()), len);
   }
 };
@@ -208,34 +252,11 @@ result calibration_brake_max_item()
 result ota_update_pio()
 {
   TFT_menu_shrd->inOtaMode = OTA_IDE;
+  save_exit();
 
   return proceed;
 }
 
-////////////////////////////////////////////////
-// Simple processing functions
-result discard_exit()
-{
-  Serial.print("\n\nEXIT - discard_exit!!!!\n\n");
-
-  TFT_menu_shrd->inSettingsMenu = SETTINGS_MENU_STATE_OUT;
-  Serial.println("discard_exit_item ===> SETTINGS_MENU_STATE_OUT");
-
-  return proceed;
-}
-
-result save_exit()
-{
-  Serial.print("\n\nEXIT - save_exit!!!!\n\n");
-
-  TFT_menu_shrd->inSettingsMenu = SETTINGS_MENU_STATE_OUT;
-  Serial.println("discard_exit_item ===> SETTINGS_MENU_STATE_OUT");
-
-  settings_menu_save_to_settings();
-  notifySettingsChangedWithBle();
-
-  return proceed;
-}
 
 MENU(SUBMENU_MANUAL_status, "  Status", doNothing, noEvent, noStyle,
      altOP(currrent_temperature_item, "", doNothing, updateEvent), // updateEvent
@@ -250,16 +271,16 @@ MENU(SUBMENU_MANUAL_calibrations, "  Calibrations", doNothing, noEvent, noStyle,
      EXIT("< Back"));
 
 MENU(SUBMENU_MANUAL_more, "  More", doNothing, noEvent, noStyle,
-     altOP(firmware_type_item, "", doNothing, updateEvent), // updateEvent
+     altOP(firmware_type_item, "", doNothing, updateEvent),    // updateEvent
      altOP(firmware_version_item, "", doNothing, updateEvent), // updateEvent
-     altOP(beacon_rssi_item, "", doNothing, updateEvent), // updateEvent
-     altOP(beacon_mac_item, "", doNothing, updateEvent), // updateEvent
-     altOP(ble_pin_code_item, "", doNothing, updateEvent), // updateEvent
+     altOP(beacon_rssi_item, "", doNothing, updateEvent),      // updateEvent
+     altOP(beacon_mac_item, "", doNothing, updateEvent),       // updateEvent
+     altOP(ble_pin_code_item, "", doNothing, updateEvent),     // updateEvent
      OP("  Bluetooth reset PIN code to 147258", reset_ble_pin_code_item, enterEvent),
      altOP(wifi_conf_ap_ssid_item, "", doNothing, updateEvent), // updateEvent
-     altOP(wifi_conf_ap_pwd_item, "", doNothing, updateEvent), // updateEvent
-     altOP(wifi_connect_item, "", doNothing, updateEvent), // updateEvent
-     OP("  OTA update through PlatformIO", ota_update_pio, noEvent),
+     altOP(wifi_conf_ap_pwd_item, "", doNothing, updateEvent),  // updateEvent
+     altOP(wifi_connect_item, "", doNothing, updateEvent),      // updateEvent
+     OP("  OTA update through PlatformIO", ota_update_pio, enterEvent),
      EXIT("< Back"));
 
 #include "tft_settings_menu_specs_gen.h"
@@ -285,15 +306,13 @@ MENU(SUBMENU_MANUAL_more, "  More", doNothing, noEvent, noStyle,
 #define TitleDarkAndroid RGB565(0x66, 0x3F, 0x9F)
 #define LineSelectAndroid RGB565(0x9e, 0x5f, 0xff)
 
-
 //  {{disabled normal,disabled selected},{enabled normal,enabled selected, enabled editing}}
 const colorDef<uint16_t> colors[6] MEMMODE = {
-    {
-        {(uint16_t)Black,
-        (uint16_t)Black},
-        {(uint16_t)Black,
-        (uint16_t)LineSelectAndroid,
-        (uint16_t)LineSelectAndroid}}, //bgColor
+    {{(uint16_t)Black,
+      (uint16_t)Black},
+     {(uint16_t)Black,
+      (uint16_t)LineSelectAndroid,
+      (uint16_t)LineSelectAndroid}}, //bgColor
     {
         {(uint16_t)Gray,
          (uint16_t)Gray},

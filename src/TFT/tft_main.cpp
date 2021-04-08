@@ -1,6 +1,5 @@
 #include <SPI.h>
 
-#include <TJpg_Decoder.h>
 #include "SPIFFS.h"
 #include "AnimatedGIF.h"
 
