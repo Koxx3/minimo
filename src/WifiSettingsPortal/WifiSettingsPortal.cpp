@@ -315,9 +315,9 @@ void WifiSettingsPortal_setup()
 
   // In the setup(),
   // Join the custom Web pages and performs begin
+  portal.append("/dashboardpage", "SmartElec dashboard");
   portal.join({settingsPageAux, settingsSaveAux, calibPageAux, otaPageAux, otaFlashAux});
 
-  portal.append("/dashboardpage", "SmartElec - dashboard");
 
   // fix wifi name ... same as BLE
   uint8_t base_mac_addr[6] = {0};
