@@ -589,7 +589,7 @@ uint8_t MinimoUart::modifyBrakeFromAnalog(char var, char data_buffer[])
     {
       step = (shrd->brakeMaxPressureRaw - shrd->brakeMinPressureRaw) / (settings->get_Ebrake_max_power_value() - settings->get_Ebrake_min_power_value());
 
-      // fix invalid parameters 
+      // fix invalid parameters
       if (step <= 0)
         step = 1;
 
@@ -991,6 +991,7 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
 //        var = data_buffer_cntrl_ori[3];
 //        isModified_CntrlToLcd = true;
 #endif
+        shrd->currentFromController = var * 20;
       }
     }
 

@@ -1510,7 +1510,7 @@ void processAutonomy()
 
 void processCurrent()
 {
-  if (shrd.currentSensorPresent)
+  if ((shrd.currentSensorPresent == -1) || (shrd.currentSensorPresent == 1))
   {
     int currentRead = analogRead(PIN_IN_CURRENT);
 
@@ -1527,12 +1527,14 @@ void processCurrent()
       }
       else
       {
+        shrd.currentSensorPresent = 1;
         currentRawFilterInit.in(currentRead);
+        Serial.println("Current sensor is detected -> enable reading");
       }
     }
     currentRawFilter.in(currentRead);
 
-    if (shrd.currentSensorPresent)
+    if ((shrd.currentSensorPresent == -1) || (shrd.currentSensorPresent == 1))
     {
       // current rest value
       int currentRawFilter2 = currentRawFilter.getMeanWithoutExtremes(2);
@@ -1553,6 +1555,13 @@ void processCurrent()
     Serial.print(" / in amperes : ");
     Serial.println(shrd.currentActual / 1000.0);
 #endif
+  }
+  else
+  {
+    // TEST // TEST // TEST // TEST // TEST //
+    shrd.currentSensorPresent = 2;
+    shrd.currentActual = shrd.currentFromController;
+    // TEST // TEST // TEST // TEST // TEST //
   }
 }
 

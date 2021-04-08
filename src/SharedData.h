@@ -111,7 +111,8 @@ public:
 
     //int32_t currentRawFilterMean = 0;
     int32_t currentActual = 0; // in milliamps
-    uint8_t currentSensorPresent = 1;
+    int32_t currentFromController = 0; // in milliamps
+    uint8_t currentSensorPresent = -1;
 
     uint8_t pasEnabled = 0;
 

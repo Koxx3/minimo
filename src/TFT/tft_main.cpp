@@ -619,7 +619,7 @@ void tftUpdateData(uint32_t i_loop)
       String txt_unit;
       bool shouldClear = false;
 
-      if ((shrd.currentSensorPresent == 1) && (!(shrd.speedCurrent == 0 && shrd.brakePressedStatus == 1)))
+      if ((shrd.currentSensorPresent > 0) && (!(shrd.speedCurrent == 0 && shrd.brakePressedStatus == 1)))
       {
         // CASE POWER (With current sensor)
         txt_label = "  " + (String)txt_power;
