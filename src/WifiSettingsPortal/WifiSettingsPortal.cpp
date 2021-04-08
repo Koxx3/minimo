@@ -10,8 +10,6 @@
 #include <WebSocketsServer.h>
 #include "ArduinoJson.h"
 
-#include "WifiSettingsPortalDashboard.h"
-
 using WebServerClass = WebServer;
 
 Settings *WifiSettingsPortal_settings;
@@ -60,7 +58,6 @@ ACStyle(ACE_Style2, "input[type='button']{background-color:#303F9F; border-color
 ACStyle(ACE_Style3, "select{width:44%} h2{ color:#303F9F;padding:10px; }");
 ACStyle(ACE_Style4, ".noorder{width:100%}.noorder label{display:inline-block;width:40%;cursor:pointer;padding:5px}.noorder .noorder input[type='text']{width:40%} .noorder input[type='password']{width:40%} .noorder input[type='text']{width:40%}");
 ACStyle(ACE_Style5, "input[type='text']{paddingLeft:10px}");
-ACStyle(ACE_Style6, CSS_DASHBOARD_PAGE);
 
 // Settings page
 ACSubmit(ACE_SETTINGS_Save, "Save", "/settingssave");
@@ -82,11 +79,6 @@ ACSubmit(ACE_CALIB_submit_min, "Min position", "/calibpage?min=1");
 ACSubmit(ACE_CALIB_submit_max, "Max position", "/calibpage?max=1");
 AutoConnectAux calibPageAux("/calibpage", "SmartElec calibrations", true, {ACE_Style1, ACE_Style2, ACE_Style4, ACE_Style5, ACE_CALIB_title, ACE_CALIB_text1, ACE_CALIB_text2, ACE_CALIB_submit_min, ACE_CALIB_submit_max});
 
-// Dashboard page
-ACElement(ACE_DASHBOARD_html_body, HTML_DASHBOARD_PAGE);
-ACElement(ACE_DASHBOARD_js, JS_DASHBOARD_PAGE);
-AutoConnectAux dashboardPageAux("/dashboardpage", "SmartElec dashboard", true, {ACE_Style6, ACE_DASHBOARD_html_body, ACE_DASHBOARD_js});
-
 // OTA flash pages
 ACText(ACE_OTA_title, "Available versions : ", "", "", AC_Tag_BR);
 ACText(ACE_OTA_current_version, "Current version : ", "", "", AC_Tag_BR);
@@ -100,13 +92,115 @@ AutoConnectAux otaPageAux("/otapage", "SmartElec firmware update", true, {ACE_St
 ACText(ACE_OTA_FLASH_in_progress, "<h4>Flash in progress</h4>The SmartElec device will reboot after flash", "");
 AutoConnectAux otaFlashAux("/otaflash", "SmartElec flash in progress", false, {ACE_Style2, ACE_OTA_FLASH_in_progress});
 
+// You only need to format the filesystem once
+#define FORMAT_FILESYSTEM false
+#define DBG_OUTPUT_PORT Serial
+#define FILESYSTEM SPIFFS
+#include <SPIFFS.h>
+
+//format bytes
+String formatBytes(size_t bytes) {
+  if (bytes < 1024) {
+    return String(bytes) + "B";
+  } else if (bytes < (1024 * 1024)) {
+    return String(bytes / 1024.0) + "KB";
+  } else if (bytes < (1024 * 1024 * 1024)) {
+    return String(bytes / 1024.0 / 1024.0) + "MB";
+  } else {
+    return String(bytes / 1024.0 / 1024.0 / 1024.0) + "GB";
+  }
+}
+
+String getContentType(String filename) {
+  if (server.hasArg("download")) {
+    return "application/octet-stream";
+  } else if (filename.endsWith(".htm")) {
+    return "text/html";
+  } else if (filename.endsWith(".html")) {
+    return "text/html";
+  } else if (filename.endsWith(".css")) {
+    return "text/css";
+  } else if (filename.endsWith(".js")) {
+    return "application/javascript";
+  } else if (filename.endsWith(".png")) {
+    return "image/png";
+  } else if (filename.endsWith(".gif")) {
+    return "image/gif";
+  } else if (filename.endsWith(".jpg")) {
+    return "image/jpeg";
+  } else if (filename.endsWith(".ico")) {
+    return "image/x-icon";
+  } else if (filename.endsWith(".xml")) {
+    return "text/xml";
+  } else if (filename.endsWith(".pdf")) {
+    return "application/x-pdf";
+  } else if (filename.endsWith(".zip")) {
+    return "application/x-zip";
+  } else if (filename.endsWith(".gz")) {
+    return "application/x-gzip";
+  }
+  return "text/plain";
+}
+
+bool exists(String path){
+  bool yes = false;
+  File file = FILESYSTEM.open(path, "r");
+  if(!file.isDirectory()){
+    yes = true;
+  }
+  file.close();
+  return yes;
+}
+
+bool handleFileRead(String path) {
+  DBG_OUTPUT_PORT.println("handleFileRead: " + path);
+  if (path.endsWith("/")) {
+    path += "index.htm";
+  }
+  String contentType = getContentType(path);
+  String pathWithGz = path + ".gz";
+  if (exists(pathWithGz) || exists(path)) {
+    if (exists(pathWithGz)) {
+      path += ".gz";
+    }
+    File file = FILESYSTEM.open(path, "r");
+    server.streamFile(file, contentType);
+    file.close();
+    return true;
+  }
+  return false;
+}
+
 void WifiSettingsPortal_setup()
 {
+
+  
+  DBG_OUTPUT_PORT.setDebugOutput(true);
+  if (FORMAT_FILESYSTEM) FILESYSTEM.format();
+  FILESYSTEM.begin();
+  {
+      File root = FILESYSTEM.open("/");
+      File file = root.openNextFile();
+      while(file){
+          String fileName = file.name();
+          size_t fileSize = file.size();
+          DBG_OUTPUT_PORT.printf("FS File: %s, size: %s\n", fileName.c_str(), formatBytes(fileSize).c_str());
+          file = root.openNextFile();
+      }
+      DBG_OUTPUT_PORT.printf("\n");
+  }
+
 
   // Responder of root page handled directly from WebServer class.
   server.on("/_ac", []() {
     server.sendHeader("Location", "/settingspage", true);
     server.send(302, "text/plain", "");
+  });
+
+  server.on("/dashboardpage", HTTP_GET, []() {
+    if (!handleFileRead("/dash.html")) {
+      server.send(404, "text/plain", "FileNotFound");
+    }
   });
 
   // Load a custom web page described in JSON as PAGE_ELEMENT and
@@ -206,9 +300,24 @@ void WifiSettingsPortal_setup()
     return String();
   });
 
+
+  // Default handler for all URIs not defined above
+  // Use it to read files from filesystem
+  // To make AutoConnect recognize the 404 handler, replace it with:
+  //called when the url is not defined here
+  //use it to load content from FILESYSTEM
+  // server.onNotFound([]() {
+  portal.onNotFound([]() {
+    if (!handleFileRead(server.uri())) {
+      server.send(404, "text/plain", "FileNotFound");
+    }
+  });
+
   // In the setup(),
   // Join the custom Web pages and performs begin
-  portal.join({dashboardPageAux, settingsPageAux, settingsSaveAux, calibPageAux, otaPageAux, otaFlashAux});
+  portal.join({settingsPageAux, settingsSaveAux, calibPageAux, otaPageAux, otaFlashAux});
+
+  portal.append("/dashboardpage", "SmartElec - dashboard");
 
   // fix wifi name ... same as BLE
   uint8_t base_mac_addr[6] = {0};
