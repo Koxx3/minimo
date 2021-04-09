@@ -12,10 +12,10 @@ except ImportError:
     import ConfigParser as configparser
 project_config = configparser.ConfigParser()
 project_config.read("platformio.ini")
-version = project_config.get("common", "JsonVersion")
-host = project_config.get("common", "JsonHost")
-port = project_config.get("common", "JsonPort")
-bin = project_config.get("common", "JsonBin")
+version = project_config.get("ota", "JsonVersion")
+host = project_config.get("ota", "JsonHost")
+port = project_config.get("ota", "JsonPort")
+bin = project_config.get("ota", "JsonBin")
 
 
 def myconverter(o):

@@ -213,30 +213,6 @@ void WifiSettingsPortal_setup()
     }
   });
 
-  /*
-  server.on("/settings2page", HTTP_GET, []() {
-    if (!handleFileRead("/settings.html"))
-    {
-      server.send(404, "text/plain", "FileNotFound");
-    }
-  });
-
-  server.on("/settingsdata.json", HTTP_GET, []() {
-    DynamicJsonDocument doc(1024);
-    String str;
-
-    doc["ACS1_1"] = 1;
-    doc["ACS1_2"] = 2;
-    doc["ACS1_3"] = 3;
-    doc["ACS1_4"] = 4;
-    doc["ACS1_5"] = 5;
-    doc["ACS2_1"] = "checked";
-
-    serializeJson(doc, str);
-
-    server.send(200, "application/json", str);
-  });
-*/
 
   // Load a custom web page described in JSON as PAGE_ELEMENT and
   // register a handler. This handler will be invoked from
@@ -286,7 +262,6 @@ void WifiSettingsPortal_setup()
     {
       Serial.println("calib : no arg match");
     }
-
     return String();
   });
 
@@ -294,8 +269,6 @@ void WifiSettingsPortal_setup()
     Serial.println("flash page");
     String versionStr = "Current version : " + (String)FIRMWARE_VERSION;
     aux.setElementValue("ACE_OTA_current_version", versionStr);
-    //otaPageAux["ACE_OTA_current_version"].value = versionStr;
-
     return String();
   });
 
@@ -356,7 +329,6 @@ void WifiSettingsPortal_setup()
   // In the setup(),
   // Join the custom Web pages and performs begin
   portal.append("/dashboardpage", "SmartElec dashboard");
-  portal.append("/settings2page", "SmartElec settings2");
   portal.join({settingsPageAux, settingsSaveAux, calibPageAux, otaPageAux, otaFlashAux});
 
   // fix wifi name ... same as BLE
