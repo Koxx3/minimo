@@ -801,10 +801,14 @@ void tftUpdateData(uint32_t i_loop)
     }
     case 8:
     {
+      /*
       float bat_min = settings.get_Battery_minimum_voltage();
       float bat_max = settings.get_Battery_maximum_voltage();
       float batteryPercent = (1 / ((bat_max - bat_min) / ((shrd.voltageFilterMean / 1000.0) - bat_min)) * 100);
-      drawBatteryJauge(&tft, batteryPercent, COLUMN7, LINE_2Y, 4 * SCALE_FACTOR_X, 24 * SCALE_FACTOR_Y, NB_BATTERY_BARS);
+      batteryPercent = constrain(batteryPercent, 0, 100);
+      */
+
+      drawBatteryJauge(&tft, shrd.batteryLevel, COLUMN7, LINE_2Y, 4 * SCALE_FACTOR_X, 24 * SCALE_FACTOR_Y, NB_BATTERY_BARS);
       break;
     }
 
