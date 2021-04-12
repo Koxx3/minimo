@@ -15,7 +15,7 @@ $(function() {
     socket.onmessage = function(event) {
         var datas = JSON.parse(event.data);
 
-        setDatasToDashboard(datas);
+        showDatasToDashboard(datas);
     }
 });
 
