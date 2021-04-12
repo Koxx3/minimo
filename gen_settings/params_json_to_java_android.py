@@ -490,7 +490,7 @@ env.filters['regex_replace'] = regex_replace
 tmpl = env.from_string(template)
 
 # load json from file
-jsonConfigName = "settings\\params.json"
+jsonConfigName = "gen_settings\\params.json"
 print ("jsonConfigName: " + jsonConfigName)
 with open(jsonConfigName) as json_file:
     json_data = json.load(json_file)

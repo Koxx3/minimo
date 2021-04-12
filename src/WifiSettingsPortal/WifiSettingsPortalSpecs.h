@@ -16,23 +16,23 @@
 
 /* elements */
 ACText(ACS1, "<h2>Escooter characteristics</h2>", "");
-ACInput(ACS1_1, "10.0", "Wheel size", "^[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$", "edit_text_number_float", AC_Tag_BR, AC_Input_Text);
+ACInput(ACS1_1, "10.0", "Wheel size", "^[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACS1_2, "15", "Number of poles pairs", "^[0-9]+$", "", AC_Tag_BR, AC_Input_Text);
-ACInput(ACS1_3, "42.0", "Battery minimum voltage", "^[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$", "edit_text_number_float", AC_Tag_BR, AC_Input_Text);
-ACInput(ACS1_4, "58.8", "Battery maximum voltage", "^[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$", "edit_text_number_float", AC_Tag_BR, AC_Input_Text);
-ACInput(ACS1_5, "40", "Battery maximum distance", "^[0-9]+$", "edit_text_number_integer", AC_Tag_BR, AC_Input_Text);
+ACInput(ACS1_3, "42.0", "Battery minimum voltage", "^[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACS1_4, "58.8", "Battery maximum voltage", "^[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACS1_5, "40", "Battery maximum distance", "^[0-9]+$", "", AC_Tag_BR, AC_Input_Text);
 ACText(ACS2, "<h2>General</h2>", "");
 ACCheckbox(ACS2_1, "ACS2_1", "Speed limiter at startup", false, AC_Infront);
 ACInput(ACS2_2, "37", "Speed limiter max speed", "", "", AC_Tag_BR, AC_Input_Text);
 ACSelect(ACS2_3, {"None","Smartphone connected","Smartphone connected or beacon visible","Beacon visible"}, "Bluetooth lock mode", 0);
-ACInput(ACS2_4, "147258", "PIN code", "^[0-9]{6,6}$", "edit_text_number_integer", AC_Tag_BR, AC_Input_Text);
-ACInput(ACS2_5, "aa:bb:cc:dd:ee:ff", "Beacon Mac Address", "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$", "edit_text_string", AC_Tag_BR, AC_Input_Text);
+ACInput(ACS2_4, "147258", "PIN code", "^[0-9]{6,6}$", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACS2_5, "aa:bb:cc:dd:ee:ff", "Beacon Mac Address", "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACS2_6, "-80", "Beacon range", "", "", AC_Tag_BR, AC_Input_Text);
-ACInput(ACS2_7, "0", "Speed adjustment", "^[-]?[0-9]+$", "edit_text_number_integer_signed", AC_Tag_BR, AC_Input_Text);
+ACInput(ACS2_7, "0", "Speed adjustment", "^[-]?[0-9]+$", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACS2_8, "70", "Temperature warning", "", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACS2_9, "80", "Humidity warning", "", "", AC_Tag_BR, AC_Input_Text);
 ACText(ACS3, "<h2>Smartphone display</h2>", "");
-ACInput(ACS3_1, "0", "Speed adjustment", "^[-]?[0-9]+$", "edit_text_number_integer_signed", AC_Tag_BR, AC_Input_Text);
+ACInput(ACS3_1, "0", "Speed adjustment", "^[-]?[0-9]+$", "", AC_Tag_BR, AC_Input_Text);
 ACSelect(ACS3_2, {"AUX","DUAL","LIGHT","HORN","RELAY"}, "Aux relay name", 0);
 ACCheckbox(ACS3_3, "ACS3_3", "Display GPS speed ", false, AC_Infront);
 ACText(ACS4, "<h2>SmartDisplay</h2>", "");
@@ -59,15 +59,16 @@ ACInput(ACS6_2, "650", "Input min voltage", "", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACS6_3, "3950", "Input max voltage", "", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACS6_4, "800", "Output min voltage", "", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACS6_5, "3350", "Output max voltage", "", "", AC_Tag_BR, AC_Input_Text);
-ACSelect(ACS6_6, {"Linear","Exponential 1","Exponential 2","Exponential 3","Exponential 4"}, "Output curve", 2);
+ACSelect(ACS6_6, {"Linear","Exponential 1","Exponential 2","Exponential 3","Exponential 4","Custom 6 points"}, "Output curve", 2);
+ACInput(ACS6_7, "20,40,60,80", "Custom output curve points", "^[0-9]+(,[0-9]+){3}$", "", AC_Tag_BR, AC_Input_Text);
 ACText(ACS7, "<h2>Escooter buttons</h2>", "");
 ACSelect(ACS7_1, {"None","Speed limit ON/OFF","Aux ON/OFF","Mode switch 1/2/3","Mode switch 2/3","Eco switch NONE/MED/MAX","Eco switch NONE/MED"}, "B1 short press ", 0);
 ACSelect(ACS7_2, {"None","Speed limitation ON/OFF","Aux ON/OFF","Mode switch 1/2/3","Mode switch 2/3","Eco switch NONE/MED/MAX","Eco switch NONE/MED","Anti-theft manual lock ON","Nitro boost continuous"}, "B1 long press ", 0);
 ACSelect(ACS7_3, {"None","Speed limitation ON/OFF","Aux ON/OFF","Mode switch 1/2/3","Mode switch 2/3","Eco switch NONE/MED/MAX","Eco switch NONE/MED"}, "B2 short press ", 0);
 ACInput(ACS7_4, "3", "Button long press duration", "", "", AC_Tag_BR, AC_Input_Text);
 ACText(ACS8, "<h2>OTA update</h2>", "");
-ACInput(ACS8_1, "", "Wifi network name", "^(.{0,32})$", "edit_text_string", AC_Tag_BR, AC_Input_Text);
-ACInput(ACS8_2, "", "Wifi password", "^(.{0,32})$", "edit_text_password", AC_Tag_BR, AC_Input_Password);
+ACInput(ACS8_1, "", "Wifi network name", "^(.{0,32})$", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACS8_2, "", "Wifi password", "^(.{0,32})$", "", AC_Tag_BR, AC_Input_Password);
 
 
 /* menus */
@@ -127,6 +128,7 @@ AutoConnectAux settingsPageAux("/settingspage", "SmartElec settings", true, {
     ACS6_4,
     ACS6_5,
     ACS6_6,
+    ACS6_7,
         
     ACS7,
     ACS7_1,
@@ -184,6 +186,7 @@ void saveConfig(AutoConnectAux &aux)
     WifiSettingsPortal_settings->set_Throttle_output_min_voltage((settingsPageAux["ACS6_4"].as<AutoConnectInput>()).value.toInt());
     WifiSettingsPortal_settings->set_Throttle_output_max_voltage((settingsPageAux["ACS6_5"].as<AutoConnectInput>()).value.toInt());
     WifiSettingsPortal_settings->set_Throttle_output_curve((settingsPageAux["ACS6_6"].as<AutoConnectSelect>()).selected - 1);
+    WifiSettingsPortal_settings->set_Throttle_output_curve_custom((settingsPageAux["ACS6_7"].as<AutoConnectInput>()).value);
     WifiSettingsPortal_settings->set_Button_1_short_press_action((settingsPageAux["ACS7_1"].as<AutoConnectSelect>()).selected - 1);
     WifiSettingsPortal_settings->set_Button_1_long_press_action((settingsPageAux["ACS7_2"].as<AutoConnectSelect>()).selected - 1);
     WifiSettingsPortal_settings->set_Button_2_short_press_action((settingsPageAux["ACS7_3"].as<AutoConnectSelect>()).selected - 1);
@@ -298,6 +301,9 @@ void loadConfig(AutoConnectAux &aux)
         aux.setElementValue("ACS6_6", "Exponential 3");
     if (val_Throttle_output_curve == 4)
         aux.setElementValue("ACS6_6", "Exponential 4");
+    if (val_Throttle_output_curve == 5)
+        aux.setElementValue("ACS6_6", "Custom 6 points");
+    aux.setElementValue("ACS6_7", (String)WifiSettingsPortal_settings->get_Throttle_output_curve_custom());
     uint8_t val_Button_1_short_press_action = WifiSettingsPortal_settings->get_Button_1_short_press_action();
     if (val_Button_1_short_press_action == 0)
         aux.setElementValue("ACS7_1", "None");

@@ -577,13 +577,27 @@ public:
         LIST_Throttle_output_curve_Exponential_1,
         LIST_Throttle_output_curve_Exponential_2,
         LIST_Throttle_output_curve_Exponential_3,
-        LIST_Throttle_output_curve_Exponential_4, 
+        LIST_Throttle_output_curve_Exponential_4,
+        LIST_Throttle_output_curve_Custom_6_points, 
     } tThrottle_output_curve;
 
     void set_Throttle_output_curve (uint8_t value);
     uint8_t get_Throttle_output_curve();
     void display_Throttle_output_curve();
     void save_Throttle_output_curve(uint8_t value);
+            
+    /*-------------------------------------------------------*/
+
+    #define SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_BLE_ID 46
+    #define SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_STORAGE_KEY "-3nJ4Z5iG0YgXA"
+    #define SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_NAME "Throttle_output_curve_custom"
+
+    String Throttle_output_curve_custom;
+
+    void set_Throttle_output_curve_custom (String value);
+    String get_Throttle_output_curve_custom();
+    void display_Throttle_output_curve_custom();
+    void save_Throttle_output_curve_custom(String value);
             
     /*-------------------------------------------------------*/
 

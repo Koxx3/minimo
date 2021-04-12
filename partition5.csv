@@ -1,0 +1,16 @@
+# Name,   Type, SubType, Offset,  Size, Flags
+
+# BOOTLOADER 0x0 -> 0x009000
+
+# NVS - 20K - 5 pages
+nvs,      data, nvs,     0x009000, 0x005000, 
+
+# OTA data - 8K
+otadata,  data, ota,     0x00e000, 0x002000, 
+
+# APPs - 2 x 1984K
+app0,     app,  ota_0,   0x010000, 0x1E0000, 
+app1,     app,  ota_1,   0x1F0000, 0x1E0000,
+
+# SPIFFS - 196K
+spiffs,   data, spiffs,  0x3D0000, 0x030000,

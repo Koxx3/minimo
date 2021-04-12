@@ -183,8 +183,8 @@ void Settings::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         {{ item.var_name  }} =  {{ item.var_name  }} + {{ item.var_name  }}_part;
         set_{{ item.var_name  }}( {{ item.var_name  }});
             {%- endif %}
-        Serial.print("unpack_setting_packet - {{ item.var_name  }} : " + (String) {{ item.var_name  }} + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - {{ item.var_name  }} : " + (String) {{ item.var_name  }} + " / ");
+        //buffer_display("", packet, length);
         break;
     {%- endfor %}
 {%- endfor %}
@@ -241,8 +241,8 @@ bool Settings::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, ui
             *ind = *ind + {{ item.var_name  }}.length() - 16;
         }
             {%- endif %}
-        Serial.print("pack_setting_packet - {{ item.var_name  }} : " + (String) {{ item.var_name  }} + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - {{ item.var_name  }} : " + (String) {{ item.var_name  }} + " / ");
+        //buffer_display("", packet, *ind);
         break;
     {%- endfor %}
 {%- endfor %}
@@ -311,7 +311,7 @@ tmpl_h = env.from_string(template_h)
 
 
 # load json from file
-jsonConfigName = "settings\\params.json"
+jsonConfigName = "gen_settings\\params.json"
 print ("jsonConfigName: " + jsonConfigName)
 with open(jsonConfigName) as json_file:
     json_data = json.load(json_file)

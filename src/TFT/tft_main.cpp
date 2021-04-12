@@ -1,7 +1,7 @@
 #include <SPI.h>
 
-#include <TJpg_Decoder.h>
 #include "SPIFFS.h"
+#include "AnimatedGIF.h"
 
 #include "tft_main.h"
 #include "tft_colors.h"
@@ -33,13 +33,15 @@
 #define FONT_FORCED_SQUARE18pt7b &FORCED_SQUARE18pt7b
 
 #if ((TFT_MODEL == 2) || (TFT_MODEL == 3)) // 3.5"
-#define FONT_LABEL FONT_FORCED_SQUARE10pt7b
-#define FONT_LABEL_HEIGH 10
+#define FONT_RED_LABEL FONT_FORCED_SQUARE10pt7b
+#define FONT_UNIT FONT_FORCED_SQUARE10pt7b
+#define FONT_UNIT_HEIGH 10
 #define FONT_NUMBER FONT_FORCED_SQUARE18pt7b
 #define FONT_NUMBER_HEIGHT 18
 #else
-#define FONT_LABEL FONT_FORCED_SQUARE7pt7b
-#define FONT_LABEL_HEIGH 7
+#define FONT_RED_LABEL FONT_FORCED_SQUARE6pt7b
+#define FONT_UNIT FONT_FORCED_SQUARE7pt7b
+#define FONT_UNIT_HEIGH 7
 #define FONT_NUMBER FONT_FORCED_SQUARE14pt7b
 #define FONT_NUMBER_HEIGHT 14
 #endif
@@ -108,7 +110,11 @@
 
 #define LINE_TEXT_OFFSET 6
 
-#define JPG_PATH "/smart_splash.jpg"
+#define NORMAL_SPEED // Comment out for rame rate for render speed test
+
+#define NB_LOOP_ANIM_GIF 1
+#define GIF_PATH_SPLASH "/gifs/splash.gif"
+#define GIF_PATH_OTA "/gifs/update.gif"
 
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
 TFT_eSPI tft = TFT_eSPI();
@@ -145,28 +151,210 @@ uint8_t oldShrdIsLocked = 255;
 uint8_t oldAuxOrder = 255;
 
 uint8_t old_substate_case3 = 0;
+uint8_t old_substate_case7 = 0;
 uint8_t old_substate_case6 = 0;
+uint8_t old_substate_ota = 0;
 
 bool lock = false;
 
-// This next function will be called during decoding of the jpeg file to
-// render each block to the TFT.  If you use a different TFT library
-// you will need to adapt this function to suit.
-bool tft_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap)
+//-------------------------------------------------------
+//
+// GIF fonctions
+//
+//-------------------------------------------------------
+#define DISPLAY_WIDTH tft.width()
+
+// rule: loop GIF at least during 3s, maximum 5 times, and don't loop/animate longer than 30s per GIF
+const int maxLoopIterations = 5;   // stop after this amount of loops
+const int maxLoopsDuration = 5000; // ms, max cumulated time after the GIF will break loop
+const int maxGifDuration = 30000;  // ms, max GIF duration
+
+// used to center image based on GIF dimensions
+static int xOffset = 0;
+static int yOffset = 0;
+
+static int currentFile = 0;
+static int lastFile = -1;
+
+static File FSGifFile; // temp gif file holder
+
+static void *GIFOpenFile(const char *fname, int32_t *pSize)
 {
-  // Stop further decoding as image is running off bottom of screen
-  if (y >= tft.height())
-    return 0;
-
-  // This function will clip the image block rendering automatically at the TFT boundaries
-  tft.pushImage(x, y, w, h, bitmap);
-
-  // This might work instead if you adapt the sketch to use the Adafruit_GFX library
-  // tft.drawRGBBitmap(x, y, bitmap, w, h);
-
-  // Return 1 to decode next block
-  return 1;
+  //log_d("GIFOpenFile( %s )\n", fname );
+  FSGifFile = SPIFFS.open(fname);
+  if (FSGifFile)
+  {
+    *pSize = FSGifFile.size();
+    return (void *)&FSGifFile;
+  }
+  return NULL;
 }
+
+static void GIFCloseFile(void *pHandle)
+{
+  File *f = static_cast<File *>(pHandle);
+  if (f != NULL)
+    f->close();
+}
+
+static int32_t GIFReadFile(GIFFILE *pFile, uint8_t *pBuf, int32_t iLen)
+{
+  int32_t iBytesRead;
+  iBytesRead = iLen;
+  File *f = static_cast<File *>(pFile->fHandle);
+  // Note: If you read a file all the way to the last byte, seek() stops working
+  if ((pFile->iSize - pFile->iPos) < iLen)
+    iBytesRead = pFile->iSize - pFile->iPos - 1; // <-- ugly work-around
+  if (iBytesRead <= 0)
+    return 0;
+  iBytesRead = (int32_t)f->read(pBuf, iBytesRead);
+  pFile->iPos = f->position();
+  return iBytesRead;
+}
+
+static int32_t GIFSeekFile(GIFFILE *pFile, int32_t iPosition)
+{
+  int i = micros();
+  File *f = static_cast<File *>(pFile->fHandle);
+  f->seek(iPosition);
+  pFile->iPos = (int32_t)f->position();
+  i = micros() - i;
+  //log_d("Seek time = %d us\n", i);
+  return pFile->iPos;
+}
+
+static void TFTDraw(int x, int y, int w, int h, uint16_t *lBuf)
+{
+  tft.pushRect(x + xOffset, y + yOffset, w, h, lBuf);
+}
+
+// Draw a line of image directly on the LCD
+void GIFDraw(GIFDRAW *pDraw)
+{
+  uint8_t *s;
+  uint16_t *d, *usPalette, usTemp[320];
+  int x, y, iWidth;
+
+  iWidth = pDraw->iWidth;
+  if (iWidth > DISPLAY_WIDTH)
+    iWidth = DISPLAY_WIDTH;
+  usPalette = pDraw->pPalette;
+  y = pDraw->iY + pDraw->y; // current line
+
+  s = pDraw->pPixels;
+  if (pDraw->ucDisposalMethod == 2)
+  { // restore to background color
+    for (x = 0; x < iWidth; x++)
+    {
+      if (s[x] == pDraw->ucTransparent)
+        s[x] = pDraw->ucBackground;
+    }
+    pDraw->ucHasTransparency = 0;
+  }
+  // Apply the new pixels to the main image
+  if (pDraw->ucHasTransparency)
+  { // if transparency used
+    uint8_t *pEnd, c, ucTransparent = pDraw->ucTransparent;
+    int x, iCount;
+    pEnd = s + iWidth;
+    x = 0;
+    iCount = 0; // count non-transparent pixels
+    while (x < iWidth)
+    {
+      c = ucTransparent - 1;
+      d = usTemp;
+      while (c != ucTransparent && s < pEnd)
+      {
+        c = *s++;
+        if (c == ucTransparent)
+        {      // done, stop
+          s--; // back up to treat it like transparent
+        }
+        else
+        { // opaque
+          *d++ = usPalette[c];
+          iCount++;
+        }
+      } // while looking for opaque pixels
+      if (iCount)
+      { // any opaque pixels?
+        TFTDraw(pDraw->iX + x, y, iCount, 1, (uint16_t *)usTemp);
+        x += iCount;
+        iCount = 0;
+      }
+      // no, look for a run of transparent pixels
+      c = ucTransparent;
+      while (c == ucTransparent && s < pEnd)
+      {
+        c = *s++;
+        if (c == ucTransparent)
+          iCount++;
+        else
+          s--;
+      }
+      if (iCount)
+      {
+        x += iCount; // skip these
+        iCount = 0;
+      }
+    }
+  }
+  else
+  {
+    s = pDraw->pPixels;
+    // Translate the 8-bit pixels through the RGB565 palette (already byte reversed)
+    for (x = 0; x < iWidth; x++)
+      usTemp[x] = usPalette[*s++];
+    TFTDraw(pDraw->iX, y, iWidth, 1, (uint16_t *)usTemp);
+  }
+} /* GIFDraw() */
+
+int gifPlay(AnimatedGIF *gif, char *gifPath, int16_t y_offset)
+{ // 0=infinite
+
+  gif->begin(BIG_ENDIAN_PIXELS);
+
+  if (!gif->open(gifPath, GIFOpenFile, GIFCloseFile, GIFReadFile, GIFSeekFile, GIFDraw))
+  {
+    Serial.printf("Could not open gif %s", gifPath);
+    return maxLoopsDuration;
+  }
+
+  int frameDelay = 0; // store delay for the last frame
+  int then = 0;       // store overall delay
+
+  // center the GIF !!
+  int w = gif->getCanvasWidth();
+  int h = gif->getCanvasHeight();
+  xOffset = (tft.width() - w) / 2;
+  yOffset = ((tft.height() - h) / 2) + y_offset;
+
+  if (lastFile != currentFile)
+  {
+    Serial.printf("Playing %s [%d,%d] with offset [%d,%d]", gifPath, w, h, xOffset, yOffset);
+    lastFile = currentFile;
+  }
+
+  while (gif->playFrame(true, &frameDelay))
+  {
+    then += frameDelay;
+    if (then > maxGifDuration)
+    { // avoid being trapped in infinite GIF's
+      //log_w("Broke the GIF loop, max duration exceeded");
+      break;
+    }
+  }
+
+  gif->close();
+
+  return then;
+}
+
+//-------------------------------------------------------
+//
+// Bakclight fonctions
+//
+//-------------------------------------------------------
 
 void tftSetupBacklight()
 {
@@ -180,9 +368,10 @@ void tftSetupBacklight()
 
 void tftBacklightFull()
 {
-  if (!lock) {
-  uint16_t brigtness = map(settings.get_Display_brightness(), 0, 100, 0, 1023);
-  ledcWrite(0, brigtness);
+  if (!lock)
+  {
+    uint16_t brigtness = map(settings.get_Display_brightness(), 0, 100, 0, 1023);
+    ledcWrite(0, brigtness);
   }
 }
 
@@ -192,6 +381,11 @@ void tftBacklightLow(bool lock_p)
   ledcWrite(0, 0);
 }
 
+//-------------------------------------------------------
+//
+// Main fonctions
+//
+//-------------------------------------------------------
 void tftSetup(SharedData *shrd_p, Settings *settings_p)
 {
 
@@ -200,6 +394,14 @@ void tftSetup(SharedData *shrd_p, Settings *settings_p)
 
   // dim screen for init
   tftBacklightLow(false);
+
+  if (!SPIFFS.begin())
+  {
+    Serial.println("SPIFFS not found !!!");
+  }
+
+  tft.begin();
+  tft.fillScreen(TFT_BLACK);
 }
 
 static char *Dfmt2_1(double v)
@@ -229,8 +431,7 @@ void tftUpdateData(uint32_t i_loop)
 {
   char fmt[10];
 
-  // -2 / show splash screen
-  if (i_loop == -2)
+  if (i_loop == -2) // -2 / show splash screen
   {
     Serial.print("step -2");
 
@@ -241,31 +442,27 @@ void tftUpdateData(uint32_t i_loop)
 
     tft.fillScreen(TFT_BLACK);
 
-    // Initialise SPIFFS
-    bool spiffs = SPIFFS.begin();
-    if (!spiffs)
+    // Only if splash is enabled ...
+    if (settings.get_Display_splash_screen() == 1)
     {
-      Serial.println("SPIFFS initialisation failed!");
-    }
-    else
-    {
-      // The jpeg image can be scaled by a factor of 1, 2, 4, or 8
-      TJpgDec.setJpgScale(1);
-
-      // The decoder must be given the exact name of the rendering function above
-      TJpgDec.setCallback(tft_output);
-
-      // Swap the colour byte order when rendering
-      tft.setSwapBytes(true);
-
-      if (settings.get_Display_splash_screen())
+      // Initialise SPIFFS
+      bool spiffs = SPIFFS.begin();
+      if (!spiffs)
       {
-        // Get the width and height in pixels of the jpeg if you wish
-        uint16_t w = 0, h = 0;
-        TJpgDec.getFsJpgSize(&w, &h, JPG_PATH); // Note name preceded with "/"
+        Serial.println("SPIFFS initialisation failed!");
+      }
+      else
+      {
 
-        // Draw the image, top left at 0,0
-        TJpgDec.drawFsJpg((TFT_HEIGHT - w) / 2, (TFT_WIDTH - h) / 2, JPG_PATH);
+        // Display GIF image
+        int loops = maxLoopIterations;          // max loops
+        int durationControl = maxLoopsDuration; // force break loop after xxx ms
+        AnimatedGIF gif;
+        while (loops-- > 0 && durationControl > 0)
+        {
+          durationControl -= gifPlay(&gif, (char *)GIF_PATH_SPLASH, 0);
+          gif.reset();
+        }
 
         tftBacklightFull();
 
@@ -276,17 +473,13 @@ void tftUpdateData(uint32_t i_loop)
           delay(250);
         }
       }
-      else
-      {
-        Serial.println("no splash screen display");
-
-        tftBacklightFull();
-      }
+    }
+    else
+    {
+      tftBacklightFull();
     }
   }
-  else
-      // init fix datas after
-      if (i_loop == -1)
+  else if (i_loop == -1) // init fix datas after
   {
 
     // reset indicators status
@@ -303,12 +496,7 @@ void tftUpdateData(uint32_t i_loop)
     // init TFT settings
     tft.setTextSize(1);
 
-#if ((TFT_MODEL == 2) || (TFT_MODEL == 3)) // 3.5"
-    tft.setFreeFont(FONT_FORCED_SQUARE10pt7b);
-#else
-    tft.setFreeFont(FONT_FORCED_SQUARE6pt7b);
-#endif
-
+    tft.setFreeFont(FONT_RED_LABEL);
     // draw interface - labels
     tft.setTextColor(TFT_RED, TFT_BLACK);
     tft.setTextDatum(BR_DATUM);
@@ -319,15 +507,18 @@ void tftUpdateData(uint32_t i_loop)
     tft.drawString(txt_trip, COLUMN9, LINE_4Y - LINE_TEXT_OFFSET, GFXFF);
 
     // draw interface - units
-    tft.setFreeFont(FONT_LABEL);
+    tft.setFreeFont(FONT_UNIT);
     tft.setTextColor(MY_TFT_WHITE, TFT_BLACK);
     tft.setTextDatum(BL_DATUM);
     tft.drawString(txt_km, COLUMN3 + UNIT_LEFT_MARGIN, LINE_2Y_UNIT, GFXFF);
     tft.drawString(txt_v, COLUMN4 + UNIT_LEFT_MARGIN, LINE_2Y_UNIT, GFXFF);
     tft.drawString(txt_kmh, COLUMN8 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT2, GFXFF);
-    tft.drawString(txt_max, COLUMN8 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT3, GFXFF);
+
     tft.drawString(txt_w, COLUMN2 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF);
     tft.drawString(txt_km, COLUMN9 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF);
+
+    tft.setFreeFont(FONT_RED_LABEL);
+    tft.drawString(txt_max, COLUMN8 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT3, GFXFF);
 
     tft.setFreeFont(FONT_NUMBER);
     tft.drawString(txt_kmh, COLUMN5 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT1, GFXFF);
@@ -341,6 +532,57 @@ void tftUpdateData(uint32_t i_loop)
 
     tft.drawLine(LINE_POINT5X, LINE_POINT5Y, TFT_HEIGHT, LINE_POINT5Y, MY_TFT_DARK_DIGIT_DISABLED);
     tft.drawLine(LINE_POINT6X, LINE_POINT6Y, TFT_HEIGHT, LINE_POINT6Y, MY_TFT_DARK_DIGIT_DISABLED);
+  }
+  else if (shrd.inOtaMode) // OTA BLE/Wifi
+  {
+
+    if (old_substate_ota == 0)
+    {
+      // Clear screen
+      tft.fillScreen(TFT_BLACK);
+
+      old_substate_ota++;
+    }
+    else if (old_substate_ota == 1)
+    {
+      // Display GIF image
+      int loops = maxLoopIterations;          // max loops
+      int durationControl = maxLoopsDuration; // force break loop after xxx ms
+      AnimatedGIF gif;
+      while (loops-- > 0 && durationControl > 0)
+      {
+        durationControl -= gifPlay(&gif, (char *)GIF_PATH_OTA, -20);
+        gif.reset();
+      }
+
+      old_substate_ota++;
+    }
+    else if (old_substate_ota == 2)
+    {
+
+      // Display flashing informations
+#if ((TFT_MODEL == 2) || (TFT_MODEL == 3)) // 3.5"
+      tft.setFreeFont(FONT_FORCED_SQUARE12pt7b);
+#else
+      tft.setFreeFont(FONT_FORCED_SQUARE9pt7b);
+#endif
+      tft.setTextColor(MY_TFT_WHITE, TFT_BLACK);
+      tft.setTextDatum(BC_DATUM);
+      String str_ota_mode;
+      if (shrd.inOtaMode == OTA_IDE)
+      {
+        str_ota_mode = "Mode : IDE server";
+      }
+      else
+      {
+        str_ota_mode = "Mode : Wifi server / Version : " + (String)shrd.inOtaModeVersion;
+      }
+      tft.drawString("Downloading and flashing", TFT_HEIGHT / 2, 180, GFXFF);
+      tft.drawString(str_ota_mode, TFT_HEIGHT / 2, 200, GFXFF);
+      tft.drawString("Wifi : " + settings.get_Wifi_ssid(), TFT_HEIGHT / 2, 220, GFXFF);
+
+      old_substate_ota++;
+    }
   }
   else
   {
@@ -377,7 +619,7 @@ void tftUpdateData(uint32_t i_loop)
       String txt_unit;
       bool shouldClear = false;
 
-      if ((shrd.currentSensorPresent == 1) && (!(shrd.speedCurrent == 0 && shrd.brakePressedStatus == 1)))
+      if ((shrd.currentSensorPresent > 0) && (!(shrd.speedCurrent == 0 && shrd.brakePressedStatus == 1)))
       {
         // CASE POWER (With current sensor)
         txt_label = "  " + (String)txt_power;
@@ -417,13 +659,13 @@ void tftUpdateData(uint32_t i_loop)
         // Draw label
         tft.setTextColor(TFT_RED, TFT_BLACK);                                  //LABEL
         tft.setTextDatum(BR_DATUM);                                            //LABEL
-        tft.setFreeFont(FONT_LABEL);                                           //LABEL SIZE/FONT
+        tft.setFreeFont(FONT_RED_LABEL);                                       //LABEL SIZE/FONT
         tft.drawString(txt_label, COLUMN2, LINE_4Y - LINE_TEXT_OFFSET, GFXFF); //DRAW LABEL ON DISPLAY
 
         // Draw unit
         tft.setTextColor(MY_TFT_WHITE, TFT_BLACK);                                 //UNIT
         tft.setTextDatum(BL_DATUM);                                                //UNIT
-        tft.setFreeFont(FONT_LABEL);                                               //UNIT SIZE/FONT
+        tft.setFreeFont(FONT_UNIT);                                                //UNIT SIZE/FONT
         tft.drawString(txt_unit, COLUMN2 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF); //DRAW UNIT ON DISPLAY
 
         // Switch font back
@@ -495,7 +737,7 @@ void tftUpdateData(uint32_t i_loop)
         // Draw label
         tft.setTextColor(TFT_RED, TFT_BLACK);                                  //LABEL
         tft.setTextDatum(BR_DATUM);                                            //LABEL
-        tft.setFreeFont(FONT_LABEL);                                           //LABEL SIZE/FONT
+        tft.setFreeFont(FONT_RED_LABEL);                                       //LABEL SIZE/FONT
         tft.drawString(txt_label, COLUMN9, LINE_4Y - LINE_TEXT_OFFSET, GFXFF); //DRAW LABEL ON DISPLAY
 
         // Switch font back
@@ -507,18 +749,66 @@ void tftUpdateData(uint32_t i_loop)
     }
     case 7:
     {
-      float autonomy = shrd.autonomyLeft;
-      autonomy = constrain(autonomy, 0, 999);
-      sprintf(fmt, "%03.0f", autonomy);
+      float data;
+      String txt_unit;
+      bool shouldClear = false;
+
+      if (shrd.speedCurrent == 0 && shrd.brakePressedStatus == 1)
+      { // CASE PERCENTAGE
+        data = shrd.batteryLevel;
+        sprintf(fmt, "%03.0f", data);
+        txt_unit = "%   ";
+
+        // check substate change
+        if (old_substate_case7 == 1)
+        {
+          shouldClear = true;
+          old_substate_case7 = 0;
+        }
+      }
+
+      else
+      { // CASE AUTONOMY
+        txt_unit = "Km";
+        float autonomy = shrd.autonomyLeft;
+        autonomy = constrain(autonomy, 0, 999);
+        sprintf(fmt, "%03.0f", autonomy);
+        // check substate change
+        if (old_substate_case7 == 0)
+        {
+          shouldClear = true;
+          old_substate_case7 = 1;
+        }
+      }
+
+      if (shouldClear)
+      {
+        // Clear number space
+        //tft.fillRect(COLUMN4, LINE_2Y, COLUMN4 - COLUMN6, (SMALLEST_FONT_SIZE * 5), TFT_BLACK); //broken
+
+        // Draw unit
+        tft.setTextColor(MY_TFT_WHITE, TFT_BLACK);                                 //UNIT
+        tft.setTextDatum(BL_DATUM);                                                //UNIT
+        tft.setFreeFont(FONT_UNIT);                                                //UNIT SIZE/FONT
+        tft.drawString(txt_unit, COLUMN3 + UNIT_LEFT_MARGIN, LINE_2Y_UNIT, GFXFF); //DRAW UNIT ON DISPLAY
+
+        // Switch font back
+        tft.setFreeFont(FONT_NUMBER); //SET FONT FOR DATA
+      }
+
       tft_util_draw_number(&tft, fmt, COLUMN3, LINE_2Y, MY_TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
     case 8:
     {
+      /*
       float bat_min = settings.get_Battery_minimum_voltage();
       float bat_max = settings.get_Battery_maximum_voltage();
       float batteryPercent = (1 / ((bat_max - bat_min) / ((shrd.voltageFilterMean / 1000.0) - bat_min)) * 100);
-      drawBatteryJauge(&tft, batteryPercent, COLUMN7, LINE_2Y, 4 * SCALE_FACTOR_X, 24 * SCALE_FACTOR_Y, NB_BATTERY_BARS);
+      batteryPercent = constrain(batteryPercent, 0, 100);
+      */
+
+      drawBatteryJauge(&tft, shrd.batteryLevel, COLUMN7, LINE_2Y, 4 * SCALE_FACTOR_X, 24 * SCALE_FACTOR_Y, NB_BATTERY_BARS);
       break;
     }
 

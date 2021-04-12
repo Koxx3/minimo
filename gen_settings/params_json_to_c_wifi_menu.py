@@ -26,19 +26,19 @@ ACText(ACS{{ outer_loop.index }}, "<h2>{{ key2 }}</h2>", "");
         {%- for  item in value2.settings %}
 
                 {%- if item.smartphone_display_type == "edit_text_number_float" %}
-ACInput(ACS{{ outer_loop.index }}_{{ loop.index }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_number_float", AC_Tag_BR, AC_Input_Text);   
+ACInput(ACS{{ outer_loop.index }}_{{ loop.index }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "", AC_Tag_BR, AC_Input_Text);   
                 {%- endif %}
                 {%- if item.smartphone_display_type == "edit_text_number_integer" %}
-ACInput(ACS{{ outer_loop.index }}_{{ loop.index }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_number_integer", AC_Tag_BR, AC_Input_Text);   
+ACInput(ACS{{ outer_loop.index }}_{{ loop.index }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "", AC_Tag_BR, AC_Input_Text);   
                 {%- endif %}
                 {%- if item.smartphone_display_type == "edit_text_number_integer_signed" %}
-ACInput(ACS{{ outer_loop.index }}_{{ loop.index }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_number_integer_signed", AC_Tag_BR, AC_Input_Text);        
+ACInput(ACS{{ outer_loop.index }}_{{ loop.index }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "", AC_Tag_BR, AC_Input_Text);        
                 {%- endif %}
                 {%- if item.smartphone_display_type == "edit_text_string" %}
-ACInput(ACS{{ outer_loop.index }}_{{ loop.index }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_string", AC_Tag_BR, AC_Input_Text);     
+ACInput(ACS{{ outer_loop.index }}_{{ loop.index }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "", AC_Tag_BR, AC_Input_Text);     
                 {%- endif %}
                 {%- if item.smartphone_display_type == "edit_text_password" %}
-ACInput(ACS{{ outer_loop.index }}_{{ loop.index }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "edit_text_password", AC_Tag_BR, AC_Input_Password);        
+ACInput(ACS{{ outer_loop.index }}_{{ loop.index }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{%- endif %}, "", AC_Tag_BR, AC_Input_Password);        
                 {%- endif %}
                 {%- if item.smartphone_display_type == "seek_bar" %}
 ACInput(ACS{{ outer_loop.index }}_{{ loop.index }}, "{{ item.default }}", "{{ item.tft_display_name }}" {%- if item.regex_valid != "" %}, "{{item.regex_valid}}"{% else %}, "" {%- endif %}, "", AC_Tag_BR, AC_Input_Text);  
@@ -160,7 +160,7 @@ tmpl_h = env.from_string(template_h)
 
 
 # load json from file
-jsonConfigName = "settings\\params.json"
+jsonConfigName = "gen_settings\\params.json"
 print ("jsonConfigName: " + jsonConfigName)
 
 with open(jsonConfigName) as json_file:

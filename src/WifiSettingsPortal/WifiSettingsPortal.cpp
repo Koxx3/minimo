@@ -22,269 +22,9 @@ AutoConnect portal(server);
 AutoConnectConfig config;
 
 static const char JSPAGE[] PROGMEM = R"=====(
-  
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script type='text/javascript'>
-
-$.getJSON( "https://raw.githubusercontent.com/Koxx3/SmartController_SmartDisplay_ESP32/master/ota_updates/smartcontroller_minimo/firmware.json", function( data ) {
-  var items = [];
-
-$.each(data.versions, function(id, item) {
-  $("#versionslist").append('<input type="radio" name="version_selected" id="' + item.version + '" value="' + item.version + '"><label>' + item.version + " - " + EpochToDate(item.date) + '</albel></input><br>')
-});
-
-$("#versions_not_available").hide();
-$('label[for="ACE_OTA_version_manual"]').hide();
-$("#ACE_OTA_version_manual").hide();
-
-//Epoch To Date
-function EpochToDate(epoch) {
-    if (epoch < 10000000000)
-        epoch *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but Javascript uses Milliseconds)
-    var epoch = epoch + (new Date().getTimezoneOffset() * -1); //for timeZone        
-    var dat = new Date(epoch);
-    //return dat.toLocaleDateString(undefined, options);
-    return dat.toLocaleString();
-}
-});
-
-</script>
-
+<script type="text/javascript" src="/js/jquery-3.3.1.min.js.gz"></script>
+<script src="/js/ota.js"></script>
 )=====";
-
-
-static const char JS_DASHBOARD_PAGE[] PROGMEM = R"=====(
-<script type="text/javascript">
-
-var ws = new WebSocket("ws://" + location.host +":81");
-
-function SendText() {
-  ws.send('Hello, world');
-}
-
-ws.onmessage = function(event) {
-  var msg = JSON.parse(event.data);
-
-  switch(msg.id) {
-    case 1:
-      document.getElementById("ACE_DASHBOARD_text1").innerHTML = 'Init' + msg.value;
-      break;
-    case 2:
-      document.getElementById("ACE_DASHBOARD_text1").innerHTML = 'Reply : ' + msg.value;
-      break;
-    case 3:
-      document.getElementById("ACE_DASHBOARD_text1").innerHTML = 'Temperature : ' + msg.value;
-      break;
-  }
-
-};
-
-</script>
-)=====";
-
-
-static const char CSS_DASHBOARD_PAGE[] PROGMEM = R"=====(
-html {
-  background-color: #00013D !important;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-}
-
-* {
-  font-family: Helvetica, sans-serif;
-  color: #fff;
-}
-
-h1 {
-  text-align: center;
-  /*text-transform: uppercase;*/
-  letter-spacing: 3px;
-  color: #eee;
-  position: relative;
-  z-index: 100;
-}
-h1 a {
-  letter-spacing: 1px;
-  text-transform: lowercase;
-  color: #3F51B5;
-  font-size: 30px;
-  transition: all 0.5s ease;
-  -webkit-transition: all 0.5s ease;
-  -moz-transition: all 0.5s ease;
-  -o-transition: all 0.5s ease;
-  -ms-transition: all 0.5s ease;
-}
-h1 a:hover {
-  color: #F44336;
-}
-
-main.wrap {
-  position: absolute;
-  top: 0;
-  /* height: 70%; */
-  /* transform: translateY(-50%); */
-  /* -webkit-transform: translateY(-50%); */
-  /* -moz-transform: translateY(-50%); */
-  /* -o-transform: translateY(-50%); */
-  /* -ms-transform: translateY(-50%); */
-  width: 100%;
-  left: 5px;
-}
-main.wrap .tile-wrap {
-  display: inline-block;
-  margin: 0;
-  max-width: 50%;
-}
-main.wrap .tile-wrap h3 {
-  margin: 0;
-  padding: 0;
-  color: #aaa;
-  text-align: center;
-}
-
-.tile {
-  display: inline-block;
-  width: 100%;
-  height: 125px;
-  background-color: #7E3FF3;
-  outline: none;
-  
-  cursor: pointer;
-  border: 5px solid #00013D;
-  padding: 0;
-  float: left;
-  transition: all 0.5s ease;
-  -webkit-transition: all 0.5s ease;
-  -moz-transition: all 0.5s ease;
-  -o-transition: all 0.5s ease;
-  -ms-transition: all 0.5s ease;
-}
-.tile .icon {
-  font-size: 60px;
-}
-.tile .name {
-  text-align: center;
-  opacity: 0;
-  transform: translateY(20px);
-  -webkit-transform: translateY(20px);
-  -moz-transform: translateY(20px);
-  -o-transform: translateY(20px);
-  -ms-transform: translateY(20px);
-  transition: all 0.5s ease;
-  -webkit-transition: all 0.5s ease;
-  -moz-transition: all 0.5s ease;
-  -o-transition: all 0.5s ease;
-  -ms-transition: all 0.5s ease;
-}
-.tile:hover {
-  border-color: #fff;
-}
-.tile:hover > .name {
-  transform: translateY(0px);
-  -webkit-transform: translateY(0px);
-  -moz-transform: translateY(0px);
-  -o-transform: translateY(0px);
-  -ms-transform: translateY(0px);
-  opacity: 1;
-}
-
-.short {
-  width: 50%;
-}
-
-)=====";
-
-
-static const char HTML_DASHBOARD_PAGE[] PROGMEM = R"=====(
-<div class='content-wrapper'>
-	<main class='wrap'>
-		<h2 style="color:grey;font-weight: normal;">Smart-e sd_minimo_35 v38</h2>
-		<div class='tile-wrap'>
-			<h3>Bloc N°1</h3>
-			
-			<button class='tile'>
-				<h3 style="text-align:left; color: white;">Speed (M)</h3>
-				<h1>0 km/h</h1>
-				<div class='name'>Description</div>
-			</button>
-			
-			<button class='tile'>
-				<h3 style="text-align:left; color: white;">Mode</h3>
-				<h1>1 2 3</h1>
-				<div class='name'>Description</div>
-			</button>
-			
-			<button class='tile'>
-				<h3 style="text-align:left; color: white;">Brake</h3>
-				<h1>1 2 3 4 5</h1>
-				<div class='name'>Description</div>
-			</button>
-			
-			<button class='tile short'>
-				<h3 style="text-align:left; color: white;">ECO</h3>
-				<h1>NONE</h1>
-				<div class='name'>Description</div>
-			</button>
-			
-			<button class='tile short'>
-				<h3 style="text-align:left; color: white;">ACCEL.</h3>
-				<h1>MAX</h1>
-				<div class='name'>Description</div>
-			</button>
-			
-			<button class='tile short'>
-				<h3 style="text-align:left; color: white;">LOCK</h3>
-				<h1>OFF</h1>
-				<div class='name'>Description</div>
-			</button>
-			
-			<button class='tile short'>
-				<h3 style="text-align:left; color: white;">SPD. LMT.</h3>
-				<h1>OFF</h1>
-				<div class='name'>Description</div>
-			</button>
-			
-			<button class='tile'>
-				<h3 style="text-align:left; color: white;">AUX</h3>
-				<h1>OFF</h1>
-				<div class='name'>Description</div>
-			</button>
-			
-		</div>
-		<div class='tile-wrap'>
-			<h3>Bloc N°2</h3>
-			<button class='tile'>
-				<div class='icon'>&#x2601;</div>
-				<div class='name'>Description</div>
-			</button>
-			<button class='tile short'>
-				<div class='icon'>&#x20A4;</div>
-				<div class='name'>Description</div>
-			</button>
-			<button class='tile'>
-				<div class='icon'>&#x266B;</div>
-				<div class='name'>Description</div>
-			</button>
-			<button class='tile short'>
-				<div class='icon'>&#x25B7;</div>
-				<div class='name'>Description</div>
-			</button>
-			<button class='tile short'>
-				<div class='icon'>&#x2753;</div>
-				<div class='name'>Description</div>
-			</button>
-		</div>
-	</main>
-</div>
-<!-- footer -->
-
-</body>
-</html>
-)=====";
-
 
 // General style elements
 ACStyle(ACE_Style1, "label{display:inline-block;padding-right: 10px !important;padding-left: 0px !important;}");
@@ -292,12 +32,10 @@ ACStyle(ACE_Style2, "input[type='button']{background-color:#303F9F; border-color
 ACStyle(ACE_Style3, "select{width:44%} h2{ color:#303F9F;padding:10px; }");
 ACStyle(ACE_Style4, ".noorder{width:100%}.noorder label{display:inline-block;width:40%;cursor:pointer;padding:5px}.noorder .noorder input[type='text']{width:40%} .noorder input[type='password']{width:40%} .noorder input[type='text']{width:40%}");
 ACStyle(ACE_Style5, "input[type='text']{paddingLeft:10px}");
-ACStyle(ACE_Style6, CSS_DASHBOARD_PAGE);
 
 // Settings page
 ACSubmit(ACE_SETTINGS_Save, "Save", "/settingssave");
 ACSubmit(ACE_SETTINGS_Discard, "Discard", "/settingspage");
-//ACElement(ACE_SETTINGS_Js1, "<script type=\"text/javascript\">window.onload=function(){var t=document.querySelectorAll(\"input[type='text']\");for(i=0;i<t.length;i++){var e=t[i].getAttribute(\"placeholder\");e&&t[i].setAttribute(\"class\",e)}};</script>");
 ACElement(ACE_SETTINGS_Js1, "");
 #include "WifiSettingsPortalSpecs.h"
 
@@ -314,13 +52,6 @@ ACSubmit(ACE_CALIB_submit_min, "Min position", "/calibpage?min=1");
 ACSubmit(ACE_CALIB_submit_max, "Max position", "/calibpage?max=1");
 AutoConnectAux calibPageAux("/calibpage", "SmartElec calibrations", true, {ACE_Style1, ACE_Style2, ACE_Style4, ACE_Style5, ACE_CALIB_title, ACE_CALIB_text1, ACE_CALIB_text2, ACE_CALIB_submit_min, ACE_CALIB_submit_max});
 
-// Status page
-//ACText(ACE_DASHBOARD_text1, "Test.", "", "", AC_Tag_BR);
-ACElement(ACE_DASHBOARD_html_body, HTML_DASHBOARD_PAGE);
-//ACButton(ACE_DASHBOARD_btn, "btn", "SendText()");
-ACElement(ACE_DASHBOARD_js, JS_DASHBOARD_PAGE);
-AutoConnectAux dashboardPageAux("/dashboardpage", "SmartElec Dashboard", true, {/*ACE_Style1, ACE_Style2, ACE_Style4, ACE_Style5,*/ ACE_Style6, /*ACE_DASHBOARD_text1,*/ ACE_DASHBOARD_html_body, /*ACE_DASHBOARD_btn, */ ACE_DASHBOARD_js});
-
 // OTA flash pages
 ACText(ACE_OTA_title, "Available versions : ", "", "", AC_Tag_BR);
 ACText(ACE_OTA_current_version, "Current version : ", "", "", AC_Tag_BR);
@@ -334,8 +65,140 @@ AutoConnectAux otaPageAux("/otapage", "SmartElec firmware update", true, {ACE_St
 ACText(ACE_OTA_FLASH_in_progress, "<h4>Flash in progress</h4>The SmartElec device will reboot after flash", "");
 AutoConnectAux otaFlashAux("/otaflash", "SmartElec flash in progress", false, {ACE_Style2, ACE_OTA_FLASH_in_progress});
 
+//format bytes
+String formatBytes(size_t bytes)
+{
+  if (bytes < 1024)
+  {
+    return String(bytes) + "B";
+  }
+  else if (bytes < (1024 * 1024))
+  {
+    return String(bytes / 1024.0) + "KB";
+  }
+  else if (bytes < (1024 * 1024 * 1024))
+  {
+    return String(bytes / 1024.0 / 1024.0) + "MB";
+  }
+  else
+  {
+    return String(bytes / 1024.0 / 1024.0 / 1024.0) + "GB";
+  }
+}
+
+String getContentType(String filename)
+{
+  if (server.hasArg("download"))
+  {
+    return "application/octet-stream";
+  }
+  else if (filename.endsWith(".htm"))
+  {
+    return "text/html";
+  }
+  else if (filename.endsWith(".html"))
+  {
+    return "text/html";
+  }
+  else if (filename.endsWith(".css"))
+  {
+    return "text/css";
+  }
+  else if (filename.endsWith(".js"))
+  {
+    return "application/javascript";
+  }
+  else if (filename.endsWith(".png"))
+  {
+    return "image/png";
+  }
+  else if (filename.endsWith(".gif"))
+  {
+    return "image/gif";
+  }
+  else if (filename.endsWith(".jpg"))
+  {
+    return "image/jpeg";
+  }
+  else if (filename.endsWith(".ico"))
+  {
+    return "image/x-icon";
+  }
+  else if (filename.endsWith(".xml"))
+  {
+    return "text/xml";
+  }
+  else if (filename.endsWith(".pdf"))
+  {
+    return "application/x-pdf";
+  }
+  else if (filename.endsWith(".zip"))
+  {
+    return "application/x-zip";
+  }
+  else if (filename.endsWith(".js.gz"))
+  {
+    return "application/javascript";
+  }
+  else if (filename.endsWith(".gz"))
+  {
+    return "application/x-gzip";
+  }
+  return "text/plain";
+}
+
+bool exists(String path)
+{
+  bool yes = false;
+  File file = SPIFFS.open(path, "r");
+  if (!file.isDirectory())
+  {
+    yes = true;
+  }
+  file.close();
+  return yes;
+}
+
+bool handleFileRead(String path)
+{
+  Serial.println("handleFileRead: " + path);
+  if (path.endsWith("/"))
+  {
+    path += "index.htm";
+  }
+  String contentType = getContentType(path);
+  String pathWithGz = path + ".gz";
+  if (exists(pathWithGz) || exists(path))
+  {
+    if (exists(pathWithGz))
+    {
+      path += ".gz";
+    }
+    File file = SPIFFS.open(path, "r");
+    server.streamFile(file, contentType);
+    file.close();
+    return true;
+  }
+  return false;
+}
+
 void WifiSettingsPortal_setup()
 {
+
+  Serial.setDebugOutput(true);
+  SPIFFS.begin();
+  {
+    File root = SPIFFS.open("/");
+    File file = root.openNextFile();
+    while (file)
+    {
+      String fileName = file.name();
+      size_t fileSize = file.size();
+      Serial.printf("FS File: %s, size: %s\n", fileName.c_str(), formatBytes(fileSize).c_str());
+      file = root.openNextFile();
+    }
+    Serial.printf("\n");
+  }
 
   // Responder of root page handled directly from WebServer class.
   server.on("/_ac", []() {
@@ -343,21 +206,29 @@ void WifiSettingsPortal_setup()
     server.send(302, "text/plain", "");
   });
 
+  server.on("/dashboardpage", HTTP_GET, []() {
+    if (!handleFileRead("/dash.html"))
+    {
+      server.send(404, "text/plain", "FileNotFound");
+    }
+  });
+
+
   // Load a custom web page described in JSON as PAGE_ELEMENT and
   // register a handler. This handler will be invoked from
   // AutoConnectSubmit named the Load defined on the same page.
   settingsPageAux.on([](AutoConnectAux &aux, PageArgument &arg) {
     Serial.println("portal where = " + (String)portal.where());
-//    if ((portal.where() == "/settingspage") || (portal.where() == "/settingssave") || (portal.where() == ""))
-//    {
-      Serial.println("load begin");
+    //    if ((portal.where() == "/settingspage") || (portal.where() == "/settingssave") || (portal.where() == ""))
+    //    {
+    Serial.println("load begin");
 
-      loadConfig(aux);
-//    }
-//    else
-//    {
-//      Serial.println("where reject : " + (String)portal.where());
-//    }
+    loadConfig(aux);
+    //    }
+    //    else
+    //    {
+    //      Serial.println("where reject : " + (String)portal.where());
+    //    }
     Serial.println("load end");
     return String();
   });
@@ -391,7 +262,6 @@ void WifiSettingsPortal_setup()
     {
       Serial.println("calib : no arg match");
     }
-
     return String();
   });
 
@@ -399,8 +269,6 @@ void WifiSettingsPortal_setup()
     Serial.println("flash page");
     String versionStr = "Current version : " + (String)FIRMWARE_VERSION;
     aux.setElementValue("ACE_OTA_current_version", versionStr);
-    //otaPageAux["ACE_OTA_current_version"].value = versionStr;
-
     return String();
   });
 
@@ -408,8 +276,9 @@ void WifiSettingsPortal_setup()
     Serial.println("flash process");
     if (arg.hasArg("version_selected") && (arg.arg(0) != "") && (arg.argName(0) == "version_selected"))
     {
+      /*
       Serial.println("flash process : version_selected = " + (String)arg.arg(0));
-
+      */
       WifiSettingsPortal_shrd->inOtaModeVersion = arg.arg(0).toInt();
       WifiSettingsPortal_shrd->inOtaMode = OTA_SERVER;
     }
@@ -417,32 +286,50 @@ void WifiSettingsPortal_setup()
     {
       if (arg.hasArg("ACE_OTA_version_manual") && (arg.arg(0) != "") && (arg.argName(0) == "ACE_OTA_version_manual"))
       {
+        /*
         Serial.println("flash process ACE_OTA_version_manual 0  : arg = " + (String)arg.arg(0));
-
+        */
         WifiSettingsPortal_shrd->inOtaModeVersion = arg.arg(0).toInt();
         WifiSettingsPortal_shrd->inOtaMode = OTA_SERVER;
       }
       else if (arg.hasArg("ACE_OTA_version_manual") && (arg.arg(1) != "") && (arg.argName(1) == "ACE_OTA_version_manual"))
       {
+        /*
         Serial.println("flash process : ACE_OTA_version_manual 1 = " + (String)arg.arg(1));
-
+        */
         WifiSettingsPortal_shrd->inOtaModeVersion = arg.arg(1).toInt();
         WifiSettingsPortal_shrd->inOtaMode = OTA_SERVER;
       }
       else
       {
+        /*
         Serial.println("flash process : arg 0 = " + (String)arg.arg(0));
         Serial.println("flash process : argName 0 = " + (String)arg.argName(0));
         Serial.println("flash process : arg 1 = " + (String)arg.arg(1));
         Serial.println("flash process : argName 1 = " + (String)arg.argName(1));
+        */
       }
     }
     return String();
   });
 
+  // Default handler for all URIs not defined above
+  // Use it to read files from SPIFFS
+  // To make AutoConnect recognize the 404 handler, replace it with:
+  //called when the url is not defined here
+  //use it to load content from SPIFFS
+  // server.onNotFound([]() {
+  portal.onNotFound([]() {
+    if (!handleFileRead(server.uri()))
+    {
+      server.send(404, "text/plain", "FileNotFound");
+    }
+  });
+
   // In the setup(),
   // Join the custom Web pages and performs begin
-  portal.join({dashboardPageAux, settingsPageAux, settingsSaveAux, calibPageAux, otaPageAux, otaFlashAux});
+  portal.append("/dashboardpage", "SmartElec dashboard");
+  portal.join({settingsPageAux, settingsSaveAux, calibPageAux, otaPageAux, otaFlashAux});
 
   // fix wifi name ... same as BLE
   uint8_t base_mac_addr[6] = {0};
@@ -473,7 +360,8 @@ void WifiSettingsPortal_setup()
 void WifiSettingsPortal_begin()
 {
 
-  portal.config(config);  if (portal.begin())
+  portal.config(config);
+  if (portal.begin())
   {
 
     webSocket.begin(); // <--- After AutoConnect::begin
@@ -545,16 +433,42 @@ void WifiSettingsPortal_setBluetoothHandler(BluetoothHandler *set)
   WifiSettingsPortal_blh = set;
 }
 
-void WifiSettingsPortal_sendTemperature()
+void WifiSettingsPortal_sendValues()
 {
 
-  /*
-  DynamicJsonDocument doc(1024);
-  String str;
-  doc["id"] = 3;
-  doc["value"] = WifiSettingsPortal_shrd->currentTemperature;
-  serializeJson(doc, str);
-  Serial.println("str : " + (String)str);
-  webSocket.sendTXT(0, str);
-  */
+  if (webSocket.connectedClients() > 0)
+  {
+    DynamicJsonDocument doc(2048);
+    String str;
+
+    int32_t power = ((WifiSettingsPortal_shrd->currentActual / 1000.0) * (WifiSettingsPortal_shrd->voltageActual / 1000.0)); // / 1000000;
+    power = constrain(power, 0, 65535);
+
+    doc["speedCurrent"] = WifiSettingsPortal_shrd->speedCurrent;
+    doc["voltageFilterMean"] = ceil(WifiSettingsPortal_shrd->voltageFilterMean / 100.0);
+    doc["currentActual"] = WifiSettingsPortal_shrd->currentActual / 100;
+    doc["currentTemperature"] = WifiSettingsPortal_shrd->currentTemperature;
+    doc["currentHumidity"] = WifiSettingsPortal_shrd->currentHumidity;
+    doc["distanceTrip"] = WifiSettingsPortal_shrd->distanceTrip / 100;
+    doc["distanceOdo"] = WifiSettingsPortal_shrd->distanceOdo;
+    doc["batteryLevel"] = WifiSettingsPortal_shrd->batteryLevel;
+    doc["isLocked"] = WifiSettingsPortal_shrd->isLocked;
+    doc["bleBeaconVisible"] = WifiSettingsPortal_shrd->bleBeaconVisible;
+    doc["beaconRSSI"] = WifiSettingsPortal_shrd->beaconRSSI;
+    doc["bleLockForced"] = WifiSettingsPortal_shrd->bleLockForced;
+    doc["modeOrder"] = WifiSettingsPortal_shrd->modeOrder;
+    doc["speedLimiter"] = WifiSettingsPortal_shrd->speedLimiter;
+    doc["ecoOrder"] = WifiSettingsPortal_shrd->ecoOrder;
+    doc["accelOrder"] = WifiSettingsPortal_shrd->accelOrder;
+    doc["auxOrder"] = WifiSettingsPortal_shrd->auxOrder;
+    doc["brakeSentOrder"] = WifiSettingsPortal_shrd->brakeSentOrder;
+    doc["brakeSentOrderFromBLE"] = WifiSettingsPortal_shrd->brakeSentOrderFromBLE;
+    doc["brakePressedStatus"] = WifiSettingsPortal_shrd->brakePressedStatus;
+    doc["brakeFordidenHighVoltage"] = WifiSettingsPortal_shrd->brakeFordidenHighVoltage;
+    doc["time"] = millis();
+
+    serializeJson(doc, str);
+    //Serial.println("str : " + (String)str);
+    webSocket.sendTXT(0, str);
+  }
 }

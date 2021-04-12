@@ -111,7 +111,8 @@ public:
 
     //int32_t currentRawFilterMean = 0;
     int32_t currentActual = 0; // in milliamps
-    uint8_t currentSensorPresent = 1;
+    int32_t currentFromController = 0; // in milliamps
+    uint8_t currentSensorPresent = -1;
 
     uint8_t pasEnabled = 0;
 
@@ -132,6 +133,10 @@ public:
     boolean errorSerialFromContrl = false;
     boolean errorContrl = false;
 
+
+    int8_t bleBeaconVisible = 1;
+    int8_t bleLockForced = 0;
+    int8_t fastUpdate = 0;
     int16_t beaconRSSI = -1;
 
 };

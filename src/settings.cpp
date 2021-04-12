@@ -101,6 +101,8 @@ void Settings::restore() {
     Serial.println("  >> Throttle_output_max_voltage = " + (String)Throttle_output_max_voltage);
     Throttle_output_curve = prefs.getInt(SETTINGS_THROTTLE_OUTPUT_CURVE_STORAGE_KEY, 2);
     Serial.println("  >> Throttle_output_curve = " + (String)Throttle_output_curve);
+    Throttle_output_curve_custom = prefs.getString(SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_STORAGE_KEY, "20,40,60,80");
+    Serial.println("  >> Throttle_output_curve_custom = " + (String)Throttle_output_curve_custom);
     Button_1_short_press_action = prefs.getInt(SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_STORAGE_KEY, 0);
     Serial.println("  >> Button_1_short_press_action = " + (String)Button_1_short_press_action);
     Button_1_long_press_action = prefs.getInt(SETTINGS_BUTTON_1_LONG_PRESS_ACTION_STORAGE_KEY, 0);
@@ -159,6 +161,7 @@ void Settings::save() {
     prefs.putInt(SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_STORAGE_KEY, Throttle_output_min_voltage);
     prefs.putInt(SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_STORAGE_KEY, Throttle_output_max_voltage);
     prefs.putInt(SETTINGS_THROTTLE_OUTPUT_CURVE_STORAGE_KEY, Throttle_output_curve);
+    prefs.putString(SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_STORAGE_KEY, Throttle_output_curve_custom);
     prefs.putInt(SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_STORAGE_KEY, Button_1_short_press_action);
     prefs.putInt(SETTINGS_BUTTON_1_LONG_PRESS_ACTION_STORAGE_KEY, Button_1_long_press_action);
     prefs.putInt(SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_STORAGE_KEY, Button_2_short_press_action);
@@ -182,48 +185,48 @@ void Settings::unpack_setting_packet(uint8_t* packet, uint8_t length) {
     switch(settingId) {
     case SETTINGS_WHEEL_SIZE_BLE_ID :
         set_Wheel_size(buffer_get_float32_auto(packet, &ind));
-        Serial.print("unpack_setting_packet - Wheel_size : " + (String) Wheel_size + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Wheel_size : " + (String) Wheel_size + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_NUMBER_OF_POLES_PAIRS_BLE_ID :
         set_Number_of_poles_pairs(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Number_of_poles_pairs : " + (String) Number_of_poles_pairs + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Number_of_poles_pairs : " + (String) Number_of_poles_pairs + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_BATTERY_MINIMUM_VOLTAGE_BLE_ID :
         set_Battery_minimum_voltage(buffer_get_float32_auto(packet, &ind));
-        Serial.print("unpack_setting_packet - Battery_minimum_voltage : " + (String) Battery_minimum_voltage + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Battery_minimum_voltage : " + (String) Battery_minimum_voltage + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_BATTERY_MAXIMUM_VOLTAGE_BLE_ID :
         set_Battery_maximum_voltage(buffer_get_float32_auto(packet, &ind));
-        Serial.print("unpack_setting_packet - Battery_maximum_voltage : " + (String) Battery_maximum_voltage + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Battery_maximum_voltage : " + (String) Battery_maximum_voltage + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_BATTERY_MAXIMUM_DISTANCE_BLE_ID :
         set_Battery_maximum_distance(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Battery_maximum_distance : " + (String) Battery_maximum_distance + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Battery_maximum_distance : " + (String) Battery_maximum_distance + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_SPEED_LIMITER_AT_STARTUP_BLE_ID :
         set_Speed_limiter_at_startup(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Speed_limiter_at_startup : " + (String) Speed_limiter_at_startup + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Speed_limiter_at_startup : " + (String) Speed_limiter_at_startup + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_SPEED_LIMITER_MAX_SPEED_BLE_ID :
         set_Speed_limiter_max_speed(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Speed_limiter_max_speed : " + (String) Speed_limiter_max_speed + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Speed_limiter_max_speed : " + (String) Speed_limiter_max_speed + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_BLUETOOTH_LOCK_MODE_BLE_ID :
         set_Bluetooth_lock_mode(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Bluetooth_lock_mode : " + (String) Bluetooth_lock_mode + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Bluetooth_lock_mode : " + (String) Bluetooth_lock_mode + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_BLE_PIN_CODE_BLE_ID :
         set_Ble_pin_code(buffer_get_uint32(packet, &ind));
-        Serial.print("unpack_setting_packet - Ble_pin_code : " + (String) Ble_pin_code + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Ble_pin_code : " + (String) Ble_pin_code + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_BLE_BEACON_MAC_ADDRESS_BLE_ID :
         char Ble_beacon_mac_address_part[17];
@@ -234,173 +237,185 @@ void Settings::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         memcpy(Ble_beacon_mac_address_part, &packet[ind], length  - 4);
         Ble_beacon_mac_address =  Ble_beacon_mac_address + Ble_beacon_mac_address_part;
         set_Ble_beacon_mac_address( Ble_beacon_mac_address);
-        Serial.print("unpack_setting_packet - Ble_beacon_mac_address : " + (String) Ble_beacon_mac_address + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Ble_beacon_mac_address : " + (String) Ble_beacon_mac_address + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_BLE_BEACON_RANGE_BLE_ID :
         set_Ble_beacon_range(buffer_get_int8(packet, &ind));
-        Serial.print("unpack_setting_packet - Ble_beacon_range : " + (String) Ble_beacon_range + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Ble_beacon_range : " + (String) Ble_beacon_range + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_BLE_ID :
         set_Original_display_speed_adjustment(buffer_get_int8(packet, &ind));
-        Serial.print("unpack_setting_packet - Original_display_speed_adjustment : " + (String) Original_display_speed_adjustment + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Original_display_speed_adjustment : " + (String) Original_display_speed_adjustment + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_TEMPERATURE_WARNING_BLE_ID :
         set_Temperature_warning(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Temperature_warning : " + (String) Temperature_warning + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Temperature_warning : " + (String) Temperature_warning + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_HUMIDITY_WARNING_BLE_ID :
         set_Humidity_warning(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Humidity_warning : " + (String) Humidity_warning + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Humidity_warning : " + (String) Humidity_warning + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_SMARTDISPLAY_SPEED_ADJUSTMENT_BLE_ID :
         set_Smartdisplay_speed_adjustment(buffer_get_int8(packet, &ind));
-        Serial.print("unpack_setting_packet - Smartdisplay_speed_adjustment : " + (String) Smartdisplay_speed_adjustment + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Smartdisplay_speed_adjustment : " + (String) Smartdisplay_speed_adjustment + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_AUX_RELAY_NAME_BLE_ID :
         set_Aux_relay_name(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Aux_relay_name : " + (String) Aux_relay_name + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Aux_relay_name : " + (String) Aux_relay_name + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_DISPLAY_GPS_SPEED_INSTEAD_OF_ESCOOTER_SPEED_BLE_ID :
         set_Display_gps_speed_instead_of_escooter_speed(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Display_gps_speed_instead_of_escooter_speed : " + (String) Display_gps_speed_instead_of_escooter_speed + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Display_gps_speed_instead_of_escooter_speed : " + (String) Display_gps_speed_instead_of_escooter_speed + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_DEFAULT_MODE_AT_STARTUP_BLE_ID :
         set_Default_mode_at_startup(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Default_mode_at_startup : " + (String) Default_mode_at_startup + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Default_mode_at_startup : " + (String) Default_mode_at_startup + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_DEFAULT_ECO_MODE_AT_STARTUP_BLE_ID :
         set_Default_eco_mode_at_startup(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Default_eco_mode_at_startup : " + (String) Default_eco_mode_at_startup + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Default_eco_mode_at_startup : " + (String) Default_eco_mode_at_startup + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_DEFAULT_ACCELERATION_BLE_ID :
         set_Default_acceleration(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Default_acceleration : " + (String) Default_acceleration + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Default_acceleration : " + (String) Default_acceleration + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_DEFAULT_ELECTRIC_BRAKE_AT_STARTUP_BLE_ID :
         set_Default_electric_brake_at_startup(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Default_electric_brake_at_startup : " + (String) Default_electric_brake_at_startup + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Default_electric_brake_at_startup : " + (String) Default_electric_brake_at_startup + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_PAS_ENABLED_BLE_ID :
         set_Pas_enabled(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Pas_enabled : " + (String) Pas_enabled + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Pas_enabled : " + (String) Pas_enabled + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_ABS_ENABLED_BLE_ID :
         set_Abs_enabled(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Abs_enabled : " + (String) Abs_enabled + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Abs_enabled : " + (String) Abs_enabled + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_DISPLAY_BRIGHTNESS_BLE_ID :
         set_Display_brightness(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Display_brightness : " + (String) Display_brightness + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Display_brightness : " + (String) Display_brightness + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_DISPLAY_SPLASH_SCREEN_BLE_ID :
         set_Display_splash_screen(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Display_splash_screen : " + (String) Display_splash_screen + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Display_splash_screen : " + (String) Display_splash_screen + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_ROTATE_SCREEN_BLE_ID :
         set_Rotate_screen(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Rotate_screen : " + (String) Rotate_screen + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Rotate_screen : " + (String) Rotate_screen + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_EBRAKE_PROGRESSIVE_MODE_BLE_ID :
         set_Ebrake_progressive_mode(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Ebrake_progressive_mode : " + (String) Ebrake_progressive_mode + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Ebrake_progressive_mode : " + (String) Ebrake_progressive_mode + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_EBRAKE_SMART_BRAKE_TYPE_BLE_ID :
         set_Ebrake_smart_brake_type(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Ebrake_smart_brake_type : " + (String) Ebrake_smart_brake_type + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Ebrake_smart_brake_type : " + (String) Ebrake_smart_brake_type + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_EBRAKE_MIN_POWER_VALUE_BLE_ID :
         set_Ebrake_min_power_value(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Ebrake_min_power_value : " + (String) Ebrake_min_power_value + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Ebrake_min_power_value : " + (String) Ebrake_min_power_value + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_EBRAKE_MAX_POWER_VALUE_BLE_ID :
         set_Ebrake_max_power_value(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Ebrake_max_power_value : " + (String) Ebrake_max_power_value + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Ebrake_max_power_value : " + (String) Ebrake_max_power_value + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_EBRAKE_TIME_BETWEEN_MODE_SHIFT_BLE_ID :
         set_Ebrake_time_between_mode_shift(buffer_get_uint32(packet, &ind));
-        Serial.print("unpack_setting_packet - Ebrake_time_between_mode_shift : " + (String) Ebrake_time_between_mode_shift + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Ebrake_time_between_mode_shift : " + (String) Ebrake_time_between_mode_shift + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_EBRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_BLE_ID :
         set_Ebrake_disabled_on_high_battery_voltage(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Ebrake_disabled_on_high_battery_voltage : " + (String) Ebrake_disabled_on_high_battery_voltage + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Ebrake_disabled_on_high_battery_voltage : " + (String) Ebrake_disabled_on_high_battery_voltage + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_EBRAKE_DISABLED_PERCENT_LIMIT_BLE_ID :
         set_Ebrake_disabled_percent_limit(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Ebrake_disabled_percent_limit : " + (String) Ebrake_disabled_percent_limit + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Ebrake_disabled_percent_limit : " + (String) Ebrake_disabled_percent_limit + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_THROTTLE_REGENERATION_BLE_ID :
         set_Throttle_regeneration(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Throttle_regeneration : " + (String) Throttle_regeneration + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Throttle_regeneration : " + (String) Throttle_regeneration + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_BLE_ID :
         set_Throttle_input_min_voltage(buffer_get_uint32(packet, &ind));
-        Serial.print("unpack_setting_packet - Throttle_input_min_voltage : " + (String) Throttle_input_min_voltage + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Throttle_input_min_voltage : " + (String) Throttle_input_min_voltage + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_BLE_ID :
         set_Throttle_input_max_voltage(buffer_get_uint32(packet, &ind));
-        Serial.print("unpack_setting_packet - Throttle_input_max_voltage : " + (String) Throttle_input_max_voltage + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Throttle_input_max_voltage : " + (String) Throttle_input_max_voltage + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_BLE_ID :
         set_Throttle_output_min_voltage(buffer_get_uint32(packet, &ind));
-        Serial.print("unpack_setting_packet - Throttle_output_min_voltage : " + (String) Throttle_output_min_voltage + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Throttle_output_min_voltage : " + (String) Throttle_output_min_voltage + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_BLE_ID :
         set_Throttle_output_max_voltage(buffer_get_uint32(packet, &ind));
-        Serial.print("unpack_setting_packet - Throttle_output_max_voltage : " + (String) Throttle_output_max_voltage + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Throttle_output_max_voltage : " + (String) Throttle_output_max_voltage + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_THROTTLE_OUTPUT_CURVE_BLE_ID :
         set_Throttle_output_curve(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Throttle_output_curve : " + (String) Throttle_output_curve + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Throttle_output_curve : " + (String) Throttle_output_curve + " / ");
+        //buffer_display("", packet, length);
+        break;
+    case SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_BLE_ID :
+        char Throttle_output_curve_custom_part[17];
+        memset(Throttle_output_curve_custom_part, 0, 17 );
+        if (packetNumber == 0) {
+            Throttle_output_curve_custom = "";
+        }
+        memcpy(Throttle_output_curve_custom_part, &packet[ind], length  - 4);
+        Throttle_output_curve_custom =  Throttle_output_curve_custom + Throttle_output_curve_custom_part;
+        set_Throttle_output_curve_custom( Throttle_output_curve_custom);
+        //Serial.print("unpack_setting_packet - Throttle_output_curve_custom : " + (String) Throttle_output_curve_custom + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_BLE_ID :
         set_Button_1_short_press_action(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Button_1_short_press_action : " + (String) Button_1_short_press_action + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Button_1_short_press_action : " + (String) Button_1_short_press_action + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_BUTTON_1_LONG_PRESS_ACTION_BLE_ID :
         set_Button_1_long_press_action(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Button_1_long_press_action : " + (String) Button_1_long_press_action + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Button_1_long_press_action : " + (String) Button_1_long_press_action + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_BLE_ID :
         set_Button_2_short_press_action(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Button_2_short_press_action : " + (String) Button_2_short_press_action + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Button_2_short_press_action : " + (String) Button_2_short_press_action + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_BUTTON_LONG_PRESS_DURATION_BLE_ID :
         set_Button_long_press_duration(buffer_get_uint8(packet, &ind));
-        Serial.print("unpack_setting_packet - Button_long_press_duration : " + (String) Button_long_press_duration + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Button_long_press_duration : " + (String) Button_long_press_duration + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_WIFI_SSID_BLE_ID :
         char Wifi_ssid_part[17];
@@ -411,8 +426,8 @@ void Settings::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         memcpy(Wifi_ssid_part, &packet[ind], length  - 4);
         Wifi_ssid =  Wifi_ssid + Wifi_ssid_part;
         set_Wifi_ssid( Wifi_ssid);
-        Serial.print("unpack_setting_packet - Wifi_ssid : " + (String) Wifi_ssid + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Wifi_ssid : " + (String) Wifi_ssid + " / ");
+        //buffer_display("", packet, length);
         break;
     case SETTINGS_WIFI_PASSWORD_BLE_ID :
         char Wifi_password_part[17];
@@ -423,8 +438,8 @@ void Settings::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         memcpy(Wifi_password_part, &packet[ind], length  - 4);
         Wifi_password =  Wifi_password + Wifi_password_part;
         set_Wifi_password( Wifi_password);
-        Serial.print("unpack_setting_packet - Wifi_password : " + (String) Wifi_password + " / ");
-        buffer_display("", packet, length);
+        //Serial.print("unpack_setting_packet - Wifi_password : " + (String) Wifi_password + " / ");
+        //buffer_display("", packet, length);
         break;
     default:
         Serial.println("unpack_setting_packet : ID error");
@@ -445,48 +460,48 @@ bool Settings::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, ui
     switch(settingId) {
     case SETTINGS_WHEEL_SIZE_BLE_ID :
         buffer_append_float32_auto(packet, Wheel_size, ind);
-        Serial.print("pack_setting_packet - Wheel_size : " + (String) Wheel_size + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Wheel_size : " + (String) Wheel_size + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_NUMBER_OF_POLES_PAIRS_BLE_ID :
         buffer_append_uint8(packet, Number_of_poles_pairs, ind);
-        Serial.print("pack_setting_packet - Number_of_poles_pairs : " + (String) Number_of_poles_pairs + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Number_of_poles_pairs : " + (String) Number_of_poles_pairs + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_BATTERY_MINIMUM_VOLTAGE_BLE_ID :
         buffer_append_float32_auto(packet, Battery_minimum_voltage, ind);
-        Serial.print("pack_setting_packet - Battery_minimum_voltage : " + (String) Battery_minimum_voltage + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Battery_minimum_voltage : " + (String) Battery_minimum_voltage + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_BATTERY_MAXIMUM_VOLTAGE_BLE_ID :
         buffer_append_float32_auto(packet, Battery_maximum_voltage, ind);
-        Serial.print("pack_setting_packet - Battery_maximum_voltage : " + (String) Battery_maximum_voltage + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Battery_maximum_voltage : " + (String) Battery_maximum_voltage + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_BATTERY_MAXIMUM_DISTANCE_BLE_ID :
         buffer_append_uint8(packet, Battery_maximum_distance, ind);
-        Serial.print("pack_setting_packet - Battery_maximum_distance : " + (String) Battery_maximum_distance + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Battery_maximum_distance : " + (String) Battery_maximum_distance + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_SPEED_LIMITER_AT_STARTUP_BLE_ID :
         buffer_append_uint8(packet, Speed_limiter_at_startup, ind);
-        Serial.print("pack_setting_packet - Speed_limiter_at_startup : " + (String) Speed_limiter_at_startup + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Speed_limiter_at_startup : " + (String) Speed_limiter_at_startup + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_SPEED_LIMITER_MAX_SPEED_BLE_ID :
         buffer_append_uint8(packet, Speed_limiter_max_speed, ind);
-        Serial.print("pack_setting_packet - Speed_limiter_max_speed : " + (String) Speed_limiter_max_speed + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Speed_limiter_max_speed : " + (String) Speed_limiter_max_speed + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_BLUETOOTH_LOCK_MODE_BLE_ID :
         buffer_append_uint8(packet, Bluetooth_lock_mode, ind);
-        Serial.print("pack_setting_packet - Bluetooth_lock_mode : " + (String) Bluetooth_lock_mode + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Bluetooth_lock_mode : " + (String) Bluetooth_lock_mode + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_BLE_PIN_CODE_BLE_ID :
         buffer_append_uint32(packet, Ble_pin_code, ind);
-        Serial.print("pack_setting_packet - Ble_pin_code : " + (String) Ble_pin_code + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Ble_pin_code : " + (String) Ble_pin_code + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_BLE_BEACON_MAC_ADDRESS_BLE_ID :
         if (packetNumber == 0) {
@@ -504,173 +519,192 @@ bool Settings::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, ui
             memcpy(&packet[*ind], &Ble_beacon_mac_address[16], Ble_beacon_mac_address.length() - 16);
             *ind = *ind + Ble_beacon_mac_address.length() - 16;
         }
-        Serial.print("pack_setting_packet - Ble_beacon_mac_address : " + (String) Ble_beacon_mac_address + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Ble_beacon_mac_address : " + (String) Ble_beacon_mac_address + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_BLE_BEACON_RANGE_BLE_ID :
         buffer_append_int8(packet, Ble_beacon_range, ind);
-        Serial.print("pack_setting_packet - Ble_beacon_range : " + (String) Ble_beacon_range + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Ble_beacon_range : " + (String) Ble_beacon_range + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_BLE_ID :
         buffer_append_int8(packet, Original_display_speed_adjustment, ind);
-        Serial.print("pack_setting_packet - Original_display_speed_adjustment : " + (String) Original_display_speed_adjustment + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Original_display_speed_adjustment : " + (String) Original_display_speed_adjustment + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_TEMPERATURE_WARNING_BLE_ID :
         buffer_append_uint8(packet, Temperature_warning, ind);
-        Serial.print("pack_setting_packet - Temperature_warning : " + (String) Temperature_warning + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Temperature_warning : " + (String) Temperature_warning + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_HUMIDITY_WARNING_BLE_ID :
         buffer_append_uint8(packet, Humidity_warning, ind);
-        Serial.print("pack_setting_packet - Humidity_warning : " + (String) Humidity_warning + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Humidity_warning : " + (String) Humidity_warning + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_SMARTDISPLAY_SPEED_ADJUSTMENT_BLE_ID :
         buffer_append_int8(packet, Smartdisplay_speed_adjustment, ind);
-        Serial.print("pack_setting_packet - Smartdisplay_speed_adjustment : " + (String) Smartdisplay_speed_adjustment + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Smartdisplay_speed_adjustment : " + (String) Smartdisplay_speed_adjustment + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_AUX_RELAY_NAME_BLE_ID :
         buffer_append_uint8(packet, Aux_relay_name, ind);
-        Serial.print("pack_setting_packet - Aux_relay_name : " + (String) Aux_relay_name + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Aux_relay_name : " + (String) Aux_relay_name + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_DISPLAY_GPS_SPEED_INSTEAD_OF_ESCOOTER_SPEED_BLE_ID :
         buffer_append_uint8(packet, Display_gps_speed_instead_of_escooter_speed, ind);
-        Serial.print("pack_setting_packet - Display_gps_speed_instead_of_escooter_speed : " + (String) Display_gps_speed_instead_of_escooter_speed + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Display_gps_speed_instead_of_escooter_speed : " + (String) Display_gps_speed_instead_of_escooter_speed + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_DEFAULT_MODE_AT_STARTUP_BLE_ID :
         buffer_append_uint8(packet, Default_mode_at_startup, ind);
-        Serial.print("pack_setting_packet - Default_mode_at_startup : " + (String) Default_mode_at_startup + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Default_mode_at_startup : " + (String) Default_mode_at_startup + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_DEFAULT_ECO_MODE_AT_STARTUP_BLE_ID :
         buffer_append_uint8(packet, Default_eco_mode_at_startup, ind);
-        Serial.print("pack_setting_packet - Default_eco_mode_at_startup : " + (String) Default_eco_mode_at_startup + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Default_eco_mode_at_startup : " + (String) Default_eco_mode_at_startup + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_DEFAULT_ACCELERATION_BLE_ID :
         buffer_append_uint8(packet, Default_acceleration, ind);
-        Serial.print("pack_setting_packet - Default_acceleration : " + (String) Default_acceleration + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Default_acceleration : " + (String) Default_acceleration + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_DEFAULT_ELECTRIC_BRAKE_AT_STARTUP_BLE_ID :
         buffer_append_uint8(packet, Default_electric_brake_at_startup, ind);
-        Serial.print("pack_setting_packet - Default_electric_brake_at_startup : " + (String) Default_electric_brake_at_startup + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Default_electric_brake_at_startup : " + (String) Default_electric_brake_at_startup + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_PAS_ENABLED_BLE_ID :
         buffer_append_uint8(packet, Pas_enabled, ind);
-        Serial.print("pack_setting_packet - Pas_enabled : " + (String) Pas_enabled + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Pas_enabled : " + (String) Pas_enabled + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_ABS_ENABLED_BLE_ID :
         buffer_append_uint8(packet, Abs_enabled, ind);
-        Serial.print("pack_setting_packet - Abs_enabled : " + (String) Abs_enabled + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Abs_enabled : " + (String) Abs_enabled + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_DISPLAY_BRIGHTNESS_BLE_ID :
         buffer_append_uint8(packet, Display_brightness, ind);
-        Serial.print("pack_setting_packet - Display_brightness : " + (String) Display_brightness + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Display_brightness : " + (String) Display_brightness + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_DISPLAY_SPLASH_SCREEN_BLE_ID :
         buffer_append_uint8(packet, Display_splash_screen, ind);
-        Serial.print("pack_setting_packet - Display_splash_screen : " + (String) Display_splash_screen + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Display_splash_screen : " + (String) Display_splash_screen + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_ROTATE_SCREEN_BLE_ID :
         buffer_append_uint8(packet, Rotate_screen, ind);
-        Serial.print("pack_setting_packet - Rotate_screen : " + (String) Rotate_screen + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Rotate_screen : " + (String) Rotate_screen + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_EBRAKE_PROGRESSIVE_MODE_BLE_ID :
         buffer_append_uint8(packet, Ebrake_progressive_mode, ind);
-        Serial.print("pack_setting_packet - Ebrake_progressive_mode : " + (String) Ebrake_progressive_mode + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Ebrake_progressive_mode : " + (String) Ebrake_progressive_mode + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_EBRAKE_SMART_BRAKE_TYPE_BLE_ID :
         buffer_append_uint8(packet, Ebrake_smart_brake_type, ind);
-        Serial.print("pack_setting_packet - Ebrake_smart_brake_type : " + (String) Ebrake_smart_brake_type + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Ebrake_smart_brake_type : " + (String) Ebrake_smart_brake_type + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_EBRAKE_MIN_POWER_VALUE_BLE_ID :
         buffer_append_uint8(packet, Ebrake_min_power_value, ind);
-        Serial.print("pack_setting_packet - Ebrake_min_power_value : " + (String) Ebrake_min_power_value + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Ebrake_min_power_value : " + (String) Ebrake_min_power_value + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_EBRAKE_MAX_POWER_VALUE_BLE_ID :
         buffer_append_uint8(packet, Ebrake_max_power_value, ind);
-        Serial.print("pack_setting_packet - Ebrake_max_power_value : " + (String) Ebrake_max_power_value + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Ebrake_max_power_value : " + (String) Ebrake_max_power_value + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_EBRAKE_TIME_BETWEEN_MODE_SHIFT_BLE_ID :
         buffer_append_uint32(packet, Ebrake_time_between_mode_shift, ind);
-        Serial.print("pack_setting_packet - Ebrake_time_between_mode_shift : " + (String) Ebrake_time_between_mode_shift + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Ebrake_time_between_mode_shift : " + (String) Ebrake_time_between_mode_shift + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_EBRAKE_DISABLED_ON_HIGH_BATTERY_VOLTAGE_BLE_ID :
         buffer_append_uint8(packet, Ebrake_disabled_on_high_battery_voltage, ind);
-        Serial.print("pack_setting_packet - Ebrake_disabled_on_high_battery_voltage : " + (String) Ebrake_disabled_on_high_battery_voltage + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Ebrake_disabled_on_high_battery_voltage : " + (String) Ebrake_disabled_on_high_battery_voltage + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_EBRAKE_DISABLED_PERCENT_LIMIT_BLE_ID :
         buffer_append_uint8(packet, Ebrake_disabled_percent_limit, ind);
-        Serial.print("pack_setting_packet - Ebrake_disabled_percent_limit : " + (String) Ebrake_disabled_percent_limit + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Ebrake_disabled_percent_limit : " + (String) Ebrake_disabled_percent_limit + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_THROTTLE_REGENERATION_BLE_ID :
         buffer_append_uint8(packet, Throttle_regeneration, ind);
-        Serial.print("pack_setting_packet - Throttle_regeneration : " + (String) Throttle_regeneration + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Throttle_regeneration : " + (String) Throttle_regeneration + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_THROTTLE_INPUT_MIN_VOLTAGE_BLE_ID :
         buffer_append_uint32(packet, Throttle_input_min_voltage, ind);
-        Serial.print("pack_setting_packet - Throttle_input_min_voltage : " + (String) Throttle_input_min_voltage + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Throttle_input_min_voltage : " + (String) Throttle_input_min_voltage + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_THROTTLE_INPUT_MAX_VOLTAGE_BLE_ID :
         buffer_append_uint32(packet, Throttle_input_max_voltage, ind);
-        Serial.print("pack_setting_packet - Throttle_input_max_voltage : " + (String) Throttle_input_max_voltage + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Throttle_input_max_voltage : " + (String) Throttle_input_max_voltage + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_BLE_ID :
         buffer_append_uint32(packet, Throttle_output_min_voltage, ind);
-        Serial.print("pack_setting_packet - Throttle_output_min_voltage : " + (String) Throttle_output_min_voltage + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Throttle_output_min_voltage : " + (String) Throttle_output_min_voltage + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_BLE_ID :
         buffer_append_uint32(packet, Throttle_output_max_voltage, ind);
-        Serial.print("pack_setting_packet - Throttle_output_max_voltage : " + (String) Throttle_output_max_voltage + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Throttle_output_max_voltage : " + (String) Throttle_output_max_voltage + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_THROTTLE_OUTPUT_CURVE_BLE_ID :
         buffer_append_uint8(packet, Throttle_output_curve, ind);
-        Serial.print("pack_setting_packet - Throttle_output_curve : " + (String) Throttle_output_curve + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Throttle_output_curve : " + (String) Throttle_output_curve + " / ");
+        //buffer_display("", packet, *ind);
+        break;
+    case SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_BLE_ID :
+        if (packetNumber == 0) {
+            if (Throttle_output_curve_custom.length() > 16) {
+                hasNextPacket = true;
+                memcpy(&packet[*ind], &Throttle_output_curve_custom[0], 16);
+                *ind = *ind + 16;
+            }
+            else {
+                memcpy(&packet[*ind], &Throttle_output_curve_custom[0], Throttle_output_curve_custom.length());
+                *ind = *ind + Throttle_output_curve_custom.length();
+            }
+        }
+        else if (packetNumber == 1) {
+            memcpy(&packet[*ind], &Throttle_output_curve_custom[16], Throttle_output_curve_custom.length() - 16);
+            *ind = *ind + Throttle_output_curve_custom.length() - 16;
+        }
+        //Serial.print("pack_setting_packet - Throttle_output_curve_custom : " + (String) Throttle_output_curve_custom + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_BLE_ID :
         buffer_append_uint8(packet, Button_1_short_press_action, ind);
-        Serial.print("pack_setting_packet - Button_1_short_press_action : " + (String) Button_1_short_press_action + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Button_1_short_press_action : " + (String) Button_1_short_press_action + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_BUTTON_1_LONG_PRESS_ACTION_BLE_ID :
         buffer_append_uint8(packet, Button_1_long_press_action, ind);
-        Serial.print("pack_setting_packet - Button_1_long_press_action : " + (String) Button_1_long_press_action + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Button_1_long_press_action : " + (String) Button_1_long_press_action + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_BLE_ID :
         buffer_append_uint8(packet, Button_2_short_press_action, ind);
-        Serial.print("pack_setting_packet - Button_2_short_press_action : " + (String) Button_2_short_press_action + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Button_2_short_press_action : " + (String) Button_2_short_press_action + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_BUTTON_LONG_PRESS_DURATION_BLE_ID :
         buffer_append_uint8(packet, Button_long_press_duration, ind);
-        Serial.print("pack_setting_packet - Button_long_press_duration : " + (String) Button_long_press_duration + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Button_long_press_duration : " + (String) Button_long_press_duration + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_WIFI_SSID_BLE_ID :
         if (packetNumber == 0) {
@@ -688,8 +722,8 @@ bool Settings::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, ui
             memcpy(&packet[*ind], &Wifi_ssid[16], Wifi_ssid.length() - 16);
             *ind = *ind + Wifi_ssid.length() - 16;
         }
-        Serial.print("pack_setting_packet - Wifi_ssid : " + (String) Wifi_ssid + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Wifi_ssid : " + (String) Wifi_ssid + " / ");
+        //buffer_display("", packet, *ind);
         break;
     case SETTINGS_WIFI_PASSWORD_BLE_ID :
         if (packetNumber == 0) {
@@ -707,8 +741,8 @@ bool Settings::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, ui
             memcpy(&packet[*ind], &Wifi_password[16], Wifi_password.length() - 16);
             *ind = *ind + Wifi_password.length() - 16;
         }
-        Serial.print("pack_setting_packet - Wifi_password : " + (String) Wifi_password + " / ");
-        buffer_display("", packet, *ind);
+        //Serial.print("pack_setting_packet - Wifi_password : " + (String) Wifi_password + " / ");
+        //buffer_display("", packet, *ind);
         break;
     default:
         Serial.println("pack_setting_packet : ID error");
@@ -1534,6 +1568,27 @@ void Settings::display_Throttle_output_curve() {
 void Settings::save_Throttle_output_curve(uint8_t value) {
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_THROTTLE_OUTPUT_CURVE_STORAGE_KEY, Throttle_output_curve);
+    prefs.end();
+}
+                
+
+/*-------------------------------------------------------*/
+
+void Settings::set_Throttle_output_curve_custom(String value) {
+    Throttle_output_curve_custom = value;
+}
+
+String Settings::get_Throttle_output_curve_custom() {
+    return Throttle_output_curve_custom ;
+}
+
+void Settings::display_Throttle_output_curve_custom() {
+    Serial.println("  Throttle_output_curve_custom = " + (String) Throttle_output_curve_custom);
+}
+
+void Settings::save_Throttle_output_curve_custom(String value) {
+    prefs.begin(SETTINGS_STORAGE, false);
+    prefs.putString(SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_STORAGE_KEY, Throttle_output_curve_custom);
     prefs.end();
 }
                 

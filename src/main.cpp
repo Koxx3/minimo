@@ -83,7 +83,7 @@ ZeroUart zeroCntrl;
 #define ANALOG_TO_VOLTS_A 0.0213
 #define ANALOG_TO_VOLTS_B 5.4225
 #define ANALOG_TO_CURRENT 35
-#define ANALOG_CURRENT_MIN_RAW_READING 100
+#define ANALOG_CURRENT_MIN_RAW_READING 150
 #define NB_CURRENT_FILTER_DATA 20
 #define NB_CURRENT_FILTER_CALIB_DATA 20
 #define NB_VOLTAGE_FILTER_DATA 10
@@ -96,6 +96,11 @@ ZeroUart zeroCntrl;
 
 //////------------------------------------
 ////// Variables
+
+// Tasks handlers
+TaskHandle_t htaskUpdateTFT;
+TaskHandle_t htaskProcessWifiBlocking;
+TaskHandle_t htaskProcessButtons;
 
 // Time
 unsigned long timeLoop = 0;
@@ -166,8 +171,10 @@ void setupPins()
   pinMode(PIN_OUT_LED_BUTTON1, OUTPUT);
   pinMode(PIN_IN_ABRAKE, INPUT);
   pinMode(PIN_IN_ATHROTTLE, INPUT);
+#if (PCB >= 142)
   pinMode(PIN_OUT_POWER_LATCH, OUTPUT);
   pinMode(PIN_IN_BUTTON_PWR, INPUT);
+#endif
 }
 
 #if HAS_I2C
@@ -484,9 +491,6 @@ void setup()
   tftSetup(&shrd, &settings);
 #endif
 
-  // force BLE lock mode
-  blh.setBleLock(false);
-
   Serial.println("   prefs... ");
   settings2.setSharedData(&shrd);
   settings2.restore();
@@ -501,6 +505,7 @@ void setup()
   Serial.println("   BLE ...");
   blh.setSettings(&settings);
   blh.setSharedData(&shrd);
+  blh.setBleLock(false); // force BLE lock mode
   blh.init();
 
   setupVoltage();
@@ -514,29 +519,29 @@ void setup()
   xTaskCreatePinnedToCore(
       taskUpdateTFT,   // Function that should be called
       "taskUpdateTFT", // Name of the task (for debugging)
-      10000,           // Stack size (bytes)
+      30000,           // Stack size (bytes)
       NULL,            // Parameter to pass
       0,               // Task priority
-      NULL,            // Task handle,
+      &htaskUpdateTFT, // Task handle,
       1);              // Core
 #endif
 
   xTaskCreatePinnedToCore(
       taskProcessWifiBlocking,   // Function that should be called
       "taskProcessWifiBlocking", // Name of the task (for debugging)
-      10000,                     // Stack size (bytes)
+      8000,                      // Stack size (bytes)
       NULL,                      // Parameter to pass
       0,                         // Task priority
-      NULL,                      // Task handle,
+      &htaskProcessWifiBlocking, // Task handle,
       1);                        // Core
 
   xTaskCreatePinnedToCore(
       taskProcessButtons,   // Function that should be called
       "taskProcessButtons", // Name of the task (for debugging)
-      5000,                 // Stack size (bytes)
+      3000,                 // Stack size (bytes)
       NULL,                 // Parameter to pass
       0,                    // Task priority
-      NULL,                 // Task handle,
+      &htaskProcessButtons, // Task handle,
       1);                   // Core
 
 #if ENABLE_WATCHDOG
@@ -798,7 +803,7 @@ void getBrakeFromAnalog()
     else if (shrd.brakeAnalogValue < ANALOG_BRAKE_MIN_ERR_VALUE)
     {
 #if DEBUG_DISPLAY_ANALOG_BRAKE
-      Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE");
+      Serial.println("brake ANALOG_BRAKE_MIN_ERR_VALUE : " + (String)shrd.brakeAnalogValue);
 #endif
       /*
       char print_buffer[500];
@@ -823,7 +828,7 @@ void getBrakeFromAnalog()
     if (shrd.brakeAnalogValue > ANALOG_BRAKE_MAX_ERR_VALUE)
     {
 #if DEBUG_DISPLAY_ANALOG_BRAKE
-      Serial.println("brake ANALOG_BRAKE_MAX_ERR_VALUE");
+      Serial.println("brake ANALOG_BRAKE_MAX_ERR_VALUE : " + (String)shrd.brakeAnalogValue);
       char print_buffer[500];
       sprintf(print_buffer, "brake ANALOG_BRAKE_MAX_ERR_VALUE / f2 : %d / raw : %d / sentOrder : %d / sentOrderOld : %d / status : %d",
               shrd.brakeFilterMeanErr,
@@ -1044,13 +1049,39 @@ void processDacOutput()
 
   // apply exponential curve
   if (settings.get_Throttle_output_curve() == settings.LIST_Throttle_output_curve_Exponential_1)
+  {
     throttlePercent = (exp(throttlePercent / 100.0) - 1) / (exp(1) - 1) * 100;
+  }
   else if (settings.get_Throttle_output_curve() == settings.LIST_Throttle_output_curve_Exponential_2)
+  {
     throttlePercent = (exp(throttlePercent / 100.0 * 2) - 1) / (exp(2) - 1) * 100;
+  }
   else if (settings.get_Throttle_output_curve() == settings.LIST_Throttle_output_curve_Exponential_3)
+  {
     throttlePercent = (exp(throttlePercent / 100.0 * 3) - 1) / (exp(3) - 1) * 100;
+  }
   else if (settings.get_Throttle_output_curve() == settings.LIST_Throttle_output_curve_Exponential_4)
+  {
     throttlePercent = (exp(throttlePercent / 100.0 * 4) - 1) / (exp(4) - 1) * 100;
+  }
+  else if (settings.get_Throttle_output_curve() == settings.LIST_Throttle_output_curve_Custom_6_points)
+  {
+    int8_t index = 4;
+    uint16_t low = 0;
+    uint16_t high = 1000;
+    uint16_t throttlePercentInt = throttlePercent * 10;
+    if ((throttlePercentInt > 0) && (throttlePercentInt < 1000))
+    {
+      index = (throttlePercentInt / 200) - 1;
+      if (index >= 0)
+        low = getValueFromString(settings.get_Throttle_output_curve_custom(), ',', index) * 10;
+      if (index < 3)
+        high = getValueFromString(settings.get_Throttle_output_curve_custom(), ',', index + 1) * 10;
+      float throttlePercentNew = map(throttlePercentInt, (index + 1) * 200, (index + 2) * 200, low, high) / 10.0;
+      //Serial.println("throttlePercentInt = " + (String)throttlePercentInt + " / index = " + (String)index + " / low = " + (String)low + " / high = " + (String)high + " / throttlePercentNew = " + (String)throttlePercentNew);
+      throttlePercent = throttlePercentNew;
+    }
+  }
 
   shrd.throttlePercent = throttlePercent;
 
@@ -1479,7 +1510,7 @@ void processAutonomy()
 
 void processCurrent()
 {
-  if (shrd.currentSensorPresent)
+  if ((shrd.currentSensorPresent == -1) || (shrd.currentSensorPresent == 1))
   {
     int currentRead = analogRead(PIN_IN_CURRENT);
 
@@ -1496,12 +1527,14 @@ void processCurrent()
       }
       else
       {
+        shrd.currentSensorPresent = 1;
         currentRawFilterInit.in(currentRead);
+        Serial.println("Current sensor is detected -> enable reading");
       }
     }
     currentRawFilter.in(currentRead);
 
-    if (shrd.currentSensorPresent)
+    if ((shrd.currentSensorPresent == -1) || (shrd.currentSensorPresent == 1))
     {
       // current rest value
       int currentRawFilter2 = currentRawFilter.getMeanWithoutExtremes(2);
@@ -1522,6 +1555,13 @@ void processCurrent()
     Serial.print(" / in amperes : ");
     Serial.println(shrd.currentActual / 1000.0);
 #endif
+  }
+  else
+  {
+    // TEST // TEST // TEST // TEST // TEST //
+    shrd.currentSensorPresent = 2;
+    shrd.currentActual = shrd.currentFromController;
+    // TEST // TEST // TEST // TEST // TEST //
   }
 }
 
@@ -1755,9 +1795,9 @@ void loop()
     checkAndSaveOdo();
   }
 
-  if (i_loop % 1000 == 99)
+  if (i_loop % 100 == 99)
   {
-    WifiSettingsPortal_sendTemperature();
+    WifiSettingsPortal_sendValues();
   }
 
   // Give a time for ESP
@@ -1802,7 +1842,7 @@ void loop()
   }
   timeLoop = millis();
 #endif
-/*
+  /*
   if (i_loop == 5000) {
     digitalWrite(PIN_OUT_POWER_LATCH, 1);
     Serial.println("shutdown !!!");
@@ -1816,11 +1856,14 @@ void loop()
 
   i_loop++;
 
-  /*
-  if (i_loop % 1000 == 0){
-    Serial.print(".");
+  if (i_loop % 10000 == 0)
+  {
+    uint32_t hm1 = uxTaskGetStackHighWaterMark(NULL);
+    uint32_t hm2 = uxTaskGetStackHighWaterMark(htaskUpdateTFT);
+    uint32_t hm3 = uxTaskGetStackHighWaterMark(htaskProcessWifiBlocking);
+    uint32_t hm4 = uxTaskGetStackHighWaterMark(htaskProcessButtons);
+    Serial.printf("RAM left = %d / HM idle = %d / HM tft = %d / HM wifi = %d / HM btn = %d\n", esp_get_free_heap_size(), hm1, hm2, hm3, hm4);
   }
-*/
 
 #if ENABLE_WATCHDOG
   resetWatchdog();
