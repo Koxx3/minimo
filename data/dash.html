@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
-
-<html>
-   <head>
+   	<head>
 		<meta charset="UTF-8" name="viewport" content="width=device-width,initial-scale=1">
 		<meta charset="UTF-8">
 		<title>SmartElec</title>
@@ -12,182 +9,200 @@
 		<meta name="description" content="SmartElec Dashboard">
 		<meta name="keywords" content="Dashboard, esp32, elec">
 		<meta name="author" content="Valentin GOLLIOT, Proload Studio, Proload©">
+		<meta name="author" content="François DESLANDE, koxx3">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-   </head>
-   <body style="padding-top:58px;">
-      <div class="container">
-         <header id="lb" class="lb-fixed">
-            <input type="checkbox" class="lb-cb" id="lb-cb">
-            <div class="lb-menu lb-menu-right lb-menu-material">
-               <ul class="lb-navigation">
-                  <li class="lb-header"><a href="/_ac" class="lb-brand">SmartElec dashboard</a><label class="lb-burger lb-burger-dblspin" id="lb-burger" for="lb-cb"><span></span></label></li>
-                  <li class="lb-item"><a href="/_ac/config">Configure new AP</a></li>
-                  <li class="lb-item"><a href="/_ac/open">Open SSIDs</a></li>
-                  <li class="lb-item"><a href="/_ac/disc">Disconnect</a></li>
-                  <li class="lb-item" id="reset"><a href="#rdlg">Reset...</a></li>
-                  <li class="lb-item"><a href="/settingspage">SmartElec settings</a></li>
-                  <li class="lb-item"><a href="/calibpage">SmartElec calibrations</a></li>
-                  <li class="lb-item"><a href="/otapage">SmartElec firmware update</a></li>
-                  <li class="lb-item"><a href="/dashboardpage">SmartElec dashboard</a></li>
-               </ul>
-            </div>
-            <div class="lap" id="rdlg">
-               <a href="#reset" class="overlap"></a>
-               <div class="modal_button">
-                  <h2><a href="/_ac/reset" class="modal_button">RESET</a></h2>
-               </div>
-            </div>
-         </header>
-         <div class="base-panel">
-            <div class="aux-page">	<div class="content-wrapper">
-				<main class="wrap">
-					<div class="container">
-						<div class="blocks-left">
-							<div class="block-info">
-								<div class="content">
-									<div class="legend">Speed (M)</div>
-									<div class="data">0 km/h</div>
-								</div>
-							</div>
-							<div class="block-info">
-								<div class="content">
-									<div class="legend">Mode</div>
-									<div class="data">
-										<span class="select-mode" data-value="1">1</span>
-										<span class="select-mode" data-value="2">2</span>
-										<span class="select-mode selected" data-value="3">3</span>
+   	</head>
+   	<body style="padding-top:58px;">
+      	<div class="container">
+         	<header id="lb" class="lb-fixed">
+				<input type="checkbox" class="lb-cb" id="lb-cb">
+				<div class="lb-menu lb-menu-right lb-menu-material">
+				   	<ul class="lb-navigation">
+						<li class="lb-header"><a href="/_ac" class="lb-brand">SmartElec dashboard</a><label class="lb-burger lb-burger-dblspin" id="lb-burger" for="lb-cb"><span></span></label></li>
+						<li class="lb-item"><a href="/_ac/config">Configure new AP</a></li>
+						<li class="lb-item"><a href="/_ac/open">Open SSIDs</a></li>
+						<li class="lb-item"><a href="/_ac/disc">Disconnect</a></li>
+						<li class="lb-item" id="reset"><a href="#rdlg">Reset...</a></li>
+						<li class="lb-item"><a href="/settingspage">SmartElec settings</a></li>
+						<li class="lb-item"><a href="/calibpage">SmartElec calibrations</a></li>
+						<li class="lb-item"><a href="/otapage">SmartElec firmware update</a></li>
+						<li class="lb-item"><a href="/dashboardpage">SmartElec dashboard</a></li>
+				   	</ul>
+				</div>
+				<div class="lap" id="rdlg">
+				   	<a href="#reset" class="overlap"></a>
+				   	<div class="modal_button">
+					  	<h2><a href="/_ac/reset" class="modal_button">RESET</a></h2>
+				   	</div>
+				</div>
+		 	</header>
+			<div class="base-panel">
+				<div class="aux-page">
+					<div class="content-wrapper">
+						<main class="wrap">
+							<div class="container">
+								<div class="blocks-left">
+									<div class="block-info">
+										<div class="content">
+											<div class="legend">Speed (M)</div>
+											<div class="data" id="speedCurrent">0 km/h</div>
+											<div class="sub-data" id="speedMax">0 km/h</div>
+										</div>
+									</div>
+									<div class="block-info">
+										<div class="content">
+											<div class="legend">Mode</div>
+											<div class="data" id="speedMode" data-value="3">
+												<span class="select-mode" data-value="1">1</span>
+												<span class="select-mode" data-value="2">2</span>
+												<span class="select-mode selected" data-value="3">3</span>
+											</div>
+										</div>
+									</div>
+									<div class="block-info">
+										<div class="content">
+											<div class="legend">Brake</div>
+											<div class="data" id="brakeMode" data-value="1">
+												<span class="select-mode selected" data-value="1">1</span>
+												<span class="select-mode" data-value="2">2</span>
+												<span class="select-mode" data-value="3">3</span>
+												<span class="select-mode" data-value="4">4</span>
+												<span class="select-mode" data-value="5">5</span>
+											</div>
+										</div>
+									</div>
+									<div class="block-info-double">
+										<div class="block-middle">
+											<div class="content">
+												<div class="legend">Eco</div>
+												<div class="data" id="ecoOrder">None</div>
+											</div>
+										</div>
+										<div class="block-middle">
+											<div class="content">
+												<div class="legend">Accel.</div>
+												<div class="data">Max</div>
+											</div>
+										</div>
+										<div class="clearfix"></div>
+									</div>
+									<div class="block-info-double">
+										<div class="block-middle">
+											<div class="content">
+												<div class="legend">Lock</div>
+												<div class="data" id="isLocked">Off</div>
+											</div>
+										</div>
+										<div class="block-middle">
+											<div class="content">
+												<div class="legend">Spd. Lmt.</div>
+												<div class="data" id="speedLimiter" data-value="0">Off</div>
+											</div>
+										</div>
+										<div class="clearfix"></div>
+									</div>
+									<div class="block-info">
+										<div class="content">
+											<div class="legend">Aux</div>
+											<div class="data" id="auxOrder" data-value="0">OFF</div>
+										</div>
+									</div>
+									<div class="block-info">
+										<div class="content">
+											<div class="legend">Dst</div>
+											<div class="data" id="distanceTrip">0.0 km</div>
+											<div class="sub-data" id="distanceOdo">237.8 km</div>
+										</div>
+									</div>
+									<div class="block-info">
+										<div class="content">
+											<div class="legend">Time</div>
+											<div class="data">0:00:05</div>
+											<div class="sub-data">0:00:00</div>
+										</div>
 									</div>
 								</div>
-							</div>
-							<div class="block-info">
-								<div class="content">
-									<div class="legend">Brake</div>
-									<div class="data">
-										<span class="select-mode selected" data-value="1">1</span>
-										<span class="select-mode" data-value="2">2</span>
-										<span class="select-mode" data-value="3">3</span>
-										<span class="select-mode" data-value="4">4</span>
-										<span class="select-mode" data-value="5">5</span>
+								<div class="blocks-right">
+									<div class="block-info">
+										<div class="content">
+											<div class="legend">Voltage</div>
+											<div class="legend-data" id="batteryLevel">45%</div>
+											<div class="data">64.3 V</div>
+											<div class="sub-data">
+												<div id="battery-gauge">
+													<div id="battery-level"></div>
+													<table id="battery-mask-container">
+														<tbody>
+															<tr>
+																<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
 									</div>
-								</div>
-							</div>
-							<div class="block-info-double">
-								<div class="block-middle">
-									<div class="content">
-										<div class="legend">Eco</div>
-										<div class="data">None</div>
+									<div class="block-info">
+										<div class="content">
+											<div class="legend">Auton.</div>
+											<div class="data" id="autonomyLeft">0 km</div>
+										</div>
 									</div>
-								</div>
-								<div class="block-middle">
-									<div class="content">
-										<div class="legend">Accel.</div>
-										<div class="data">Max</div>
+									<div class="block-info">
+										<div class="content">
+											<div class="legend">Cur.</div>
+											<div class="data">0.0 A</div>
+											<div class="sub-data">0.0 A</div>
+										</div>
 									</div>
-								</div>
-								<div class="clearfix"></div>
-							</div>
-							<div class="block-info-double">
-								<div class="block-middle">
-									<div class="content">
-										<div class="legend">Lock</div>
-										<div class="data">Off</div>
+									<div class="block-info">
+										<div class="content">
+											<div class="legend">Power</div>
+											<div class="data">0 W</div>
+											<div class="sub-data">0 W</div>
+										</div>
 									</div>
-								</div>
-								<div class="block-middle">
-									<div class="content">
-										<div class="legend">Spd. Lmt.</div>
-										<div class="data">Off</div>
+									<div class="block-info">
+										<div class="content">
+											<div class="legend">Temp.</div>
+											<div class="data" id="currentTemperature">31.0 °</div>
+											<div class="sub-data" id="maxTemperature">31.0 °</div>
+										</div>
 									</div>
-								</div>
-								<div class="clearfix"></div>
-							</div>
-							<div class="block-info">
-								<div class="content">
-									<div class="legend">Aux</div>
-									<div class="data">OFF</div>
-								</div>
-							</div>
-							<div class="block-info">
-								<div class="content">
-									<div class="legend">Dst</div>
-									<div class="data">0.0 km</div>
-									<div class="sub-data">237.8 km</div>
-								</div>
-							</div>
-							<div class="block-info">
-								<div class="content">
-									<div class="legend">Time</div>
-									<div class="data">0:00:05</div>
-									<div class="sub-data">0:00:00</div>
-								</div>
-							</div>
-						</div>
-						<div class="blocks-right">
-							<div class="block-info">
-								<div class="content">
-									<div class="legend">Voltage</div>
-									<div class="legend-data">45%</div>
-									<div class="data">64.3 V</div>
-									<div class="sub-data">
-										<div id="battery-gauge">
-											<div id="battery-level"></div>
-											<table id="battery-mask-container">
-												<tbody>
-													<tr>
-														<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-													</tr>
-												</tbody>
-											</table>
+									<div class="block-info">
+										<div class="content">
+											<div class="legend">Hr</div>
+											<div class="data" id="currentHumidity">30.3 %</div>
 										</div>
 									</div>
 								</div>
 							</div>
-							<div class="block-info">
-								<div class="content">
-									<div class="legend">Auton.</div>
-									<div class="data">0 km</div>
-								</div>
-							</div>
-							<div class="block-info">
-								<div class="content">
-									<div class="legend">Cur.</div>
-									<div class="data">0.0 A</div>
-									<div class="sub-data">0.0 A</div>
-								</div>
-							</div>
-							<div class="block-info">
-								<div class="content">
-									<div class="legend">Power</div>
-									<div class="data">0 W</div>
-									<div class="sub-data">0 W</div>
-								</div>
-							</div>
-							<div class="block-info">
-								<div class="content">
-									<div class="legend">Temp.</div>
-									<div class="data">31.0 °</div>
-									<div class="sub-data">31.0 °</div>
-								</div>
-							</div>
-							<div class="block-info">
-								<div class="content">
-									<div class="legend">Hr</div>
-									<div class="data">30.3 %</div>
-								</div>
-							</div>
-						</div>
+						</main>
 					</div>
-				</main>
+				</div>
 			</div>
-            </div>
-         </div>
-      </div>
-      <script>function _bu(url) {var uri=document.createElement('input');uri.setAttribute('type','hidden');uri.setAttribute('name','_acuri');uri.setAttribute('value','&#47;settingspage');var fm=document.getElementById('_aux');fm.appendChild(uri);fm.action=url;return fm;}function _sa(url) {_bu(url).submit();}</script>
-	  
-	<script type="text/javascript" src="./js/lib.js"></script>
-	<script type="text/javascript" src="./js/function.js"></script>
-	<script type="text/javascript" src="./js/script.js"></script>
-   </body>
+      	</div>
+
+      	<script>
+			function _bu(url) {
+				var uri = document.createElement('input');
+				uri.setAttribute('type', 'hidden');
+				uri.setAttribute('name', '_acuri');
+				uri.setAttribute('value', '&#47;settingspage');
+				var fm = document.getElementById('_aux');
+				fm.appendChild(uri);
+				fm.action = url;
+
+				return fm;
+			}
+			function _sa(url) {
+				_bu(url).submit();
+			}
+		</script>
+		<!--script type="text/javascript" src="./js/lib.js"></script-->
+		<script type="text/javascript" src="./js/jquery-3.3.1.min.js.gz"></script>
+		<script type="text/javascript" src="./js/function.js"></script>
+		<script type="text/javascript" src="./js/script.js"></script>
+	</body>
 </html>
 
