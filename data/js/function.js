@@ -1,11 +1,23 @@
+/**
+ * @param int value
+ * @param string selector
+ */
 function setDataFromSelector(value, selector) {
     $(selector).html(value);
 }
 
+/**
+ * @param int value
+ * @param string selector
+ */
 function setDataValueAttrFromSelector(value, selector) {
     $(selector).attr('data-value', value);
 }
 
+/**
+ * @param int value
+ * @param string selector
+ */
 function setListSelected(value, selector) {
     // Firstly we reset selected option
     $(selector).find('.selected').removeClass('selected');
@@ -18,10 +30,18 @@ function setListSelected(value, selector) {
     });
 }
 
+/**
+ * @param int voltageFilterMean
+ * @returns Number
+ */
 function getVoltage(voltageFilterMean) {
     return Number((voltageFilterMean / 1000).toFixed(1));
 }
 
+/**
+ * @param int percentBattery
+ * @param int voltageFilterMean
+ */
 function showBatteryLevel(percentBattery, voltageFilterMean) {
     var width = (100 - percentBattery) + '%';
     $('#battery-level').css('width', width);
@@ -40,16 +60,27 @@ function showBatteryLevel(percentBattery, voltageFilterMean) {
     setDataFromSelector(getVoltage(voltageFilterMean), '#voltageFilterMean');
 }
 
+/**
+ * @param int time
+ */
 function setTimeToHumanTime(time) {
     var date = new Date(time).toISOString().substr(12, 7);
     setDataFromSelector(date, '#time');
 }
 
+/**
+ * @param current
+ * @param voltageFilterMean
+ */
 function setCurrentPower(current, voltageFilterMean) {
     var power = getVoltage(voltageFilterMean) * current;
     setDataFromSelector(power, '#currentPower');
 }
 
+/**
+ * @param int value
+ * @param string selector
+ */
 function setOnOff(value, selector) {
     var label = 'OFF';
     if (value == 1) {
@@ -59,11 +90,18 @@ function setOnOff(value, selector) {
     setDataValueAttrFromSelector(value, selector);
 }
 
+/**
+ * @param int value
+ * @param string selector
+ */
 function setModeFromList(value, selector) {
     setDataValueAttrFromSelector(value, selector);
     setListSelected(value, selector);
 }
 
+/**
+ * @param int accel
+ */
 function setEco(eco) {
     var selector = '#ecoOrder';
     var ecoModList = {
@@ -75,6 +113,9 @@ function setEco(eco) {
     setDataValueAttrFromSelector(eco, selector);
 }
 
+/**
+ * @param int accel
+ */
 function setAccel(accel) {
     var selector = '#accelOrder';
     var accelModeList = {
@@ -89,6 +130,9 @@ function setAccel(accel) {
     setDataValueAttrFromSelector(accel, selector);
 }
 
+/**
+ * @param array datas
+ */
 function showDatasToDashboard(datas) {
     console.log(datas);
     // Current speed
@@ -116,7 +160,6 @@ function showDatasToDashboard(datas) {
     // Time
     setTimeToHumanTime(datas.time);
 
-
     // Battery level
     showBatteryLevel(datas.batteryLevel, datas.voltageFilterMean);
     // Autonomy
@@ -129,4 +172,22 @@ function showDatasToDashboard(datas) {
     setDataFromSelector(datas.currentTemperature, '#currentTemperature');
     // Humidity
     setDataFromSelector(datas.currentHumidity, '#currentHumidity');
+}
+
+/**
+ *
+ * @param int currentValue
+ * @param int valueMin
+ * @param int valueMax
+ * @returns int
+ */
+function getNextModeValue(currentValue, valueMin, valueMax) {
+    var newValue;
+    if (currentValue == valueMax) {
+        newValue = valueMin;
+    } else {
+        newValue = currentValue + 1;
+    }
+
+    return newValue;
 }
