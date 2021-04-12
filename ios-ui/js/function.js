@@ -10,5 +10,8 @@ function showBatteryLevel(percentBattery) {
 
     $('#battery-mask-container').css({'width': batteryLevelWidth + 'px'});
     $('#battery-mask-container td').css({'border-rigth': maskBorderWidth + 'px'});
-    $('#battery-gauge').css({'width': (batteryLevelWidth - maskBorderWidth) + 'px'})
+    $('#battery-gauge').css({'width': (batteryLevelWidth - maskBorderWidth) + 'px'});
+
+    // Websocket
+    var socket = new WebSocket('ws://koxx3.fr.eu.org:81/');
 }
