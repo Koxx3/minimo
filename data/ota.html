@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+      <meta charset="UTF-8" name="viewport" content="width=device-width,initial-scale=1">
+      <title>SmartElec firmware update</title>
+      <link rel="stylesheet" href="./css/style_ac.css">
+	  <style>.noorder label { display: contents; }</style>
+   </head>
+   <body style="padding-top:58px;">
+      <div class="container">
+         <header id="lb" class="lb-fixed">
+            <input type="checkbox" class="lb-cb" id="lb-cb">
+            <div class="lb-menu lb-menu-right lb-menu-material">
+               <ul class="lb-navigation">
+                  <li class="lb-header"><a href="_ac" class="lb-brand">SmartElec firmware update</a><label class="lb-burger lb-burger-dblspin" id="lb-burger" for="lb-cb"><span></span></label></li>
+                  <li class="lb-item"><a href="_ac/config">Configure new AP</a></li>
+                  <li class="lb-item"><a href="_ac/open">Open SSIDs</a></li>
+                  <li class="lb-item"><a href="_ac/disc">Disconnect</a></li>
+                  <li class="lb-item" id="reset"><a href="#rdlg">Reset...</a></li>
+                  <li class="lb-item"><a href="/dashboardpage">SmartElec dashboard</a></li>
+                  <li class="lb-item"><a href="/calibpage">SmartElec calibration</a></li>
+                  <li class="lb-item"><a href="/settingspage">SmartElec settings</a></li>
+                  <li class="lb-item"><a href="/otapage">SmartElec firmware update</a></li>
+               </ul>
+            </div>
+            <div class="lap" id="rdlg">
+               <a href="#reset" class="overlap"></a>
+               <div class="modal_button">
+                  <h2><a href="_ac/reset" class="modal_button">RESET</a></h2>
+               </div>
+            </div>
+         </header>
+         <div class="base-panel">
+            <div class="aux-page">
+               <form id="_aux" method="post" onsubmit="return false;">
+                  <ul class="noorder">
+                     <div id="ACE_OTA_current_version">Current version : </div>
+                     <br>
+                     <div id="ACE_OTA_title">Available versions : </div>
+                     <br>
+                     <div id="ACE_OTA_versions_list">
+                        <div class="versionslist radio-list" id="versionslist">
+                           <div id="versions_not_available" style="padding-left: 20px; display: none;">Versions
+                              list not available when connected directly with the phone. Connect the 
+                              SmartElec to a wifi access point to list versions or manually enter a 
+                              verion number.
+                           </div>
+                        </div>
+                        <br><label for="ACE_OTA_version_manual" style="display: none;">Version to flash</label><input type="text" id="ACE_OTA_version_manual" name="ACE_OTA_version_manual" pattern="^[0-9]+$" placeholder="version_selected_manual" value="0" style="display: none;"><br><input type="button" name="ACE_OTA_submit" value="Flash this version" onclick="_sa('/otaflash')">
+                     </div>
+                  </ul>
+               </form>
+            </div>
+         </div>
+      </div>
+	<script type="text/javascript" src="/js/jquery-3.3.1.min.js.gz"></script>
+	<script src="/js/ota.js"></script>
+      <script>function _bu(url) {var uri=document.createElement('input');uri.setAttribute('type','hidden');uri.setAttribute('name','_acuri');uri.setAttribute('value','&#47;otapage');var fm=document.getElementById('_aux');fm.appendChild(uri);fm.action=url;return fm;}function _sa(url) {_bu(url).submit();}</script>
+	  <script>$.toast('Here you can put the text of the toast')</script>
+   </body>
+</html>
+

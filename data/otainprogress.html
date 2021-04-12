@@ -1,0 +1,51 @@
+
+
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+      <meta charset="UTF-8" name="viewport" content="width=device-width,initial-scale=1">
+      <title>SmartElec flash in progress</title>
+      <link rel="stylesheet" href="./css/style_ac.css">
+   </head>
+   <body style="padding-top:58px;">
+      <div class="container">
+         <header id="lb" class="lb-fixed">
+            <input type="checkbox" class="lb-cb" id="lb-cb">
+            <div class="lb-menu lb-menu-right lb-menu-material">
+               <ul class="lb-navigation">
+                  <li class="lb-header"><a href="/_ac" class="lb-brand">SmartElec flash in progress</a><label class="lb-burger lb-burger-dblspin" id="lb-burger" for="lb-cb"><span></span></label></li>
+                  <li class="lb-item"><a href="/_ac/config">Configure new AP</a></li>
+                  <li class="lb-item"><a href="/_ac/open">Open SSIDs</a></li>
+                  <li class="lb-item"><a href="/_ac/disc">Disconnect</a></li>
+                  <li class="lb-item" id="reset"><a href="#rdlg">Reset...</a></li>
+                  <li class="lb-item"><a href="/dashboardpage">SmartElec dashboard</a></li>
+                  <li class="lb-item"><a href="/calibpage">SmartElec calibration</a></li>
+                  <li class="lb-item"><a href="/otapage">SmartElec firmware update</a></li>
+                  <li class="lb-item"><a href="/settingspage">SmartElec settings</a></li>
+               </ul>
+            </div>
+            <div class="lap" id="rdlg">
+               <a href="#reset" class="overlap"></a>
+               <div class="modal_button">
+                  <h2><a href="/_ac/reset" class="modal_button">RESET</a></h2>
+               </div>
+            </div>
+         </header>
+         <div class="base-panel">
+            <div class="aux-page">
+               <form id="_aux" method="post" onsubmit="return false;">
+                  <ul class="noorder">
+                     <div id="ACE_OTA_FLASH_in_progress">
+                        <h4>Flash in progress</h4>
+                        The SmartElec device will reboot after flash
+                     </div>
+                  </ul>
+               </form>
+            </div>
+         </div>
+      </div>
+      <script>function _bu(url) {var uri=document.createElement('input');uri.setAttribute('type','hidden');uri.setAttribute('name','_acuri');uri.setAttribute('value','&#47;otaflash');var fm=document.getElementById('_aux');fm.appendChild(uri);fm.action=url;return fm;}function _sa(url) {_bu(url).submit();}</script>
+   </body>
+</html>
+
