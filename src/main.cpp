@@ -33,7 +33,7 @@
 #include "Settings.h"
 #include "Settings2.h"
 #include "WifiSettingsPortal/WifiSettingsPortal.h"
-
+#include "OWB/owb_process.h"
 #include "Controllers/ControllerType.h"
 #include "Controllers/KellyUart.h"
 #include "Controllers/MinimoUart.h"
@@ -91,6 +91,7 @@ ZeroUart zeroCntrl;
 // distance
 #define SPEED_TO_DISTANCE_CORRECTION_FACTOR 1
 
+#define ENABLED_WIFI 1
 #define ENABLE_WATCHDOG 1
 #define WATCHDOG_TIMEOUT 1000 // 1s // time in ms to trigger the watchdog
 
@@ -101,6 +102,7 @@ ZeroUart zeroCntrl;
 TaskHandle_t htaskUpdateTFT;
 TaskHandle_t htaskProcessWifiBlocking;
 TaskHandle_t htaskProcessButtons;
+TaskHandle_t htaskProcessOwb;
 
 // Time
 unsigned long timeLoop = 0;
@@ -409,6 +411,7 @@ void taskUpdateTFT(void *parameter)
       {
         i = 0;
         vTaskDelay(200);
+        //Serial.println("taskUpdateTFT ===> delay 200");
       }
     }
   }
@@ -416,6 +419,9 @@ void taskUpdateTFT(void *parameter)
 
 void taskProcessWifiBlocking(void *parameter)
 {
+
+  // For for display to init to avoid too much memory allocation
+  vTaskDelay(4000);
 
   // setup
   WifiSettingsPortal_setSettings(&settings);
@@ -444,6 +450,11 @@ void taskProcessButtons(void *parameter)
 
     vTaskDelay(10);
   }
+}
+
+void taskProcessOwb(void *parameter)
+{
+  owb_loop();
 }
 
 ////// Setup
@@ -517,32 +528,43 @@ void setup()
 
 #if TFT_ENABLED
   xTaskCreatePinnedToCore(
-      taskUpdateTFT,   // Function that should be called
-      "taskUpdateTFT", // Name of the task (for debugging)
-      30000,           // Stack size (bytes)
-      NULL,            // Parameter to pass
-      0,               // Task priority
-      &htaskUpdateTFT, // Task handle,
-      1);              // Core
+      taskUpdateTFT,    // Function that should be called
+      "taskUpdateTFT",  // Name of the task (for debugging)
+      30000,            // Stack size (bytes)
+      NULL,             // Parameter to pass
+      tskIDLE_PRIORITY, // Task priority
+      &htaskUpdateTFT,  // Task handle,
+      1);               // Core
 #endif
 
+#if ENABLED_WIFI
   xTaskCreatePinnedToCore(
       taskProcessWifiBlocking,   // Function that should be called
       "taskProcessWifiBlocking", // Name of the task (for debugging)
       8000,                      // Stack size (bytes)
       NULL,                      // Parameter to pass
-      0,                         // Task priority
+      tskIDLE_PRIORITY,          // Task priority
       &htaskProcessWifiBlocking, // Task handle,
       1);                        // Core
+#endif
 
   xTaskCreatePinnedToCore(
       taskProcessButtons,   // Function that should be called
       "taskProcessButtons", // Name of the task (for debugging)
       3000,                 // Stack size (bytes)
       NULL,                 // Parameter to pass
-      0,                    // Task priority
+      tskIDLE_PRIORITY,     // Task priority
       &htaskProcessButtons, // Task handle,
       1);                   // Core
+
+  xTaskCreatePinnedToCore(
+      taskProcessOwb,   // Function that should be called
+      "taskProcessOwb", // Name of the task (for debugging)
+      3000,             // Stack size (bytes)
+      NULL,             // Parameter to pass
+      tskIDLE_PRIORITY, // Task priority
+      &htaskProcessOwb, // Task handle,
+      1);               // Core
 
 #if ENABLE_WATCHDOG
   Serial.println(PSTR("Watchdog enabled"));
@@ -1585,8 +1607,12 @@ void loop()
 {
 
 #if DEBUG_FAKE_SPEED
-  if (millis() > 5000)
-    shrd.speedCurrent = millis() % 2000;
+  if (millis() % 10000 < 5000)
+    shrd.speedCurrent = shrd.speedCurrent + 0.01;
+  else if (millis() % 10000 > 5000)
+    shrd.speedCurrent = shrd.speedCurrent - 0.01;
+  if (shrd.speedCurrent < 0)
+    shrd.speedCurrent = 0;
   if (millis() > 5000 && millis() % 20 == 0)
     computeDistance(shrd.speedCurrent);
 #endif
@@ -1795,10 +1821,12 @@ void loop()
     checkAndSaveOdo();
   }
 
-  if (i_loop % 100 == 99)
+#if ENABLED_WIFI
+  if (i_loop % 200 == 98)
   {
     WifiSettingsPortal_sendValues();
   }
+#endif
 
   // Give a time for ESP
   delay(1);
@@ -1862,7 +1890,8 @@ void loop()
     uint32_t hm2 = uxTaskGetStackHighWaterMark(htaskUpdateTFT);
     uint32_t hm3 = uxTaskGetStackHighWaterMark(htaskProcessWifiBlocking);
     uint32_t hm4 = uxTaskGetStackHighWaterMark(htaskProcessButtons);
-    Serial.printf("RAM left = %d / HM idle = %d / HM tft = %d / HM wifi = %d / HM btn = %d\n", esp_get_free_heap_size(), hm1, hm2, hm3, hm4);
+    uint32_t hm5 = uxTaskGetStackHighWaterMark(htaskProcessOwb);
+    Serial.printf("RAM left = %d / HM idle = %d / HM tft = %d / HM wifi = %d / HM btn = %d / HM owb = %d\n", esp_get_free_heap_size(), hm1, hm2, hm3, hm4, hm5);
   }
 
 #if ENABLE_WATCHDOG
