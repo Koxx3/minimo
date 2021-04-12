@@ -6,6 +6,18 @@ function setDataValueAttrFromSelector(value, selector) {
     $(selector).attr('data-value', value);
 }
 
+function setListSelected(value, selector) {
+    // Firstly we reset selected option
+    $(selector).find('.selected').removeClass('selected');
+    // Secondly we set new mode value to selected
+    $(selector).find('.select-mode').each(function() {
+        if ($(this).attr('data-value') == value) {
+            $(this).addClass('selected');
+            return;
+        }
+    });
+}
+
 function getVoltage(voltageFilterMean) {
     return Number((voltageFilterMean / 1000).toFixed(1));
 }
@@ -47,6 +59,11 @@ function setOnOff(value, selector) {
     setDataValueAttrFromSelector(value, selector);
 }
 
+function setModeFromList(value, selector) {
+    setDataValueAttrFromSelector(value, selector);
+    setListSelected(value, selector);
+}
+
 function setEco(eco) {
     var selector = '#ecoOrder';
     var ecoModList = {
@@ -78,6 +95,10 @@ function showDatasToDashboard(datas) {
     setDataFromSelector(datas.speedCurrent, '#speedCurrent');
     // Max speed
     setDataFromSelector(datas.speedMax, '#speedMax');
+    // Mode
+    setModeFromList(datas.modeOrder, '#modeOrder');
+    // Brake
+    setModeFromList(datas.brakeSentOrder, '#brakeSentOrder');
     // Eco
     setEco(datas.ecoOrder);
     // Accel
