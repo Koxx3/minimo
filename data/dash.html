@@ -44,26 +44,26 @@
 								<div class="blocks-left">
 									<div class="block-info">
 										<div class="content">
-											<div class="legend">Speed (M)</div>
-											<div class="data" id="speedCurrent">0 km/h</div>
-											<div class="sub-data" id="speedMax">0 km/h</div>
+											<div class="legend">Speed</div>
+											<div class="data"><span id="speedCurrent">--</span> km/h</div>
+											<div class="sub-data"><span id="speedMax">--</span> km/h</div>
 										</div>
 									</div>
 									<div class="block-info">
 										<div class="content">
 											<div class="legend">Mode</div>
-											<div class="data" id="speedMode" data-value="3">
+											<div class="data" id="modeOrder" data-value="">
 												<span class="select-mode" data-value="1">1</span>
 												<span class="select-mode" data-value="2">2</span>
-												<span class="select-mode selected" data-value="3">3</span>
+												<span class="select-mode" data-value="3">3</span>
 											</div>
 										</div>
 									</div>
 									<div class="block-info">
 										<div class="content">
 											<div class="legend">Brake</div>
-											<div class="data" id="brakeMode" data-value="1">
-												<span class="select-mode selected" data-value="1">1</span>
+											<div class="data" id="brakeSentOrder" data-value="">
+												<span class="select-mode" data-value="1">1</span>
 												<span class="select-mode" data-value="2">2</span>
 												<span class="select-mode" data-value="3">3</span>
 												<span class="select-mode" data-value="4">4</span>
@@ -75,13 +75,13 @@
 										<div class="block-middle">
 											<div class="content">
 												<div class="legend">Eco</div>
-												<div class="data" id="ecoOrder">None</div>
+												<div class="data"><span id="ecoOrder" data-value="">--</span></div>
 											</div>
 										</div>
 										<div class="block-middle">
 											<div class="content">
 												<div class="legend">Accel.</div>
-												<div class="data">Max</div>
+												<div class="data"><span id="accelOrder" data-value="">--</span></div>
 											</div>
 										</div>
 										<div class="clearfix"></div>
@@ -90,13 +90,13 @@
 										<div class="block-middle">
 											<div class="content">
 												<div class="legend">Lock</div>
-												<div class="data" id="isLocked">Off</div>
+												<div class="data"><span id="isLocked" data-value="">--</span></div>
 											</div>
 										</div>
 										<div class="block-middle">
 											<div class="content">
 												<div class="legend">Spd. Lmt.</div>
-												<div class="data" id="speedLimiter" data-value="0">Off</div>
+												<div class="data"><span id="speedLimiter" data-value="">--</span></div>
 											</div>
 										</div>
 										<div class="clearfix"></div>
@@ -104,21 +104,21 @@
 									<div class="block-info">
 										<div class="content">
 											<div class="legend">Aux</div>
-											<div class="data" id="auxOrder" data-value="0">OFF</div>
+											<div class="data"><span id="auxOrder" data-value="0">--</span></div>
 										</div>
 									</div>
 									<div class="block-info">
 										<div class="content">
 											<div class="legend">Dst</div>
-											<div class="data" id="distanceTrip">0.0 km</div>
-											<div class="sub-data" id="distanceOdo">237.8 km</div>
+											<div class="data"><span id="distanceTrip">--</span> km</div>
+											<div class="sub-data"><span id="distanceOdo">--</span> km</div>
 										</div>
 									</div>
 									<div class="block-info">
 										<div class="content">
 											<div class="legend">Time</div>
-											<div class="data">0:00:05</div>
-											<div class="sub-data">0:00:00</div>
+											<div class="data"><span id="time">-:--:--</span></div>
+											<div class="sub-data"><span id="timeTotal">-:--:--</span></div>
 										</div>
 									</div>
 								</div>
@@ -126,8 +126,8 @@
 									<div class="block-info">
 										<div class="content">
 											<div class="legend">Voltage</div>
-											<div class="legend-data" id="batteryLevel">45%</div>
-											<div class="data">64.3 V</div>
+											<div class="legend-data"><span id="batteryLevel">--</span> %</div>
+											<div class="data"><span id="voltageFilterMean">--</span> V</div>
 											<div class="sub-data">
 												<div id="battery-gauge">
 													<div id="battery-level"></div>
@@ -145,34 +145,34 @@
 									<div class="block-info">
 										<div class="content">
 											<div class="legend">Auton.</div>
-											<div class="data" id="autonomyLeft">0 km</div>
+											<div class="data"><span id="autonomyLeft">--</span> km</div>
 										</div>
 									</div>
 									<div class="block-info">
 										<div class="content">
 											<div class="legend">Cur.</div>
-											<div class="data">0.0 A</div>
-											<div class="sub-data">0.0 A</div>
+											<div class="data"><span id="currentActual">--</span> A</div>
+											<div class="sub-data"><span id="currentMax">--</span> A</div>
 										</div>
 									</div>
 									<div class="block-info">
 										<div class="content">
 											<div class="legend">Power</div>
-											<div class="data">0 W</div>
-											<div class="sub-data">0 W</div>
+											<div class="data"><span id="currentPower">--</span> W</div>
+											<div class="sub-data"><span id="powerMax">--</span> W</div>
 										</div>
 									</div>
 									<div class="block-info">
 										<div class="content">
 											<div class="legend">Temp.</div>
-											<div class="data" id="currentTemperature">31.0 °</div>
-											<div class="sub-data" id="maxTemperature">31.0 °</div>
+											<div class="data"><span id="currentTemperature">--</span> °</div>
+											<div class="sub-data"><span id="temperatureMax">--</span> °</div>
 										</div>
 									</div>
 									<div class="block-info">
 										<div class="content">
 											<div class="legend">Hr</div>
-											<div class="data" id="currentHumidity">30.3 %</div>
+											<div class="data"><span id="currentHumidity">--</span> %</div>
 										</div>
 									</div>
 								</div>
@@ -199,7 +199,6 @@
 				_bu(url).submit();
 			}
 		</script>
-		<!--script type="text/javascript" src="./js/lib.js"></script-->
 		<script type="text/javascript" src="./js/jquery-3.3.1.min.js.gz"></script>
 		<script type="text/javascript" src="./js/function.js"></script>
 		<script type="text/javascript" src="./js/script.js"></script>
