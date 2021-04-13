@@ -26,7 +26,6 @@ ACStyle(ACE_Style1, "label{display:inline-block;padding-right: 10px !important;p
 ACStyle(ACE_Style2, "input[type='button']{background-color:#303F9F; border-color:#303F9F}");
 ACStyle(ACE_Style3, "select{width:44%} h2{ color:#303F9F;padding:10px; }");
 ACStyle(ACE_Style4, ".noorder{width:100%}.noorder label{display:inline-block;width:40%;cursor:pointer;padding:5px}.noorder .noorder input[type='text']{width:40%} .noorder input[type='password']{width:40%} .noorder input[type='text']{width:40%}");
-ACStyle(ACE_Style5, "input[type='text']{paddingLeft:10px}");
 
 // Settings page
 ACSubmit(ACE_SETTINGS_Save, "Save", "/settingssave");
@@ -380,47 +379,42 @@ void WifiSettingsPortal_begin()
         }
         else if (doc.containsKey("distanceTrip"))
         {
-          WifiSettingsPortal_shrd->modeOrder = doc["distanceTrip"];
+          WifiSettingsPortal_shrd->distanceTrip = doc["distanceTrip"];
           Serial.println("WifiSettingsPortal_shrd distanceTrip = " + (String)WifiSettingsPortal_shrd->distanceTrip);
         }
         else if (doc.containsKey("bleLockForced"))
         {
-          WifiSettingsPortal_shrd->modeOrder = doc["bleLockForced"];
+          WifiSettingsPortal_shrd->bleLockForced = doc["bleLockForced"];
           Serial.println("WifiSettingsPortal_shrd bleLockForced = " + (String)WifiSettingsPortal_shrd->bleLockForced);
         }
         else if (doc.containsKey("speedLimiter"))
         {
-          WifiSettingsPortal_shrd->modeOrder = doc["speedLimiter"];
+          WifiSettingsPortal_shrd->speedLimiter = doc["speedLimiter"];
           Serial.println("WifiSettingsPortal_shrd speedLimiter = " + (String)WifiSettingsPortal_shrd->speedLimiter);
         }
         else if (doc.containsKey("ecoOrder"))
         {
-          WifiSettingsPortal_shrd->modeOrder = doc["ecoOrder"];
+          WifiSettingsPortal_shrd->ecoOrder = doc["ecoOrder"];
           Serial.println("WifiSettingsPortal_shrd ecoOrder = " + (String)WifiSettingsPortal_shrd->ecoOrder);
         }
         else if (doc.containsKey("accelOrder"))
         {
-          WifiSettingsPortal_shrd->modeOrder = doc["accelOrder"];
+          WifiSettingsPortal_shrd->accelOrder = doc["accelOrder"];
           Serial.println("WifiSettingsPortal_shrd accelOrder = " + (String)WifiSettingsPortal_shrd->accelOrder);
         }
         else if (doc.containsKey("auxOrder"))
         {
-          WifiSettingsPortal_shrd->modeOrder = doc["auxOrder"];
-          Serial.println("WifiSettingsPortal_shrd auxOrder = " + (String)WifiSettingsPortal_shrd->auxOrder);
-        }
-        else if (doc.containsKey("auxOrder"))
-        {
-          WifiSettingsPortal_shrd->modeOrder = doc["auxOrder"];
+          WifiSettingsPortal_shrd->auxOrder = doc["auxOrder"];
           Serial.println("WifiSettingsPortal_shrd auxOrder = " + (String)WifiSettingsPortal_shrd->auxOrder);
         }
         else if (doc.containsKey("brakeSentOrderFromBLE"))
         {
-          WifiSettingsPortal_shrd->modeOrder = doc["brakeSentOrderFromBLE"];
+          WifiSettingsPortal_shrd->brakeSentOrderFromBLE = doc["brakeSentOrderFromBLE"];
           Serial.println("WifiSettingsPortal_shrd brakeSentOrderFromBLE = " + (String)WifiSettingsPortal_shrd->brakeSentOrderFromBLE);
         }
         else if (doc.containsKey("speedMax"))
         {
-          WifiSettingsPortal_shrd->modeOrder = doc["speedMax"];
+          WifiSettingsPortal_shrd->speedMax = doc["speedMax"];
           Serial.println("WifiSettingsPortal_shrd speedMax = " + (String)WifiSettingsPortal_shrd->speedMax);
         }
 
@@ -494,11 +488,14 @@ void WifiSettingsPortal_sendValues()
     doc["brakeSentOrderFromBLE"] = WifiSettingsPortal_shrd->brakeSentOrderFromBLE;
     doc["brakePressedStatus"] = WifiSettingsPortal_shrd->brakePressedStatus;
     doc["brakeFordidenHighVoltage"] = WifiSettingsPortal_shrd->brakeFordidenHighVoltage;
+    doc["Ebrake_progressive_mode"] = WifiSettingsPortal_settings->Ebrake_progressive_mode;
 
     doc["time"] = millis();
 
     serializeJson(doc, str);
-    //Serial.println("str : " + (String)str);
+    
+    Serial.println("send WifiSettingsPortal_shrd->auxOrder : " + (String)WifiSettingsPortal_shrd->auxOrder);
+
     webSocket.sendTXT(0, str);
   }
 }
