@@ -46,7 +46,8 @@
 										<div class="content">
 											<div class="legend">Speed</div>
 											<div class="data"><span id="speedCurrent">--</span> km/h</div>
-											<div class="sub-data"><span id="speedMax">--</span> km/h</div>
+											<div class="sub-data">Avg : <span id="speedAvg">--</span> km/h</div>
+											<div class="sub-data">Max : <span id="speedMax">--</span> km/h</div>
 										</div>
 									</div>
 									<div class="block-info">
@@ -62,7 +63,7 @@
 									<div class="block-info">
 										<div class="content">
 											<div class="legend">Brake</div>
-											<div class="data" id="brakeSentOrder" data-value="">
+											<div class="data" id="brakeSentOrder" data-value="" data-ebrake-progresive-mode="">
 												<span class="select-mode" data-value="1">1</span>
 												<span class="select-mode" data-value="2">2</span>
 												<span class="select-mode" data-value="3">3</span>
@@ -118,7 +119,7 @@
 										<div class="content">
 											<div class="legend">Time</div>
 											<div class="data"><span id="time">-:--:--</span></div>
-											<div class="sub-data"><span id="timeTotal">-:--:--</span></div>
+											<div class="sub-data"><span id="timeInActivity">-:--:--</span></div>
 										</div>
 									</div>
 								</div>
@@ -183,6 +184,22 @@
 			</div>
       	</div>
 
+		<div id="dialog" class="ui-dialog">
+			<div class="ui-dialog-header">
+				<span id="ui-id-1" class="ui-dialog-title">Information</span>
+				<button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="Close">
+					<span class="ui-button-icon ui-icon ui-icon-closethick"></span>
+					<span class="ui-button-icon-space"> </span>Close
+				</button>
+			</div>
+			<div class="ui-dialog-content">
+
+			</div>
+			<div class="ui-dialog-footer">
+
+			</div>
+		</div>
+
       	<script>
 			function _bu(url) {
 				var uri = document.createElement('input');
@@ -199,7 +216,7 @@
 				_bu(url).submit();
 			}
 		</script>
-		<script type="text/javascript" src="./js/jquery-3.3.1.min.js.gz"></script>
+		<script type="text/javascript" src="./js/jquery-3.3.1.min.js"></script>
 		<script type="text/javascript" src="./js/function.js"></script>
 		<script type="text/javascript" src="./js/script.js"></script>
 	</body>

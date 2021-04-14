@@ -63,9 +63,9 @@ function showBatteryLevel(percentBattery, voltageFilterMean) {
 /**
  * @param int time
  */
-function setTimeToHumanTime(time) {
+function setTimeToHumanTime(time, selector) {
     var date = new Date(time).toISOString().substr(12, 7);
-    setDataFromSelector(date, '#time');
+    setDataFromSelector(date, selector);
 }
 
 /**
@@ -94,7 +94,16 @@ function setOnOff(value, selector) {
  * @param int value
  * @param string selector
  */
-function setModeFromList(value, selector) {
+function setModeFromList(datas, selector) {
+    var value;
+
+    if (selector == '#modeOrder') {
+        value = datas.modeOrder;
+    } else if (selector == '#brakeSentOrder') {
+        value = datas.brakeSentOrder;
+        $(selector).attr('data-ebrake-progresive-mode', datas.Ebrake_progressive_mode);
+    }
+
     setDataValueAttrFromSelector(value, selector);
     setListSelected(value, selector);
 }
@@ -130,19 +139,62 @@ function setAccel(accel) {
     setDataValueAttrFromSelector(accel, selector);
 }
 
+// Variables compute
+var speedAverage = 0;
+var lastSpeedIsRun = 0;
+var lastTimeSpeedInActivity;
+var timeInActivityTrip = 0;
+var timeCurrentTrip;
+
+function computeAverageSpeed(speedCurrent, distanceTrip) {
+    if (speedCurrent > 0) {// If we run
+        if (lastSpeedIsRun == 0) {// .. and after we are stopped
+            lastTimeSpeedInActivity = new Date().getMilliseconds();
+            lastSpeedIsRun = 1;
+        } else {// .. and we are already running
+            var currentTime = new Date().getMilliseconds();
+            var diffTime = currentTime - lastTimeSpeedInActivity;
+            timeInActivityTrip = timeInActivityTrip + diffTime;
+
+            lastTimeSpeedInActivity = currentTime;
+        }
+    } else {// If we are stopped
+        if (lastSpeedIsRun == 1) {
+            var currentTime = new Date().getMilliseconds();
+            var diffTime = currentTime - lastTimeSpeedInActivity;
+            timeInActivityTrip = timeInActivityTrip + diffTime;
+
+            lastSpeedIsRun = 0;
+        }
+    }
+
+    if (timeInActivityTrip > 0) {
+        timeCurrentTrip = new Date().getMilliseconds();
+        // https://run-motion.com/calcul-vitesse-moyenne-allure/
+        // Exemple de calcul manuel :
+        // 10km en 40min, distance = 10000m, temps = 40×60 = 2400 secondes
+        // vitesse = 10000 / 2400 x 3,6 = 15 km/h.
+        // spdAvg = (x km * 1000 (=> m)) / (y ms / 1000 (=> s)) * 3.6 (=> convertion m/s vers km/h)
+        speedAverage = (distanceTrip * 1000) / (timeInActivityTrip / 1000) * 3.6;
+        speedAverage = Number((speedAverage).toFixed(1));
+    }
+}
+
 /**
  * @param array datas
  */
 function showDatasToDashboard(datas) {
-    console.log(datas);
+    //console.log(datas);
     // Current speed
     setDataFromSelector(datas.speedCurrent, '#speedCurrent');
+    // Average speed
+    setDataFromSelector(speedAverage, '#speedAvg');
     // Max speed
     setDataFromSelector(datas.speedMax, '#speedMax');
     // Mode
-    setModeFromList(datas.modeOrder, '#modeOrder');
+    setModeFromList(datas, '#modeOrder');
     // Brake
-    setModeFromList(datas.brakeSentOrder, '#brakeSentOrder');
+    setModeFromList(datas, '#brakeSentOrder');
     // Eco
     setEco(datas.ecoOrder);
     // Accel
@@ -155,10 +207,12 @@ function showDatasToDashboard(datas) {
     setOnOff(datas.auxOrder, '#auxOrder');
     // Distance trip
     setDataFromSelector(datas.distanceTrip, '#distanceTrip');
-    // Distance trip
+    // Distance ODO
     setDataFromSelector(datas.distanceOdo, '#distanceOdo');
-    // Time
-    setTimeToHumanTime(datas.time);
+    // Time from startup
+    setTimeToHumanTime(datas.time, '#time');
+    // Time in activity during Vcurrent > 0 km/h
+    setTimeToHumanTime((timeInActivityTrip / 1000), '#timeInActivity');
 
     // Battery level
     showBatteryLevel(datas.batteryLevel, datas.voltageFilterMean);
