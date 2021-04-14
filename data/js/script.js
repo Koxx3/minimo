@@ -87,6 +87,11 @@ $(function() {
             });*/
         });
     };
+
+    // Avertissment if connection with server is loose
+    socket.onclose = function() {
+        alert('ERROR : Connection is closed ...');
+    };
 });
 /*
 datas = {
