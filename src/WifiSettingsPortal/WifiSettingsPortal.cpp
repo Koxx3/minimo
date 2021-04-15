@@ -494,7 +494,7 @@ void WifiSettingsPortal_sendValues()
 
     serializeJson(doc, str);
     
-    Serial.println("send WifiSettingsPortal_shrd->auxOrder : " + (String)WifiSettingsPortal_shrd->auxOrder);
+    //Serial.println("send WifiSettingsPortal_shrd->auxOrder : " + (String)WifiSettingsPortal_shrd->auxOrder);
 
     webSocket.sendTXT(0, str);
   }

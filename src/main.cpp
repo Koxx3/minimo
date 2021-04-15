@@ -94,6 +94,7 @@ ZeroUart zeroCntrl;
 #define ENABLED_WIFI 1
 #define ENABLE_WATCHDOG 1
 #define WATCHDOG_TIMEOUT 1000 // 1s // time in ms to trigger the watchdog
+#define USE_CURRENT_FROM_MINIMO_CONTROLLER 0
 
 //////------------------------------------
 ////// Variables
@@ -1053,6 +1054,10 @@ void getThrottleFromAnalog()
   {
     shrd.errorThrottle = false;
   }
+
+#if DEBUG_DISPLAY_THROTTLE
+#endif
+
 }
 
 void processDacOutput()
@@ -1580,10 +1585,14 @@ void processCurrent()
   }
   else
   {
+#if USE_CURRENT_FROM_MINIMO_CONTROLLER
     // TEST // TEST // TEST // TEST // TEST //
     shrd.currentSensorPresent = 2;
     shrd.currentActual = shrd.currentFromController;
     // TEST // TEST // TEST // TEST // TEST //
+#else
+    shrd.currentSensorPresent = 0;
+#endif
   }
 }
 
