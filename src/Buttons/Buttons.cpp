@@ -11,7 +11,9 @@
 
 OneButton button1(PIN_IN_BUTTON1, true, true);
 OneButton button2(PIN_IN_BUTTON2, true, true);
+#if (PCB > 130)
 OneButton button3(PIN_IN_BUTTON_PWR, true, false);
+#endif
 
 Settings *Buttons::settings;
 SharedData *Buttons::shrd;
@@ -48,6 +50,7 @@ void Buttons::setup(SharedData *shrd_p, BluetoothHandler *blh_p, Settings *setti
     button2.setDebounceTicks(50);
     button2.setPressTicks(BUTTON_LONG_PRESS_TICK);
 
+#if (PCB > 130)
     button3.attachClick(processButton3Click);
     button3.attachLongPressStart(processButton3LpStart);
     button3.attachDuringLongPress(processButton3LpDuring);
@@ -60,6 +63,7 @@ void Buttons::setup(SharedData *shrd_p, BluetoothHandler *blh_p, Settings *setti
     {
         poweringStartInProgress = true;
     }
+#endif
 
 #if ENABLE_LED
     led1.Stop();
@@ -253,6 +257,7 @@ void Buttons::processButton2LpStop()
 
 ////////////////////////////////////////////
 
+#if (PCB > 130)
 void Buttons::processButton3Click()
 {
     Serial.println("processButton3Click");
@@ -289,6 +294,7 @@ void Buttons::processButton3LpStop()
 
     poweringStartInProgress = false;
 }
+#endif
 
 //////////////////////////
 
