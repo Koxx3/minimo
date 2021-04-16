@@ -3,7 +3,7 @@
 
 // PINOUT
 #ifndef PCB
-#define PCB 132
+#define PCB 142
 #endif
 
 #if (PCB == 130)

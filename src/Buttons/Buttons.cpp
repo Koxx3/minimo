@@ -11,9 +11,7 @@
 
 OneButton button1(PIN_IN_BUTTON1, true, true);
 OneButton button2(PIN_IN_BUTTON2, true, true);
-#if (PCB >= 142)
 OneButton button3(PIN_IN_BUTTON_PWR, true, false);
-#endif
 
 Settings *Buttons::settings;
 SharedData *Buttons::shrd;
