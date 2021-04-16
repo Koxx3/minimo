@@ -17,7 +17,7 @@
 #define DEBUG_DISPLAY_MODE                          0
 #define DEBUG_DISPLAY_DIGITAL_BRAKE                 0
 #define DEBUG_DISPLAY_ANALOG_BRAKE                  0
-#define DEBUG_DISPLAY_DAC_OUTPUT                    0
+#define DEBUG_DISPLAY_DAC_OUTPUT                    1
 #define DEBUG_DISPLAY_THROTTLE                      0
 #define DEBUG_DISPLAY_ECO                           0
 #define DEBUG_DISPLAY_ACCEL                         0
@@ -49,7 +49,7 @@
 #define DEBUG_DISPLAY_VESC_FRAME                    0
 
 #define SERIAL_FAKE_CURRENT                         0
-#define DEBUG_FAKE_SPEED                            0
+#define DEBUG_FAKE_SPEED                            1
 #define DEBUG_FAKE_VOLTAGE                          0
 #define DEBUG_FAKE_TEMPERATURE                      0
 
