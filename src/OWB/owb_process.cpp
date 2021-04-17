@@ -34,10 +34,11 @@
 #include "owb_rmt.h"
 #include "ds9990.h"
 #include "SharedData.h"
+#include "tools/buffer.h"
 
 #define GPIO_OWB (PIN_IN_OUT_ONEWIRE)
 #define MAX_DEVICES 4
-#define SAMPLE_PERIOD 4000 // milliseconds
+#define SAMPLE_PERIOD 50 // milliseconds
 #define SINGLE_ATTEMPT 1
 
 int num_devices = 0;
@@ -112,8 +113,6 @@ void owb_loop()
         }
     }
 
-    vTaskDelay(3000);
-
     // Read temperatures more efficiently by starting conversions on all devices at the same time
     int errors_ds9990_count[MAX_DEVICES] = {0};
     if (num_devices > 0)
@@ -131,7 +130,6 @@ void owb_loop()
             // (using printf before reading may take too long)
             uint8_t readings[8] = {0};
             uint8_t writings[1] = {0};
-            writings[0] = owb_shrd->brakePressedStatus;
             DS9990_ERROR errors_ds9990[MAX_DEVICES] = {DS9990_OK};
 
             for (int i = 0; i < num_devices; ++i)
@@ -143,8 +141,10 @@ void owb_loop()
                     // WRITE & READ
                     // first attempt
 
+                    writings[0] = owb_shrd->brakePressedStatus;
+
                     bool isDataOk = false;
-                    errors_ds9990[i] = ds9990_write_read_memory(devices_ds9990[i], writings, 1, readings, 5);
+                    errors_ds9990[i] = ds9990_write_read_memory(devices_ds9990[i], writings, 1, readings, 7);
                     if (errors_ds9990[i] != DS9990_OK)
                     {
 #if SINGLE_ATTEMPT
@@ -171,9 +171,15 @@ void owb_loop()
 
                     if (isDataOk)
                     {
-                        printf("  %d: %02x %02x %02x %02x %02x    %d errors\n", i, readings[0], readings[1], readings[2], readings[3], readings[4], errors_ds9990_count[i]);
-                        owb_shrd->currentTemperature = readings[1];
-                        owb_shrd->currentHumidity = readings[2];
+                        //printf("  %d: %02x %02x %02x %02x %02x %02x %02x    %d errors\n", i, readings[0], readings[1], readings[2], readings[3], readings[4], readings[5], readings[6], errors_ds9990_count[i]);
+                        int32_t index = 1;
+                        int16_t tempInf = buffer_get_int16_inv(readings, &index);
+                        int16_t humInt = buffer_get_int16_inv(readings, &index);
+                        uint16_t curInt = buffer_get_uint16_inv(readings, &index);
+                        owb_shrd->currentTemperature = tempInf / 10.0;
+                        owb_shrd->currentHumidity = humInt / 10.0;
+                        owb_shrd->currentActual = curInt;
+                        //printf("  %d: t = %d / h = %d / c = %d    %d errors\n", i, tempInf, humInt, curInt, errors_ds9990_count[i]);
                     }
                 }
             }

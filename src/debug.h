@@ -11,7 +11,7 @@
 #define DEBUG_BLE_DISPLAY_SCAN                      0
 
 // Serial general debugs
-#define DEBUG_TIMELOOP_MS                           0
+#define DEBUG_TIMELOOP_MS                           1
 #define DEBUG_TIMELOOP_NS                           0
 #define DEBUG_HEAP                                  0
 

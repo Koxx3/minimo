@@ -567,9 +567,9 @@ void setup()
       "taskProcessOwb", // Name of the task (for debugging)
       3000,             // Stack size (bytes)
       NULL,             // Parameter to pass
-      tskIDLE_PRIORITY, // Task priority
+      tskIDLE_PRIORITY +1 , // Task priority
       &htaskProcessOwb, // Task handle,
-      1);               // Core
+      0);               // Core
 
 #if ENABLE_WATCHDOG
   Serial.println(PSTR("Watchdog enabled"));
