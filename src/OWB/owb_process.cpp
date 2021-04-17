@@ -174,10 +174,11 @@ void owb_loop()
                         if (errors_ds9990[i] != DS9990_OK)
                         {
                             ++errors_ds9990_count[i];
-                            printf("  %d: %d errors => retry\n", i, readings[0], readings[1], readings[2], readings[3], readings[4], readings[5], readings[6], errors_ds9990_count[i]);
+                            printf("  %d: %d errors => still error => increase counter\n", i, errors_ds9990_count[i]);
                         }
+                        // printf("  %d: %02x %02x %02x %02x %02x %02x %02x    %d errors\n", i, readings[0], readings[1], readings[2], readings[3], readings[4], readings[5], readings[6], errors_ds9990_count[i]);
 #endif
-                        printf("  %d: %02x %02x %02x %02x %02x %02x %02x    %d errors\n", i, readings[0], readings[1], readings[2], readings[3], readings[4], readings[5], readings[6], errors_ds9990_count[i]);
+                        printf("  %d: %d errors => retry\n", i, errors_ds9990_count[i]);
                     }
                 }
             }

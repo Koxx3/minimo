@@ -1,6 +1,6 @@
 $(function() {
     // Websocket instance
-    var socket = new WebSocket('ws://localhost:81/');
+    var socket = new WebSocket('ws://" + location.host +":81/');
     var datas;
     var freezeUpdateDatasDuringUpdate = false;
     var timeDuringFreeze = 0;
