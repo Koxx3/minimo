@@ -1,5 +1,6 @@
 $(function() {
     // Websocket instance
+//    var socket = new WebSocket('ws://koxx3.fr.eu.org:81/');
     var socket = new WebSocket('ws://" + location.host +":81/');
     var datas;
     var freezeUpdateDatasDuringUpdate = false;

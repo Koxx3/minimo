@@ -127,7 +127,7 @@ static bool _address_device(const DS9990_Info *ds9990_info)
         }
         else
         {
-            ESP_LOGE(TAG, "ds9990 device not responding");
+            ESP_LOGI(TAG, "ds9990 device not responding");
         }
     }
     return present;
@@ -240,7 +240,7 @@ DS9990_Info *ds9990_malloc(void)
     if (ds9990_info != NULL)
     {
         memset(ds9990_info, 0, sizeof(*ds9990_info));
-        ESP_LOGE(TAG, "malloc %p", ds9990_info);
+        ESP_LOGI(TAG, "malloc %p", ds9990_info);
     }
     else
     {
@@ -254,7 +254,7 @@ void ds9990_free(DS9990_Info **ds9990_info)
 {
     if (ds9990_info != NULL && (*ds9990_info != NULL))
     {
-        ESP_LOGE(TAG, "free %p", *ds9990_info);
+        ESP_LOGI(TAG, "free %p", *ds9990_info);
         free(*ds9990_info);
         *ds9990_info = NULL;
     }
@@ -278,7 +278,7 @@ void ds9990_use_crc(DS9990_Info *ds9990_info, bool use_crc)
     if (_is_init(ds9990_info))
     {
         ds9990_info->use_crc = use_crc;
-        ESP_LOGE(TAG, "use_crc %d", ds9990_info->use_crc);
+        ESP_LOGI(TAG, "use_crc %d", ds9990_info->use_crc);
     }
 }
 
@@ -370,7 +370,7 @@ DS9990_ERROR ds9990_write_read_memory(const DS9990_Info *ds9990_info, uint8_t *v
         else
         {
             err = DS9990_ERROR_DEVICE;
-            ESP_LOGE(TAG, "ds9990_write_read_memory : err3");
+            ESP_LOGI(TAG, "ds9990_write_read_memory : err3");
         }
     }
     else

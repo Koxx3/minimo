@@ -521,6 +521,7 @@ void setup()
   blh.init();
 
   Serial.println("   OneWire ...");
+  owb_setup();
   owb_setSharedData(&shrd);
 
   setupVoltage();

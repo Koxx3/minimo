@@ -42,6 +42,8 @@
 int num_devices = 0;
 DS9990_Info *devices[MAX_DEVICES] = {0};
 OneWireBus *owb;
+owb_rmt_driver_info rmt_driver_info;
+OneWireBus_ROMCode device_rom_codes[MAX_DEVICES] = {0};
 
 SharedData *owb_shrd;
 
@@ -50,9 +52,8 @@ void owb_setSharedData(SharedData *shrd)
     owb_shrd = shrd;
 }
 
-void owb_loop()
+void owb_setup()
 {
-
     // Override global log level
     //esp_log_level_set("*", ESP_LOG_INFO);
 
@@ -61,19 +62,12 @@ void owb_loop()
     esp_log_level_set("ds9990", ESP_LOG_DEBUG);
     esp_log_level_set("owb_rmt", ESP_LOG_DEBUG);
 
-    // Stable readings require a brief period before communication
-    vTaskDelay(2000.0 / portTICK_PERIOD_MS);
-
     // Create a 1-Wire bus, using the RMT timeslot driver
-    OneWireBus *owb;
-    owb_rmt_driver_info rmt_driver_info;
     owb = owb_rmt_initialize(&rmt_driver_info, GPIO_OWB, RMT_CHANNEL_1, RMT_CHANNEL_0);
     owb_use_crc(owb, true); // enable CRC check for ROM code
 
     // Find all connected devices
-    printf("Find devices:\n");
-    OneWireBus_ROMCode device_rom_codes[MAX_DEVICES] = {0};
-    int num_devices = 0;
+    printf("OW - Find devices:\n");
     OneWireBus_SearchState search_state = {0};
     bool found = false;
     owb_search_first(owb, &search_state, &found);
@@ -84,13 +78,20 @@ void owb_loop()
         device_rom_codes[num_devices] = search_state.rom_code;
         if (search_state.rom_code.fields.family[0] == DS9990_FAMILY_CODE)
         {
-            printf("  %d devices : is DS9990\n", num_devices);
+            printf("OW - %d devices : is DS9990\n", num_devices);
         }
 
         num_devices++;
         owb_search_next(owb, &search_state, &found);
     }
-    printf("Found %d device%s\n", num_devices, num_devices == 1 ? "" : "s");
+    printf("OW - Found %d device%s\n", num_devices, num_devices == 1 ? "" : "s");
+}
+
+void owb_loop()
+{
+
+    // Stable readings require a brief period before communication
+    vTaskDelay(2000.0 / portTICK_PERIOD_MS);
 
     // Create DS18B20 devices on the 1-Wire bus
     DS9990_Info *devices_ds9990[MAX_DEVICES] = {0};
@@ -105,12 +106,6 @@ void owb_loop()
             ds9990_use_crc(ds9990_info, true);                  // enable CRC check on all reads
         }
     }
-
-#ifdef CONFIG_ENABLE_STRONG_PULLUP_GPIO
-    // An external pull-up circuit is used to supply extra current to OneWireBus devices
-    // during temperature conversions.
-    owb_use_strong_pullup_gpio(owb, CONFIG_STRONG_PULLUP_GPIO);
-#endif
 
     vTaskDelay(3000);
 
@@ -138,27 +133,6 @@ void owb_loop()
             {
                 if (device_rom_codes[i].fields.family[0] == DS9990_FAMILY_CODE)
                 {
-                    /*
-                    // -------------
-                    // READ
-                    errors_ds9990[i] = ds9990_read_memory(devices_ds9990[i], readings, 7);
-
-                    if (errors_ds9990[i] != DS9990_OK)
-                    {
-                        ++errors_ds9990_count[i];
-                    }
-                    //printf("  %d: %02x %02x %02x %02x %02x %02x %02x %02x    %d errors\n", i, readings[0], readings[1], readings[2], readings[3], readings[4], readings[5], readings[6], readings[7], errors_ds9990_count[i]);
-
-                    // -------------
-                    // WRITE
-                    readings[0] = (uint8_t)i_loop % 256;
-                    errors_ds9990[i] = ds9990_write_memory(devices_ds9990[i], readings, 1);
-
-                    if (errors_ds9990[i] != DS9990_OK)
-                    {
-                        ++errors_ds9990_count[i];
-                    }
-                    */
 
                     // -------------
                     // WRITE & READ
@@ -174,11 +148,11 @@ void owb_loop()
                         if (errors_ds9990[i] != DS9990_OK)
                         {
                             ++errors_ds9990_count[i];
-                            printf("  %d: %d errors => still error => increase counter\n", i, errors_ds9990_count[i]);
+                            printf("OW %d: %d errors => still error => increase counter\n", i, errors_ds9990_count[i]);
                         }
                         // printf("  %d: %02x %02x %02x %02x %02x %02x %02x    %d errors\n", i, readings[0], readings[1], readings[2], readings[3], readings[4], readings[5], readings[6], errors_ds9990_count[i]);
 #endif
-                        printf("  %d: %d errors => retry\n", i, errors_ds9990_count[i]);
+                        printf("OW %d: %d errors => retry\n", i, errors_ds9990_count[i]);
                     }
                 }
             }
@@ -188,6 +162,14 @@ void owb_loop()
             vTaskDelayUntil(&last_wake_time, SAMPLE_PERIOD / portTICK_PERIOD_MS);
 
             //Serial.println();
+        }
+    }
+    else
+    {
+        while (1)
+        {
+            vTaskDelay(100);
+            printf("OW - no device found\n");
         }
     }
 }
