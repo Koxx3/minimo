@@ -4,8 +4,6 @@
 // TODO : auto mode shift on low battery
 // TODO : reduce SHTC3 read time - brake read function in 2 parts
 // BUG : Minimo - original regulator perturbation
-// BUG : minimo - brake digital lever ?
-// BUG : minimo - brake controller ?
 // BUG : current init = false max current/power on smartphone ??
 //////////////////////////////////////////
 
@@ -124,7 +122,9 @@ char bleLog[50] = "";
 HardwareSerial hwSerCntrl(1);
 HardwareSerial hwSerLcd(2);
 
-DHT_nonblocking dht_sensor(PIN_IN_OUT_DHT, DHT_TYPE_22);
+#if TEMPERATURE_EXT_READ
+DHT_nonblocking dht_sensor(PIN_IN_OUT_ONEWIRE, DHT_TYPE_22);
+#endif
 
 TwoWire I2Cone = TwoWire(0);
 Adafruit_MCP4725 dac;
@@ -164,7 +164,7 @@ BluetoothHandler blh;
 void setupPins()
 {
 
-  pinMode(PIN_IN_OUT_DHT, INPUT_PULLUP);
+  pinMode(PIN_IN_OUT_ONEWIRE, INPUT_PULLUP);
   pinMode(PIN_IN_BUTTON1, INPUT_PULLUP);
   pinMode(PIN_IN_BUTTON2, INPUT_PULLUP);
   pinMode(PIN_IN_VOLTAGE, INPUT);
@@ -1316,6 +1316,7 @@ void processSmartEscSerial()
 }
 #endif
 
+#if TEMPERATURE_EXT_READ
 void processDHT()
 {
   static unsigned long measurement_timestamp = millis();
@@ -1347,6 +1348,7 @@ void processDHT()
     }
   }
 }
+#endif
 
 void processSHTC3(bool requestRead)
 {

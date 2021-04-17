@@ -27,6 +27,7 @@
 #include "freertos/task.h"
 #include "esp_system.h"
 #include "esp_log.h"
+#include "pinout.h"
 
 #include "owb.h"
 #include "owb_process.h"
@@ -34,9 +35,9 @@
 #include "ds9990.h"
 #include "SharedData.h"
 
-#define GPIO_OWB (GPIO_NUM_12)
-#define MAX_DEVICES (8)
-#define SAMPLE_PERIOD (50) // milliseconds
+#define GPIO_OWB (PIN_IN_OUT_ONEWIRE)
+#define MAX_DEVICES 4
+#define SAMPLE_PERIOD 50 // milliseconds
 #define SINGLE_ATTEMPT 0
 
 int num_devices = 0;
@@ -78,7 +79,10 @@ void owb_setup()
         device_rom_codes[num_devices] = search_state.rom_code;
         if (search_state.rom_code.fields.family[0] == DS9990_FAMILY_CODE)
         {
-            printf("OW - %d devices : is DS9990\n", num_devices);
+            printf("OW - device %d is DS9990\n", num_devices);
+        } else
+        {
+            printf("OW - device %d is UNKNONWN\n", num_devices);
         }
 
         num_devices++;
@@ -160,8 +164,6 @@ void owb_loop()
             i_loop++;
 
             vTaskDelayUntil(&last_wake_time, SAMPLE_PERIOD / portTICK_PERIOD_MS);
-
-            //Serial.println();
         }
     }
     else
