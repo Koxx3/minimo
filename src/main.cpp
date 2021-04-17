@@ -64,12 +64,6 @@ SmartEsc smartEscCntrl;
 ZeroUart zeroCntrl;
 #endif
 
-#define DEBUG_ESP_HTTP_UPDATE 1
-#define TEMPERATURE_EXT_READ 0
-#define TEMPERATURE_INT_READ 1
-#define VOLTAGE_EXT_READ 1
-#define BRAKE_ANALOG_EXT_READ 1
-
 // I2C
 #define I2C_FREQ 1000000
 
@@ -89,9 +83,18 @@ ZeroUart zeroCntrl;
 // distance
 #define SPEED_TO_DISTANCE_CORRECTION_FACTOR 1
 
-#define ENABLED_WIFI 1
+#define DEBUG_ESP_HTTP_UPDATE 1
+
+#define ENABLE_TEMPERATURE_EXT_READ 0
+#define ENABLE_TEMPERATURE_INT_READ 1
+#define ENABLE_VOLTAGE_EXT_READ 1
+#define ENABLE_BRAKE_ANALOG_EXT_READ 1
+#define ENABLE_ONEWIRE 1
+#define ENABLE_WIFI 1
 #define ENABLE_WATCHDOG 1
+
 #define WATCHDOG_TIMEOUT 1000 // 1s // time in ms to trigger the watchdog
+
 #define USE_CURRENT_FROM_MINIMO_CONTROLLER 0
 
 //////------------------------------------
@@ -122,7 +125,7 @@ char bleLog[50] = "";
 HardwareSerial hwSerCntrl(1);
 HardwareSerial hwSerLcd(2);
 
-#if TEMPERATURE_EXT_READ
+#if ENABLE_TEMPERATURE_EXT_READ
 DHT_nonblocking dht_sensor(PIN_IN_OUT_ONEWIRE, DHT_TYPE_22);
 #endif
 
@@ -471,7 +474,7 @@ void setup()
   Serial.printf("\n\nfirmware : type = %s / version : %d\n", FIRMWARE_TYPE, FIRMWARE_VERSION);
   Serial.println("\nsetup --- begin :");
 
-#if TFT_ENABLED
+#if ENABLE_TFT
   Serial.println("   TFT backligth... ");
   tftSetupBacklight();
 #endif
@@ -498,7 +501,7 @@ void setup()
   Serial.println("   buttons...");
   btns.setup(&shrd, &blh, &settings);
 
-#if TFT_ENABLED
+#if ENABLE_TFT
   Serial.println("   TFT... ");
   tftSetup(&shrd, &settings);
 #endif
@@ -520,9 +523,11 @@ void setup()
   blh.setBleLock(false); // force BLE lock mode
   blh.init();
 
+#if ENABLE_ONEWIRE
   Serial.println("   OneWire ...");
   owb_setup();
   owb_setSharedData(&shrd);
+#endif
 
   setupVoltage();
   setupBattery();
@@ -531,7 +536,7 @@ void setup()
   // Setup wifi portal
   Serial.println("   Wifi portal ...");
 
-#if TFT_ENABLED
+#if ENABLE_TFT
   xTaskCreatePinnedToCore(
       taskUpdateTFT,    // Function that should be called
       "taskUpdateTFT",  // Name of the task (for debugging)
@@ -542,7 +547,7 @@ void setup()
       1);               // Core
 #endif
 
-#if ENABLED_WIFI
+#if ENABLE_WIFI
   xTaskCreatePinnedToCore(
       taskProcessWifiBlocking,   // Function that should be called
       "taskProcessWifiBlocking", // Name of the task (for debugging)
@@ -562,14 +567,16 @@ void setup()
       &htaskProcessButtons, // Task handle,
       1);                   // Core
 
+#if ENABLE_ONEWIRE
   xTaskCreatePinnedToCore(
-      taskProcessOwb,   // Function that should be called
-      "taskProcessOwb", // Name of the task (for debugging)
-      3000,             // Stack size (bytes)
-      NULL,             // Parameter to pass
-      tskIDLE_PRIORITY +1 , // Task priority
-      &htaskProcessOwb, // Task handle,
-      0);               // Core
+      taskProcessOwb,       // Function that should be called
+      "taskProcessOwb",     // Name of the task (for debugging)
+      3000,                 // Stack size (bytes)
+      NULL,                 // Parameter to pass
+      tskIDLE_PRIORITY + 1, // Task priority
+      &htaskProcessOwb,     // Task handle,
+      0);                   // Core
+#endif
 
 #if ENABLE_WATCHDOG
   Serial.println(PSTR("Watchdog enabled"));
@@ -1316,7 +1323,7 @@ void processSmartEscSerial()
 }
 #endif
 
-#if TEMPERATURE_EXT_READ
+#if ENABLE_TEMPERATURE_EXT_READ
 void processDHT()
 {
   static unsigned long measurement_timestamp = millis();
@@ -1755,7 +1762,7 @@ void loop()
 
   processRelay();
 
-#if VOLTAGE_EXT_READ
+#if ENABLE_VOLTAGE_EXT_READ
   if (i_loop % 10 == 0)
   {
 #if CONTROLLER_TYPE != CONTROLLER_VESC
@@ -1799,7 +1806,7 @@ void loop()
 #endif
 
 // keep it fast (/100 not working)
-#if TEMPERATURE_EXT_READ
+#if ENABLE_TEMPERATURE_EXT_READ
   if (i_loop % 10 == 6)
   {
     processDHT();
@@ -1823,7 +1830,7 @@ void loop()
   }
 #endif
 
-#if HAS_I2C && TEMPERATURE_INT_READ
+#if HAS_I2C && ENABLE_TEMPERATURE_INT_READ
   if (i_loop % 1000 == 8)
   {
     processSHTC3(true);
@@ -1839,7 +1846,7 @@ void loop()
     checkAndSaveOdo();
   }
 
-#if ENABLED_WIFI
+#if ENABLE_WIFI
   if (i_loop % 200 == 98)
   {
     WifiSettingsPortal_sendValues();
