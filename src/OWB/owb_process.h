@@ -1,16 +1,9 @@
-#pragma once
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifndef OWB_PROCESS_H
 #define OWB_PROCESS_H
 
-void owb_loop();
+#include "SharedData.h"
 
-#ifdef __cplusplus
-}
-#endif
+void owb_loop();
+void owb_setSharedData(SharedData *shrd);
 
 #endif

@@ -520,6 +520,9 @@ void setup()
   blh.setBleLock(false); // force BLE lock mode
   blh.init();
 
+  Serial.println("   OneWire ...");
+  owb_setSharedData(&shrd);
+
   setupVoltage();
   setupBattery();
   setupAutonomy();
@@ -808,6 +811,7 @@ void getBrakeFromAnalog()
 
   if (settings.get_Ebrake_smart_brake_type() == settings.LIST_Ebrake_smart_brake_type_Smart__analog_brake_lever)
   {
+
     shrd.brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
 
     // if brake is pressed at startup, disable speed limiter
@@ -987,7 +991,7 @@ void getBrakeFromAnalog()
         shrd.brakePercent = 0;
       }
 
-      // Serial.println("brakePercent = " + (String)shrd.brakePercent);
+      //Serial.println("brakePercent = " + (String)shrd.brakePercent);
 
       // alarm controler from braking throught IO output
       changeBrakeIOState();
@@ -1057,7 +1061,6 @@ void getThrottleFromAnalog()
 
 #if DEBUG_DISPLAY_THROTTLE
 #endif
-
 }
 
 void processDacOutput()
