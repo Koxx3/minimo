@@ -1359,7 +1359,7 @@ void processSHTC3(bool requestRead)
   }
   else
   {
-    mySHTC3.readDatas();
+    SHTC3_Status_TypeDef status = mySHTC3.readDatas();
 #if DEBUG_DISPLAY_SHTC3
     Serial.print(mySHTC3.toPercent()); // "toPercent" returns the percent humidity as a floating point number
     Serial.print("% / ");
@@ -1368,13 +1368,16 @@ void processSHTC3(bool requestRead)
     Serial.print(" deg C\n");
 #endif
 
+    if (status == SHTC3_Status_Nominal)
+    {
 #if CONTROLLER_TYPE == CONTROLLER_MINIMOTORS
-    shrd.currentTemperature = mySHTC3.toDegC();
-    if (shrd.currentTemperature > shrd.maxTemperature)
-      shrd.maxTemperature = shrd.currentTemperature;
+      shrd.currentTemperature = mySHTC3.toDegC();
+      if (shrd.currentTemperature > shrd.maxTemperature)
+        shrd.maxTemperature = shrd.currentTemperature;
 #endif
 
-    shrd.currentHumidity = mySHTC3.toPercent();
+      shrd.currentHumidity = mySHTC3.toPercent();
+    }
   }
 
 #if DEBUG_FAKE_TEMPERATURE
@@ -1899,6 +1902,7 @@ void loop()
 
   i_loop++;
 
+#if DEBUG_HEAP
   if (i_loop % 10000 == 0)
   {
     uint32_t hm1 = uxTaskGetStackHighWaterMark(NULL);
@@ -1908,6 +1912,7 @@ void loop()
     uint32_t hm5 = uxTaskGetStackHighWaterMark(htaskProcessOwb);
     Serial.printf("RAM left = %d / HM idle = %d / HM tft = %d / HM wifi = %d / HM btn = %d / HM owb = %d\n", esp_get_free_heap_size(), hm1, hm2, hm3, hm4, hm5);
   }
+#endif
 
 #if ENABLE_WATCHDOG
   resetWatchdog();

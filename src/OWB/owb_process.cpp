@@ -37,8 +37,8 @@
 
 #define GPIO_OWB (PIN_IN_OUT_ONEWIRE)
 #define MAX_DEVICES 4
-#define SAMPLE_PERIOD 50 // milliseconds
-#define SINGLE_ATTEMPT 0
+#define SAMPLE_PERIOD 4000 // milliseconds
+#define SINGLE_ATTEMPT 1
 
 int num_devices = 0;
 DS9990_Info *devices[MAX_DEVICES] = {0};
@@ -80,7 +80,8 @@ void owb_setup()
         if (search_state.rom_code.fields.family[0] == DS9990_FAMILY_CODE)
         {
             printf("OW - device %d is DS9990\n", num_devices);
-        } else
+        }
+        else
         {
             printf("OW - device %d is UNKNONWN\n", num_devices);
         }
@@ -141,22 +142,38 @@ void owb_loop()
                     // -------------
                     // WRITE & READ
                     // first attempt
-                    errors_ds9990[i] = ds9990_write_read_memory(devices_ds9990[i], writings, 1, readings, 7);
+
+                    bool isDataOk = false;
+                    errors_ds9990[i] = ds9990_write_read_memory(devices_ds9990[i], writings, 1, readings, 5);
                     if (errors_ds9990[i] != DS9990_OK)
                     {
 #if SINGLE_ATTEMPT
                         ++errors_ds9990_count[i];
+                        printf("OW %d: %d errors (%d ms)\n", i, errors_ds9990_count[i], millis());
 #else
                         // second attemp
                         errors_ds9990[i] = ds9990_write_read_memory(devices_ds9990[i], writings, 1, readings, 7);
                         if (errors_ds9990[i] != DS9990_OK)
                         {
                             ++errors_ds9990_count[i];
-                            printf("OW %d: %d errors => still error => increase counter\n", i, errors_ds9990_count[i]);
+                            printf("OW %d: %d errors => still error => increase counter (%d ms)\n", i, errors_ds9990_count[i], millis());
                         }
-                        // printf("  %d: %02x %02x %02x %02x %02x %02x %02x    %d errors\n", i, readings[0], readings[1], readings[2], readings[3], readings[4], readings[5], readings[6], errors_ds9990_count[i]);
+                        else
+                        {
+                            isDataOk = true;
+                        }
 #endif
-                        printf("OW %d: %d errors => retry\n", i, errors_ds9990_count[i]);
+                    }
+                    else
+                    {
+                        isDataOk = true;
+                    }
+
+                    if (isDataOk)
+                    {
+                        printf("  %d: %02x %02x %02x %02x %02x    %d errors\n", i, readings[0], readings[1], readings[2], readings[3], readings[4], errors_ds9990_count[i]);
+                        owb_shrd->currentTemperature = readings[1];
+                        owb_shrd->currentHumidity = readings[2];
                     }
                 }
             }
