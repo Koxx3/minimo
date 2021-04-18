@@ -759,7 +759,7 @@ double ZeroUart::getSpeed()
 
   // eject error values
   if (speed > 150)
-    return shrd->speedOld;
+    return shrd->speedOldForCntrl;
 
   return speed;
 }
@@ -785,7 +785,7 @@ uint8_t ZeroUart::modifySpeed(char var, char data_buffer[], uint8_t byte)
   // LCD Speed adjustement
   if ((settings->get_Original_display_speed_adjustment() != 0) || (shrd->speedLimiter == 1))
   {
-    double speedToProcess = shrd->speedOld * ((settings->get_Original_display_speed_adjustment() + 100) / 100.0);
+    double speedToProcess = shrd->speedOldForCntrl * ((settings->get_Original_display_speed_adjustment() + 100) / 100.0);
 
     if ((shrd->speedLimiter == 1) && (speedToProcess > 25))
     {
@@ -1016,7 +1016,7 @@ void ZeroUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSe
         var = modifySpeed(var, data_buffer_mod, 1);
 #endif
 
-        shrd->speedOld = shrd->speedCurrent;
+        shrd->speedOldForCntrl = shrd->speedCurrent;
 
         if (shrd->speedCurrent > shrd->speedMax)
           shrd->speedMax = shrd->speedCurrent;

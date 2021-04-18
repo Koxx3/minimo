@@ -315,6 +315,28 @@
           "tft_fast_increment": 10.0,
           "tft_slow_increment": 5.0,
           "tft_unit": "RH"
+        },
+        {
+          "ble_id": 47,
+          "var_name_hash": "nHon1qLHb9H-CA",
+          "type": "uint8_t",
+          "var_name": "Auto_power_off",
+          "valid_config": "",
+          "list_strings": "None\n2 min\n3 min\n4 min\n5 min\n10 min\n15 min\n20 min\n30 min\n60 min",
+          "min": 0,
+          "max": 9,
+          "default": 0,
+          "increment": "",
+          "regex_valid": "",
+          "smartphone_display_name": "Automatic power off",
+          "smartphone_display_unit": "",
+          "smartphone_display_hint": "",
+          "smartphone_display_type": "list",
+          "tft_menu_visible": 1.0,
+          "tft_display_name": "Auto power off",
+          "tft_fast_increment": 1.0,
+          "tft_slow_increment": 1.0,
+          "tft_unit": ""
         }
       ]
     },
@@ -888,9 +910,9 @@
         },
         {
           "ble_id": 46,
-          "var_name_hash": "-3nJ4Z5iG0YgXA",
+          "var_name_hash": "_PpyAC5APJBURg",
           "type": "string",
-          "var_name": "Throttle_output_curve_custom",
+          "var_name": "Throttle_output_curve_custom4",
           "valid_config": "",
           "list_strings": "",
           "min": 1.0,

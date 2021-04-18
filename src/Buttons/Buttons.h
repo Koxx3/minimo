@@ -19,6 +19,7 @@ public:
     Buttons();
     static void setup(SharedData *shrd_p, BluetoothHandler *blh_p, Settings *settings_p);
     static void processTicks();
+    static void ledsOff();
 
 private:
     static SharedData *shrd;
@@ -37,13 +38,11 @@ private:
     static void processButton2LpStop();
     static void processButton2();
 
-#if (PCB >= 142)
     static void processButton3Click();
     static void processButton3LpStart();
     static void processButton3LpDuring();
     static void processButton3LpStop();
     static void processButton3();
-#endif
 
     static void processAuxEvent(uint8_t buttonId, bool isLongPress);
     static void processSpeedLimiterEvent(uint8_t buttonId, bool isLongPress);

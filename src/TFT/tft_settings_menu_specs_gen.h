@@ -24,6 +24,19 @@ uint8_t tft_Speed_limiter_max_speed = 37;
 int8_t tft_Original_display_speed_adjustment = 0;
 uint8_t tft_Temperature_warning = 70;
 uint8_t tft_Humidity_warning = 80;
+uint8_t tft_Auto_power_off = 0;
+TOGGLE(tft_Auto_power_off, tft_Auto_power_off_LIST,"  Auto power off ",doNothing,noEvent,noStyle //
+    ,VALUE("None", 0 ,doNothing,noEvent) //
+    ,VALUE("2 min", 1 ,doNothing,noEvent) //
+    ,VALUE("3 min", 2 ,doNothing,noEvent) //
+    ,VALUE("4 min", 3 ,doNothing,noEvent) //
+    ,VALUE("5 min", 4 ,doNothing,noEvent) //
+    ,VALUE("10 min", 5 ,doNothing,noEvent) //
+    ,VALUE("15 min", 6 ,doNothing,noEvent) //
+    ,VALUE("20 min", 7 ,doNothing,noEvent) //
+    ,VALUE("30 min", 8 ,doNothing,noEvent) //
+    ,VALUE("60 min", 9 ,doNothing,noEvent) //
+);
 uint8_t tft_Default_mode_at_startup = 3;
 uint8_t tft_Default_eco_mode_at_startup = 2;
 TOGGLE(tft_Default_eco_mode_at_startup, tft_Default_eco_mode_at_startup_LIST,"  Startup eco mode ",doNothing,noEvent,noStyle //
@@ -154,6 +167,7 @@ MENU(SUBMENU_General,"  General",doNothing,noEvent,noStyle //
     ,FIELD(tft_Original_display_speed_adjustment,"  Speed adjustment "," %", -100, 100, 5, 1, doNothing,noEvent,noStyle) //
     ,FIELD(tft_Temperature_warning,"  Temperature warning "," °C", 50, 100, 10, 5, doNothing,noEvent,noStyle) //
     ,FIELD(tft_Humidity_warning,"  Humidity warning "," RH", 20, 100, 10, 5, doNothing,noEvent,noStyle) //
+    ,SUBMENU(tft_Auto_power_off_LIST) //
     ,EXIT("< Back")
 );
     
@@ -233,6 +247,7 @@ void settings_menu_init_from_settings() {
     tft_Original_display_speed_adjustment = TFT_menu_settings->get_Original_display_speed_adjustment();
     tft_Temperature_warning = TFT_menu_settings->get_Temperature_warning();
     tft_Humidity_warning = TFT_menu_settings->get_Humidity_warning();
+    tft_Auto_power_off = TFT_menu_settings->get_Auto_power_off();
     tft_Default_mode_at_startup = TFT_menu_settings->get_Default_mode_at_startup();
     tft_Default_eco_mode_at_startup = TFT_menu_settings->get_Default_eco_mode_at_startup();
     tft_Default_acceleration = TFT_menu_settings->get_Default_acceleration();
@@ -273,6 +288,7 @@ void settings_menu_save_to_settings() {
     TFT_menu_settings->set_Original_display_speed_adjustment(tft_Original_display_speed_adjustment);
     TFT_menu_settings->set_Temperature_warning(tft_Temperature_warning);
     TFT_menu_settings->set_Humidity_warning(tft_Humidity_warning);
+    TFT_menu_settings->set_Auto_power_off(tft_Auto_power_off);
     TFT_menu_settings->set_Default_mode_at_startup(tft_Default_mode_at_startup);
     TFT_menu_settings->set_Default_eco_mode_at_startup(tft_Default_eco_mode_at_startup);
     TFT_menu_settings->set_Default_acceleration(tft_Default_acceleration);

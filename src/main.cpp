@@ -137,6 +137,8 @@ SharedData shrd;
 
 int i_loop = 0;
 
+uint32_t timerPowerOff = 0;
+
 uint32_t iBrakeMinCalibOrder = 0;
 
 uint16_t voltageRaw = 0;
@@ -571,7 +573,7 @@ void setup()
   xTaskCreatePinnedToCore(
       taskProcessOwb,       // Function that should be called
       "taskProcessOwb",     // Name of the task (for debugging)
-      3000,                 // Stack size (bytes)
+      2000,                 // Stack size (bytes)
       NULL,                 // Parameter to pass
       tskIDLE_PRIORITY + 1, // Task priority
       &htaskProcessOwb,     // Task handle,
@@ -621,7 +623,7 @@ void displaySpeed()
   Serial.print("speedCurrent : ");
   Serial.print(shrd.speedCurrent);
   Serial.print(" / speedOld : ");
-  Serial.print(shrd.speedOld);
+  Serial.print(shrd.speedOldForCntrl);
   Serial.println("");
 }
 
@@ -681,6 +683,69 @@ void checkAndSaveOdo()
   }
 
   shrd.speedOldForOdo = shrd.speedCurrent;
+}
+
+void powerOff()
+{
+  Serial.println("SHUTDOWN");
+  digitalWrite(PIN_OUT_POWER_LATCH, 1);
+  btns.ledsOff();
+  tftBacklightLow(true);
+}
+
+void checkAndPowerOff()
+{
+
+  if (shrd.speedCurrent > 0)
+  {
+    timerPowerOff = millis();
+  }
+  else
+  {
+
+    bool shouldPowerOff = false;
+    if ((settings.get_Auto_power_off() == settings.LIST_Auto_power_off_2_min) && (millis() > timerPowerOff + (60000 * 2)))
+    {
+      shouldPowerOff = true;
+    }
+    else if ((settings.get_Auto_power_off() == settings.LIST_Auto_power_off_3_min) && (millis() > timerPowerOff + (60000 * 3)))
+    {
+      shouldPowerOff = true;
+    }
+    else if ((settings.get_Auto_power_off() == settings.LIST_Auto_power_off_4_min) && (millis() > timerPowerOff + (60000 * 4)))
+    {
+      shouldPowerOff = true;
+    }
+    else if ((settings.get_Auto_power_off() == settings.LIST_Auto_power_off_5_min) && (millis() > timerPowerOff + (60000 * 5)))
+    {
+      shouldPowerOff = true;
+    }
+    else if ((settings.get_Auto_power_off() == settings.LIST_Auto_power_off_10_min) && (millis() > timerPowerOff + (60000 * 10)))
+    {
+      shouldPowerOff = true;
+    }
+    else if ((settings.get_Auto_power_off() == settings.LIST_Auto_power_off_15_min) && (millis() > timerPowerOff + (60000 * 15)))
+    {
+      shouldPowerOff = true;
+    }
+    else if ((settings.get_Auto_power_off() == settings.LIST_Auto_power_off_20_min) && (millis() > timerPowerOff + (60000 * 20)))
+    {
+      shouldPowerOff = true;
+    }
+    else if ((settings.get_Auto_power_off() == settings.LIST_Auto_power_off_30_min) && (millis() > timerPowerOff + (60000 * 30)))
+    {
+      shouldPowerOff = true;
+    }
+    else if ((settings.get_Auto_power_off() == settings.LIST_Auto_power_off_60_min) && (millis() > timerPowerOff + (60000 * 60)))
+    {
+      shouldPowerOff = true;
+    }
+
+    if (shouldPowerOff)
+    {
+      powerOff();
+    }
+  }
 }
 
 void computeDistance(float speed)
@@ -1112,9 +1177,9 @@ void processDacOutput()
     {
       index = (throttlePercentInt / 200) - 1;
       if (index >= 0)
-        low = getValueFromString(settings.get_Throttle_output_curve_custom(), ',', index) * 10;
+        low = getValueFromString(settings.get_Throttle_output_curve_custom4(), ',', index) * 10;
       if (index < 3)
-        high = getValueFromString(settings.get_Throttle_output_curve_custom(), ',', index + 1) * 10;
+        high = getValueFromString(settings.get_Throttle_output_curve_custom4(), ',', index + 1) * 10;
       float throttlePercentNew = map(throttlePercentInt, (index + 1) * 200, (index + 2) * 200, low, high) / 10.0;
       //Serial.println("throttlePercentInt = " + (String)throttlePercentInt + " / index = " + (String)index + " / low = " + (String)low + " / high = " + (String)high + " / throttlePercentNew = " + (String)throttlePercentNew);
       throttlePercent = throttlePercentNew;
@@ -1841,10 +1906,12 @@ void loop()
   }
 #endif
 
-  if (i_loop % 1000 == 99)
+#if PCB > 130
+  if (i_loop % 1000 == 97)
   {
-    checkAndSaveOdo();
+    checkAndPowerOff();
   }
+#endif
 
 #if ENABLE_WIFI
   if (i_loop % 200 == 98)
@@ -1852,6 +1919,11 @@ void loop()
     WifiSettingsPortal_sendValues();
   }
 #endif
+
+  if (i_loop % 1000 == 99)
+  {
+    checkAndSaveOdo();
+  }
 
   // Give a time for ESP
   delay(1);

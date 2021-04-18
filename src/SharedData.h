@@ -46,7 +46,7 @@ public:
 
     double speedCurrent = 0.0;
     double speedMax = 0.0;
-    double speedOld = 0;
+    double speedOldForCntrl = 0;
     double speedOldForOdo = 0.0;
 
     uint32_t distanceTrip = 0;       // this TRIP can be reset from/for display // 1 unit = 0.1m ?

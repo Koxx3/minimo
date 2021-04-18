@@ -223,6 +223,31 @@ public:
             
     /*-------------------------------------------------------*/
 
+    #define SETTINGS_AUTO_POWER_OFF_BLE_ID 47
+    #define SETTINGS_AUTO_POWER_OFF_STORAGE_KEY "nHon1qLHb9H-CA"
+    #define SETTINGS_AUTO_POWER_OFF_NAME "Auto_power_off"
+
+    uint8_t Auto_power_off;
+    typedef enum LIST_Auto_power_off {
+        LIST_Auto_power_off_None,
+        LIST_Auto_power_off_2_min,
+        LIST_Auto_power_off_3_min,
+        LIST_Auto_power_off_4_min,
+        LIST_Auto_power_off_5_min,
+        LIST_Auto_power_off_10_min,
+        LIST_Auto_power_off_15_min,
+        LIST_Auto_power_off_20_min,
+        LIST_Auto_power_off_30_min,
+        LIST_Auto_power_off_60_min, 
+    } tAuto_power_off;
+
+    void set_Auto_power_off (uint8_t value);
+    uint8_t get_Auto_power_off();
+    void display_Auto_power_off();
+    void save_Auto_power_off(uint8_t value);
+            
+    /*-------------------------------------------------------*/
+
     #define SETTINGS_SMARTDISPLAY_SPEED_ADJUSTMENT_BLE_ID 15
     #define SETTINGS_SMARTDISPLAY_SPEED_ADJUSTMENT_STORAGE_KEY "uRlkv2vjRKyQBw"
     #define SETTINGS_SMARTDISPLAY_SPEED_ADJUSTMENT_NAME "Smartdisplay_speed_adjustment"
@@ -588,16 +613,16 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_BLE_ID 46
-    #define SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_STORAGE_KEY "-3nJ4Z5iG0YgXA"
-    #define SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_NAME "Throttle_output_curve_custom"
+    #define SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM4_BLE_ID 46
+    #define SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM4_STORAGE_KEY "_PpyAC5APJBURg"
+    #define SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM4_NAME "Throttle_output_curve_custom4"
 
-    String Throttle_output_curve_custom;
+    String Throttle_output_curve_custom4;
 
-    void set_Throttle_output_curve_custom (String value);
-    String get_Throttle_output_curve_custom();
-    void display_Throttle_output_curve_custom();
-    void save_Throttle_output_curve_custom(String value);
+    void set_Throttle_output_curve_custom4 (String value);
+    String get_Throttle_output_curve_custom4();
+    void display_Throttle_output_curve_custom4();
+    void save_Throttle_output_curve_custom4(String value);
             
     /*-------------------------------------------------------*/
 

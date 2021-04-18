@@ -3,6 +3,7 @@
 #include <jled.h>
 #include "debug.h"
 #include "TFT/tft_main.h"
+#include "main.h"
 
 #define ENABLE_LED 1
 
@@ -231,7 +232,7 @@ void Buttons::processButton2LpDuring()
         shrd->button2LpProcessed = true;
 
         // Enter settings panel
-#if TFT_ENABLED
+#if ENABLE_TFT
         if (shrd->inSettingsMenu == SETTINGS_MENU_STATE_OUT)
         {
             shrd->inSettingsMenu = SETTINGS_MENU_STATE_ENTERING;
@@ -279,11 +280,7 @@ void Buttons::processButton3LpDuring()
 
         if (shrd->button3LpDuration > settings->get_Button_long_press_duration() * 1000)
         {
-            digitalWrite(PIN_OUT_POWER_LATCH, 1);
-            Serial.println("processButton3LpDuring : SHUTDOWN");
-            led1.Stop();
-            led1.On().Forever();
-            tftBacklightLow(true);
+            powerOff();
         }
     }
 }
@@ -520,6 +517,12 @@ void Buttons::processEcoEvent(uint8_t buttonId, bool isLongPress)
 
         Serial.println("processEcoEvent => new ecoOrder = " + (String)shrd->ecoOrder);
     }
+}
+
+void Buttons::ledsOff()
+{
+  led1.Stop();
+  led1.On().Forever();
 }
 
 void Buttons::processTicks()

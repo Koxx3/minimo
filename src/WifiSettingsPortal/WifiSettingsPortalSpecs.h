@@ -31,6 +31,7 @@ ACInput(ACS2_6, "-80", "Beacon range", "", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACS2_7, "0", "Speed adjustment", "^[-]?[0-9]+$", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACS2_8, "70", "Temperature warning", "", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACS2_9, "80", "Humidity warning", "", "", AC_Tag_BR, AC_Input_Text);
+ACSelect(ACS2_10, {"None","2 min","3 min","4 min","5 min","10 min","15 min","20 min","30 min","60 min"}, "Auto power off", 0);
 ACText(ACS3, "<h2>Smartphone display</h2>", "");
 ACInput(ACS3_1, "0", "Speed adjustment", "^[-]?[0-9]+$", "", AC_Tag_BR, AC_Input_Text);
 ACSelect(ACS3_2, {"AUX","DUAL","LIGHT","HORN","RELAY"}, "Aux relay name", 0);
@@ -95,6 +96,7 @@ AutoConnectAux settingsPageAux("/settingspage", "SmartElec settings", true, {
     ACS2_7,
     ACS2_8,
     ACS2_9,
+    ACS2_10,
         
     ACS3,
     ACS3_1,
@@ -161,6 +163,7 @@ void saveConfig(AutoConnectAux &aux)
     WifiSettingsPortal_settings->set_Original_display_speed_adjustment((settingsPageAux["ACS2_7"].as<AutoConnectInput>()).value.toInt());
     WifiSettingsPortal_settings->set_Temperature_warning((settingsPageAux["ACS2_8"].as<AutoConnectInput>()).value.toInt());
     WifiSettingsPortal_settings->set_Humidity_warning((settingsPageAux["ACS2_9"].as<AutoConnectInput>()).value.toInt());
+    WifiSettingsPortal_settings->set_Auto_power_off((settingsPageAux["ACS2_10"].as<AutoConnectSelect>()).selected - 1);
     WifiSettingsPortal_settings->set_Smartdisplay_speed_adjustment((settingsPageAux["ACS3_1"].as<AutoConnectInput>()).value.toInt());
     WifiSettingsPortal_settings->set_Aux_relay_name((settingsPageAux["ACS3_2"].as<AutoConnectSelect>()).selected - 1);
     WifiSettingsPortal_settings->set_Display_gps_speed_instead_of_escooter_speed((settingsPageAux["ACS3_3"].as<AutoConnectCheckbox>()).checked ? 1 : 0);
@@ -186,7 +189,7 @@ void saveConfig(AutoConnectAux &aux)
     WifiSettingsPortal_settings->set_Throttle_output_min_voltage((settingsPageAux["ACS6_4"].as<AutoConnectInput>()).value.toInt());
     WifiSettingsPortal_settings->set_Throttle_output_max_voltage((settingsPageAux["ACS6_5"].as<AutoConnectInput>()).value.toInt());
     WifiSettingsPortal_settings->set_Throttle_output_curve((settingsPageAux["ACS6_6"].as<AutoConnectSelect>()).selected - 1);
-    WifiSettingsPortal_settings->set_Throttle_output_curve_custom((settingsPageAux["ACS6_7"].as<AutoConnectInput>()).value);
+    WifiSettingsPortal_settings->set_Throttle_output_curve_custom4((settingsPageAux["ACS6_7"].as<AutoConnectInput>()).value);
     WifiSettingsPortal_settings->set_Button_1_short_press_action((settingsPageAux["ACS7_1"].as<AutoConnectSelect>()).selected - 1);
     WifiSettingsPortal_settings->set_Button_1_long_press_action((settingsPageAux["ACS7_2"].as<AutoConnectSelect>()).selected - 1);
     WifiSettingsPortal_settings->set_Button_2_short_press_action((settingsPageAux["ACS7_3"].as<AutoConnectSelect>()).selected - 1);
@@ -222,6 +225,27 @@ void loadConfig(AutoConnectAux &aux)
     aux.setElementValue("ACS2_7", (String)WifiSettingsPortal_settings->get_Original_display_speed_adjustment());
     aux.setElementValue("ACS2_8", (String)WifiSettingsPortal_settings->get_Temperature_warning());
     aux.setElementValue("ACS2_9", (String)WifiSettingsPortal_settings->get_Humidity_warning());
+    uint8_t val_Auto_power_off = WifiSettingsPortal_settings->get_Auto_power_off();
+    if (val_Auto_power_off == 0)
+        aux.setElementValue("ACS2_10", "None");
+    if (val_Auto_power_off == 1)
+        aux.setElementValue("ACS2_10", "2 min");
+    if (val_Auto_power_off == 2)
+        aux.setElementValue("ACS2_10", "3 min");
+    if (val_Auto_power_off == 3)
+        aux.setElementValue("ACS2_10", "4 min");
+    if (val_Auto_power_off == 4)
+        aux.setElementValue("ACS2_10", "5 min");
+    if (val_Auto_power_off == 5)
+        aux.setElementValue("ACS2_10", "10 min");
+    if (val_Auto_power_off == 6)
+        aux.setElementValue("ACS2_10", "15 min");
+    if (val_Auto_power_off == 7)
+        aux.setElementValue("ACS2_10", "20 min");
+    if (val_Auto_power_off == 8)
+        aux.setElementValue("ACS2_10", "30 min");
+    if (val_Auto_power_off == 9)
+        aux.setElementValue("ACS2_10", "60 min");
     aux.setElementValue("ACS3_1", (String)WifiSettingsPortal_settings->get_Smartdisplay_speed_adjustment());
     uint8_t val_Aux_relay_name = WifiSettingsPortal_settings->get_Aux_relay_name();
     if (val_Aux_relay_name == 0)
@@ -303,7 +327,7 @@ void loadConfig(AutoConnectAux &aux)
         aux.setElementValue("ACS6_6", "Exponential 4");
     if (val_Throttle_output_curve == 5)
         aux.setElementValue("ACS6_6", "Custom 6 points");
-    aux.setElementValue("ACS6_7", (String)WifiSettingsPortal_settings->get_Throttle_output_curve_custom());
+    aux.setElementValue("ACS6_7", (String)WifiSettingsPortal_settings->get_Throttle_output_curve_custom4());
     uint8_t val_Button_1_short_press_action = WifiSettingsPortal_settings->get_Button_1_short_press_action();
     if (val_Button_1_short_press_action == 0)
         aux.setElementValue("ACS7_1", "None");

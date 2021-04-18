@@ -51,6 +51,8 @@ void Settings::restore() {
     Serial.println("  >> Temperature_warning = " + (String)Temperature_warning);
     Humidity_warning = prefs.getInt(SETTINGS_HUMIDITY_WARNING_STORAGE_KEY, 80);
     Serial.println("  >> Humidity_warning = " + (String)Humidity_warning);
+    Auto_power_off = prefs.getInt(SETTINGS_AUTO_POWER_OFF_STORAGE_KEY, 0);
+    Serial.println("  >> Auto_power_off = " + (String)Auto_power_off);
     Smartdisplay_speed_adjustment = prefs.getInt(SETTINGS_SMARTDISPLAY_SPEED_ADJUSTMENT_STORAGE_KEY, 0);
     Serial.println("  >> Smartdisplay_speed_adjustment = " + (String)Smartdisplay_speed_adjustment);
     Aux_relay_name = prefs.getInt(SETTINGS_AUX_RELAY_NAME_STORAGE_KEY, 0);
@@ -101,8 +103,8 @@ void Settings::restore() {
     Serial.println("  >> Throttle_output_max_voltage = " + (String)Throttle_output_max_voltage);
     Throttle_output_curve = prefs.getInt(SETTINGS_THROTTLE_OUTPUT_CURVE_STORAGE_KEY, 2);
     Serial.println("  >> Throttle_output_curve = " + (String)Throttle_output_curve);
-    Throttle_output_curve_custom = prefs.getString(SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_STORAGE_KEY, "20,40,60,80");
-    Serial.println("  >> Throttle_output_curve_custom = " + (String)Throttle_output_curve_custom);
+    Throttle_output_curve_custom4 = prefs.getString(SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM4_STORAGE_KEY, "20,40,60,80");
+    Serial.println("  >> Throttle_output_curve_custom4 = " + (String)Throttle_output_curve_custom4);
     Button_1_short_press_action = prefs.getInt(SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_STORAGE_KEY, 0);
     Serial.println("  >> Button_1_short_press_action = " + (String)Button_1_short_press_action);
     Button_1_long_press_action = prefs.getInt(SETTINGS_BUTTON_1_LONG_PRESS_ACTION_STORAGE_KEY, 0);
@@ -136,6 +138,7 @@ void Settings::save() {
     prefs.putInt(SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_STORAGE_KEY, Original_display_speed_adjustment);
     prefs.putInt(SETTINGS_TEMPERATURE_WARNING_STORAGE_KEY, Temperature_warning);
     prefs.putInt(SETTINGS_HUMIDITY_WARNING_STORAGE_KEY, Humidity_warning);
+    prefs.putInt(SETTINGS_AUTO_POWER_OFF_STORAGE_KEY, Auto_power_off);
     prefs.putInt(SETTINGS_SMARTDISPLAY_SPEED_ADJUSTMENT_STORAGE_KEY, Smartdisplay_speed_adjustment);
     prefs.putInt(SETTINGS_AUX_RELAY_NAME_STORAGE_KEY, Aux_relay_name);
     prefs.putInt(SETTINGS_DISPLAY_GPS_SPEED_INSTEAD_OF_ESCOOTER_SPEED_STORAGE_KEY, Display_gps_speed_instead_of_escooter_speed);
@@ -161,7 +164,7 @@ void Settings::save() {
     prefs.putInt(SETTINGS_THROTTLE_OUTPUT_MIN_VOLTAGE_STORAGE_KEY, Throttle_output_min_voltage);
     prefs.putInt(SETTINGS_THROTTLE_OUTPUT_MAX_VOLTAGE_STORAGE_KEY, Throttle_output_max_voltage);
     prefs.putInt(SETTINGS_THROTTLE_OUTPUT_CURVE_STORAGE_KEY, Throttle_output_curve);
-    prefs.putString(SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_STORAGE_KEY, Throttle_output_curve_custom);
+    prefs.putString(SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM4_STORAGE_KEY, Throttle_output_curve_custom4);
     prefs.putInt(SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_STORAGE_KEY, Button_1_short_press_action);
     prefs.putInt(SETTINGS_BUTTON_1_LONG_PRESS_ACTION_STORAGE_KEY, Button_1_long_press_action);
     prefs.putInt(SETTINGS_BUTTON_2_SHORT_PRESS_ACTION_STORAGE_KEY, Button_2_short_press_action);
@@ -258,6 +261,11 @@ void Settings::unpack_setting_packet(uint8_t* packet, uint8_t length) {
     case SETTINGS_HUMIDITY_WARNING_BLE_ID :
         set_Humidity_warning(buffer_get_uint8(packet, &ind));
         //Serial.print("unpack_setting_packet - Humidity_warning : " + (String) Humidity_warning + " / ");
+        //buffer_display("", packet, length);
+        break;
+    case SETTINGS_AUTO_POWER_OFF_BLE_ID :
+        set_Auto_power_off(buffer_get_uint8(packet, &ind));
+        //Serial.print("unpack_setting_packet - Auto_power_off : " + (String) Auto_power_off + " / ");
         //buffer_display("", packet, length);
         break;
     case SETTINGS_SMARTDISPLAY_SPEED_ADJUSTMENT_BLE_ID :
@@ -385,16 +393,16 @@ void Settings::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         //Serial.print("unpack_setting_packet - Throttle_output_curve : " + (String) Throttle_output_curve + " / ");
         //buffer_display("", packet, length);
         break;
-    case SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_BLE_ID :
-        char Throttle_output_curve_custom_part[17];
-        memset(Throttle_output_curve_custom_part, 0, 17 );
+    case SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM4_BLE_ID :
+        char Throttle_output_curve_custom4_part[17];
+        memset(Throttle_output_curve_custom4_part, 0, 17 );
         if (packetNumber == 0) {
-            Throttle_output_curve_custom = "";
+            Throttle_output_curve_custom4 = "";
         }
-        memcpy(Throttle_output_curve_custom_part, &packet[ind], length  - 4);
-        Throttle_output_curve_custom =  Throttle_output_curve_custom + Throttle_output_curve_custom_part;
-        set_Throttle_output_curve_custom( Throttle_output_curve_custom);
-        //Serial.print("unpack_setting_packet - Throttle_output_curve_custom : " + (String) Throttle_output_curve_custom + " / ");
+        memcpy(Throttle_output_curve_custom4_part, &packet[ind], length  - 4);
+        Throttle_output_curve_custom4 =  Throttle_output_curve_custom4 + Throttle_output_curve_custom4_part;
+        set_Throttle_output_curve_custom4( Throttle_output_curve_custom4);
+        //Serial.print("unpack_setting_packet - Throttle_output_curve_custom4 : " + (String) Throttle_output_curve_custom4 + " / ");
         //buffer_display("", packet, length);
         break;
     case SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_BLE_ID :
@@ -542,6 +550,11 @@ bool Settings::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, ui
         //Serial.print("pack_setting_packet - Humidity_warning : " + (String) Humidity_warning + " / ");
         //buffer_display("", packet, *ind);
         break;
+    case SETTINGS_AUTO_POWER_OFF_BLE_ID :
+        buffer_append_uint8(packet, Auto_power_off, ind);
+        //Serial.print("pack_setting_packet - Auto_power_off : " + (String) Auto_power_off + " / ");
+        //buffer_display("", packet, *ind);
+        break;
     case SETTINGS_SMARTDISPLAY_SPEED_ADJUSTMENT_BLE_ID :
         buffer_append_int8(packet, Smartdisplay_speed_adjustment, ind);
         //Serial.print("pack_setting_packet - Smartdisplay_speed_adjustment : " + (String) Smartdisplay_speed_adjustment + " / ");
@@ -667,23 +680,23 @@ bool Settings::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, ui
         //Serial.print("pack_setting_packet - Throttle_output_curve : " + (String) Throttle_output_curve + " / ");
         //buffer_display("", packet, *ind);
         break;
-    case SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_BLE_ID :
+    case SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM4_BLE_ID :
         if (packetNumber == 0) {
-            if (Throttle_output_curve_custom.length() > 16) {
+            if (Throttle_output_curve_custom4.length() > 16) {
                 hasNextPacket = true;
-                memcpy(&packet[*ind], &Throttle_output_curve_custom[0], 16);
+                memcpy(&packet[*ind], &Throttle_output_curve_custom4[0], 16);
                 *ind = *ind + 16;
             }
             else {
-                memcpy(&packet[*ind], &Throttle_output_curve_custom[0], Throttle_output_curve_custom.length());
-                *ind = *ind + Throttle_output_curve_custom.length();
+                memcpy(&packet[*ind], &Throttle_output_curve_custom4[0], Throttle_output_curve_custom4.length());
+                *ind = *ind + Throttle_output_curve_custom4.length();
             }
         }
         else if (packetNumber == 1) {
-            memcpy(&packet[*ind], &Throttle_output_curve_custom[16], Throttle_output_curve_custom.length() - 16);
-            *ind = *ind + Throttle_output_curve_custom.length() - 16;
+            memcpy(&packet[*ind], &Throttle_output_curve_custom4[16], Throttle_output_curve_custom4.length() - 16);
+            *ind = *ind + Throttle_output_curve_custom4.length() - 16;
         }
-        //Serial.print("pack_setting_packet - Throttle_output_curve_custom : " + (String) Throttle_output_curve_custom + " / ");
+        //Serial.print("pack_setting_packet - Throttle_output_curve_custom4 : " + (String) Throttle_output_curve_custom4 + " / ");
         //buffer_display("", packet, *ind);
         break;
     case SETTINGS_BUTTON_1_SHORT_PRESS_ACTION_BLE_ID :
@@ -1043,6 +1056,27 @@ void Settings::display_Humidity_warning() {
 void Settings::save_Humidity_warning(uint8_t value) {
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putInt(SETTINGS_HUMIDITY_WARNING_STORAGE_KEY, Humidity_warning);
+    prefs.end();
+}
+                
+
+/*-------------------------------------------------------*/
+
+void Settings::set_Auto_power_off(uint8_t value) {
+    Auto_power_off = value;
+}
+
+uint8_t Settings::get_Auto_power_off() {
+    return Auto_power_off ;
+}
+
+void Settings::display_Auto_power_off() {
+    Serial.println("  Auto_power_off = " + (String) Auto_power_off);
+}
+
+void Settings::save_Auto_power_off(uint8_t value) {
+    prefs.begin(SETTINGS_STORAGE, false);
+    prefs.putInt(SETTINGS_AUTO_POWER_OFF_STORAGE_KEY, Auto_power_off);
     prefs.end();
 }
                 
@@ -1574,21 +1608,21 @@ void Settings::save_Throttle_output_curve(uint8_t value) {
 
 /*-------------------------------------------------------*/
 
-void Settings::set_Throttle_output_curve_custom(String value) {
-    Throttle_output_curve_custom = value;
+void Settings::set_Throttle_output_curve_custom4(String value) {
+    Throttle_output_curve_custom4 = value;
 }
 
-String Settings::get_Throttle_output_curve_custom() {
-    return Throttle_output_curve_custom ;
+String Settings::get_Throttle_output_curve_custom4() {
+    return Throttle_output_curve_custom4 ;
 }
 
-void Settings::display_Throttle_output_curve_custom() {
-    Serial.println("  Throttle_output_curve_custom = " + (String) Throttle_output_curve_custom);
+void Settings::display_Throttle_output_curve_custom4() {
+    Serial.println("  Throttle_output_curve_custom4 = " + (String) Throttle_output_curve_custom4);
 }
 
-void Settings::save_Throttle_output_curve_custom(String value) {
+void Settings::save_Throttle_output_curve_custom4(String value) {
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putString(SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM_STORAGE_KEY, Throttle_output_curve_custom);
+    prefs.putString(SETTINGS_THROTTLE_OUTPUT_CURVE_CUSTOM4_STORAGE_KEY, Throttle_output_curve_custom4);
     prefs.end();
 }
                 

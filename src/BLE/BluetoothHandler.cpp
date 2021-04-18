@@ -326,8 +326,8 @@ void BluetoothHandler::init()
             else if (pCharacteristic->getUUID().toString() == SETTINGS_DATA_CHARACTERISTIC_UUID)
             {
                 std::string rxValue = pCharacteristic->getValue();
-                Serial.println("BLH - Write : SETTINGS_DATA_CHARACTERISTIC_UUID");
                 /*
+                Serial.println("BLH - Write : SETTINGS_DATA_CHARACTERISTIC_UUID");
                 uint8_t rxInt[20];
                 for (int i = 0; i < rxValue.length(); i++)
                 {
@@ -343,7 +343,7 @@ void BluetoothHandler::init()
             }
             else if (pCharacteristic->getUUID().toString() == SETTINGS_ACTION_CHARACTERISTIC_UUID)
             {
-                Serial.println("BLH - Write : SETTINGS_ACTION_CHARACTERISTIC_UUID");
+                // Serial.println("BLH - Write : SETTINGS_ACTION_CHARACTERISTIC_UUID");
                 std::string rxValue = pCharacteristic->getValue();
 
                 if (rxValue[0] == 0)

@@ -57,4 +57,6 @@ void checkAndSaveOdo();
 
 void processWifi();
 
+void powerOff();
+
 #endif
