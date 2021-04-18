@@ -321,7 +321,7 @@
           "var_name_hash": "nHon1qLHb9H-CA",
           "type": "uint8_t",
           "var_name": "Auto_power_off",
-          "valid_config": "",
+          "valid_config": "^sd_.*",
           "list_strings": "None\n2 min\n3 min\n4 min\n5 min\n10 min\n15 min\n20 min\n30 min\n60 min",
           "min": 0,
           "max": 9,
