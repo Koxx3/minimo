@@ -172,11 +172,12 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Send optocopler order
     - [✅] Internal temperature sensor
     - [✅] Throttle signal regeneration
+    - [IN PROGRESS 🔄] External expansion boards
 
 - [✅] Power 🔋
     - [✅] Convert 12V to 5V
     - [✅] Convert 80V to 5V
-    - [IN PROGRESS 🔄] Convert 100V to 5V
+    - [✅] Convert 100V to 5V
 
 - [ ] Features ⚙️
     - [✅] Save settings in non volatile memory
@@ -202,7 +203,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] LCD Speed adjustment
     - [✅] Exponential acceleration curve
     - [✅] PAS switch
-    - [✅] Custom acceleration curves (linear/expo)
+    - [✅] Custom acceleration curves (linear/expo/custom)
+    - [✅] Automatic power off
     - [IN PROGRESS 🔄] Automatic ECO mode on low battery 
     - [ ] Dynamic BLE debug infos
 
@@ -225,16 +227,16 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
         - [✅] Trip distance
         - [✅] Average speed
         - [✅] Autonomy
-        - [IN TEST 🔄] Brake forbiden
-        - [ ] Errors
+        - [✅] Brake forbiden
+        - [✅] Errors
     - [✅] Auto-launch app with NFC tag
     - [✅] Parameters custom settings
     - [✅] Data logging
     - [✅] History graphics
-    - [ ] Wizzard with escooter model choice
+    - [ ] Wizzard for escooter model choice
+    - [ ] Wizzard for calibrations
     - [ ] UI configuration (hide items)
-    
-
+   
 - [ ] iPhone application 🍏
     - [ ] A kind developper to do this part ? 😇
 
