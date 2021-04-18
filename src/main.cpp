@@ -577,7 +577,7 @@ void setup()
       NULL,                 // Parameter to pass
       tskIDLE_PRIORITY + 1, // Task priority
       &htaskProcessOwb,     // Task handle,
-      0);                   // Core
+      1);                   // Core
 #endif
 
 #if ENABLE_WATCHDOG
@@ -1967,17 +1967,6 @@ void loop()
   }
   timeLoop = millis();
 #endif
-  /*
-  if (i_loop == 5000) {
-    digitalWrite(PIN_OUT_POWER_LATCH, 1);
-    Serial.println("shutdown !!!");
-  }
-
-  if (i_loop % 500 == 0) {
-    int var = digitalRead(PIN_IN_BUTTON_PWR);
-    Serial.println("btn = " + (String) var);
-  }
-*/
 
   i_loop++;
 
