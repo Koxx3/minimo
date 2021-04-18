@@ -278,6 +278,7 @@ void Buttons::processButton3LpDuring()
 
         shrd->button3LpDuration = button3.getPressedTicks();
 
+        Serial.println("processButton3LpDuring");
         if (shrd->button3LpDuration > settings->get_Button_long_press_duration() * 1000)
         {
             powerOff();
@@ -521,8 +522,8 @@ void Buttons::processEcoEvent(uint8_t buttonId, bool isLongPress)
 
 void Buttons::ledsOff()
 {
-  led1.Stop();
-  led1.On().Forever();
+    led1.Stop();
+    led1.On().Forever();
 }
 
 void Buttons::processTicks()

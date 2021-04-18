@@ -575,7 +575,7 @@ void setup()
       "taskProcessOwb",     // Name of the task (for debugging)
       2000,                 // Stack size (bytes)
       NULL,                 // Parameter to pass
-      tskIDLE_PRIORITY + 1, // Task priority
+      1, // Task priority
       &htaskProcessOwb,     // Task handle,
       1);                   // Core
 #endif

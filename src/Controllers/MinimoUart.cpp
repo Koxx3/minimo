@@ -593,6 +593,9 @@ uint8_t MinimoUart::modifyBrakeFromAnalog(char var, char data_buffer[])
       if (step <= 0)
         step = 1;
 
+
+      //shrd->brakeSentOrder = map(shrd->brakePercent, 0, 100, settings->get_Ebrake_min_power_value(), settings->get_Ebrake_max_power_value());
+
       if (shrd->brakeFilterMeanErr > shrd->brakeMinPressureRaw)
       {
 

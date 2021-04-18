@@ -13,7 +13,7 @@
 // Perf debugs
 #define DEBUG_TIMELOOP_MS                           0
 #define DEBUG_TIMELOOP_NS                           0
-#define DEBUG_HEAP                                  1
+#define DEBUG_HEAP                                  0
 
 // General debugs
 #define DEBUG_DISPLAY_BLE_NOTIFY                    0
@@ -38,7 +38,6 @@
 #define DEBUG_DISPLAY_SHTC3                         0
 #define DEBUG_DISPLAY_SPEED                         0
 #define DEBUG_DISPLAY_SAVE_ODO                      0
-#define DEBUG_DISPLAY_AUTO_POWER_OFF                1
 
 #define DEBUG_BRAKE_SENT_ORDER                      0
 
