@@ -149,7 +149,7 @@ void owb_loop()
                     {
 #if SINGLE_ATTEMPT
                         ++errors_ds9990_count[i];
-                        printf("OW %d: %d errors (%d ms)\n", i, errors_ds9990_count[i], millis());
+                        printf("OW %d: %d errors (%lu ms)\n", i, errors_ds9990_count[i], millis());
 #else
                         // second attemp
                         errors_ds9990[i] = ds9990_write_read_memory(devices_ds9990[i], writings, 1, readings, 7);
@@ -194,7 +194,7 @@ void owb_loop()
         while (1)
         {
             vTaskDelay(100);
-            printf("OW - no device found\n");
+            //printf("OW - no device found\n");
         }
     }
 }

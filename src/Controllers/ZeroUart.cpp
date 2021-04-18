@@ -148,8 +148,6 @@ uint8_t ZeroUart::getMode(char var, char data_buffer[])
 uint8_t ZeroUart::modifyMode(char var, char data_buffer[])
 {
   uint8_t newModeLcd;
-
-  uint32_t byteDiff = 0x0;
   uint8_t modeLcd = 0;
 
   if (var == 0x05)
@@ -1071,7 +1069,7 @@ void ZeroUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hwSe
 
     data_buffer_mod[*i] = var;
 
-    uint32_t time = millis();
+    //uint32_t time = millis();
 
     ss_out->write(var);
 
