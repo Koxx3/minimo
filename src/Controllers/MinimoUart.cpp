@@ -88,6 +88,7 @@ void MinimoUart::displayFrame(int mode, char data_buffer[], byte checksum)
           checksum);
 
   Serial.println(print_buffer);
+  blh->notifyBleLogs(print_buffer);
 }
 
 void MinimoUart::displayDecodedFrame(int mode, char data_buffer[], byte checksum)
@@ -1101,8 +1102,10 @@ void MinimoUart::readHardSerial(int mode, int *i, Stream *hwSerCntrl, Stream *hw
 #endif
 #if DEBUG_DISPLAY_MODIFIED_FRAME_LCD_TO_CNTRL
         Serial.print("ori : ");
+        blh->notifyBleLogs("ori : ");
         displayFrame(serialMode, data_buffer_ori, checksum);
         Serial.print("mod : ");
+        blh->notifyBleLogs("mod : ");
         displayFrame(serialMode, data_buffer_mod, checksum);
 #endif
       }
