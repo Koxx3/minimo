@@ -9,3 +9,7 @@ esptool
 *.log
 
 documents/zero/~$ZERO.xlsx
+
+documents/~$throttle.xlsx
+
+documents/~$throttle_mapping.xlsx

@@ -213,7 +213,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Lock the scooter if bluetooth device check is not successful :\n- None : no bluetooth peripheral check\n- Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\n- Smartphone connected or beacon visible : your smartphone OR a BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\n- Beacon visible : BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\nThose modes are use as anti-theft technics. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter."
+          "help_en": "Lock the scooter if bluetooth device check is not successful :\n- None : no bluetooth peripheral check\n- Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\n- Smartphone connected or beacon visible : your smartphone OR a BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\n- Beacon visible : BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\nThose modes are used as **anti-theft** protection. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter."
         },
         {
           "ble_id": 9,
@@ -236,7 +236,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Bluetooth PIN code is used when you want to connect a smartphone to your SmartEelc device. Change it to protect your SmartElec device from any anybody connection."
+          "help_en": "Bluetooth PIN code is used when you want to connect a smartphone to your SmartEelc device. **Change it to protect your SmartElec device from any anybody connection.**"
         },
         {
           "ble_id": 10,
@@ -259,7 +259,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "To search a beacon you must specify the beacon mac address. Search on your smartphone store for a 'BLE Scanner', it will scan all Bluetooth devices and the MAC address (an unique identifier) for the beacon, then enter this MAC address in this setting.<br>\nYou can use any Bluetooth Low Energy device as beacon (any BLE band for example) or use a BLE beacon (10$ on aliexpress)."
+          "help_en": "To search a beacon you must specify the beacon mac address. \nSearch on your smartphone store for a 'BLE Scanner', it will scan all Bluetooth devices and the MAC address (an unique identifier) for the beacon, then enter this MAC address in this setting.<br>\nYou can use any Bluetooth Low Energy device as beacon (any BLE band/bracelet for example) or use a BLE beacon (10$ on aliexpress)."
         },
         {
           "ble_id": 11,
@@ -591,7 +591,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Enable the Anti-lock braking system (not advised, not well managed on most escooters)"
+          "help_en": "Enable the Anti-lock braking system (not advised, not well implemented on most escooters)"
         },
         {
           "ble_id": 24,
@@ -614,7 +614,7 @@
           "tft_fast_increment": 10.0,
           "tft_slow_increment": 5.0,
           "tft_unit": "",
-          "help_en": "Set the escooter display brightness."
+          "help_en": "Set the SmartDisplay screen brightness."
         },
         {
           "ble_id": 44,
@@ -688,7 +688,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Enable  electric brake progressive mode."
+          "help_en": "Enable the electric brake progressive mode."
         },
         {
           "ble_id": 26,
@@ -711,7 +711,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. There is mulitple possibilities to wire the brake on the SmartElec and you **MUST** select the brake type according to your wiring :\n- Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake activation. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.\n- Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.\n- Smart - Analog brake lever : an analog brake lever (xiaomi type or any hall sensor brake lever) is wired to directly to the SmartElec device. This wiring is the best. The brake force will be determined by the brake lever pressure force.\n- Smart - Digital brake + throttle (expermental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure set the brake force. You will need time to use this mode when riding."
+          "help_en": "If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. There is mulitple possibilities to wire the brake on the SmartElec and you **MUST** select the brake type according to your wiring :\n- Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake activation. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.\n- Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.\n- Smart - Analog brake lever : an analog brake lever (xiaomi type or any hall sensor brake lever) is wired to directly to the SmartElec device. This wiring is the best. The brake force will be determined by the brake lever pressure force.\n- Smart - Digital brake + throttle (experimental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure set the brake force. You will need time to use this mode when riding."
         },
         {
           "ble_id": 27,
@@ -803,7 +803,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Prevent power surge when braking if the battery is already full. \nElectric brake generate current/voltage when used. If you use electric brake when the battery is battery is full, the battery cannot take the energy and the controller will try to dissipate the energy... and can heat/blow.\nThis option disable the electric brake until the baterry reach a threshold."
+          "help_en": "Prevent power surge when braking if the battery is full or almost full. \nElectric brake generate current/voltage when used. If you use the electric brake when the battery is battery is full, the battery cannot take the energy and the controller will try to dissipate the energy... and can heat/blow.\nThis option disable the electric brake until the baterry reach a threshold."
         },
         {
           "ble_id": 31,
@@ -826,7 +826,7 @@
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "%",
-          "help_en": "Battery load percent to reach to enable electric brake."
+          "help_en": "Battery load percent threshold to reach to enable electric brake."
         }
       ]
     },
@@ -854,7 +854,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Enable throttle signal regeneration.\nThis option allow you to modify the acceleration curve to make it more/less dynamic with different acceleration curves.\nTo enable this feature, you must wire the trottle jumpers according to the *WIRING documentation*."
+          "help_en": "Enable throttle signal regeneration.\nThis option allow you to modify the acceleration curve to make it more/less dynamic with different acceleration curves.\n**To enable this feature, you must wire the trottle jumpers according to the WIRING documentation.**"
         },
         {
           "ble_id": 33,
@@ -969,7 +969,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Select your acceleration curve.\nThis option modify the throttle response.\nThere is 3 main modes :\n- linear : same as original, except you can put offset to increase the dead zone (with min input voltage)\n- exponential : those curves follow exponential curves, the acceleration becomes more violent as you reach the end the trigger pressure. exponential 1 is soft, exponential 4 is very violent.\n- custom 6 points : 2 points are fixed (0% trigger pressure = 0% output / 100% trigger pressure = 100% output), with the next option, you can the set the output percent for 20, 40, 60 and 80% pressure on the trigger. It will interpolate the values between those pressure percentage."
+          "help_en": "This option modify the throttle response and acceleration curve.\nThere is 3 main modes :\n- linear : same as original, except you can put  an offset to increase the dead zone (with min input voltage)\n- exponential : those curves follow exponential functions, the acceleration becomes more violent as you reach the end the trigger pressure. Exponential 1 is soft but more violent than linear, Exponential 4 is very violent.\n- custom 6 points : 2 points are fixed (0% trigger pressure = 0% output / 100% trigger pressure = 100% output), with the next option, you can the set the output percent for 20, 40, 60 and 80% pressure on the trigger. It will interpolate the values between those pressure percentage to determine the ouput throttle percentage."
         },
         {
           "ble_id": 46,
@@ -992,7 +992,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "String of 4 values separated by commas.\nIt will determine the output level for the 4 points (see custom curve option above) of 20, 40, 60, 80% pressure."
+          "help_en": "String of 4 values separated by commas.\nIt will determine the output level for the 4 points (see custom curve option above) of 20, 40, 60, 80% pressure.\nExample with : 7, 15, 45, 75\n![](throttle_custom_curve.png)"
         }
       ]
     },

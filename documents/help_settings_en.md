@@ -61,20 +61,21 @@ Usage : Lock the scooter if bluetooth device check is not successful :
 - Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.
 - Smartphone connected or beacon visible : your smartphone OR a BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.
 - Beacon visible : BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.
-Those modes are use as anti-theft technics. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter.<br>
+Those modes are used as **anti-theft** protection. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter.<br>
                 
 ### PIN code
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 147258<br>
 <br>
-Usage : Bluetooth PIN code is used when you want to connect a smartphone to your SmartEelc device. Change it to protect your SmartElec device from any anybody connection.<br>
+Usage : Bluetooth PIN code is used when you want to connect a smartphone to your SmartEelc device. **Change it to protect your SmartElec device from any anybody connection.**<br>
                 
 ### Beacon Mac Address
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : aa:bb:cc:dd:ee:ff<br>
 <br>
-Usage : To search a beacon you must specify the beacon mac address. Search on your smartphone store for a 'BLE Scanner', it will scan all Bluetooth devices and the MAC address (an unique identifier) for the beacon, then enter this MAC address in this setting.<br>
-You can use any Bluetooth Low Energy device as beacon (any BLE band for example) or use a BLE beacon (10$ on aliexpress).<br>
+Usage : To search a beacon you must specify the beacon mac address. 
+Search on your smartphone store for a 'BLE Scanner', it will scan all Bluetooth devices and the MAC address (an unique identifier) for the beacon, then enter this MAC address in this setting.<br>
+You can use any Bluetooth Low Energy device as beacon (any BLE band/bracelet for example) or use a BLE beacon (10$ on aliexpress).<br>
                 
 ### Beacon range
 Valid configuration : SmartController / SmartDisplay<br>
@@ -193,13 +194,13 @@ Usage : The 'pedal assitance switch' will force you to push the escooter to star
 Valid configuration : SmartDisplay<br>
 Default value : 0<br>
 <br>
-Usage : Enable the Anti-lock braking system (not advised, not well managed on most escooters)<br>
+Usage : Enable the Anti-lock braking system (not advised, not well implemented on most escooters)<br>
                 
 ### Display brightness
 Valid configuration : SmartDisplay<br>
 Default value : 100<br>
 <br>
-Usage : Set the escooter display brightness.<br>
+Usage : Set the SmartDisplay screen brightness.<br>
                 
 ### Display splash screen
 Valid configuration : SmartDisplay<br>
@@ -224,7 +225,7 @@ Usage : Rotate screen if you mount the display in un unorthodox way.<br>
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 0<br>
 <br>
-Usage : Enable  electric brake progressive mode.<br>
+Usage : Enable the electric brake progressive mode.<br>
                 
 ### Smart brake type / Type
 Valid configuration : SmartController / SmartDisplay<br>
@@ -239,7 +240,7 @@ Usage : If you enable the electric progressive mode, the braking feedback must a
 - Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake activation. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.
 - Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.
 - Smart - Analog brake lever : an analog brake lever (xiaomi type or any hall sensor brake lever) is wired to directly to the SmartElec device. This wiring is the best. The brake force will be determined by the brake lever pressure force.
-- Smart - Digital brake + throttle (expermental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure set the brake force. You will need time to use this mode when riding.<br>
+- Smart - Digital brake + throttle (experimental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure set the brake force. You will need time to use this mode when riding.<br>
                 
 ### Min power value / Min value
 Valid configuration : SmartController / SmartDisplay<br>
@@ -266,15 +267,15 @@ Exemple : brake min = 1 / brake max = 3 / brake switch period = 500ms. When you 
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 0<br>
 <br>
-Usage : Prevent power surge when braking if the battery is already full. 
-Electric brake generate current/voltage when used. If you use electric brake when the battery is battery is full, the battery cannot take the energy and the controller will try to dissipate the energy... and can heat/blow.
+Usage : Prevent power surge when braking if the battery is full or almost full. 
+Electric brake generate current/voltage when used. If you use the electric brake when the battery is battery is full, the battery cannot take the energy and the controller will try to dissipate the energy... and can heat/blow.
 This option disable the electric brake until the baterry reach a threshold.<br>
                 
 ### Disabled percent limit / Disabled with bat. HV
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 100 (percent)<br>
 <br>
-Usage : Battery load percent to reach to enable electric brake.<br>
+Usage : Battery load percent threshold to reach to enable electric brake.<br>
                 
 
 ## Throttle
@@ -284,7 +285,7 @@ Default value : 0<br>
 <br>
 Usage : Enable throttle signal regeneration.
 This option allow you to modify the acceleration curve to make it more/less dynamic with different acceleration curves.
-To enable this feature, you must wire the trottle jumpers according to the *WIRING documentation*.<br>
+**To enable this feature, you must wire the trottle jumpers according to the WIRING documentation.**<br>
                 
 ### Input min voltage (in millivolts) / Input min voltage
 Valid configuration : SmartController / SmartDisplay<br>
@@ -325,19 +326,20 @@ Possible values : <br>
     - Custom 6 points (value = 5)<br>
 Default value : 2<br>
 <br>
-Usage : Select your acceleration curve.
-This option modify the throttle response.
+Usage : This option modify the throttle response and acceleration curve.
 There is 3 main modes :
-- linear : same as original, except you can put offset to increase the dead zone (with min input voltage)
-- exponential : those curves follow exponential curves, the acceleration becomes more violent as you reach the end the trigger pressure. exponential 1 is soft, exponential 4 is very violent.
-- custom 6 points : 2 points are fixed (0% trigger pressure = 0% output / 100% trigger pressure = 100% output), with the next option, you can the set the output percent for 20, 40, 60 and 80% pressure on the trigger. It will interpolate the values between those pressure percentage.<br>
+- linear : same as original, except you can put  an offset to increase the dead zone (with min input voltage)
+- exponential : those curves follow exponential functions, the acceleration becomes more violent as you reach the end the trigger pressure. Exponential 1 is soft but more violent than linear, Exponential 4 is very violent.
+- custom 6 points : 2 points are fixed (0% trigger pressure = 0% output / 100% trigger pressure = 100% output), with the next option, you can the set the output percent for 20, 40, 60 and 80% pressure on the trigger. It will interpolate the values between those pressure percentage to determine the ouput throttle percentage.<br>
                 
 ### Custom output curve points
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 20,40,60,80<br>
 <br>
 Usage : String of 4 values separated by commas.
-It will determine the output level for the 4 points (see custom curve option above) of 20, 40, 60, 80% pressure.<br>
+It will determine the output level for the 4 points (see custom curve option above) of 20, 40, 60, 80% pressure.
+Example with : 7, 15, 45, 75
+![](throttle_custom_curve.png)<br>
                 
 
 ## Escooter buttons
