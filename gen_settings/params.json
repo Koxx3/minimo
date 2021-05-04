@@ -688,7 +688,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Set electric brake progressive mode."
+          "help_en": "Enable  electric brake progressive mode."
         },
         {
           "ble_id": 26,
@@ -711,7 +711,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. There is mulitple possibilities to cable the brake on the SmartElec and you *MUST* select the brake type according to your wiring :\n- Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake to starts to kick. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will be.\n- Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will be.\n- Smart - Analog brake lever : an analog brake lever (xiaomi type) is wired to directly to the SmartElec device. This wiring is the best and fast. The brake force will be determined by the brake lever pressure force.\n- Smart - Digital brake + throttle (expermental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure determine the brake force. The user will need time to use this mode when riding."
         },
         {
           "ble_id": 27,

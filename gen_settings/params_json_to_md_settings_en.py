@@ -19,6 +19,14 @@ template_h = """
 ### {{ item.smartphone_display_name }} / {{ item.tft_display_name }} 
                 {%- endif %}
 
+                {%- if (item.valid_config == "^sd_.*")  %}
+Valid configuration : SmartDisplay<br>
+                {%- elif (item.valid_config == "^sc_.*") %}
+Valid configuration : SmartController<br>
+                {%- else %}
+Valid configuration : SmartController / SmartDisplay<br>
+                {%- endif %}
+                
                 {%- if ((item.smartphone_display_type | lower) == "list") %}
 Possible values : <br>
                     {%- set list1 = item.list_strings.split('\n')  %}
@@ -29,15 +37,11 @@ Possible values : <br>
                 {%- endfor %}
                 {%- endif %}
 Default value : {{ item.default }} {%- if item.smartphone_display_unit != "" %} ({{ item.smartphone_display_unit }}) {%- endif %}<br>
+<br>
+Usage : {{ item.help_en }}<br>
 
-                {%- if (item.valid_config == "^sd_.*")  %}
-Valid configuration : SmartDisplay<br>
-                {%- elif (item.valid_config == "^sc_.*") %}
-Valid configuration : SmartController<br>
-                {%- else %}
-Valid configuration : SmartController / SmartDisplay<br>
-                {%- endif %}
-<b>Usage : {{ item.help_en }}<br></b>
+Usage 2 : 
+    {{ item.help_en | replace('\n', "<br>") }}
                 {%+ if True %}{% endif %}
             {%- endif %}
         {%- endfor %}
