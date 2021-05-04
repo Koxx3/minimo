@@ -71,7 +71,7 @@ with open(jsonConfigName) as json_file:
     result_h = tmpl_h.render(parameters=json_data)
 
     # get template name, output file name
-    outputFileName = "gen_settings\\help_en.md"
+    outputFileName = "documents\\help_en.md"
     print("outputFileName H : " + outputFileName)
 
     # write output to file

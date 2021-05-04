@@ -5,4 +5,4 @@ python gen_settings\\params_json_to_c_tft_menu.py
 python gen_settings\\params_json_to_java_android.py
 python gen_settings\\params_json_to_c_wifi_menu.py
 python gen_settings\\params_json_to_c_wifi_menu.py
-python gen_settings\\params_json_to_md_help_en.py
+python gen_settings\\params_json_to_md_settings_en.py

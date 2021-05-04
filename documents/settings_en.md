@@ -1,5 +1,5 @@
 
-# Manual
+# Settings
 
 ## Escooter characteristics
 ### Wheel size
