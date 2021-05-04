@@ -1,5 +1,5 @@
 
-# Manual
+# Settings manual
 
 ## Escooter characteristics
 ### Wheel size
@@ -18,9 +18,9 @@ Usage : Number of poles are used to compute speed/distance. Check you manual to 
 Valid configuration : SmartController / SmartDisplay<br>
 Possible values : <br>
     - 36V (42V full / 10S) (value = 0)<br>
-    - 46,8 (54,6V full / 13S) (value = 1)<br>
-    - 50,4V (58,8V full / 14S) (value = 2)<br>
-    - 57.6V (67,2V full / 16S) (value = 3)<br>
+    - 48V (54,6V full / 13S) (value = 1)<br>
+    - 52V (58,8V full / 14S) (value = 2)<br>
+    - 60V (67,2V full / 16S) (value = 3)<br>
     - 72V (84V full / 20S) (value = 4)<br>
     - 86V (100,8V full / 24S) (value = 5)<br>
 Default value : 2<br>
@@ -31,7 +31,7 @@ Usage : Battery voltage is used to compute the autonomy left and charge indicato
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 40 (kilometers)<br>
 <br>
-Usage : Use to compute autonomy. Set your regular max distance with one charge.<br>
+Usage : Used to compute autonomy. Set your regular max distance with one full charge.<br>
                 
 
 ## General
@@ -115,7 +115,7 @@ Possible values : <br>
     - 60 min (value = 9)<br>
 Default value : 0<br>
 <br>
-Usage : Automatically shutdown the escooter at a fixed time at 0 speed.<br>
+Usage : Automatically shutdown the escooter at a fixed period when escooter is not moving.<br>
                 
 
 ## Smartphone display
@@ -202,7 +202,7 @@ Usage : Set the escooter display brightness<br>
 Valid configuration : SmartDisplay<br>
 Default value : 1<br>
 <br>
-Usage : <br>
+Usage : Enable the splash screen at escotter startup<br>
                 
 ### Rotate screen
 Valid configuration : SmartDisplay<br>
@@ -213,7 +213,7 @@ Possible values : <br>
     - 3 (value = 3)<br>
 Default value : 1<br>
 <br>
-Usage : <br>
+Usage : Rotate screen if you mount the display in un unorthodox way.<br>
                 
 
 ## Electric brake
@@ -242,31 +242,36 @@ Usage : If you enable the electric progressive mode, the braking feedback must a
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 1<br>
 <br>
-Usage : <br>
+Usage : Define the minimum electric brake force when you start pressing the brake lever.
+Note : don't forget to calibrate the brake lever pressure for a better feeling.<br>
                 
 ### Max power value / Max value
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 5<br>
 <br>
-Usage : <br>
+Usage : Define the maxmum electric brake force when you start pressing the brake lever.
+Note : don't forget to calibrate the brake lever pressure for a better feeling.<br>
                 
 ### Time between mode shift
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 500 (milliseconds)<br>
 <br>
-Usage : <br>
+Usage : When using a digital brake lever (on/off), this period will determine when the brake force is increased to the next lever (from min to max) as long as you keep the brake active.
+Exemple : brake min = 1 / brake max = 3 / brake switch period = 500ms. When you start pressing the brake, it will set a electric brake force at 1. If you keep the brake pressed, 500ms later, it will set a electric brake force at 2, and 500ms later to 3. It will remain at 3 (max) until you release the brake lever.<br>
                 
 ### Disabled on high battery voltage / Disabled with bat, HV
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 0<br>
 <br>
-Usage : <br>
+Usage : Prevent power surge when braking if the battery is already full. 
+Electric brake generate current/voltage when used. If you use electric brake when the battery is battery is full, the battery cannot take the energy and the controller will try to dissipate the energy... and can heat/blow.
+This option disable the electric brake until the baterry reach a threshold.<br>
                 
 ### Disabled percent limit / Disabled with bat. HV
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 100 (percent)<br>
 <br>
-Usage : <br>
+Usage : Battery load percent to reach to enable electric brake.<br>
                 
 
 ## Throttle
@@ -274,31 +279,37 @@ Usage : <br>
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 0<br>
 <br>
-Usage : <br>
+Usage : Enable throttle signal regeneration.
+This option allow you to modify the acceleration curve to make it more/less dynamic with different acceleration curves.
+To enable this feature, you must wire the trottle jumpers according to the *WIRING documentation*.<br>
                 
 ### Input min voltage (in millivolts) / Input min voltage
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 650 (millivolts)<br>
 <br>
-Usage : <br>
+Usage : Throttle input signal voltage when the throttle is released.
+Note : if the motor is spinning when the throttle is not pressed, try to decrease this value.<br>
                 
 ### Input max voltage (in millivolts) / Input max voltage
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 3950 (millivolts)<br>
 <br>
-Usage : <br>
+Usage : Throttle input signal voltage when the throttle is fully pressed
+Note : if the motor is not reaching max speed when the throttle is pressed, try to increase this value.<br>
                 
 ### Output min voltage (in millivolts) / Output min voltage
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 800 (millivolts)<br>
 <br>
-Usage : <br>
+Usage : Throttle ouput signal voltage when the throttle is released.
+Note : if the motor is spinning when the throttle is not pressed, try to decrease this value.<br>
                 
 ### Output max voltage (in millivolts) / Output max voltage
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 3350 (millivolts)<br>
 <br>
-Usage : <br>
+Usage : Throttle output signal voltage when the throttle is fully pressed
+Note : if the motor is not reaching max speed when the throttle is pressed, try to increase this value.<br>
                 
 ### Output curve
 Valid configuration : SmartController / SmartDisplay<br>
@@ -311,13 +322,19 @@ Possible values : <br>
     - Custom 6 points (value = 5)<br>
 Default value : 2<br>
 <br>
-Usage : <br>
+Usage : Select your acceleration curve.
+This option modify the throttle response.
+There is 3 main modes :
+- linear : same as original, except you can put offset to increase the dead zone (with min input voltage)
+- exponential : those curves follow exponential curves, the acceleration becomes more violent as you reach the end the trigger pressure. exponential 1 is soft, exponential 4 is very violent.
+- custom 6 points : 2 points are fixed (0% trigger pressure = 0% output / 100% trigger pressure = 100% output), with the next option, you can the set the output percent for 20, 40, 60 and 80% pressure on the trigger. It will interpolate the values between those pressure percentage.<br>
                 
 ### Custom output curve points
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 20,40,60,80<br>
 <br>
-Usage : <br>
+Usage : String of 4 values separated by commas.
+It will determine the output level for the 4 points (see custom curve option above) of 20, 40, 60, 80% pressure.<br>
                 
 
 ## Escooter buttons
@@ -333,7 +350,16 @@ Possible values : <br>
     - Eco switch NONE/MED (value = 6)<br>
 Default value : 0<br>
 <br>
-Usage : <br>
+Usage : Set the button 1 short press action (for external buttons wired to the SmartElec) :
+- None : no action
+- Speed limitation ON/OFF : enable/disable the speed limiter
+- Aux ON/OFF : enable/disable the auxiliary relay output
+- Mode switch 1/2/3 : switch between speed modes
+- Mode switch 2/3 : switch between speed modes
+- Eco switch NONE/MED/MAX : switch between eco modes
+- Eco switch NONE/MED : switch between eco modes
+- Anti-theft manual lock ON : lock the escooter (motor power is locked, nobody can steal & ride with this mode)
+- Nitro boost continuous : switch speed mode to 3 while the button is pressed, then go back to original speed mode<br>
                 
 ### Button 1 long press action / B1 long press 
 Valid configuration : SmartController / SmartDisplay<br>
@@ -349,7 +375,16 @@ Possible values : <br>
     - Nitro boost continuous (value = 8)<br>
 Default value : 0<br>
 <br>
-Usage : <br>
+Usage : Set the button 1 long press action (for external buttons wired to the SmartElec) :
+- None : no action
+- Speed limitation ON/OFF : enable/disable the speed limiter
+- Aux ON/OFF : enable/disable the auxiliary relay output
+- Mode switch 1/2/3 : switch between speed modes
+- Mode switch 2/3 : switch between speed modes
+- Eco switch NONE/MED/MAX : switch between eco modes
+- Eco switch NONE/MED : switch between eco modes
+- Anti-theft manual lock ON : lock the escooter (motor power is locked, nobody can steal & ride with this mode)
+- Nitro boost continuous : switch speed mode to 3 while the button is pressed, then go back to original speed mode<br>
                 
 ### Button 2 short press action / B2 short press 
 Valid configuration : SmartController / SmartDisplay<br>
@@ -363,13 +398,23 @@ Possible values : <br>
     - Eco switch NONE/MED (value = 6)<br>
 Default value : 0<br>
 <br>
-Usage : <br>
+Usage : Set the button 2 short press action (for external buttons wired to the SmartElec) :
+- None : no action
+- Speed limitation ON/OFF : enable/disable the speed limiter
+- Aux ON/OFF : enable/disable the auxiliary relay output
+- Mode switch 1/2/3 : switch between speed modes
+- Mode switch 2/3 : switch between speed modes
+- Eco switch NONE/MED/MAX : switch between eco modes
+- Eco switch NONE/MED : switch between eco modes
+- Anti-theft manual lock ON : lock the escooter (motor power is locked, nobody can steal & ride with this mode)
+- Nitro boost continuous : switch speed mode to 3 while the button is pressed, then go back to original speed mode
+Note : button 2 long press action allow you to enter the settings menu.<br>
                 
 ### Button long press duration
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 3 (seconds)<br>
 <br>
-Usage : <br>
+Usage : If you press the button for this period, the SmartElec will launch the "long press" action.<br>
                 
 
 ## OTA update
@@ -377,12 +422,12 @@ Usage : <br>
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : <br>
 <br>
-Usage : <br>
+Usage : Wifi network SSID/name used for software updates.<br>
                 
 ### Wifi password
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : <br>
 <br>
-Usage : <br>
+Usage : Wifi network password used for software updates.<br>
                 
 

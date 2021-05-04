@@ -101,7 +101,7 @@
           "type": "uint8_t",
           "var_name": "Battery_nominal_voltage",
           "valid_config": "",
-          "list_strings": "36V (42V full / 10S)\n46,8 (54,6V full / 13S)\n50,4V (58,8V full / 14S)\n57.6V (67,2V full / 16S)\n72V (84V full / 20S)\n86V (100,8V full / 24S)",
+          "list_strings": "36V (42V full / 10S)\n48V (54,6V full / 13S)\n52V (58,8V full / 14S)\n60V (67,2V full / 16S)\n72V (84V full / 20S)\n86V (100,8V full / 24S)",
           "min": 0,
           "max": 5,
           "default": 2,
@@ -139,7 +139,7 @@
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "Km",
-          "help_en": "Use to compute autonomy. Set your regular max distance with one charge."
+          "help_en": "Used to compute autonomy. Set your regular max distance with one full charge."
         }
       ]
     },
@@ -374,7 +374,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "",
-          "help_en": "Automatically shutdown the escooter at a fixed time at 0 speed."
+          "help_en": "Automatically shutdown the escooter at a fixed period when escooter is not moving."
         }
       ]
     },
@@ -637,7 +637,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Enable the splash screen at escotter startup"
         },
         {
           "ble_id": 45,
@@ -660,7 +660,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Rotate screen if you mount the display in un unorthodox way."
         }
       ]
     },
@@ -734,7 +734,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Define the minimum electric brake force when you start pressing the brake lever.\nNote : don't forget to calibrate the brake lever pressure for a better feeling."
         },
         {
           "ble_id": 28,
@@ -757,7 +757,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Define the maxmum electric brake force when you start pressing the brake lever.\nNote : don't forget to calibrate the brake lever pressure for a better feeling."
         },
         {
           "ble_id": 29,
@@ -780,7 +780,7 @@
           "tft_fast_increment": 100.0,
           "tft_slow_increment": 50.0,
           "tft_unit": "ms",
-          "help_en": ""
+          "help_en": "When using a digital brake lever (on/off), this period will determine when the brake force is increased to the next lever (from min to max) as long as you keep the brake active.\nExemple : brake min = 1 / brake max = 3 / brake switch period = 500ms. When you start pressing the brake, it will set a electric brake force at 1. If you keep the brake pressed, 500ms later, it will set a electric brake force at 2, and 500ms later to 3. It will remain at 3 (max) until you release the brake lever."
         },
         {
           "ble_id": 30,
@@ -803,7 +803,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Prevent power surge when braking if the battery is already full. \nElectric brake generate current/voltage when used. If you use electric brake when the battery is battery is full, the battery cannot take the energy and the controller will try to dissipate the energy... and can heat/blow.\nThis option disable the electric brake until the baterry reach a threshold."
         },
         {
           "ble_id": 31,
@@ -826,7 +826,7 @@
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "%",
-          "help_en": ""
+          "help_en": "Battery load percent to reach to enable electric brake."
         }
       ]
     },
@@ -854,7 +854,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Enable throttle signal regeneration.\nThis option allow you to modify the acceleration curve to make it more/less dynamic with different acceleration curves.\nTo enable this feature, you must wire the trottle jumpers according to the *WIRING documentation*."
         },
         {
           "ble_id": 33,
@@ -877,7 +877,7 @@
           "tft_fast_increment": 100.0,
           "tft_slow_increment": 50.0,
           "tft_unit": "mV",
-          "help_en": ""
+          "help_en": "Throttle input signal voltage when the throttle is released.\nNote : if the motor is spinning when the throttle is not pressed, try to decrease this value."
         },
         {
           "ble_id": 34,
@@ -900,7 +900,7 @@
           "tft_fast_increment": 100.0,
           "tft_slow_increment": 50.0,
           "tft_unit": "mV",
-          "help_en": ""
+          "help_en": "Throttle input signal voltage when the throttle is fully pressed\nNote : if the motor is not reaching max speed when the throttle is pressed, try to increase this value."
         },
         {
           "ble_id": 35,
@@ -923,7 +923,7 @@
           "tft_fast_increment": 100.0,
           "tft_slow_increment": 50.0,
           "tft_unit": "mV",
-          "help_en": ""
+          "help_en": "Throttle ouput signal voltage when the throttle is released.\nNote : if the motor is spinning when the throttle is not pressed, try to decrease this value."
         },
         {
           "ble_id": 36,
@@ -946,7 +946,7 @@
           "tft_fast_increment": 100.0,
           "tft_slow_increment": 50.0,
           "tft_unit": "mV",
-          "help_en": ""
+          "help_en": "Throttle output signal voltage when the throttle is fully pressed\nNote : if the motor is not reaching max speed when the throttle is pressed, try to increase this value."
         },
         {
           "ble_id": 37,
@@ -969,7 +969,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Select your acceleration curve.\nThis option modify the throttle response.\nThere is 3 main modes :\n- linear : same as original, except you can put offset to increase the dead zone (with min input voltage)\n- exponential : those curves follow exponential curves, the acceleration becomes more violent as you reach the end the trigger pressure. exponential 1 is soft, exponential 4 is very violent.\n- custom 6 points : 2 points are fixed (0% trigger pressure = 0% output / 100% trigger pressure = 100% output), with the next option, you can the set the output percent for 20, 40, 60 and 80% pressure on the trigger. It will interpolate the values between those pressure percentage."
         },
         {
           "ble_id": 46,
@@ -992,7 +992,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "String of 4 values separated by commas.\nIt will determine the output level for the 4 points (see custom curve option above) of 20, 40, 60, 80% pressure."
         }
       ]
     },
@@ -1020,7 +1020,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Set the button 1 short press action (for external buttons wired to the SmartElec) :\n- None : no action\n- Speed limitation ON/OFF : enable/disable the speed limiter\n- Aux ON/OFF : enable/disable the auxiliary relay output\n- Mode switch 1/2/3 : switch between speed modes\n- Mode switch 2/3 : switch between speed modes\n- Eco switch NONE/MED/MAX : switch between eco modes\n- Eco switch NONE/MED : switch between eco modes\n- Anti-theft manual lock ON : lock the escooter (motor power is locked, nobody can steal & ride with this mode)\n- Nitro boost continuous : switch speed mode to 3 while the button is pressed, then go back to original speed mode"
         },
         {
           "ble_id": 39,
@@ -1043,7 +1043,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Set the button 1 long press action (for external buttons wired to the SmartElec) :\n- None : no action\n- Speed limitation ON/OFF : enable/disable the speed limiter\n- Aux ON/OFF : enable/disable the auxiliary relay output\n- Mode switch 1/2/3 : switch between speed modes\n- Mode switch 2/3 : switch between speed modes\n- Eco switch NONE/MED/MAX : switch between eco modes\n- Eco switch NONE/MED : switch between eco modes\n- Anti-theft manual lock ON : lock the escooter (motor power is locked, nobody can steal & ride with this mode)\n- Nitro boost continuous : switch speed mode to 3 while the button is pressed, then go back to original speed mode"
         },
         {
           "ble_id": 40,
@@ -1066,7 +1066,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Set the button 2 short press action (for external buttons wired to the SmartElec) :\n- None : no action\n- Speed limitation ON/OFF : enable/disable the speed limiter\n- Aux ON/OFF : enable/disable the auxiliary relay output\n- Mode switch 1/2/3 : switch between speed modes\n- Mode switch 2/3 : switch between speed modes\n- Eco switch NONE/MED/MAX : switch between eco modes\n- Eco switch NONE/MED : switch between eco modes\n- Anti-theft manual lock ON : lock the escooter (motor power is locked, nobody can steal & ride with this mode)\n- Nitro boost continuous : switch speed mode to 3 while the button is pressed, then go back to original speed mode\nNote : button 2 long press action allow you to enter the settings menu."
         },
         {
           "ble_id": 41,
@@ -1089,7 +1089,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "s",
-          "help_en": ""
+          "help_en": "If you press the button for this period, the SmartElec will launch the \"long press\" action."
         }
       ]
     },
@@ -1117,7 +1117,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Wifi network SSID/name used for software updates."
         },
         {
           "ble_id": 43,
@@ -1140,7 +1140,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Wifi network password used for software updates."
         }
       ]
     }

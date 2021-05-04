@@ -3,7 +3,7 @@ import re
 import jinja2
 
 template_h = """
-# Manual
+# Settings manual
 
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
