@@ -213,7 +213,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Lock the scooter if bluetooth device check is not successful.<br>- None : no bluetooth peripheral check<br>- Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.<br>- Smartphone connected or beacon visible : your smartphone OR a BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.<br>- Beacon visible : BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.<br>Those modes are use as anti-theft technics. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter.\nBeacon visible"
+          "help_en": "Lock the scooter if bluetooth device check is not successful :\n- None : no bluetooth peripheral check\n- Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\n- Smartphone connected or beacon visible : your smartphone OR a BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\n- Beacon visible : BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\nThose modes are use as anti-theft technics. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter."
         },
         {
           "ble_id": 9,
