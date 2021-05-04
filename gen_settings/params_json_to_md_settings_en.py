@@ -28,7 +28,7 @@ Possible values : <br>
 
                 {%- endfor %}
                 {%- endif %}
-Default value : {{ item.default }}<br>
+Default value : {{ item.default }} ({{ item.smartphone_display_unit }})<br>
 
                 {%- if (item.valid_config == "^sd_.*")  %}
 Valid configuration : SmartDisplay<br>
@@ -39,7 +39,7 @@ Valid configuration : SmartController / SmartDisplay<br>
                 {%- endif %}
 </em>
 Usage : {{ item.help_en }}<br>
-
+                {%+ if True %}{% endif %}
             {%- endif %}
         {%- endfor %}
     {%- endfor %}
