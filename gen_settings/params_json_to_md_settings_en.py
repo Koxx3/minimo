@@ -20,25 +20,25 @@ template_h = """
                 {%- endif %}
 <em>
                 {%- if ((item.smartphone_display_type | lower) == "list") %}
-Possible values : 
+Possible values : <br>
                     {%- set list1 = item.list_strings.split('\n')  %}
                     {%- for item4 in list1 %}
                         {%- set var_elem_name = item4 | lower  | replace(" ", "_") | replace("/", "_") | regex_replace("[^A-Za-z0-9_]","") %}
-- {{ item4 }} (value = {{ loop.index - 1 }})
+- {{ item4 }} (value = {{ loop.index - 1 }})<br>
 
                 {%- endfor %}
                 {%- endif %}
-Default value : {{ item.default }}
+Default value : {{ item.default }}<br>
 
                 {%- if (item.valid_config == "^sd_.*")  %}
-Valid configuration : SmartDisplay
+Valid configuration : SmartDisplay<br>
                 {%- elif (item.valid_config == "^sc_.*") %}
-Valid configuration : SmartController
+Valid configuration : SmartController<br>
                 {%- else %}
-Valid configuration : SmartController / SmartDisplay
+Valid configuration : SmartController / SmartDisplay<br>
                 {%- endif %}
 </em>
-Usage : {{ item.help_en }}
+Usage : {{ item.help_en }}<br>
 
             {%- endif %}
         {%- endfor %}
@@ -71,7 +71,7 @@ with open(jsonConfigName) as json_file:
     result_h = tmpl_h.render(parameters=json_data)
 
     # get template name, output file name
-    outputFileName = "documents\\help_en.md"
+    outputFileName = "documents\\help_settings_en.md"
     print("outputFileName H : " + outputFileName)
 
     # write output to file
