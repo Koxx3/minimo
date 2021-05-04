@@ -3,7 +3,7 @@
 
 ## Escooter characteristics
 ### Wheel size
-Default value : 10.0<p>
+Default value : 10.0<br>
 Valid configuration : SmartController / SmartDisplay
 Usage : Wheel size (in inches) is used to adjust the speed and distance when riding.
 
