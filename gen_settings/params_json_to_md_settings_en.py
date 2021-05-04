@@ -18,17 +18,17 @@ template_h = """
                 {%- else %}
 ### {{ item.smartphone_display_name }} / {{ item.tft_display_name }} 
                 {%- endif %}
-<em>
+
                 {%- if ((item.smartphone_display_type | lower) == "list") %}
 Possible values : <br>
                     {%- set list1 = item.list_strings.split('\n')  %}
                     {%- for item4 in list1 %}
                         {%- set var_elem_name = item4 | lower  | replace(" ", "_") | replace("/", "_") | regex_replace("[^A-Za-z0-9_]","") %}
-- {{ item4 }} (value = {{ loop.index - 1 }})<br>
+    - {{ item4 }} (value = {{ loop.index - 1 }})<br>
 
                 {%- endfor %}
                 {%- endif %}
-Default value : {{ item.default }} ({{ item.smartphone_display_unit }})<br>
+Default value : {{ item.default }} {%- if item.smartphone_display_unit != "" %} ({{ item.smartphone_display_unit }}) {%- endif %}<br>
 
                 {%- if (item.valid_config == "^sd_.*")  %}
 Valid configuration : SmartDisplay<br>
@@ -37,8 +37,7 @@ Valid configuration : SmartController<br>
                 {%- else %}
 Valid configuration : SmartController / SmartDisplay<br>
                 {%- endif %}
-</em>
-Usage : {{ item.help_en }}<br>
+<b>Usage : {{ item.help_en }}<br></b>
                 {%+ if True %}{% endif %}
             {%- endif %}
         {%- endfor %}
