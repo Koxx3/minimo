@@ -8,7 +8,7 @@ Default value : 10.0<br>
 Valid configuration : SmartController / SmartDisplay<br>
 </em>
 Usage : Wheel size (in inches) is used to adjust the speed and distance when riding.<br>
-<br>
+
 ### Number of poles pairs
 <em>
 Default value : 15<br>
