@@ -139,7 +139,7 @@
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "Km",
-          "help_en": "Used to compute autonomy. Set your regular max distance with one full charge."
+          "help_en": "Used to compute autonomy. Set your regular max distance with one full charge.\nAutonomy is computed following theLG MJ1 discharge curve."
         }
       ]
     },

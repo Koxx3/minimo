@@ -31,7 +31,8 @@ Usage : Battery voltage is used to compute the autonomy left and charge indicato
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 40 (kilometers)<br>
 <br>
-Usage : Used to compute autonomy. Set your regular max distance with one full charge.<br>
+Usage : Used to compute autonomy. Set your regular max distance with one full charge.
+Autonomy is computed following theLG MJ1 discharge curve.<br>
                 
 
 ## General
