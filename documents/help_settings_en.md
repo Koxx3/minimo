@@ -12,7 +12,7 @@ Usage : Wheel size (in inches) is used to adjust the speed and distance when rid
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 15<br>
 <br>
-Usage : Number of poles are used to compute speed/distance. Check you manual to set the correct value. If the manual specify '30 poles', set 15.<br>
+Usage : Motors number of poles are used to compute speed/distance. Check you manual to set the correct value. If the manual specify '30 poles', set 15.<br>
                 
 ### Battery nominal voltage
 Valid configuration : SmartController / SmartDisplay<br>

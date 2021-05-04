@@ -47,7 +47,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "",
-          "help_en": "Number of poles are used to compute speed/distance. Check you manual to set the correct value. If the manual specify '30 poles', set 15."
+          "help_en": "Motors number of poles are used to compute speed/distance. Check you manual to set the correct value. If the manual specify '30 poles', set 15."
         },
         {
           "ble_id": 3,
