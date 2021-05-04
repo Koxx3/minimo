@@ -116,7 +116,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "V",
-          "help_en": "Battery voltage is used to compute the autonomy left and charge indicator. Check your manuel or charger (it indicate full charge) to set the correct setting."
+          "help_en": "Battery voltage is used to compute the autonomy left and charge indicator. Check your manuel or charger (it indicate full charge voltage) to set the correct setting."
         },
         {
           "ble_id": 5,
@@ -213,7 +213,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Lock the scooter if bluetooth device check is not successful.<br>- None : no bluetooth peripheral check<br>-Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.<br>- Smartphone connected or beacon visible : your smartphone OR a BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.<br>- Beacon visible : BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.<br>Those modes are use as anti-theft technics. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter.\nBeacon visible"
+          "help_en": "Lock the scooter if bluetooth device check is not successful.<br>- None : no bluetooth peripheral check<br>- Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.<br>- Smartphone connected or beacon visible : your smartphone OR a BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.<br>- Beacon visible : BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.<br>Those modes are use as anti-theft technics. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter.\nBeacon visible"
         },
         {
           "ble_id": 9,
@@ -259,7 +259,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "To search a beacon you must specify the beacon mac address. Search on your smartphone store for a 'BLE Scanner', it will scan all Bluetooth devices and the MAC address (an unique identifier) for the beacon, then enter this MAC address in this setting.<br>\nYou can use any Bluetooth Low Energy device as beacon (any BLE band for example) or use a BLE beacon (10$ on aliexpress)."
         },
         {
           "ble_id": 11,
@@ -282,7 +282,7 @@
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "dB",
-          "help_en": ""
+          "help_en": "Minimal reception power of the beacon to unlock the escooter. This is in dB, it means a -100 value will be a longer distance than -50."
         },
         {
           "ble_id": 12,
@@ -305,7 +305,7 @@
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "%",
-          "help_en": ""
+          "help_en": "Use this value to correct the speed on the escooter display."
         },
         {
           "ble_id": 13,
@@ -328,7 +328,7 @@
           "tft_fast_increment": 10.0,
           "tft_slow_increment": 5.0,
           "tft_unit": "\u00b0C",
-          "help_en": ""
+          "help_en": "Trigger a error indicator on the display or the smartphone application if this temperature threshold is reached. If you place the temperature sensor inside the deck, it will warn you if the controller or the battery are too hot."
         },
         {
           "ble_id": 14,
@@ -351,7 +351,7 @@
           "tft_fast_increment": 10.0,
           "tft_slow_increment": 5.0,
           "tft_unit": "RH",
-          "help_en": ""
+          "help_en": "Trigger a error indicator on the display or the smartphone application if this humidy threshold is reached. If you place the humidity sensor inside the deck, it will warn you if the water is entered inside the deck."
         },
         {
           "ble_id": 47,
@@ -374,7 +374,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Automatically shutdown the escooter at a fixed time at 0 speed."
         }
       ]
     },
@@ -402,7 +402,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Use this value to correct the speed on the smartphone display."
         },
         {
           "ble_id": 16,
@@ -425,7 +425,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Change the name on the display and smartphone for the integrated relay action. Exemple : if you connect a light, you can display \"light\" on the dashboard instead of \"aux\"."
         },
         {
           "ble_id": 17,
@@ -448,7 +448,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Display GPS speed instead of escooter speed on the smartphone display."
         }
       ]
     },
@@ -476,7 +476,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Default speed mode after escooter power up."
         },
         {
           "ble_id": 19,
@@ -499,7 +499,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Default eco mode after escooter power up."
         },
         {
           "ble_id": 20,
@@ -522,7 +522,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Default acceleration mode after escooter power up."
         },
         {
           "ble_id": 21,
@@ -545,7 +545,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Default electric brake power mode after escooter power up."
         },
         {
           "ble_id": 22,
@@ -568,7 +568,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "The 'pedal assitance switch' will for you to push the escooter to start the engine. If you don't push the scooter, the thottle is not effective."
         },
         {
           "ble_id": 23,
@@ -591,7 +591,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Enable the Anti-lock braking system (not advised)"
         },
         {
           "ble_id": 24,
@@ -614,7 +614,7 @@
           "tft_fast_increment": 10.0,
           "tft_slow_increment": 5.0,
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Set the escooter display brightness"
         },
         {
           "ble_id": 44,
@@ -688,7 +688,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": ""
+          "help_en": "Set electric brake progressive mode."
         },
         {
           "ble_id": 26,
