@@ -80,25 +80,27 @@ You can use any Bluetooth Low Energy device as beacon (any BLE band for example)
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : -80 (dB)<br>
 <br>
-Usage : Minimal reception power of the beacon to unlock the escooter. This is in dB, it means a -100 value will be a longer distance than -50.<br>
+Usage : Minimal reception power of the beacon to unlock the escooter. This is in dB, it means a -100dB value will be a longer distance than -50dB.<br>
                 
 ### Original display speed adjustment (in percent) / Speed adjustment
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 0 (percent)<br>
 <br>
-Usage : Use this value to correct the speed on the escooter display.<br>
+Usage : Use this value to correct the speed on the escooter display.
+You can increase or decrease the speed.
+Set at -50%, it will display 25km/h when riding at 50km/h.<br>
                 
 ### Temperature warning
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 70 (celcuis)<br>
 <br>
-Usage : Trigger a error indicator on the display or the smartphone application if this temperature threshold is reached. If you place the temperature sensor inside the deck, it will warn you if the controller or the battery are too hot.<br>
+Usage : Trig an error indicator on the display or the smartphone application if this temperature threshold is reached. If you place the temperature sensor inside the deck, it will warn you if the controller or the battery are too hot.<br>
                 
 ### Humidity warning
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 80 (RH)<br>
 <br>
-Usage : Trigger a error indicator on the display or the smartphone application if this humidy threshold is reached. If you place the humidity sensor inside the deck, it will warn you if the water is entered inside the deck.<br>
+Usage : Trig an error indicator on the display or the smartphone application if this humidy threshold is reached. If you place the humidity sensor inside the deck, it will warn you if the water is entered inside the deck.<br>
                 
 ### Automatic power off / Auto power off
 Valid configuration : SmartDisplay<br>
@@ -115,7 +117,7 @@ Possible values : <br>
     - 60 min (value = 9)<br>
 Default value : 0<br>
 <br>
-Usage : Automatically shutdown the escooter at a fixed period when escooter is not moving.<br>
+Usage : Automatically shutdown the escooter after a fixed period when escooter is not moving.<br>
                 
 
 ## Smartphone display
@@ -123,7 +125,8 @@ Usage : Automatically shutdown the escooter at a fixed period when escooter is n
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 0<br>
 <br>
-Usage : Use this value to correct the speed on the smartphone display.<br>
+Usage : Use this value to correct the speed on the smartphone display.
+You can increase or decrease the speed.<br>
                 
 ### Aux relay name
 Valid configuration : SmartController / SmartDisplay<br>
@@ -135,7 +138,7 @@ Possible values : <br>
     - RELAY (value = 4)<br>
 Default value : 0<br>
 <br>
-Usage : Change the name on the display and smartphone for the integrated relay action. Exemple : if you connect a light, you can display "light" on the dashboard instead of "aux".<br>
+Usage : Change the name of the auxilary relay on the display and smartphone for the integrated relay action. Exemple : if you connect a light, you can display "light" on the dashboard instead of "aux".<br>
                 
 ### Display GPS speed instead of escooter speed / Display GPS speed 
 Valid configuration : SmartController / SmartDisplay<br>
@@ -184,19 +187,19 @@ Usage : Default electric brake power mode after escooter power up.<br>
 Valid configuration : SmartDisplay<br>
 Default value : 1<br>
 <br>
-Usage : The 'pedal assitance switch' will for you to push the escooter to start the engine. If you don't push the scooter, the thottle is not effective.<br>
+Usage : The 'pedal assitance switch' will force you to push the escooter to start the engine. If you don't push the scooter, the throttle is not effective.<br>
                 
 ### ABS enabled
 Valid configuration : SmartDisplay<br>
 Default value : 0<br>
 <br>
-Usage : Enable the Anti-lock braking system (not advised)<br>
+Usage : Enable the Anti-lock braking system (not advised, not well managed on most escooters)<br>
                 
 ### Display brightness
 Valid configuration : SmartDisplay<br>
 Default value : 100<br>
 <br>
-Usage : Set the escooter display brightness<br>
+Usage : Set the escooter display brightness.<br>
                 
 ### Display splash screen
 Valid configuration : SmartDisplay<br>
@@ -232,11 +235,11 @@ Possible values : <br>
     - Smart - Digital brake + throttle (exp) (value = 3)<br>
 Default value : 0<br>
 <br>
-Usage : If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. There is mulitple possibilities to cable the brake on the SmartElec and you *MUST* select the brake type according to your wiring :
-- Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake to starts to kick. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will be.
-- Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will be.
-- Smart - Analog brake lever : an analog brake lever (xiaomi type) is wired to directly to the SmartElec device. This wiring is the best and fast. The brake force will be determined by the brake lever pressure force.
-- Smart - Digital brake + throttle (expermental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure determine the brake force. The user will need time to use this mode when riding.<br>
+Usage : If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. There is mulitple possibilities to wire the brake on the SmartElec and you **MUST** select the brake type according to your wiring :
+- Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake activation. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.
+- Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.
+- Smart - Analog brake lever : an analog brake lever (xiaomi type or any hall sensor brake lever) is wired to directly to the SmartElec device. This wiring is the best. The brake force will be determined by the brake lever pressure force.
+- Smart - Digital brake + throttle (expermental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure set the brake force. You will need time to use this mode when riding.<br>
                 
 ### Min power value / Min value
 Valid configuration : SmartController / SmartDisplay<br>
@@ -249,14 +252,14 @@ Note : don't forget to calibrate the brake lever pressure for a better feeling.<
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 5<br>
 <br>
-Usage : Define the maxmum electric brake force when you start pressing the brake lever.
+Usage : Define the maximum electric brake force when you pressing the brake lever.
 Note : don't forget to calibrate the brake lever pressure for a better feeling.<br>
                 
 ### Time between mode shift
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 500 (milliseconds)<br>
 <br>
-Usage : When using a digital brake lever (on/off), this period will determine when the brake force is increased to the next lever (from min to max) as long as you keep the brake active.
+Usage : When using a digital brake lever (on/off switch on the lever), this period will determine when the brake force is increased to the next lever (from min to max) as long as you keep the brake active.
 Exemple : brake min = 1 / brake max = 3 / brake switch period = 500ms. When you start pressing the brake, it will set a electric brake force at 1. If you keep the brake pressed, 500ms later, it will set a electric brake force at 2, and 500ms later to 3. It will remain at 3 (max) until you release the brake lever.<br>
                 
 ### Disabled on high battery voltage / Disabled with bat, HV

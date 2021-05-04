@@ -282,7 +282,7 @@
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "dB",
-          "help_en": "Minimal reception power of the beacon to unlock the escooter. This is in dB, it means a -100 value will be a longer distance than -50."
+          "help_en": "Minimal reception power of the beacon to unlock the escooter. This is in dB, it means a -100dB value will be a longer distance than -50dB."
         },
         {
           "ble_id": 12,
@@ -305,7 +305,7 @@
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "%",
-          "help_en": "Use this value to correct the speed on the escooter display."
+          "help_en": "Use this value to correct the speed on the escooter display.\nYou can increase or decrease the speed.\nSet at -50%, it will display 25km/h when riding at 50km/h."
         },
         {
           "ble_id": 13,
@@ -328,7 +328,7 @@
           "tft_fast_increment": 10.0,
           "tft_slow_increment": 5.0,
           "tft_unit": "\u00b0C",
-          "help_en": "Trigger a error indicator on the display or the smartphone application if this temperature threshold is reached. If you place the temperature sensor inside the deck, it will warn you if the controller or the battery are too hot."
+          "help_en": "Trig an error indicator on the display or the smartphone application if this temperature threshold is reached. If you place the temperature sensor inside the deck, it will warn you if the controller or the battery are too hot."
         },
         {
           "ble_id": 14,
@@ -351,7 +351,7 @@
           "tft_fast_increment": 10.0,
           "tft_slow_increment": 5.0,
           "tft_unit": "RH",
-          "help_en": "Trigger a error indicator on the display or the smartphone application if this humidy threshold is reached. If you place the humidity sensor inside the deck, it will warn you if the water is entered inside the deck."
+          "help_en": "Trig an error indicator on the display or the smartphone application if this humidy threshold is reached. If you place the humidity sensor inside the deck, it will warn you if the water is entered inside the deck."
         },
         {
           "ble_id": 47,
@@ -374,7 +374,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "",
-          "help_en": "Automatically shutdown the escooter at a fixed period when escooter is not moving."
+          "help_en": "Automatically shutdown the escooter after a fixed period when escooter is not moving."
         }
       ]
     },
@@ -402,7 +402,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Use this value to correct the speed on the smartphone display."
+          "help_en": "Use this value to correct the speed on the smartphone display.\nYou can increase or decrease the speed."
         },
         {
           "ble_id": 16,
@@ -425,7 +425,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Change the name on the display and smartphone for the integrated relay action. Exemple : if you connect a light, you can display \"light\" on the dashboard instead of \"aux\"."
+          "help_en": "Change the name of the auxilary relay on the display and smartphone for the integrated relay action. Exemple : if you connect a light, you can display \"light\" on the dashboard instead of \"aux\"."
         },
         {
           "ble_id": 17,
@@ -568,7 +568,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "The 'pedal assitance switch' will for you to push the escooter to start the engine. If you don't push the scooter, the thottle is not effective."
+          "help_en": "The 'pedal assitance switch' will force you to push the escooter to start the engine. If you don't push the scooter, the throttle is not effective."
         },
         {
           "ble_id": 23,
@@ -591,7 +591,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Enable the Anti-lock braking system (not advised)"
+          "help_en": "Enable the Anti-lock braking system (not advised, not well managed on most escooters)"
         },
         {
           "ble_id": 24,
@@ -614,7 +614,7 @@
           "tft_fast_increment": 10.0,
           "tft_slow_increment": 5.0,
           "tft_unit": "",
-          "help_en": "Set the escooter display brightness"
+          "help_en": "Set the escooter display brightness."
         },
         {
           "ble_id": 44,
@@ -711,7 +711,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. There is mulitple possibilities to cable the brake on the SmartElec and you *MUST* select the brake type according to your wiring :\n- Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake to starts to kick. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will be.\n- Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will be.\n- Smart - Analog brake lever : an analog brake lever (xiaomi type) is wired to directly to the SmartElec device. This wiring is the best and fast. The brake force will be determined by the brake lever pressure force.\n- Smart - Digital brake + throttle (expermental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure determine the brake force. The user will need time to use this mode when riding."
+          "help_en": "If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. There is mulitple possibilities to wire the brake on the SmartElec and you **MUST** select the brake type according to your wiring :\n- Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake activation. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.\n- Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.\n- Smart - Analog brake lever : an analog brake lever (xiaomi type or any hall sensor brake lever) is wired to directly to the SmartElec device. This wiring is the best. The brake force will be determined by the brake lever pressure force.\n- Smart - Digital brake + throttle (expermental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure set the brake force. You will need time to use this mode when riding."
         },
         {
           "ble_id": 27,
@@ -757,7 +757,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "",
-          "help_en": "Define the maxmum electric brake force when you start pressing the brake lever.\nNote : don't forget to calibrate the brake lever pressure for a better feeling."
+          "help_en": "Define the maximum electric brake force when you pressing the brake lever.\nNote : don't forget to calibrate the brake lever pressure for a better feeling."
         },
         {
           "ble_id": 29,
@@ -780,7 +780,7 @@
           "tft_fast_increment": 100.0,
           "tft_slow_increment": 50.0,
           "tft_unit": "ms",
-          "help_en": "When using a digital brake lever (on/off), this period will determine when the brake force is increased to the next lever (from min to max) as long as you keep the brake active.\nExemple : brake min = 1 / brake max = 3 / brake switch period = 500ms. When you start pressing the brake, it will set a electric brake force at 1. If you keep the brake pressed, 500ms later, it will set a electric brake force at 2, and 500ms later to 3. It will remain at 3 (max) until you release the brake lever."
+          "help_en": "When using a digital brake lever (on/off switch on the lever), this period will determine when the brake force is increased to the next lever (from min to max) as long as you keep the brake active.\nExemple : brake min = 1 / brake max = 3 / brake switch period = 500ms. When you start pressing the brake, it will set a electric brake force at 1. If you keep the brake pressed, 500ms later, it will set a electric brake force at 2, and 500ms later to 3. It will remain at 3 (max) until you release the brake lever."
         },
         {
           "ble_id": 30,
