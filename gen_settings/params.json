@@ -167,7 +167,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Enable speed limit after power on by setting a power limit (Dualtron/Speedway/Zeero \u2026) or speed limit (VESC)."
+          "help_en": "Enable speed limit after power on. It set a power limit on most escooters (Dualtron/Speedway/Zeero \u2026) or real speed limit on VESC."
         },
         {
           "ble_id": 7,
@@ -213,7 +213,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Lock the scooter if bluetooth device check is not successful :\n- None : no bluetooth peripheral check\n- Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\n- Smartphone connected or beacon visible : your smartphone OR a BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\n- Beacon visible : BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\nThose modes are used as **anti-theft** protection. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter."
+          "help_en": "Lock the scooter if bluetooth device check is not successful :\n- None : no bluetooth peripheral check, no lock mecanism.\n- Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\n- Smartphone connected or beacon visible : your smartphone needs to be connected OR a BLE (Bluetooth Low Energy) must be in range beacon of the SmartElec device in Bluetooth to unlock the scooter.\n- Beacon visible : BLE beacon must be in range of the SmartElec device in Bluetooth to unlock the scooter.\n**Those modes are used as anti-theft protection**. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter."
         },
         {
           "ble_id": 9,
@@ -236,7 +236,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Bluetooth PIN code is used when you want to connect a smartphone to your SmartEelc device. **Change it to protect your SmartElec device from any anybody connection.**"
+          "help_en": "Bluetooth PIN code is used when you want to connect a smartphone to your SmartElec device. **Change it to protect your SmartElec device from any anybody connection.**"
         },
         {
           "ble_id": 10,
@@ -374,7 +374,7 @@
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "",
-          "help_en": "Automatically shutdown the escooter after a fixed period when escooter is not moving."
+          "help_en": "Automatically shutdown the escooter after this period when escooter is not moving."
         }
       ]
     },
@@ -568,7 +568,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "The 'pedal assitance switch' will force you to push the escooter to start the engine. If you don't push the scooter, the throttle is not effective."
+          "help_en": "The 'pedal assitance switch' will force you to push the escooter to start the engine. \nIf you don't push the scooter, the throttle is not effective. The motor will engage as soon as 1km/h is reached."
         },
         {
           "ble_id": 23,
@@ -591,7 +591,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Enable the Anti-lock braking system (not advised, not well implemented on most escooters)"
+          "help_en": "Enable the anti-lock electric braking system (not advised, not well implemented on most escooters),"
         },
         {
           "ble_id": 24,
@@ -711,7 +711,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. There is mulitple possibilities to wire the brake on the SmartElec and you **MUST** select the brake type according to your wiring :\n- Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake activation. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.\n- Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.\n- Smart - Analog brake lever : an analog brake lever (xiaomi type or any hall sensor brake lever) is wired to directly to the SmartElec device. This wiring is the best. The brake force will be determined by the brake lever pressure force.\n- Smart - Digital brake + throttle (experimental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure set the brake force. You will need time to use this mode when riding."
+          "help_en": "If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. **There is mulitple possibilities to wire the brake on the SmartElec and you MUST select the brake type according to your wiring** :\n- Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake activation. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.\n- Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.\n- Smart - Analog brake lever : an analog brake lever (xiaomi type or any hall sensor brake lever) is wired to directly to the SmartElec device. This wiring is the best. The brake force will be determined by the brake lever pressure force.\n- Smart - Digital brake + throttle (experimental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure set the brake force. You will need time to use this mode when riding."
         },
         {
           "ble_id": 27,

@@ -12,12 +12,7 @@ template_h = """
 ## {{ key2 }}
         {%- for  item in value2.settings %}
             {%- if (item.valid_config != "old") %}
-
-                {%- if (item.smartphone_display_name ==  item.tft_display_name) %}
 ### {{ item.smartphone_display_name }}
-                {%- else %}
-### {{ item.smartphone_display_name }} / {{ item.tft_display_name }} 
-                {%- endif %}
 
                 {%- if (item.valid_config == "^sd_.*")  %}
 Valid configuration : SmartDisplay<br>

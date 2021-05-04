@@ -39,7 +39,7 @@ Usage : Used to compute autonomy. Set your regular max distance with one full ch
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 0<br>
 <br>
-Usage : Enable speed limit after power on by setting a power limit (Dualtron/Speedway/Zeero …) or speed limit (VESC).<br>
+Usage : Enable speed limit after power on. It set a power limit on most escooters (Dualtron/Speedway/Zeero …) or real speed limit on VESC.<br>
                 
 ### Speed limiter max speed
 Valid configuration : SmartController / SmartDisplay<br>
@@ -57,17 +57,17 @@ Possible values : <br>
 Default value : 0<br>
 <br>
 Usage : Lock the scooter if bluetooth device check is not successful :
-- None : no bluetooth peripheral check
+- None : no bluetooth peripheral check, no lock mecanism.
 - Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.
-- Smartphone connected or beacon visible : your smartphone OR a BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.
-- Beacon visible : BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.
-Those modes are used as **anti-theft** protection. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter.<br>
+- Smartphone connected or beacon visible : your smartphone needs to be connected OR a BLE (Bluetooth Low Energy) must be in range beacon of the SmartElec device in Bluetooth to unlock the scooter.
+- Beacon visible : BLE beacon must be in range of the SmartElec device in Bluetooth to unlock the scooter.
+**Those modes are used as anti-theft protection**. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter.<br>
                 
 ### PIN code
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 147258<br>
 <br>
-Usage : Bluetooth PIN code is used when you want to connect a smartphone to your SmartEelc device. **Change it to protect your SmartElec device from any anybody connection.**<br>
+Usage : Bluetooth PIN code is used when you want to connect a smartphone to your SmartElec device. **Change it to protect your SmartElec device from any anybody connection.**<br>
                 
 ### Beacon Mac Address
 Valid configuration : SmartController / SmartDisplay<br>
@@ -83,7 +83,7 @@ Default value : -80 (dB)<br>
 <br>
 Usage : Minimal reception power of the beacon to unlock the escooter. This is in dB, it means a -100dB value will be a longer distance than -50dB.<br>
                 
-### Original display speed adjustment (in percent) / Speed adjustment
+### Original display speed adjustment (in percent)
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 0 (percent)<br>
 <br>
@@ -103,7 +103,7 @@ Default value : 80 (RH)<br>
 <br>
 Usage : Trig an error indicator on the display or the smartphone application if this humidy threshold is reached. If you place the humidity sensor inside the deck, it will warn you if the water is entered inside the deck.<br>
                 
-### Automatic power off / Auto power off
+### Automatic power off
 Valid configuration : SmartDisplay<br>
 Possible values : <br>
     - None (value = 0)<br>
@@ -118,11 +118,11 @@ Possible values : <br>
     - 60 min (value = 9)<br>
 Default value : 0<br>
 <br>
-Usage : Automatically shutdown the escooter after a fixed period when escooter is not moving.<br>
+Usage : Automatically shutdown the escooter after this period when escooter is not moving.<br>
                 
 
 ## Smartphone display
-### Speed adjustment (in percent) / Speed adjustment
+### Speed adjustment (in percent)
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 0<br>
 <br>
@@ -141,7 +141,7 @@ Default value : 0<br>
 <br>
 Usage : Change the name of the auxilary relay on the display and smartphone for the integrated relay action. Exemple : if you connect a light, you can display "light" on the dashboard instead of "aux".<br>
                 
-### Display GPS speed instead of escooter speed / Display GPS speed 
+### Display GPS speed instead of escooter speed
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 0<br>
 <br>
@@ -149,13 +149,13 @@ Usage : Display GPS speed instead of escooter speed on the smartphone display.<b
                 
 
 ## SmartDisplay
-### Default mode at startup / Startup mode
+### Default mode at startup
 Valid configuration : SmartDisplay<br>
 Default value : 3<br>
 <br>
 Usage : Default speed mode after escooter power up.<br>
                 
-### Default eco mode at startup / Startup eco mode
+### Default eco mode at startup
 Valid configuration : SmartDisplay<br>
 Possible values : <br>
     - Max (value = 0)<br>
@@ -165,7 +165,7 @@ Default value : 2<br>
 <br>
 Usage : Default eco mode after escooter power up.<br>
                 
-### Default acceleration / Startup acceleration
+### Default acceleration
 Valid configuration : SmartDisplay<br>
 Possible values : <br>
     - Maximum (value = 0)<br>
@@ -178,7 +178,7 @@ Default value : 0<br>
 <br>
 Usage : Default acceleration mode after escooter power up.<br>
                 
-### Default electric brake at startup / Startup  ebrake
+### Default electric brake at startup
 Valid configuration : SmartDisplay<br>
 Default value : 3<br>
 <br>
@@ -188,13 +188,14 @@ Usage : Default electric brake power mode after escooter power up.<br>
 Valid configuration : SmartDisplay<br>
 Default value : 1<br>
 <br>
-Usage : The 'pedal assitance switch' will force you to push the escooter to start the engine. If you don't push the scooter, the throttle is not effective.<br>
+Usage : The 'pedal assitance switch' will force you to push the escooter to start the engine. 
+If you don't push the scooter, the throttle is not effective. The motor will engage as soon as 1km/h is reached.<br>
                 
 ### ABS enabled
 Valid configuration : SmartDisplay<br>
 Default value : 0<br>
 <br>
-Usage : Enable the Anti-lock braking system (not advised, not well implemented on most escooters)<br>
+Usage : Enable the anti-lock electric braking system (not advised, not well implemented on most escooters),<br>
                 
 ### Display brightness
 Valid configuration : SmartDisplay<br>
@@ -227,7 +228,7 @@ Default value : 0<br>
 <br>
 Usage : Enable the electric brake progressive mode.<br>
                 
-### Smart brake type / Type
+### Smart brake type
 Valid configuration : SmartController / SmartDisplay<br>
 Possible values : <br>
     - Controller (value = 0)<br>
@@ -236,20 +237,20 @@ Possible values : <br>
     - Smart - Digital brake + throttle (exp) (value = 3)<br>
 Default value : 0<br>
 <br>
-Usage : If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. There is mulitple possibilities to wire the brake on the SmartElec and you **MUST** select the brake type according to your wiring :
+Usage : If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. **There is mulitple possibilities to wire the brake on the SmartElec and you MUST select the brake type according to your wiring** :
 - Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake activation. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.
 - Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.
 - Smart - Analog brake lever : an analog brake lever (xiaomi type or any hall sensor brake lever) is wired to directly to the SmartElec device. This wiring is the best. The brake force will be determined by the brake lever pressure force.
 - Smart - Digital brake + throttle (experimental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure set the brake force. You will need time to use this mode when riding.<br>
                 
-### Min power value / Min value
+### Min power value
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 1<br>
 <br>
 Usage : Define the minimum electric brake force when you start pressing the brake lever.
 Note : don't forget to calibrate the brake lever pressure for a better feeling.<br>
                 
-### Max power value / Max value
+### Max power value
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 5<br>
 <br>
@@ -263,7 +264,7 @@ Default value : 500 (milliseconds)<br>
 Usage : When using a digital brake lever (on/off switch on the lever), this period will determine when the brake force is increased to the next lever (from min to max) as long as you keep the brake active.
 Exemple : brake min = 1 / brake max = 3 / brake switch period = 500ms. When you start pressing the brake, it will set a electric brake force at 1. If you keep the brake pressed, 500ms later, it will set a electric brake force at 2, and 500ms later to 3. It will remain at 3 (max) until you release the brake lever.<br>
                 
-### Disabled on high battery voltage / Disabled with bat, HV
+### Disabled on high battery voltage
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 0<br>
 <br>
@@ -271,7 +272,7 @@ Usage : Prevent power surge when braking if the battery is full or almost full.
 Electric brake generate current/voltage when used. If you use the electric brake when the battery is battery is full, the battery cannot take the energy and the controller will try to dissipate the energy... and can heat/blow.
 This option disable the electric brake until the baterry reach a threshold.<br>
                 
-### Disabled percent limit / Disabled with bat. HV
+### Disabled percent limit
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 100 (percent)<br>
 <br>
@@ -287,28 +288,28 @@ Usage : Enable throttle signal regeneration.
 This option allow you to modify the acceleration curve to make it more/less dynamic with different acceleration curves.
 **To enable this feature, you must wire the trottle jumpers according to the WIRING documentation.**<br>
                 
-### Input min voltage (in millivolts) / Input min voltage
+### Input min voltage (in millivolts)
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 650 (millivolts)<br>
 <br>
 Usage : Throttle input signal voltage when the throttle is released.
 Note : if the motor is spinning when the throttle is not pressed, try to decrease this value.<br>
                 
-### Input max voltage (in millivolts) / Input max voltage
+### Input max voltage (in millivolts)
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 3950 (millivolts)<br>
 <br>
 Usage : Throttle input signal voltage when the throttle is fully pressed
 Note : if the motor is not reaching max speed when the throttle is pressed, try to increase this value.<br>
                 
-### Output min voltage (in millivolts) / Output min voltage
+### Output min voltage (in millivolts)
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 800 (millivolts)<br>
 <br>
 Usage : Throttle ouput signal voltage when the throttle is released.
 Note : if the motor is spinning when the throttle is not pressed, try to decrease this value.<br>
                 
-### Output max voltage (in millivolts) / Output max voltage
+### Output max voltage (in millivolts)
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 3350 (millivolts)<br>
 <br>
@@ -343,7 +344,7 @@ Example with : 7, 15, 45, 75
                 
 
 ## Escooter buttons
-### Button 1 short press action / B1 short press 
+### Button 1 short press action
 Valid configuration : SmartController / SmartDisplay<br>
 Possible values : <br>
     - None (value = 0)<br>
@@ -366,7 +367,7 @@ Usage : Set the button 1 short press action (for external buttons wired to the S
 - Anti-theft manual lock ON : lock the escooter (motor power is locked, nobody can steal & ride with this mode)
 - Nitro boost continuous : switch speed mode to 3 while the button is pressed, then go back to original speed mode<br>
                 
-### Button 1 long press action / B1 long press 
+### Button 1 long press action
 Valid configuration : SmartController / SmartDisplay<br>
 Possible values : <br>
     - None (value = 0)<br>
@@ -391,7 +392,7 @@ Usage : Set the button 1 long press action (for external buttons wired to the Sm
 - Anti-theft manual lock ON : lock the escooter (motor power is locked, nobody can steal & ride with this mode)
 - Nitro boost continuous : switch speed mode to 3 while the button is pressed, then go back to original speed mode<br>
                 
-### Button 2 short press action / B2 short press 
+### Button 2 short press action
 Valid configuration : SmartController / SmartDisplay<br>
 Possible values : <br>
     - None (value = 0)<br>
@@ -423,7 +424,7 @@ Usage : If you press the button for this period, the SmartElec will launch the "
                 
 
 ## OTA update
-### Wifi network name (SSID) / Wifi network name
+### Wifi network name (SSID)
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : <br>
 <br>
