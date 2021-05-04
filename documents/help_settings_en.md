@@ -8,6 +8,7 @@ Default value : 10.0 (in inches)<br>
 Valid configuration : SmartController / SmartDisplay<br>
 </em>
 Usage : Wheel size (in inches) is used to adjust the speed and distance when riding.<br>
+                
 ### Number of poles pairs
 <em>
 Default value : 15 ()<br>
@@ -43,7 +44,8 @@ Usage : Use to compute autonomy. Set your regular max distance with one charge.<
 Default value : 0 ()<br>
 Valid configuration : SmartController / SmartDisplay<br>
 </em>
-Usage : Enable speed limit after power on by setting a power limit (Dualtron/Speedway/Zeero â€¦) or speed limit (VESC).<br>
+Usage : Enable speed limit after power on by setting a power limit (Dualtron/Speedway/Zeero …) or speed limit (VESC).<br>
+                
 ### Speed limiter max speed
 <em>
 Default value : 37 ()<br>
