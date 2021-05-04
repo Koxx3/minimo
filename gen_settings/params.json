@@ -23,7 +23,8 @@
           "tft_display_name": "Wheel size",
           "tft_fast_increment": 0.5,
           "tft_slow_increment": 0.1,
-          "tft_unit": "inch"
+          "tft_unit": "inch",
+          "help_en": "Wheel size (in inches) is used to adjust the speed and distance when riding."
         },
         {
           "ble_id": 2,
@@ -45,14 +46,15 @@
           "tft_display_name": "Number of poles pairs",
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": "Number of poles are used to compute speed/distance. Check you manual to set the correct value. If the manual specify '30 poles', set 15."
         },
         {
           "ble_id": 3,
           "var_name_hash": "pE1Xtp_i43dmJg",
           "type": "float",
           "var_name": "Battery_minimum_voltage",
-          "valid_config": "",
+          "valid_config": "old",
           "list_strings": "",
           "min": 30.0,
           "max": 100.0,
@@ -63,18 +65,19 @@
           "smartphone_display_unit": "in volts",
           "smartphone_display_hint": "",
           "smartphone_display_type": "edit_text_number_float",
-          "tft_menu_visible": 1.0,
+          "tft_menu_visible": 0.0,
           "tft_display_name": "Battery minimum voltage",
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 0.1,
-          "tft_unit": "V"
+          "tft_unit": "V",
+          "help_en": ""
         },
         {
           "ble_id": 4,
           "var_name_hash": "6qRuC6-LJswFEA",
           "type": "float",
           "var_name": "Battery_maximum_voltage",
-          "valid_config": "",
+          "valid_config": "old",
           "list_strings": "",
           "min": 30.0,
           "max": 100.0,
@@ -85,11 +88,35 @@
           "smartphone_display_unit": "in volts",
           "smartphone_display_hint": "",
           "smartphone_display_type": "edit_text_number_float",
-          "tft_menu_visible": 1.0,
+          "tft_menu_visible": 0.0,
           "tft_display_name": "Battery maximum voltage",
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 0.1,
-          "tft_unit": "V"
+          "tft_unit": "V",
+          "help_en": ""
+        },
+        {
+          "ble_id": 48,
+          "var_name_hash": "5W7SMGEdvdzMKA",
+          "type": "uint8_t",
+          "var_name": "Battery_nominal_voltage",
+          "valid_config": "",
+          "list_strings": "36V (42V full / 10S)\n46,8 (54,6V full / 13S)\n50,4V (58,8V full / 14S)\n57.6V (67,2V full / 16S)\n72V (84V full / 20S)\n86V (100,8V full / 24S)",
+          "min": 0,
+          "max": 5,
+          "default": 2,
+          "increment": "",
+          "regex_valid": "",
+          "smartphone_display_name": "Battery nominal voltage",
+          "smartphone_display_unit": "",
+          "smartphone_display_hint": "",
+          "smartphone_display_type": "list",
+          "tft_menu_visible": 1.0,
+          "tft_display_name": "Battery nominal voltage",
+          "tft_fast_increment": 1.0,
+          "tft_slow_increment": 1.0,
+          "tft_unit": "V",
+          "help_en": "Battery voltage is used to compute the autonomy left and charge indicator. Check your manuel or charger (it indicate full charge) to set the correct setting."
         },
         {
           "ble_id": 5,
@@ -111,7 +138,8 @@
           "tft_display_name": "Battery maximum distance",
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": "Km"
+          "tft_unit": "Km",
+          "help_en": "Use to compute autonomy. Set your regular max distance with one charge."
         }
       ]
     },
@@ -138,7 +166,8 @@
           "tft_display_name": "Speed limiter at startup",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": "Enable speed limit after power on by setting a power limit (Dualtron/Speedway/Zeero \u2026) or speed limit (VESC)."
         },
         {
           "ble_id": 7,
@@ -160,7 +189,8 @@
           "tft_display_name": "Speed limiter max speed",
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": "%"
+          "tft_unit": "%",
+          "help_en": "Power limit is expressed in percent (same power setting as in your manual). For VESC, the speed limit is set to 25 Km/h."
         },
         {
           "ble_id": 8,
@@ -182,7 +212,8 @@
           "tft_display_name": "Bluetooth lock mode",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": "Lock the scooter if bluetooth device check is not successful.<br>- None : no bluetooth peripheral check<br>Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.<br>- Smartphone connected or beacon visible : your smartphone OR a BLE beacon needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.<br>Those modes are use as anti-theft technics. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter.\nBeacon visible"
         },
         {
           "ble_id": 9,
@@ -204,7 +235,8 @@
           "tft_display_name": "PIN code",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": "Bluetooth PIN code is used when you want to connect a smartphone to your SmartEelc device. Change it to protect your SmartElec device from any anybody connection."
         },
         {
           "ble_id": 10,
@@ -226,7 +258,8 @@
           "tft_display_name": "Beacon Mac Address",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 11,
@@ -248,7 +281,8 @@
           "tft_display_name": "Beacon range",
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": "dB"
+          "tft_unit": "dB",
+          "help_en": ""
         },
         {
           "ble_id": 12,
@@ -270,7 +304,8 @@
           "tft_display_name": "Speed adjustment",
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": "%"
+          "tft_unit": "%",
+          "help_en": ""
         },
         {
           "ble_id": 13,
@@ -292,7 +327,8 @@
           "tft_display_name": "Temperature warning",
           "tft_fast_increment": 10.0,
           "tft_slow_increment": 5.0,
-          "tft_unit": "\u00b0C"
+          "tft_unit": "\u00b0C",
+          "help_en": ""
         },
         {
           "ble_id": 14,
@@ -314,7 +350,8 @@
           "tft_display_name": "Humidity warning",
           "tft_fast_increment": 10.0,
           "tft_slow_increment": 5.0,
-          "tft_unit": "RH"
+          "tft_unit": "RH",
+          "help_en": ""
         },
         {
           "ble_id": 47,
@@ -336,7 +373,8 @@
           "tft_display_name": "Auto power off",
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         }
       ]
     },
@@ -363,7 +401,8 @@
           "tft_display_name": "Speed adjustment",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 16,
@@ -385,7 +424,8 @@
           "tft_display_name": "Aux relay name",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 17,
@@ -407,7 +447,8 @@
           "tft_display_name": "Display GPS speed ",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         }
       ]
     },
@@ -434,7 +475,8 @@
           "tft_display_name": "Startup mode",
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 19,
@@ -456,7 +498,8 @@
           "tft_display_name": "Startup eco mode",
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 20,
@@ -478,7 +521,8 @@
           "tft_display_name": "Startup acceleration",
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 21,
@@ -500,7 +544,8 @@
           "tft_display_name": "Startup  ebrake",
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 22,
@@ -522,7 +567,8 @@
           "tft_display_name": "PAS enabled",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 23,
@@ -544,7 +590,8 @@
           "tft_display_name": "ABS enabled",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 24,
@@ -566,7 +613,8 @@
           "tft_display_name": "Display brightness",
           "tft_fast_increment": 10.0,
           "tft_slow_increment": 5.0,
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 44,
@@ -588,7 +636,8 @@
           "tft_display_name": "Display splash screen",
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 45,
@@ -610,7 +659,8 @@
           "tft_display_name": "Rotate screen",
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         }
       ]
     },
@@ -637,7 +687,8 @@
           "tft_display_name": "Progressive mode",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 26,
@@ -659,7 +710,8 @@
           "tft_display_name": "Type",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 27,
@@ -681,7 +733,8 @@
           "tft_display_name": "Min value",
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 28,
@@ -703,7 +756,8 @@
           "tft_display_name": "Max value",
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 29,
@@ -725,7 +779,8 @@
           "tft_display_name": "Time between mode shift",
           "tft_fast_increment": 100.0,
           "tft_slow_increment": 50.0,
-          "tft_unit": "ms"
+          "tft_unit": "ms",
+          "help_en": ""
         },
         {
           "ble_id": 30,
@@ -747,7 +802,8 @@
           "tft_display_name": "Disabled with bat, HV",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 31,
@@ -769,7 +825,8 @@
           "tft_display_name": "Disabled with bat. HV",
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": "%"
+          "tft_unit": "%",
+          "help_en": ""
         }
       ]
     },
@@ -796,7 +853,8 @@
           "tft_display_name": "Throttle regeneration",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 33,
@@ -818,7 +876,8 @@
           "tft_display_name": "Input min voltage",
           "tft_fast_increment": 100.0,
           "tft_slow_increment": 50.0,
-          "tft_unit": "mV"
+          "tft_unit": "mV",
+          "help_en": ""
         },
         {
           "ble_id": 34,
@@ -840,7 +899,8 @@
           "tft_display_name": "Input max voltage",
           "tft_fast_increment": 100.0,
           "tft_slow_increment": 50.0,
-          "tft_unit": "mV"
+          "tft_unit": "mV",
+          "help_en": ""
         },
         {
           "ble_id": 35,
@@ -862,7 +922,8 @@
           "tft_display_name": "Output min voltage",
           "tft_fast_increment": 100.0,
           "tft_slow_increment": 50.0,
-          "tft_unit": "mV"
+          "tft_unit": "mV",
+          "help_en": ""
         },
         {
           "ble_id": 36,
@@ -884,7 +945,8 @@
           "tft_display_name": "Output max voltage",
           "tft_fast_increment": 100.0,
           "tft_slow_increment": 50.0,
-          "tft_unit": "mV"
+          "tft_unit": "mV",
+          "help_en": ""
         },
         {
           "ble_id": 37,
@@ -906,7 +968,8 @@
           "tft_display_name": "Output curve",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 46,
@@ -928,7 +991,8 @@
           "tft_display_name": "Custom output curve points",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         }
       ]
     },
@@ -955,7 +1019,8 @@
           "tft_display_name": "B1 short press ",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 39,
@@ -977,7 +1042,8 @@
           "tft_display_name": "B1 long press ",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 40,
@@ -999,7 +1065,8 @@
           "tft_display_name": "B2 short press ",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 41,
@@ -1021,7 +1088,8 @@
           "tft_display_name": "Button long press duration",
           "tft_fast_increment": 1.0,
           "tft_slow_increment": 1.0,
-          "tft_unit": "s"
+          "tft_unit": "s",
+          "help_en": ""
         }
       ]
     },
@@ -1048,7 +1116,8 @@
           "tft_display_name": "Wifi network name",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         },
         {
           "ble_id": 43,
@@ -1070,7 +1139,8 @@
           "tft_display_name": "Wifi password",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
-          "tft_unit": ""
+          "tft_unit": "",
+          "help_en": ""
         }
       ]
     }
