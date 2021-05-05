@@ -1228,7 +1228,7 @@ void processDacOutput()
 
   if (shrd.isLocked) // if locked... 0 current target
   {
-    outputMilliv = 0;
+    outputMilliv = tOutMin;
   }
   else if (((shrd.pasEnabled) && (shrd.speedCurrent > 1)) || (!shrd.pasEnabled)) // normal condition
   {
@@ -1236,7 +1236,7 @@ void processDacOutput()
   }
   else // souldn't occur
   {
-    outputMilliv = 0;
+    outputMilliv = tOutMin;
   }
 
 #endif
