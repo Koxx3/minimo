@@ -16,24 +16,44 @@ Once you have all the electronic, you'll need to flash/install the softwares.
 - Erase the ESP32
 - Flash the ESP32
 
-## Connect Smartphone
+## Configure the device
+### Android
 - Enable bluetooth
 - Check if bluetooth detect a "SmartContrl-xxxx" device
-- Install the APK
+- Install the applcation from the Google App Store : https://play.google.com/store/apps/details?id=org.koxx.smartcntrl
 - Launch the application
 - Accept the connection to the device
 - Use the defaul pin code : 147258
+Nota : You can change the pin code in the application settings page
+- Enter the applicationsettings page
+- Configure the device
 
-=> You can change the pin code in the application settings
+### iPhone
+- Enable wifi
+- Search for "SmartContrl-xxxx" wifi
+- Connect to the SmartElec hotsport and access the hotspot page
+- Enter in the settings menu
 
-Nota : you can modify the Android project from [this github](https://github.com/Koxx3/minimo_android) 
+### From the SmartDisplay
+- Long press the secondary button, you will enter in the settings menu
+Nota : some settings are not available from this menu (when you have to enter strings)
+- Use primary and secondary buttons to move the cursor, validate and escape
 
 ## Settings
-TBD
+[See settings descriptions](help_settings_en.md)
 
 ## Update throught Wifi
-- From the Android application, in the settings, enter your wifi network and password.
+You need to set the Wifi network/password from an android/iphone to make it work :
+Then ...
+
+### Android
 - In the main interface, open the menu with the '...' , tap "Software update (OTA)"
 => The SmartController will siwth from bluetooth to wifi server and you will loose Bluetooth connection.
 - Wait the upload and flash end, then it should reboot automatically
 
+### iPhone
+- On the wifi hotspot portal, select "Software update (OTA)"
+- Enter the release number and validate !
+
+### From the SmartDisplay
+- TBD
