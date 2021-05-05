@@ -61,7 +61,8 @@ Current PCB size : 6cm x 3cm x 2cm
 The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html) microcontroller.
 
 ### Schematics
-[PCB schematic v1.3.3](https://oshwlab.com/Koxx3/smartlcd-v1-3_copy_copy_copy)
+[PCB schematic v1.4.2](https://oshwlab.com/Koxx3/smartlcd-v1-4_copy)
+[old - PCB schematic v1.3.2](https://oshwlab.com/Koxx3/smartlcd-v1-3_copy_copy)
 
 ![PCB from easyEDA](/img/pcb_typon.png)
 
