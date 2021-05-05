@@ -14,7 +14,7 @@ You simply place the little box inside the deck and connect it to the controller
 
 ### Requirements
 - An e-scooter with any supported controllers (single or dual)
-- An power supply between 12V and 80V... (possible with external DC-DC providing 12V or 5V if you have 20S or more)
+- An power supply between 12V and 100V... (possible with external DC-DC providing 5V if needed)
 - If you want to use progressive brake feature, you must ensure no more than 60V pass in the brake handle (issue noted only for Kaabo)
 - The electronics (ESP32 Dev KitC V4 + SmartController shield + JST SM/PH connectors)
 - Some electronic skills
