@@ -311,7 +311,7 @@ public class SmartElecSettings {
             settings.add(
             {%- if item.smartphone_display_type | lower == "list" %}
                 {%- set list1 = item.list_strings.split('\n')  %}
-                {%- set list_default = list1[item.default] | lower  | replace(" ", "_") | regex_replace("[^A-Za-z0-9_]","") | title %}
+                {%- set list_default = list1[item.default]  | replace(" ", "_") | replace("/", "_") | regex_replace("[^A-Za-z0-9_]","") |title | title %}
                 new ListSettingsObject.Builder({{ key }}, {{ display_str }}, {{ item.var_name }}_LIST_{{ list_default }}, {{ item.var_name  }}_LIST_AL , "save")
                     .setUseValueAsSummary()
                     .setNegativeBtnText("cancel")

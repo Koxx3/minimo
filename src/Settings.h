@@ -61,29 +61,24 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_BATTERY_MINIMUM_VOLTAGE_BLE_ID 3
-    #define SETTINGS_BATTERY_MINIMUM_VOLTAGE_STORAGE_KEY "pE1Xtp_i43dmJg"
-    #define SETTINGS_BATTERY_MINIMUM_VOLTAGE_NAME "Battery_minimum_voltage"
+    #define SETTINGS_BATTERY_NOMINAL_VOLTAGE_BLE_ID 48
+    #define SETTINGS_BATTERY_NOMINAL_VOLTAGE_STORAGE_KEY "5W7SMGEdvdzMKA"
+    #define SETTINGS_BATTERY_NOMINAL_VOLTAGE_NAME "Battery_nominal_voltage"
 
-    float Battery_minimum_voltage;
+    uint8_t Battery_nominal_voltage;
+    typedef enum LIST_Battery_nominal_voltage {
+        LIST_Battery_nominal_voltage_36v_42v_full___10s,
+        LIST_Battery_nominal_voltage_48v_546v_full___13s,
+        LIST_Battery_nominal_voltage_52v_588v_full___14s,
+        LIST_Battery_nominal_voltage_60v_672v_full___16s,
+        LIST_Battery_nominal_voltage_72v_84v_full___20s,
+        LIST_Battery_nominal_voltage_86v_1008v_full___24s, 
+    } tBattery_nominal_voltage;
 
-    void set_Battery_minimum_voltage (float value);
-    float get_Battery_minimum_voltage();
-    void display_Battery_minimum_voltage();
-    void save_Battery_minimum_voltage(float value);
-            
-    /*-------------------------------------------------------*/
-
-    #define SETTINGS_BATTERY_MAXIMUM_VOLTAGE_BLE_ID 4
-    #define SETTINGS_BATTERY_MAXIMUM_VOLTAGE_STORAGE_KEY "6qRuC6-LJswFEA"
-    #define SETTINGS_BATTERY_MAXIMUM_VOLTAGE_NAME "Battery_maximum_voltage"
-
-    float Battery_maximum_voltage;
-
-    void set_Battery_maximum_voltage (float value);
-    float get_Battery_maximum_voltage();
-    void display_Battery_maximum_voltage();
-    void save_Battery_maximum_voltage(float value);
+    void set_Battery_nominal_voltage (uint8_t value);
+    uint8_t get_Battery_nominal_voltage();
+    void display_Battery_nominal_voltage();
+    void save_Battery_nominal_voltage(uint8_t value);
             
     /*-------------------------------------------------------*/
 

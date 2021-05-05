@@ -239,7 +239,7 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
   uint8_t newPower = 100;
 
   float voltage = shrd->voltageFilterMean / 1000.0;
-  float bat_min = settings->get_Battery_minimum_voltage();
+  //float bat_min = settings->get_Battery_minimum_voltage();
   //float bat_max = settings->get_Battery_maximum_voltage();
   //float bat_med_save = settings->getS3F().Battery_saving_medium_voltage;
 
@@ -292,7 +292,7 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
   }
   else
   {
-
+    /*
     // override with battery status
     int min_power = 20;
     if (voltage < bat_min)
@@ -302,7 +302,6 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
         newPower = min_power;
       }
     }
-    /*
     else if (voltage < bat_med_save_voltage)
     {
       float factor = ((min_power - 100) / (bat_min - bat_med_save_voltage));
@@ -318,12 +317,13 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
       {
         newPower = (voltage * factor) + origin;
       }
-    }
-    */
     else
     {
       newPower = var;
     }
+    */
+
+    newPower = var;
   }
 
   return newPower;
@@ -592,7 +592,6 @@ uint8_t MinimoUart::modifyBrakeFromAnalog(char var, char data_buffer[])
       // fix invalid parameters
       if (step <= 0)
         step = 1;
-
 
       //shrd->brakeSentOrder = map(shrd->brakePercent, 0, 100, settings->get_Ebrake_min_power_value(), settings->get_Ebrake_max_power_value());
 

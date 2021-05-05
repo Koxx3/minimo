@@ -18,9 +18,8 @@
 ACText(ACS1, "<h2>Escooter characteristics</h2>", "");
 ACInput(ACS1_1, "10.0", "Wheel size", "^[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$", "", AC_Tag_BR, AC_Input_Text);
 ACInput(ACS1_2, "15", "Number of poles pairs", "^[0-9]+$", "", AC_Tag_BR, AC_Input_Text);
-ACInput(ACS1_3, "42.0", "Battery minimum voltage", "^[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$", "", AC_Tag_BR, AC_Input_Text);
-ACInput(ACS1_4, "58.8", "Battery maximum voltage", "^[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$", "", AC_Tag_BR, AC_Input_Text);
-ACInput(ACS1_5, "40", "Battery maximum distance", "^[0-9]+$", "", AC_Tag_BR, AC_Input_Text);
+ACSelect(ACS1_3, {"36V (42V full / 10S)","48V (54,6V full / 13S)","52V (58,8V full / 14S)","60V (67,2V full / 16S)","72V (84V full / 20S)","86V (100,8V full / 24S)"}, "Battery nominal voltage", 2);
+ACInput(ACS1_4, "40", "Battery maximum distance", "^[0-9]+$", "", AC_Tag_BR, AC_Input_Text);
 ACText(ACS2, "<h2>General</h2>", "");
 ACCheckbox(ACS2_1, "ACS2_1", "Speed limiter at startup", false, AC_Infront);
 ACInput(ACS2_2, "37", "Speed limiter max speed", "", "", AC_Tag_BR, AC_Input_Text);
@@ -84,7 +83,6 @@ AutoConnectAux settingsPageAux("/settingspage", "SmartElec settings", true, {
     ACS1_2,
     ACS1_3,
     ACS1_4,
-    ACS1_5,
         
     ACS2,
     ACS2_1,
@@ -151,9 +149,8 @@ void saveConfig(AutoConnectAux &aux)
 {
     WifiSettingsPortal_settings->set_Wheel_size((settingsPageAux["ACS1_1"].as<AutoConnectInput>()).value.toFloat());
     WifiSettingsPortal_settings->set_Number_of_poles_pairs((settingsPageAux["ACS1_2"].as<AutoConnectInput>()).value.toInt());
-    WifiSettingsPortal_settings->set_Battery_minimum_voltage((settingsPageAux["ACS1_3"].as<AutoConnectInput>()).value.toFloat());
-    WifiSettingsPortal_settings->set_Battery_maximum_voltage((settingsPageAux["ACS1_4"].as<AutoConnectInput>()).value.toFloat());
-    WifiSettingsPortal_settings->set_Battery_maximum_distance((settingsPageAux["ACS1_5"].as<AutoConnectInput>()).value.toInt());
+    WifiSettingsPortal_settings->set_Battery_nominal_voltage((settingsPageAux["ACS1_3"].as<AutoConnectSelect>()).selected - 1);
+    WifiSettingsPortal_settings->set_Battery_maximum_distance((settingsPageAux["ACS1_4"].as<AutoConnectInput>()).value.toInt());
     WifiSettingsPortal_settings->set_Speed_limiter_at_startup((settingsPageAux["ACS2_1"].as<AutoConnectCheckbox>()).checked ? 1 : 0);
     WifiSettingsPortal_settings->set_Speed_limiter_max_speed((settingsPageAux["ACS2_2"].as<AutoConnectInput>()).value.toInt());
     WifiSettingsPortal_settings->set_Bluetooth_lock_mode((settingsPageAux["ACS2_3"].as<AutoConnectSelect>()).selected - 1);
@@ -205,9 +202,20 @@ void loadConfig(AutoConnectAux &aux)
 {
     aux.setElementValue("ACS1_1", (String)WifiSettingsPortal_settings->get_Wheel_size());
     aux.setElementValue("ACS1_2", (String)WifiSettingsPortal_settings->get_Number_of_poles_pairs());
-    aux.setElementValue("ACS1_3", (String)WifiSettingsPortal_settings->get_Battery_minimum_voltage());
-    aux.setElementValue("ACS1_4", (String)WifiSettingsPortal_settings->get_Battery_maximum_voltage());
-    aux.setElementValue("ACS1_5", (String)WifiSettingsPortal_settings->get_Battery_maximum_distance());
+    uint8_t val_Battery_nominal_voltage = WifiSettingsPortal_settings->get_Battery_nominal_voltage();
+    if (val_Battery_nominal_voltage == 0)
+        aux.setElementValue("ACS1_3", "36V (42V full / 10S)");
+    if (val_Battery_nominal_voltage == 1)
+        aux.setElementValue("ACS1_3", "48V (54,6V full / 13S)");
+    if (val_Battery_nominal_voltage == 2)
+        aux.setElementValue("ACS1_3", "52V (58,8V full / 14S)");
+    if (val_Battery_nominal_voltage == 3)
+        aux.setElementValue("ACS1_3", "60V (67,2V full / 16S)");
+    if (val_Battery_nominal_voltage == 4)
+        aux.setElementValue("ACS1_3", "72V (84V full / 20S)");
+    if (val_Battery_nominal_voltage == 5)
+        aux.setElementValue("ACS1_3", "86V (100,8V full / 24S)");
+    aux.setElementValue("ACS1_4", (String)WifiSettingsPortal_settings->get_Battery_maximum_distance());
     aux.setElementValue("ACS2_1", WifiSettingsPortal_settings->get_Speed_limiter_at_startup() ? "checked" : "");
     aux.setElementValue("ACS2_2", (String)WifiSettingsPortal_settings->get_Speed_limiter_max_speed());
     uint8_t val_Bluetooth_lock_mode = WifiSettingsPortal_settings->get_Bluetooth_lock_mode();

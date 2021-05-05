@@ -3,12 +3,26 @@ import re
 import jinja2
 
 template_h = """
-# Manual
+//////------------------------------------
+//////------------------------------------
+//////------------------------------------
+////// GENERATED FILE - DO NOT EDIT MANUALLY
+//////------------------------------------
+//////------------------------------------
+//////------------------------------------
 
+#include <AutoConnect.h>
+
+
+//-----------------------
+// variables and lists
+//-----------------------
+
+/* elements */
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
         {%- set outer_loop = loop %}
-##{{ key2 }}
+ACText(ACS{{ outer_loop.index }}, "<h2>{{ key2 }}</h2>", "");
         {%- for  item in value2.settings %}
 
                 {%- if item.smartphone_display_type == "edit_text_number_float" %}
@@ -40,7 +54,63 @@ ACSelect(ACS{{ outer_loop.index }}_{{ loop.index }}, {"{{ list1 }}"}, "{{ item.t
     {%- endfor %}
 {%- endfor %}
 
-      
+
+/* menus */
+AutoConnectAux settingsPageAux("/settingspage", "SmartElec settings", true, {
+    ACE_Style1,
+    ACE_Style2,
+    ACE_Style3,
+    ACE_Style4,
+{%- for key, value in parameters.items() %}
+    {%- for key2, value2 in value.items() %}
+        {% set outer_loop = loop %}
+    ACS{{ outer_loop.index }},
+        {%- for  item in value2.settings %}
+    ACS{{ outer_loop.index }}_{{ loop.index }},
+        {%- endfor %}
+    {%- endfor %}
+{%- endfor %}
+    ACE_SETTINGS_Discard, 
+    ACE_SETTINGS_Save,
+    ACE_SETTINGS_Js1 });        
+
+
+/* save */
+void saveConfig(AutoConnectAux &aux)
+{
+
+{%- for key, value in parameters.items() %}
+    {%- for key2, value2 in value.items() %}
+        {%- set outer_loop = loop %}
+        {%- for  item in value2.settings %}
+
+                {%- if item.smartphone_display_type == "edit_text_number_float" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACS{{ outer_loop.index }}_{{ loop.index }}"].as<AutoConnectInput>()).value.toFloat());
+                {%- elif item.smartphone_display_type == "edit_text_number_integer" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACS{{ outer_loop.index }}_{{ loop.index }}"].as<AutoConnectInput>()).value.toInt());
+                {%- elif item.smartphone_display_type == "edit_text_number_integer_signed" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACS{{ outer_loop.index }}_{{ loop.index }}"].as<AutoConnectInput>()).value.toInt());
+                {%- elif item.smartphone_display_type == "edit_text_string" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACS{{ outer_loop.index }}_{{ loop.index }}"].as<AutoConnectInput>()).value);
+                {%- elif item.smartphone_display_type == "edit_text_password" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACS{{ outer_loop.index }}_{{ loop.index }}"].as<AutoConnectInput>()).value);
+                {%- elif item.smartphone_display_type == "seek_bar" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACS{{ outer_loop.index }}_{{ loop.index }}"].as<AutoConnectInput>()).value.toInt());
+                {%- elif item.smartphone_display_type == "checkbox" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACS{{ outer_loop.index }}_{{ loop.index }}"].as<AutoConnectCheckbox>()).checked ? 1 : 0);
+                {%- elif item.smartphone_display_type | lower == "list" %}
+    WifiSettingsPortal_settings->set_{{ item.var_name }}((settingsPageAux["ACS{{ outer_loop.index }}_{{ loop.index }}"].as<AutoConnectSelect>()).selected - 1);
+                {%- endif %}
+        {%- endfor %}
+    {%- endfor %}
+{%- endfor %}
+    WifiSettingsPortal_settings->save();
+    
+}
+
+/* load */
+void loadConfig(AutoConnectAux &aux)
+{
 
 {%- for key, value in parameters.items() %}
     {%- for key2, value2 in value.items() %}
@@ -73,6 +143,7 @@ ACSelect(ACS{{ outer_loop.index }}_{{ loop.index }}, {"{{ list1 }}"}, "{{ item.t
     {%- endfor %}
 {%- endfor %}
 
+}
 
 """
 

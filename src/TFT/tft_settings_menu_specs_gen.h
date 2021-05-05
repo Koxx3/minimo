@@ -12,8 +12,15 @@
 //-----------------------
 float tft_Wheel_size = 10.0;
 uint8_t tft_Number_of_poles_pairs = 15;
-float tft_Battery_minimum_voltage = 42.0;
-float tft_Battery_maximum_voltage = 58.8;
+uint8_t tft_Battery_nominal_voltage = 2;
+TOGGLE(tft_Battery_nominal_voltage, tft_Battery_nominal_voltage_LIST,"  Battery nominal voltage ",doNothing,noEvent,noStyle //
+    ,VALUE("36V (42V full / 10S)", 0 ,doNothing,noEvent) //
+    ,VALUE("48V (54,6V full / 13S)", 1 ,doNothing,noEvent) //
+    ,VALUE("52V (58,8V full / 14S)", 2 ,doNothing,noEvent) //
+    ,VALUE("60V (67,2V full / 16S)", 3 ,doNothing,noEvent) //
+    ,VALUE("72V (84V full / 20S)", 4 ,doNothing,noEvent) //
+    ,VALUE("86V (100,8V full / 24S)", 5 ,doNothing,noEvent) //
+);
 uint8_t tft_Battery_maximum_distance = 40;
 uint8_t tft_Speed_limiter_at_startup = 0;
 TOGGLE(tft_Speed_limiter_at_startup, tft_Speed_limiter_at_startup_LIST,"  Speed limiter at startup ",doNothing,noEvent,noStyle //
@@ -155,8 +162,7 @@ uint8_t tft_Button_long_press_duration = 3;
 MENU(SUBMENU_Escooter_characteristics,"  Escooter characteristics",doNothing,noEvent,noStyle //
     ,altFIELD(decPlaces<1>::menuField, tft_Wheel_size, "  Wheel size " ," inch", 8.0, 20.0, 0.5, 0.1, doNothing,anyEvent,noStyle) //
     ,FIELD(tft_Number_of_poles_pairs,"  Number of poles pairs "," ", 10, 30, 1, 1, doNothing,noEvent,noStyle) //
-    ,altFIELD(decPlaces<1>::menuField, tft_Battery_minimum_voltage, "  Battery minimum voltage " ," V", 30.0, 100.0, 1.0, 0.1, doNothing,anyEvent,noStyle) //
-    ,altFIELD(decPlaces<1>::menuField, tft_Battery_maximum_voltage, "  Battery maximum voltage " ," V", 30.0, 100.0, 1.0, 0.1, doNothing,anyEvent,noStyle) //
+    ,SUBMENU(tft_Battery_nominal_voltage_LIST) //
     ,FIELD(tft_Battery_maximum_distance,"  Battery maximum distance "," Km", 10, 100, 5, 1, doNothing,noEvent,noStyle) //
     ,EXIT("< Back")
 );
@@ -239,8 +245,7 @@ MENU(mainMenu,"  Main menu",doNothing,noEvent,noStyle //
 void settings_menu_init_from_settings() {
     tft_Wheel_size = TFT_menu_settings->get_Wheel_size();
     tft_Number_of_poles_pairs = TFT_menu_settings->get_Number_of_poles_pairs();
-    tft_Battery_minimum_voltage = TFT_menu_settings->get_Battery_minimum_voltage();
-    tft_Battery_maximum_voltage = TFT_menu_settings->get_Battery_maximum_voltage();
+    tft_Battery_nominal_voltage = TFT_menu_settings->get_Battery_nominal_voltage();
     tft_Battery_maximum_distance = TFT_menu_settings->get_Battery_maximum_distance();
     tft_Speed_limiter_at_startup = TFT_menu_settings->get_Speed_limiter_at_startup();
     tft_Speed_limiter_max_speed = TFT_menu_settings->get_Speed_limiter_max_speed();
@@ -280,8 +285,7 @@ void settings_menu_init_from_settings() {
 void settings_menu_save_to_settings() {
     TFT_menu_settings->set_Wheel_size(tft_Wheel_size);
     TFT_menu_settings->set_Number_of_poles_pairs(tft_Number_of_poles_pairs);
-    TFT_menu_settings->set_Battery_minimum_voltage(tft_Battery_minimum_voltage);
-    TFT_menu_settings->set_Battery_maximum_voltage(tft_Battery_maximum_voltage);
+    TFT_menu_settings->set_Battery_nominal_voltage(tft_Battery_nominal_voltage);
     TFT_menu_settings->set_Battery_maximum_distance(tft_Battery_maximum_distance);
     TFT_menu_settings->set_Speed_limiter_at_startup(tft_Speed_limiter_at_startup);
     TFT_menu_settings->set_Speed_limiter_max_speed(tft_Speed_limiter_max_speed);

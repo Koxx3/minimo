@@ -32,7 +32,7 @@ Valid configuration : SmartController / SmartDisplay<br>
 Default value : 40 (kilometers)<br>
 <br>
 Usage : Used to compute autonomy. Set your regular max distance with one full charge.
-Autonomy is computed following theLG MJ1 discharge curve.<br>
+Autonomy is computed following the LG MJ1 discharge curve.<br>
                 
 
 ## General
@@ -40,7 +40,7 @@ Autonomy is computed following theLG MJ1 discharge curve.<br>
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 0<br>
 <br>
-Usage : Enable speed limit after power on. It set a power limit on most escooters (Dualtron/Speedway/Zeero …) or real speed limit on VESC.<br>
+Usage : Enable speed limit after power on. It set a power limit on most escooters (Dualtron/Speedway/Zero …) or real speed limit on VESC.<br>
                 
 ### Speed limiter max speed
 Valid configuration : SmartController / SmartDisplay<br>

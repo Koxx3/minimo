@@ -1,6 +1,4 @@
 //////////////////////////////////////////
-// TODO : buttons change accel/eco mode
-// TODO : LCD error indicators
 // TODO : auto mode shift on low battery
 // TODO : reduce SHTC3 read time - brake read function in 2 parts
 // BUG : Minimo - original regulator perturbation
@@ -143,7 +141,7 @@ uint32_t iBrakeMinCalibOrder = 0;
 
 uint16_t voltageRaw = 0;
 uint32_t voltageInMilliVolts = 0;
-Battery batt = Battery(36000, 54000);
+Battery batt = Battery(NULL);
 
 uint16_t throttleAnalogValue = 0;
 
@@ -286,9 +284,9 @@ void setupSerial()
 
 void setupBattery()
 {
-  batt = Battery(settings.get_Battery_minimum_voltage() * 1000, settings.get_Battery_maximum_voltage() * 1000);
+  batt = Battery(&settings);
 
-  Serial.println("Battery : min = " + (String)settings.get_Battery_minimum_voltage() + " / max = " + settings.get_Battery_maximum_voltage());
+  Serial.println("Battery : type = " + (String)settings.get_Battery_nominal_voltage());
 }
 
 void setupVoltage()

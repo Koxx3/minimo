@@ -27,10 +27,8 @@ void Settings::restore() {
     Serial.println("  >> Wheel_size = " + (String)Wheel_size);
     Number_of_poles_pairs = prefs.getInt(SETTINGS_NUMBER_OF_POLES_PAIRS_STORAGE_KEY, 15);
     Serial.println("  >> Number_of_poles_pairs = " + (String)Number_of_poles_pairs);
-    Battery_minimum_voltage = prefs.getFloat(SETTINGS_BATTERY_MINIMUM_VOLTAGE_STORAGE_KEY, 42.0);
-    Serial.println("  >> Battery_minimum_voltage = " + (String)Battery_minimum_voltage);
-    Battery_maximum_voltage = prefs.getFloat(SETTINGS_BATTERY_MAXIMUM_VOLTAGE_STORAGE_KEY, 58.8);
-    Serial.println("  >> Battery_maximum_voltage = " + (String)Battery_maximum_voltage);
+    Battery_nominal_voltage = prefs.getInt(SETTINGS_BATTERY_NOMINAL_VOLTAGE_STORAGE_KEY, 2);
+    Serial.println("  >> Battery_nominal_voltage = " + (String)Battery_nominal_voltage);
     Battery_maximum_distance = prefs.getInt(SETTINGS_BATTERY_MAXIMUM_DISTANCE_STORAGE_KEY, 40);
     Serial.println("  >> Battery_maximum_distance = " + (String)Battery_maximum_distance);
     Speed_limiter_at_startup = prefs.getInt(SETTINGS_SPEED_LIMITER_AT_STARTUP_STORAGE_KEY, 0);
@@ -126,8 +124,7 @@ void Settings::save() {
     prefs.begin(SETTINGS_STORAGE, false);
     prefs.putFloat(SETTINGS_WHEEL_SIZE_STORAGE_KEY, Wheel_size);
     prefs.putInt(SETTINGS_NUMBER_OF_POLES_PAIRS_STORAGE_KEY, Number_of_poles_pairs);
-    prefs.putFloat(SETTINGS_BATTERY_MINIMUM_VOLTAGE_STORAGE_KEY, Battery_minimum_voltage);
-    prefs.putFloat(SETTINGS_BATTERY_MAXIMUM_VOLTAGE_STORAGE_KEY, Battery_maximum_voltage);
+    prefs.putInt(SETTINGS_BATTERY_NOMINAL_VOLTAGE_STORAGE_KEY, Battery_nominal_voltage);
     prefs.putInt(SETTINGS_BATTERY_MAXIMUM_DISTANCE_STORAGE_KEY, Battery_maximum_distance);
     prefs.putInt(SETTINGS_SPEED_LIMITER_AT_STARTUP_STORAGE_KEY, Speed_limiter_at_startup);
     prefs.putInt(SETTINGS_SPEED_LIMITER_MAX_SPEED_STORAGE_KEY, Speed_limiter_max_speed);
@@ -196,14 +193,9 @@ void Settings::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         //Serial.print("unpack_setting_packet - Number_of_poles_pairs : " + (String) Number_of_poles_pairs + " / ");
         //buffer_display("", packet, length);
         break;
-    case SETTINGS_BATTERY_MINIMUM_VOLTAGE_BLE_ID :
-        set_Battery_minimum_voltage(buffer_get_float32_auto(packet, &ind));
-        //Serial.print("unpack_setting_packet - Battery_minimum_voltage : " + (String) Battery_minimum_voltage + " / ");
-        //buffer_display("", packet, length);
-        break;
-    case SETTINGS_BATTERY_MAXIMUM_VOLTAGE_BLE_ID :
-        set_Battery_maximum_voltage(buffer_get_float32_auto(packet, &ind));
-        //Serial.print("unpack_setting_packet - Battery_maximum_voltage : " + (String) Battery_maximum_voltage + " / ");
+    case SETTINGS_BATTERY_NOMINAL_VOLTAGE_BLE_ID :
+        set_Battery_nominal_voltage(buffer_get_uint8(packet, &ind));
+        //Serial.print("unpack_setting_packet - Battery_nominal_voltage : " + (String) Battery_nominal_voltage + " / ");
         //buffer_display("", packet, length);
         break;
     case SETTINGS_BATTERY_MAXIMUM_DISTANCE_BLE_ID :
@@ -476,14 +468,9 @@ bool Settings::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, ui
         //Serial.print("pack_setting_packet - Number_of_poles_pairs : " + (String) Number_of_poles_pairs + " / ");
         //buffer_display("", packet, *ind);
         break;
-    case SETTINGS_BATTERY_MINIMUM_VOLTAGE_BLE_ID :
-        buffer_append_float32_auto(packet, Battery_minimum_voltage, ind);
-        //Serial.print("pack_setting_packet - Battery_minimum_voltage : " + (String) Battery_minimum_voltage + " / ");
-        //buffer_display("", packet, *ind);
-        break;
-    case SETTINGS_BATTERY_MAXIMUM_VOLTAGE_BLE_ID :
-        buffer_append_float32_auto(packet, Battery_maximum_voltage, ind);
-        //Serial.print("pack_setting_packet - Battery_maximum_voltage : " + (String) Battery_maximum_voltage + " / ");
+    case SETTINGS_BATTERY_NOMINAL_VOLTAGE_BLE_ID :
+        buffer_append_uint8(packet, Battery_nominal_voltage, ind);
+        //Serial.print("pack_setting_packet - Battery_nominal_voltage : " + (String) Battery_nominal_voltage + " / ");
         //buffer_display("", packet, *ind);
         break;
     case SETTINGS_BATTERY_MAXIMUM_DISTANCE_BLE_ID :
@@ -810,42 +797,21 @@ void Settings::save_Number_of_poles_pairs(uint8_t value) {
 
 /*-------------------------------------------------------*/
 
-void Settings::set_Battery_minimum_voltage(float value) {
-    Battery_minimum_voltage = value;
+void Settings::set_Battery_nominal_voltage(uint8_t value) {
+    Battery_nominal_voltage = value;
 }
 
-float Settings::get_Battery_minimum_voltage() {
-    return Battery_minimum_voltage ;
+uint8_t Settings::get_Battery_nominal_voltage() {
+    return Battery_nominal_voltage ;
 }
 
-void Settings::display_Battery_minimum_voltage() {
-    Serial.println("  Battery_minimum_voltage = " + (String) Battery_minimum_voltage);
+void Settings::display_Battery_nominal_voltage() {
+    Serial.println("  Battery_nominal_voltage = " + (String) Battery_nominal_voltage);
 }
 
-void Settings::save_Battery_minimum_voltage(float value) {
+void Settings::save_Battery_nominal_voltage(uint8_t value) {
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putFloat(SETTINGS_BATTERY_MINIMUM_VOLTAGE_STORAGE_KEY, Battery_minimum_voltage);
-    prefs.end();
-}
-                
-
-/*-------------------------------------------------------*/
-
-void Settings::set_Battery_maximum_voltage(float value) {
-    Battery_maximum_voltage = value;
-}
-
-float Settings::get_Battery_maximum_voltage() {
-    return Battery_maximum_voltage ;
-}
-
-void Settings::display_Battery_maximum_voltage() {
-    Serial.println("  Battery_maximum_voltage = " + (String) Battery_maximum_voltage);
-}
-
-void Settings::save_Battery_maximum_voltage(float value) {
-    prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putFloat(SETTINGS_BATTERY_MAXIMUM_VOLTAGE_STORAGE_KEY, Battery_maximum_voltage);
+    prefs.putInt(SETTINGS_BATTERY_NOMINAL_VOLTAGE_STORAGE_KEY, Battery_nominal_voltage);
     prefs.end();
 }
                 

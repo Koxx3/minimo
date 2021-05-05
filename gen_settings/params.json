@@ -50,52 +50,6 @@
           "help_en": "Motors number of poles are used to compute speed/distance. Check you manual to set the correct value. If the manual specify '30 poles', set 15."
         },
         {
-          "ble_id": 3,
-          "var_name_hash": "pE1Xtp_i43dmJg",
-          "type": "float",
-          "var_name": "Battery_minimum_voltage",
-          "valid_config": "old",
-          "list_strings": "",
-          "min": 30.0,
-          "max": 100.0,
-          "default": 42.0,
-          "increment": "",
-          "regex_valid": "^[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$",
-          "smartphone_display_name": "Battery minimum voltage",
-          "smartphone_display_unit": "volts",
-          "smartphone_display_hint": "",
-          "smartphone_display_type": "edit_text_number_float",
-          "tft_menu_visible": 0.0,
-          "tft_display_name": "Battery minimum voltage",
-          "tft_fast_increment": 1.0,
-          "tft_slow_increment": 0.1,
-          "tft_unit": "V",
-          "help_en": ""
-        },
-        {
-          "ble_id": 4,
-          "var_name_hash": "6qRuC6-LJswFEA",
-          "type": "float",
-          "var_name": "Battery_maximum_voltage",
-          "valid_config": "old",
-          "list_strings": "",
-          "min": 30.0,
-          "max": 100.0,
-          "default": 58.8,
-          "increment": "",
-          "regex_valid": "^[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$",
-          "smartphone_display_name": "Battery maximum voltage",
-          "smartphone_display_unit": "volts",
-          "smartphone_display_hint": "",
-          "smartphone_display_type": "edit_text_number_float",
-          "tft_menu_visible": 0.0,
-          "tft_display_name": "Battery maximum voltage",
-          "tft_fast_increment": 1.0,
-          "tft_slow_increment": 0.1,
-          "tft_unit": "V",
-          "help_en": ""
-        },
-        {
           "ble_id": 48,
           "var_name_hash": "5W7SMGEdvdzMKA",
           "type": "uint8_t",
@@ -139,7 +93,7 @@
           "tft_fast_increment": 5.0,
           "tft_slow_increment": 1.0,
           "tft_unit": "Km",
-          "help_en": "Used to compute autonomy. Set your regular max distance with one full charge.\nAutonomy is computed following theLG MJ1 discharge curve."
+          "help_en": "Used to compute autonomy. Set your regular max distance with one full charge.\nAutonomy is computed following the LG MJ1 discharge curve."
         }
       ]
     },
@@ -167,7 +121,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Enable speed limit after power on. It set a power limit on most escooters (Dualtron/Speedway/Zeero \u2026) or real speed limit on VESC."
+          "help_en": "Enable speed limit after power on. It set a power limit on most escooters (Dualtron/Speedway/Zero \u2026) or real speed limit on VESC."
         },
         {
           "ble_id": 7,
