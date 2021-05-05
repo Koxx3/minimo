@@ -33,12 +33,12 @@ Nota : You can change the pin code in the application settings page
 - Enable wifi
 - Search for "SmartContrl-xxxx" wifi
 - Connect to the SmartElec hotsport, enter the password 147258147258 and access the hotspot page
-Nota : The password is the Bluetooth pin code repeated twice. Change the Bluetooth pin code to change the wifi password.
+  - Nota : The password is the Bluetooth pin code repeated twice. Change the Bluetooth pin code to change the wifi password.
 - Enter in the settings menu
 
 ### From the SmartDisplay
 - Long press the secondary button, you will enter in the settings menu
-Nota : some settings are not available from this menu (when you have to enter strings)
+  - Nota : some settings are not available from this menu (when you have to enter strings)
 - Use primary and secondary buttons to move the cursor, validate and escape
 
 ## Settings
