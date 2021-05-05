@@ -252,6 +252,9 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 ## Run it !
 - [Here](/documents/RUN.md)
 
+## Settings description
+- [Here](/documents/help_settings_en.md)
+
 ## Ressources 🔗
 - [Serial links data decoding - Excel XLSX](/documents/MINIMO.xlsx)
 
