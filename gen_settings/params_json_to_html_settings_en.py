@@ -17,10 +17,11 @@ template_h = """<!doctype html>
 
     h1 {
         border-bottom: 3px solid #000000;
-        color: #FF4081;
+        color: #303F9F;
     }
     h2 {
         border-bottom: 1px solid #000000;
+        color: #FF4081;
     }
     </style>
 
