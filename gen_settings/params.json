@@ -190,7 +190,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Bluetooth PIN code is used when you want to connect a smartphone to your SmartElec device. **Change it to protect your SmartElec device from any anybody connection.**"
+          "help_en": "Bluetooth PIN code is used when you want to connect a smartphone to your SmartElec device. <b>Change it to protect your SmartElec device from any anybody connection.</b>"
         },
         {
           "ble_id": 10,

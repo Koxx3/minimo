@@ -68,7 +68,7 @@ Usage : Lock the scooter if bluetooth device check is not successful :
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 147258<br>
 <br>
-Usage : Bluetooth PIN code is used when you want to connect a smartphone to your SmartElec device. **Change it to protect your SmartElec device from any anybody connection.**<br>
+Usage : Bluetooth PIN code is used when you want to connect a smartphone to your SmartElec device. <b>Change it to protect your SmartElec device from any anybody connection.</b><br>
                 
 ### Beacon Mac Address
 Valid configuration : SmartController / SmartDisplay<br>
