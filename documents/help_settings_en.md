@@ -62,7 +62,7 @@ Usage : Lock the scooter if bluetooth device check is not successful :
 - Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.
 - Smartphone connected or beacon visible : your smartphone needs to be connected OR a BLE (Bluetooth Low Energy) must be in range beacon of the SmartElec device in Bluetooth to unlock the scooter.
 - Beacon visible : BLE beacon must be in range of the SmartElec device in Bluetooth to unlock the scooter.
-**Those modes are used as anti-theft protection**. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter.<br>
+<b>Those modes are used as anti-theft protection</b>. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter.<br>
                 
 ### PIN code
 Valid configuration : SmartController / SmartDisplay<br>
@@ -238,7 +238,7 @@ Possible values : <br>
     - Smart - Digital brake + throttle (exp) (value = 3)<br>
 Default value : 0<br>
 <br>
-Usage : If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. **There is mulitple possibilities to wire the brake on the SmartElec and you MUST select the brake type according to your wiring** :
+Usage : If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. <b>There is mulitple possibilities to wire the brake on the SmartElec and you MUST select the brake type according to your wiring</b> :
 - Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake activation. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.
 - Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.
 - Smart - Analog brake lever : an analog brake lever (xiaomi type or any hall sensor brake lever) is wired to directly to the SmartElec device. This wiring is the best. The brake force will be determined by the brake lever pressure force.
@@ -287,7 +287,7 @@ Default value : 0<br>
 <br>
 Usage : Enable throttle signal regeneration.
 This option allow you to modify the acceleration curve to make it more/less dynamic with different acceleration curves.
-**To enable this feature, you must wire the trottle jumpers according to the WIRING documentation.**<br>
+<b>To enable this feature, you must wire the trottle jumpers according to the WIRING documentation.</b><br>
                 
 ### Input min voltage (in millivolts)
 Valid configuration : SmartController / SmartDisplay<br>

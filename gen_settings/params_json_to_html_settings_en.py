@@ -57,7 +57,7 @@ Possible values : <br>
                 {%- endif %}
 Default value : {{ item.default }} {%- if item.smartphone_display_unit != "" %} ({{ item.smartphone_display_unit }}) {%- endif %}<br>
 <br>
-Usage : {{ item.help_en }}<br>
+Usage : {{ item.help_en | replace("\n- ", "<br>-") }}<br>
                 {%+ if True %}{% endif %}
             {%- endif %}
         {%- endfor %}

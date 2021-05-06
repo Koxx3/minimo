@@ -81,12 +81,8 @@ Possible values : <br>
     - Beacon visible (value = 3)<br>
 Default value : 0<br>
 <br>
-Usage : Lock the scooter if bluetooth device check is not successful :
-- None : no bluetooth peripheral check, no lock mecanism.
-- Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.
-- Smartphone connected or beacon visible : your smartphone needs to be connected OR a BLE (Bluetooth Low Energy) must be in range beacon of the SmartElec device in Bluetooth to unlock the scooter.
-- Beacon visible : BLE beacon must be in range of the SmartElec device in Bluetooth to unlock the scooter.
-**Those modes are used as anti-theft protection**. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter.<br>
+Usage : Lock the scooter if bluetooth device check is not successful :<br>-None : no bluetooth peripheral check, no lock mecanism.<br>-Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.<br>-Smartphone connected or beacon visible : your smartphone needs to be connected OR a BLE (Bluetooth Low Energy) must be in range beacon of the SmartElec device in Bluetooth to unlock the scooter.<br>-Beacon visible : BLE beacon must be in range of the SmartElec device in Bluetooth to unlock the scooter.
+<b>Those modes are used as anti-theft protection</b>. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter.<br>
                 
 <h3>PIN code</h3>
 Valid configuration : SmartController / SmartDisplay<br>
@@ -262,11 +258,7 @@ Possible values : <br>
     - Smart - Digital brake + throttle (exp) (value = 3)<br>
 Default value : 0<br>
 <br>
-Usage : If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. **There is mulitple possibilities to wire the brake on the SmartElec and you MUST select the brake type according to your wiring** :
-- Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake activation. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.
-- Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.
-- Smart - Analog brake lever : an analog brake lever (xiaomi type or any hall sensor brake lever) is wired to directly to the SmartElec device. This wiring is the best. The brake force will be determined by the brake lever pressure force.
-- Smart - Digital brake + throttle (experimental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure set the brake force. You will need time to use this mode when riding.<br>
+Usage : If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. <b>There is mulitple possibilities to wire the brake on the SmartElec and you MUST select the brake type according to your wiring</b> :<br>-Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake activation. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.<br>-Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.<br>-Smart - Analog brake lever : an analog brake lever (xiaomi type or any hall sensor brake lever) is wired to directly to the SmartElec device. This wiring is the best. The brake force will be determined by the brake lever pressure force.<br>-Smart - Digital brake + throttle (experimental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure set the brake force. You will need time to use this mode when riding.<br>
                 
 <h3>Min power value</h3>
 Valid configuration : SmartController / SmartDisplay<br>
@@ -311,7 +303,7 @@ Default value : 0<br>
 <br>
 Usage : Enable throttle signal regeneration.
 This option allow you to modify the acceleration curve to make it more/less dynamic with different acceleration curves.
-**To enable this feature, you must wire the trottle jumpers according to the WIRING documentation.**<br>
+<b>To enable this feature, you must wire the trottle jumpers according to the WIRING documentation.</b><br>
                 
 <h3>Input min voltage (in millivolts)</h3>
 Valid configuration : SmartController / SmartDisplay<br>
@@ -353,10 +345,7 @@ Possible values : <br>
 Default value : 2<br>
 <br>
 Usage : This option modify the throttle response and acceleration curve.
-There is 3 main modes :
-- linear : same as original, except you can put  an offset to increase the dead zone (with min input voltage)
-- exponential : those curves follow exponential functions, the acceleration becomes more violent as you reach the end the trigger pressure. Exponential 1 is soft but more violent than linear, Exponential 4 is very violent.
-- custom 6 points : 2 points are fixed (0% trigger pressure = 0% output / 100% trigger pressure = 100% output), with the next option, you can the set the output percent for 20, 40, 60 and 80% pressure on the trigger. It will interpolate the values between those pressure percentage to determine the ouput throttle percentage.<br>
+There is 3 main modes :<br>-linear : same as original, except you can put  an offset to increase the dead zone (with min input voltage)<br>-exponential : those curves follow exponential functions, the acceleration becomes more violent as you reach the end the trigger pressure. Exponential 1 is soft but more violent than linear, Exponential 4 is very violent.<br>-custom 6 points : 2 points are fixed (0% trigger pressure = 0% output / 100% trigger pressure = 100% output), with the next option, you can the set the output percent for 20, 40, 60 and 80% pressure on the trigger. It will interpolate the values between those pressure percentage to determine the ouput throttle percentage.<br>
                 
 <h3>Custom output curve points</h3>
 Valid configuration : SmartController / SmartDisplay<br>
@@ -381,16 +370,7 @@ Possible values : <br>
     - Eco switch NONE/MED (value = 6)<br>
 Default value : 0<br>
 <br>
-Usage : Set the button 1 short press action (for external buttons wired to the SmartElec) :
-- None : no action
-- Speed limitation ON/OFF : enable/disable the speed limiter
-- Aux ON/OFF : enable/disable the auxiliary relay output
-- Mode switch 1/2/3 : switch between speed modes
-- Mode switch 2/3 : switch between speed modes
-- Eco switch NONE/MED/MAX : switch between eco modes
-- Eco switch NONE/MED : switch between eco modes
-- Anti-theft manual lock ON : lock the escooter (motor power is locked, nobody can steal & ride with this mode)
-- Nitro boost continuous : switch speed mode to 3 while the button is pressed, then go back to original speed mode<br>
+Usage : Set the button 1 short press action (for external buttons wired to the SmartElec) :<br>-None : no action<br>-Speed limitation ON/OFF : enable/disable the speed limiter<br>-Aux ON/OFF : enable/disable the auxiliary relay output<br>-Mode switch 1/2/3 : switch between speed modes<br>-Mode switch 2/3 : switch between speed modes<br>-Eco switch NONE/MED/MAX : switch between eco modes<br>-Eco switch NONE/MED : switch between eco modes<br>-Anti-theft manual lock ON : lock the escooter (motor power is locked, nobody can steal & ride with this mode)<br>-Nitro boost continuous : switch speed mode to 3 while the button is pressed, then go back to original speed mode<br>
                 
 <h3>Button 1 long press action</h3>
 Valid configuration : SmartController / SmartDisplay<br>
@@ -406,16 +386,7 @@ Possible values : <br>
     - Nitro boost continuous (value = 8)<br>
 Default value : 0<br>
 <br>
-Usage : Set the button 1 long press action (for external buttons wired to the SmartElec) :
-- None : no action
-- Speed limitation ON/OFF : enable/disable the speed limiter
-- Aux ON/OFF : enable/disable the auxiliary relay output
-- Mode switch 1/2/3 : switch between speed modes
-- Mode switch 2/3 : switch between speed modes
-- Eco switch NONE/MED/MAX : switch between eco modes
-- Eco switch NONE/MED : switch between eco modes
-- Anti-theft manual lock ON : lock the escooter (motor power is locked, nobody can steal & ride with this mode)
-- Nitro boost continuous : switch speed mode to 3 while the button is pressed, then go back to original speed mode<br>
+Usage : Set the button 1 long press action (for external buttons wired to the SmartElec) :<br>-None : no action<br>-Speed limitation ON/OFF : enable/disable the speed limiter<br>-Aux ON/OFF : enable/disable the auxiliary relay output<br>-Mode switch 1/2/3 : switch between speed modes<br>-Mode switch 2/3 : switch between speed modes<br>-Eco switch NONE/MED/MAX : switch between eco modes<br>-Eco switch NONE/MED : switch between eco modes<br>-Anti-theft manual lock ON : lock the escooter (motor power is locked, nobody can steal & ride with this mode)<br>-Nitro boost continuous : switch speed mode to 3 while the button is pressed, then go back to original speed mode<br>
                 
 <h3>Button 2 short press action</h3>
 Valid configuration : SmartController / SmartDisplay<br>
@@ -429,16 +400,7 @@ Possible values : <br>
     - Eco switch NONE/MED (value = 6)<br>
 Default value : 0<br>
 <br>
-Usage : Set the button 2 short press action (for external buttons wired to the SmartElec) :
-- None : no action
-- Speed limitation ON/OFF : enable/disable the speed limiter
-- Aux ON/OFF : enable/disable the auxiliary relay output
-- Mode switch 1/2/3 : switch between speed modes
-- Mode switch 2/3 : switch between speed modes
-- Eco switch NONE/MED/MAX : switch between eco modes
-- Eco switch NONE/MED : switch between eco modes
-- Anti-theft manual lock ON : lock the escooter (motor power is locked, nobody can steal & ride with this mode)
-- Nitro boost continuous : switch speed mode to 3 while the button is pressed, then go back to original speed mode
+Usage : Set the button 2 short press action (for external buttons wired to the SmartElec) :<br>-None : no action<br>-Speed limitation ON/OFF : enable/disable the speed limiter<br>-Aux ON/OFF : enable/disable the auxiliary relay output<br>-Mode switch 1/2/3 : switch between speed modes<br>-Mode switch 2/3 : switch between speed modes<br>-Eco switch NONE/MED/MAX : switch between eco modes<br>-Eco switch NONE/MED : switch between eco modes<br>-Anti-theft manual lock ON : lock the escooter (motor power is locked, nobody can steal & ride with this mode)<br>-Nitro boost continuous : switch speed mode to 3 while the button is pressed, then go back to original speed mode
 Note : button 2 long press action allow you to enter the settings menu.<br>
                 
 <h3>Button long press duration</h3>

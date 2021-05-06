@@ -167,7 +167,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Lock the scooter if bluetooth device check is not successful :\n- None : no bluetooth peripheral check, no lock mecanism.\n- Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\n- Smartphone connected or beacon visible : your smartphone needs to be connected OR a BLE (Bluetooth Low Energy) must be in range beacon of the SmartElec device in Bluetooth to unlock the scooter.\n- Beacon visible : BLE beacon must be in range of the SmartElec device in Bluetooth to unlock the scooter.\n**Those modes are used as anti-theft protection**. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter."
+          "help_en": "Lock the scooter if bluetooth device check is not successful :\n- None : no bluetooth peripheral check, no lock mecanism.\n- Smartphone connected : your smartphone needs to be connected to the SmartElec device in Bluetooth to unlock the scooter.\n- Smartphone connected or beacon visible : your smartphone needs to be connected OR a BLE (Bluetooth Low Energy) must be in range beacon of the SmartElec device in Bluetooth to unlock the scooter.\n- Beacon visible : BLE beacon must be in range of the SmartElec device in Bluetooth to unlock the scooter.\n<b>Those modes are used as anti-theft protection</b>. If an thief try to still you escooter, as soon as the escooter is out of range of your bluetooth device, it will cut power of the escooter."
         },
         {
           "ble_id": 9,
@@ -665,7 +665,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. **There is mulitple possibilities to wire the brake on the SmartElec and you MUST select the brake type according to your wiring** :\n- Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake activation. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.\n- Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.\n- Smart - Analog brake lever : an analog brake lever (xiaomi type or any hall sensor brake lever) is wired to directly to the SmartElec device. This wiring is the best. The brake force will be determined by the brake lever pressure force.\n- Smart - Digital brake + throttle (experimental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure set the brake force. You will need time to use this mode when riding."
+          "help_en": "If you enable the electric progressive mode, the braking feedback must arrive to the SmartElec device. <b>There is mulitple possibilities to wire the brake on the SmartElec and you MUST select the brake type according to your wiring</b> :\n- Controller : no specific wiring required, the brake feedback will come from the controller. This is slower and will add a delay of 200/300ms between the brake pressure and the electric brake activation. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.\n- Smart - Digital brake lever : a standard on/off brake lever is wired directly to the SmartElec device. This wiring has a faster reaction. The brake force will be determined by the brake lever pressure time. Longer you press, stronger the electric brake will become.\n- Smart - Analog brake lever : an analog brake lever (xiaomi type or any hall sensor brake lever) is wired to directly to the SmartElec device. This wiring is the best. The brake force will be determined by the brake lever pressure force.\n- Smart - Digital brake + throttle (experimental) : a standard on/off brake lever is wired directly to the SmartElec device and the throttle pressure set the brake force. You will need time to use this mode when riding."
         },
         {
           "ble_id": 27,
@@ -808,7 +808,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Enable throttle signal regeneration.\nThis option allow you to modify the acceleration curve to make it more/less dynamic with different acceleration curves.\n**To enable this feature, you must wire the trottle jumpers according to the WIRING documentation.**"
+          "help_en": "Enable throttle signal regeneration.\nThis option allow you to modify the acceleration curve to make it more/less dynamic with different acceleration curves.\n<b>To enable this feature, you must wire the trottle jumpers according to the WIRING documentation.</b>"
         },
         {
           "ble_id": 33,
