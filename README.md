@@ -45,14 +45,14 @@ Some examples :
 **>>> [Check all detailed features here](/documents/FEATURES.md) <<<**
 
 ## Board assembly (v1.3.2)
-![Ass1](/img/20210109_134700.jpg)
+![Ass1](/img/20210506_194917.jpg)
 
-![Ass2](/img/20210109_134706.jpg)
+![Ass2](/img/20210506_194909.jpg)
 
-![Ass3](/img/20210109_134713.jpg)
+![Ass3](/img/20210506_194902.jpg)
 
 ## Wrapping & Size
-Current PCB size : 6cm x 3cm x 2cm
+Current PCB size : 6.5cm (7cm with display connector) x 3.0cm x 1.5cm
 
 ![Idea](/img/20210109_160006.jpg)
 
