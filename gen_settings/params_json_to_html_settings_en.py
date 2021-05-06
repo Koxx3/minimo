@@ -2,8 +2,7 @@ import json
 import re
 import jinja2
 
-template_h = """
-<!doctype html>
+template_h = """<!doctype html>
 <html lang="en">
   <head>
     <!-- Required meta tags -->
