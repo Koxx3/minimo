@@ -389,7 +389,7 @@ void Buttons::processLockEvent(uint8_t buttonId, bool isLongPress)
     if ((buttonId == 1) && (!isLongPress) && (settings->get_Button_1_long_press_action() == settings->LIST_Button_1_long_press_action_Antitheft_manual_lock_on))
     {
         blh->setBleLock(true);
-        blh->notifyBleLock();
+        blh->notifyBleLockAndErrors();
 
         led1.Breathe(SHORT_BREATHE_DURATION).Forever();
 

@@ -31,7 +31,7 @@ public:
     static void startBleScan();
     static bool isBleScanActive();
     static void bleOnScanResults(BLEScanResults);
-    static void notifyBleLock();
+    static void notifyBleLockAndErrors();
     static void notifyBleLogs(char *);
     static void setBleLock(bool);
     static void processBLE();

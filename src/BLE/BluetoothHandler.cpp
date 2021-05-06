@@ -290,7 +290,7 @@ void BluetoothHandler::init()
 
                 shrd->isLocked = shrd->bleLockForced;
 
-                notifyBleLock();
+                notifyBleLockAndErrors();
                 saveBleLockForced();
             }
             else if (pCharacteristic->getUUID().toString() == SWITCH_TO_OTA_CHARACTERISTIC_UUID)
@@ -399,7 +399,7 @@ void BluetoothHandler::init()
             else if (pCharacteristic->getUUID().toString() == BTLOCK_STATUS_CHARACTERISTIC_UUID)
             {
 
-                notifyBleLock();
+                notifyBleLockAndErrors();
 
                 char print_buffer[500];
                 sprintf(print_buffer, "%02x", shrd->isLocked);
@@ -776,7 +776,7 @@ void BluetoothHandler::bleOnScanResults(NimBLEScanResults scanResults)
         }
     }
 
-    notifyBleLock();
+    notifyBleLockAndErrors();
 
     // launch new scan
     pBLEScan->start(BEACON_SCAN_PERIOD_IN_SECONDS, &bleOnScanResults, false);
@@ -1019,19 +1019,20 @@ void BluetoothHandler::notifyBleLogs(char *txt)
     }
 }
 
-void BluetoothHandler::notifyBleLock()
+void BluetoothHandler::notifyBleLockAndErrors()
 {
 
     //Serial.println("notifyBleLock");
 
     if (deviceStatus == BLE_STATUS_CONNECTED_AND_AUTHENTIFIED)
     {
-        byte value[4];
+        byte value[5];
         value[0] = shrd->isLocked;
         value[1] = shrd->bleBeaconVisible;
         value[2] = shrd->beaconRSSI;
         value[3] = shrd->bleLockForced;
-        pCharacteristicBtlockStatus->setValue((uint8_t *)&value, 4);
+        value[4] = shrd->errorBrake | (shrd->errorContrl << 1) | (shrd->errorSerialFromContrl << 2) | (shrd->errorSerialFromDisplay << 3)  | (shrd->errorThrottle << 4) ;
+        pCharacteristicBtlockStatus->setValue((uint8_t *)&value, 5);
         pCharacteristicBtlockStatus->notify();
 
 #if DEBUG_DISPLAY_BLE_NOTIFY
@@ -1089,7 +1090,7 @@ void BluetoothHandler::processBLE()
 
             notifyMeasurements();
 
-            notifyBleLock();
+            notifyBleLockAndErrors();
 
             shrd->timeLastNotifyBle = millis();
         }
