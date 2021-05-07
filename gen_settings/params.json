@@ -121,7 +121,7 @@
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Enable speed limit after power on. It set a power limit on most escooters (Dualtron/Speedway/Zero \u2026) or real speed limit on VESC."
+          "help_en": "Enable speed limit after power on. It set a power limit on most escooters (Dualtron/Speedway/Zero \u2026) or real speed limit on VESC.\nFor Dualtron/Speedway/Zero, you need to find the right setting if you want to limit it to the legal speed limit.\nOnce enabled, it will limit the displayed speed to 25 km/h."
         },
         {
           "ble_id": 7,

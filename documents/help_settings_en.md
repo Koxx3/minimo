@@ -40,7 +40,9 @@ Autonomy is computed following the LG MJ1 discharge curve.<br>
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : 0<br>
 <br>
-Usage : Enable speed limit after power on. It set a power limit on most escooters (Dualtron/Speedway/Zero …) or real speed limit on VESC.<br>
+Usage : Enable speed limit after power on. It set a power limit on most escooters (Dualtron/Speedway/Zero …) or real speed limit on VESC.
+For Dualtron/Speedway/Zero, you need to find the right setting if you want to limit it to the legal speed limit.
+Once enabled, it will limit the displayed speed to 25 km/h.<br>
                 
 ### Speed limiter max speed
 Valid configuration : SmartController / SmartDisplay<br>
