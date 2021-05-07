@@ -236,9 +236,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Data logging
     - [✅] History graphics
     - [✅] Integrated settings help
-    - [ ] Wizzard for escooter model choice
     - [ ] Wizzard for calibrations
-    - [ ] UI configuration (hide items)
    
 - [ ] iPhone application 🍏
     - [ ] A kind developper to do this part ? 😇
