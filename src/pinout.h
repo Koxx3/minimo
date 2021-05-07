@@ -24,7 +24,7 @@
 #define PIN_IN_ATHROTTLE 39
 #define PIN_SPI_BKL 5          // use in LCD  // ok
 #define PIN_FREE 19            // ok
-#define PIN_OUT_FREE 21        // ok
+#define PIN_OUT_POWER_LATCH 21        // ok
 #endif
 
 #if (PCB == 132)
