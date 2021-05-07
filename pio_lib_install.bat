@@ -1,3 +1,4 @@
+@echo off
 pio lib install
 
 pio lib install "mathertel/OneButton@0.0.0-alpha+sha.eb583d713a"

@@ -1,4 +1,5 @@
 @echo off
+
 pip install xlrd jinja2 simplejson
 python gen_settings\\params_xls_to_json.py
 python gen_settings\\params_json_to_c_storage_access.py
