@@ -77,6 +77,7 @@ ZeroUart zeroCntrl;
 #define NB_CURRENT_FILTER_DATA 20
 #define NB_CURRENT_FILTER_CALIB_DATA 20
 #define NB_VOLTAGE_FILTER_DATA 10
+#define NB_THROTTLE_FILTER_DATAS 10
 
 // distance
 #define SPEED_TO_DISTANCE_CORRECTION_FACTOR 1
@@ -152,7 +153,7 @@ MedianFilter currentRawFilter(NB_CURRENT_FILTER_DATA, 1830);
 MedianFilter currentRawFilterInit(NB_CURRENT_FILTER_CALIB_DATA, 1830);
 MedianFilter brakeFilter(10 /* 20 */, 900);
 //MedianFilter brakeMaxFilterInit(NB_BRAKE_CALIB_DATA, 900);
-MedianFilter throttleFilter(10 /* 20 */, 900);
+MedianFilter throttleFilter(NB_THROTTLE_FILTER_DATAS /* 20 */, 900);
 
 Buttons btns;
 
@@ -569,13 +570,13 @@ void setup()
 
 #if ENABLE_ONEWIRE
   xTaskCreatePinnedToCore(
-      taskProcessOwb,       // Function that should be called
-      "taskProcessOwb",     // Name of the task (for debugging)
-      2000,                 // Stack size (bytes)
-      NULL,                 // Parameter to pass
-      1, // Task priority
-      &htaskProcessOwb,     // Task handle,
-      1);                   // Core
+      taskProcessOwb,   // Function that should be called
+      "taskProcessOwb", // Name of the task (for debugging)
+      2000,             // Stack size (bytes)
+      NULL,             // Parameter to pass
+      1,                // Task priority
+      &htaskProcessOwb, // Task handle,
+      1);               // Core
 #endif
 
 #if ENABLE_WATCHDOG
@@ -1085,7 +1086,19 @@ void getThrottleFromAnalog()
   // Read and filter ADC
   throttleAnalogValue = analogRead(PIN_IN_ATHROTTLE);
   shrd.throttleAnalogValue = throttleAnalogValue;
-  throttleFilter.in(throttleAnalogValue);
+
+  // init filter
+  if (i_loop == 0)
+  {
+    for (int i = 0; i < NB_THROTTLE_FILTER_DATAS; i++)
+    {
+      throttleFilter.in(throttleAnalogValue);
+    }
+  }
+  else
+  {
+    throttleFilter.in(throttleAnalogValue);
+  }
 
   // Compute throttle voltage in 0-5V range
   uint32_t throttleInMillv = throttleAnalogValue * ANALOG_TO_VOLTS_5V * 1000;
@@ -1093,17 +1106,15 @@ void getThrottleFromAnalog()
   // ignore out of range datas ... and notify
   if (throttleInMillv < tInMin * TMIN_MARGIN)
   {
-    /*
     char print_buffer[500];
     sprintf(print_buffer, "throttle : value too low / tAnalogValue : %d / throttleFilter.getMean() : %d / tInMin : %d / tInMin with margin : %d",
             throttleAnalogValue,
             throttleFilter.getMean(),
             tInMin,
-            (uint32_t) (tInMin * TMIN_MARGIN)
-            );
+            (uint32_t)(tInMin * TMIN_MARGIN));
     blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
-*/
+
     shrd.errorThrottle = true;
 
     return;
@@ -1261,9 +1272,9 @@ void processDacOutput()
           outputMilliv,
           dacOutput);
 
-  if (millis() % 500 == 0)
+  if (true) //(millis() % 500 == 0)
   {
-    blh.notifyBleLogs(print_buffer);
+    //blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
   }
 #endif
