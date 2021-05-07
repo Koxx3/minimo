@@ -40,7 +40,7 @@
 #define PIN_SERIAL_ESP_TO_LCD 26   // ok
 #define PIN_SERIAL_ESP_TO_CNTRL 27 // ok
 #define PIN_SERIAL_CNTRL_TO_ESP 14 // ok
-#define PIN_IN_OUT_DHT 12          // ok
+#define PIN_IN_OUT_ONEWIRE 12          // ok
 #define PIN_OUT_BRAKE 13           // ok
 // RIGHT
 #define PIN_SPI_MOSI 23        // use in LCD  // ok
