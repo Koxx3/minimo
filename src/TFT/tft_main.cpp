@@ -108,6 +108,8 @@
 #define COLUMN8 278 * SCALE_FACTOR_X //279
 #define COLUMN9 292 * SCALE_FACTOR_X
 
+#define SPEED_LIMITER_INDICATOR_WIDTH (7 * SCALE_FACTOR_X)
+#define SPEED_LIMITER_INDICATOR_HEIGHT (8 * SCALE_FACTOR_Y)
 #define LINE_TEXT_OFFSET 6
 
 #define NORMAL_SPEED // Comment out for rame rate for render speed test
@@ -593,6 +595,9 @@ void tftUpdateData(uint32_t i_loop)
       int speed = shrd.speedCurrent;
       if (speed > 199)
         speed = 199;
+      if ((shrd.speedLimiter) && (speed > 25))
+        speed = 25;
+
       sprintf(fmt, "%3d", (int)speed);
       tft_util_draw_number(&tft, fmt, COLUMN5, LINE_3Y, MY_TFT_WHITE, TFT_BLACK, 5, BIG_FONT_SIZE);
       break;
@@ -600,7 +605,13 @@ void tftUpdateData(uint32_t i_loop)
 
     case 1:
     {
-      sprintf(fmt, "%02.0f", shrd.speedMax);
+      int speed = shrd.speedMax;
+      if (speed > 199)
+        speed = 199;
+      if ((shrd.speedLimiter) && (speed > 25))
+        speed = 25;
+
+      sprintf(fmt, "%3d", (int)speed);
       tft_util_draw_number(&tft, fmt, COLUMN8, LINE_3Y, MY_TFT_WHITE, TFT_BLACK, 5, SMALL_FONT_SIZE);
       break;
     }
@@ -890,6 +901,13 @@ void tftUpdateData(uint32_t i_loop)
       break;
     }
     case 10:
+    {
+      // draw speed limiter indicator
+      tft.fillRect(TFT_HEIGHT - SPEED_LIMITER_INDICATOR_WIDTH - (6 * SCALE_FACTOR_X), LINE_1Y, SPEED_LIMITER_INDICATOR_WIDTH, SPEED_LIMITER_INDICATOR_HEIGHT, shrd.speedLimiter ? MY_TFT_WHITE : TFT_BLACK);
+
+      break;
+    }
+    case 11:
     {
       tftBacklightFull();
       break;
