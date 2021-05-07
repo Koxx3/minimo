@@ -887,7 +887,7 @@ void getBrakeFromAnalog()
     shrd.brakeFilterMeanErr = brakeFilter.getMeanWithoutExtremes(1);
 
     // if brake is pressed at startup, disable speed limiter
-    if ((shrd.brakeFilterMeanErr > shrd.brakeMaxPressureRaw - ANALOG_BRAKE_MIN_OFFSET) && (i_loop < 100))
+    if ((shrd.brakeFilterMeanErr > ((shrd.brakeMaxPressureRaw - shrd.brakeMinPressureRaw) / 2) + shrd.brakeMinPressureRaw) && (i_loop < 100))
     {
       shrd.speedLimiter = 0;
 
