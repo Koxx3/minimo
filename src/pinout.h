@@ -19,7 +19,7 @@
 #define PIN_IN_BUTTON2 15 // PB was TX
 #define PIN_OUT_LED_BUTTON1 3
 #define PIN_OUT_BRAKE 13
-#define PIN_IN_OUT_DHT 12
+#define PIN_IN_OUT_ONEWIRE 12          // ok
 #define PIN_IN_ABRAKE 34
 #define PIN_IN_ATHROTTLE 39
 #define PIN_SPI_BKL 5          // use in LCD  // ok
