@@ -44,7 +44,7 @@ Some examples :
 
 **>>> [Check all detailed features here](/documents/FEATURES.md) <<<**
 
-## Board assembly (v1.3.2)
+## Board assembly (v1.4.2)
 ![Ass1](/img/20210506_194917.jpg)
 
 ![Ass2](/img/20210506_194909.jpg)
