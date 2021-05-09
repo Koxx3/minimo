@@ -131,7 +131,14 @@ Wiring (right to left):
 ![ESP32](/img/pcb_typon_max6.png)
 
 Wiring (down to up):
-- TBD
+- 1 - GND
+- 2 - 3.3V
+- 3 - SPI CLK
+- 4 - SPI MOSI
+- 5 - SPI RESET
+- 6 - SPI DC
+- 7 - Backlight control 3.3V
+- 8 - Backlight control 5V
 
 ### Throttle power
 ![ESP32](/img/pcb_typon_max7.png)
@@ -154,11 +161,10 @@ Wiring (left to right):
 
 Wiring (left to right):
 - 1 - GND
-- 2 - button 2
-- 3 - button 1
-- 4 - button 1 LED
-- 5 - not connected
-- 6 - not connected
+- 2 - button power
+- 3 - buttons LEDs
+- 4 - button 2
+- 5 - button 1
 
 ### Solid State relays
 ![ESP32](/img/pcb_typon_max10.png)
