@@ -160,11 +160,11 @@ Wiring (left to right):
 ![ESP32](/img/pcb_typon_max9.png)
 
 Wiring (left to right):
-- 1 - GND
-- 2 - button power
-- 3 - buttons LEDs
-- 4 - button 2
-- 5 - button 1
+- 1 - GND - black
+- 2 - button power - blue
+- 3 - buttons LEDs - white
+- 4 - button 2 - brown
+- 5 - button 1 - yellow
 
 ### Solid State relays
 ![ESP32](/img/pcb_typon_max10.png)
