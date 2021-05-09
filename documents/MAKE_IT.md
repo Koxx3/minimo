@@ -161,7 +161,7 @@ Wiring (left to right):
 
 Wiring (left to right):
 - 1 - GND - black
-- 2 - button power - blue
+- 2 - button power - green
 - 3 - buttons LEDs - white
 - 4 - button 2 - brown
 - 5 - button 1 - yellow
