@@ -191,13 +191,3 @@ You need a wrap for 10.5cm / diameter 33mm
 Upload the applications :D
 
 [Next steps ...](RUN.md)
-
-## Hardware revisions
-**1.4.2**
-- fix throttle ADC voltage for external throttle
-- add LCD display backlight control
-- switch to LM5164 regulator
-- add power latch
-**1.6.0**
-- switch to LM5017 regulator
-- fix throttle ADC voltage for internal throttle
