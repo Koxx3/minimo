@@ -298,7 +298,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 **1.6.0**
 - switch to LM5017 regulator
 - fix throttle ADC voltage for internal throttle
-
+- change buttons resistor from 1K to 470ohm to increase light
 
 ## License
 [The code is under GNU GPL v3 license](/LICENSE)
