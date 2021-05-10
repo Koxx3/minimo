@@ -27,7 +27,7 @@ For hardware, you only need to add a small extension board with the correct FPC 
 ## Features
 | **Features** | **SmartController** | **SmartDisplay** | **Note** |
 |:---|:---:|:---:|:---|
-| Waterproof display with 3.5" screen | | ✅ | Needs an case, not open-source. |
+| Waterproof display with 3.5" screen | | ✅ | Need a custom lcd enclosure with handlebar bracket, not open-source. |
 | Progressive electric brake | ✅ | ✅ | |
 | Temporary disable electric brake on high voltage | ✅ | ✅ | |
 | Bluetooth android application with dashboard and settings | ✅ | ✅ | |
@@ -35,7 +35,8 @@ For hardware, you only need to add a small extension board with the correct FPC 
 | Wifi web application with dashboard and settings | ✅ | ✅ | |
 | Intelligent battery autonomy computing with LG MJ1 cell reference | ✅ | ✅ | |
 | Anti-theft with bluetooth proximity and manual locking | ✅ | ✅ | |
-| Fast mode, acceleration, eco switches with custom hardware remote or smartphone | ✅ | ✅ | |
+| Fast mode, acceleration, eco switches with smartphone | ✅ | ✅ | |
+| Fast mode, acceleration, eco switches with custom hardware remote | ✅ | ✅ | Need a custom buttons enclosure with handlebar bracket, not open-source. |
 | Automatic shutdown after inactivity | ✅ | ✅ | |
 | Custom acceleration curves | ✅ | ✅ | |
 | Configurable speed limiter with fast on/off | ✅ | ✅ | |
