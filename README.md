@@ -26,8 +26,8 @@ For hardware, you only need to add a small extension board with the correct FPC 
 
 ## Features
 | Feature | SmartController | SmartDisplay | Note |
-|---|---|---|---|
-| Waterproof display with 3.5" screen | | ✅ | |
+|---|:---:|:---:|---|
+| Waterproof display with 3.5" screen | | ✅ | Needs an case, not open-source. |
 | Progressive electric brake | ✅ | ✅ | |
 | Temporary disable electric brake on high voltage | ✅ | ✅ | |
 | Bluetooth android application with dashboard and settings | ✅ | ✅ | |
@@ -36,9 +36,9 @@ For hardware, you only need to add a small extension board with the correct FPC 
 | Fast mode, acceleration, eco switches with custom hardware remote or smartphone | ✅ | ✅ | |
 | Automatic shutdown after inactivity | ✅ | ✅ | |
 | Configurable speed limiter with fast on/off | ✅ | ✅ | |
-| Multiple monitoring option like temperature/humidity | ✅ | ✅ | |
+| Multiple monitoring option like temperature/humidity | ✅ | ✅ | With SmartDisplay, it needs external sensors. |
 | PAS mode | ✅ | ✅ | |
-| Compatibility with Dualtron, Speedway, Futecher, Zero, Vsett | ✅ | ✅ | |
+| Compatibility with Dualtron, Speedway, Futecher, Zero, Vsett | ✅ | ✅ | VSett needs confirmation but it seems to be the same as Zero. Dual VESC needs work. |
 
 
 ## What can be done ?
