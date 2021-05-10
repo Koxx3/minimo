@@ -1272,7 +1272,7 @@ void processDacOutput()
           outputMilliv,
           dacOutput);
 
-  if (true) //(millis() % 500 == 0)
+  if (millis() % 500 == 0)
   {
     //blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
