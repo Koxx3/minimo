@@ -284,10 +284,6 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 ## Ressources 🔗
 - [Serial links data decoding - Excel XLSX](/documents/MINIMO.xlsx)
 
-## Donate to support
-- [If you want to support me, click here !](https://www.paypal.com/pools/c/8ut4175ux4)
-
-
 ## Hardware revisions
 **1.4.2**
 - fix throttle ADC voltage for external throttle
@@ -299,6 +295,9 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 - switch to LM5017 regulator
 - fix throttle ADC voltage for internal throttle
 - change buttons resistor from 1K to 470ohm to increase light
+
+## Donate to support
+- [If you want to support me, click here !](https://www.paypal.com/pools/c/8ut4175ux4)
 
 ## License
 [The code is under GNU GPL v3 license](/LICENSE)
