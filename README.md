@@ -40,7 +40,7 @@ For hardware, you only need to add a small extension board with the correct FPC 
 | Custom acceleration curves | ✅ | ✅ | |
 | Configurable speed limiter with fast on/off | ✅ | ✅ | |
 | Multiple monitoring option like temperature, humidity, current/power | ✅ | ✅ | With SmartDisplay, it needs external sensors. |
-| PAS mode | ✅ | ✅ | |
+| Push to start mode (PAS) | ✅ | ✅ | |
 | Compatibility with Dualtron, Speedway, Futecher, Zero, Vsett | ✅ | ✅ | VSett needs confirmation but it seems to be the same as Zero. Dual VESC needs work. |
 | Over the air update with wifi connection | ✅ | ✅ | |
 | Data logging on smartphone | ✅ | ✅ | |
