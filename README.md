@@ -12,14 +12,26 @@ It's a combo of electronic and smartphone application. It extend all features fr
 The electronic board will interract with most of the e-scooter electronic when you plug it.
 You simply place the little box inside the deck and connect it to the controller (and other electric parts if you want more features)
 
-### Requirements
+## What is SmartDisplay ?
+It is an extension of the SmartController to completly replace the standard display of the escooter.
+It mainly uses the same hardware/software.
+For hardware, you only need to add a small extension board with the correct FPC connector... and of course, the LCD screen.
+
+## Requirements
 - An e-scooter with any supported controllers (single or dual)
 - An power supply between 12V and 100V... (possible with external DC-DC providing 5V if needed)
 - If you want to use progressive brake feature, you must ensure no more than 60V pass in the brake handle (issue noted only for Kaabo)
 - The electronics (ESP32 Dev KitC V4 + SmartController shield + JST SM/PH connectors)
 - Some electronic skills
 
-### What can be done ?
+## Features
+
+| Feature | SmartController | SmartDisplay |
+------
+| Custom acceleration curve | ✅ | ✅ |
+
+
+## What can be done ?
 I suggest you to have a look at all planed/added features in the image below.
 There is almost no limit in custom features.
 The controller power cannot exceed the nominal power, but with a shunt, you can increase the acceleration and still have a current control loop to limit the current by software (and avoid burning the controller).
