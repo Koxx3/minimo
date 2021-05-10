@@ -1274,7 +1274,7 @@ void processDacOutput()
 
   if (millis() % 500 == 0)
   {
-    //blh.notifyBleLogs(print_buffer);
+    blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
   }
 #endif
