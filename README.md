@@ -268,17 +268,18 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 - [ ] iPhone application 🍏
     - [ ] A kind developper to do this part ? 😇
 
+## Let's go ! :kick_scooter
 
-## Produce your own board
+### Produce your own board
 - [Here](/documents/MAKE_IT.md)
 
-## Wiring
+### Wiring
 - [Here](/documents/WIRING.md)
 
-## Run it !
+### Run it !
 - [Here](/documents/RUN.md)
 
-## Settings description
+### Settings description
 - [Here](/documents/help_settings_en.md)
 
 ## Ressources 🔗
@@ -297,7 +298,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 - change buttons resistor from 1K to 470ohm to increase light
 - rename DHT to OW
 
-## Donate to support
+## Donate to support :moneybag:
 - [If you want to support me, click here !](https://www.paypal.com/pools/c/8ut4175ux4)
 
 ## License
