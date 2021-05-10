@@ -131,7 +131,7 @@ void tft_util_draw_number(
         {
             width = magnify;
             tft->fillRect(cursor_x - width, y, magnify - 1, 5 * magnify - 1, bg_color);
-            tft->fillRect(cursor_x - width, y + 4 * magnify, magnify - 1, magnify - 1, MY_TFT_RED);
+            tft->fillRect(cursor_x - width, y + 4 * magnify, magnify - 1, magnify - 1, activeDigit ? fg_color : MY_TFT_DARK_DIGIT /* MY_TFT_RED */);
             cursor_x -= width + spacing;
         }
         else if (ch == ':')
