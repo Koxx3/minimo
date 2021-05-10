@@ -31,7 +31,7 @@ For hardware, you only need to add a small extension board with the correct FPC 
 | Progressive electric brake | ✅ | ✅ | |
 | Temporary disable electric brake on high voltage | ✅ | ✅ | |
 | Bluetooth android application with dashboard and settings | ✅ | ✅ | |
-| Bluetooth and Wifi security integrated | ✅ | ✅ | BLE Encryption, Wifi WPA |
+| Bluetooth and Wifi security integrated | ✅ | ✅ | BLE Encryption, Wifi WPA, HTTPS OTA |
 | Wifi web application with dashboard and settings | ✅ | ✅ | |
 | Intelligent battery autonomy computing with LG MJ1 cell reference | ✅ | ✅ | |
 | Anti-theft with bluetooth proximity and manual locking | ✅ | ✅ | |
