@@ -31,15 +31,19 @@ For hardware, you only need to add a small extension board with the correct FPC 
 | Progressive electric brake | ✅ | ✅ | |
 | Temporary disable electric brake on high voltage | ✅ | ✅ | |
 | Bluetooth android application with dashboard and settings | ✅ | ✅ | |
+| Bluetooth and Wifi security integrated | ✅ | ✅ | BLE Encryption, Wifi WPA |
 | Wifi web application with dashboard and settings | ✅ | ✅ | |
+| Intelligent battery autonomy computing with LG MJ1 cell reference | ✅ | ✅ | |
 | Anti-theft with bluetooth proximity and manual locking | ✅ | ✅ | |
 | Fast mode, acceleration, eco switches with custom hardware remote or smartphone | ✅ | ✅ | |
 | Automatic shutdown after inactivity | ✅ | ✅ | |
+| Custom acceleration curves | ✅ | ✅ | |
 | Configurable speed limiter with fast on/off | ✅ | ✅ | |
-| Multiple monitoring option like temperature/humidity | ✅ | ✅ | With SmartDisplay, it needs external sensors. |
+| Multiple monitoring option like temperature, humidity, current/power | ✅ | ✅ | With SmartDisplay, it needs external sensors. |
 | PAS mode | ✅ | ✅ | |
 | Compatibility with Dualtron, Speedway, Futecher, Zero, Vsett | ✅ | ✅ | VSett needs confirmation but it seems to be the same as Zero. Dual VESC needs work. |
-
+| Over the air update with wifi connection | ✅ | ✅ | |
+| Data logging on smartphone | ✅ | ✅ | |
 
 ## What can be done ?
 I suggest you to have a look at all planed/added features in the image below.
@@ -104,7 +108,7 @@ The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/proje
 ### iPhone
 I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 
-## TODO
+## TODO / DONE
 
 - [✅] Serial Minimotors
     - [✅] Read/write serial link LCD_TO_CNTRL
