@@ -26,9 +26,9 @@ For hardware, you only need to add a small extension board with the correct FPC 
 
 ## Features
 
-| Feature | SmartController | SmartDisplay |
-------
-| Custom acceleration curve | ✅ | ✅ |
+| Feature | SmartController | SmartDisplay | Note |
+|---|---|---|---|
+| Custom acceleration curve | ✅ | ✅ | |
 
 
 ## What can be done ?
