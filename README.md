@@ -271,16 +271,10 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 ## Let's go ! :kick_scooter
 
 ### Produce your own board
-- [Here](/documents/MAKE_IT.md)
-
-### Wiring
-- [Here](/documents/WIRING.md)
-
-### Run it !
-- [Here](/documents/RUN.md)
-
-### Settings description
-- [Here](/documents/help_settings_en.md)
+- [Produce your own board](/documents/MAKE_IT.md)
+- [Wiring](/documents/WIRING.md)
+- [Run it !](/documents/RUN.md)
+- [Settings description](/documents/help_settings_en.md)
 
 ## Ressources 🔗
 - [Serial links data decoding - Excel XLSX](/documents/MINIMO.xlsx)
