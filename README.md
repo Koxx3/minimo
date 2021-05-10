@@ -25,10 +25,20 @@ For hardware, you only need to add a small extension board with the correct FPC 
 - Some electronic skills
 
 ## Features
-
 | Feature | SmartController | SmartDisplay | Note |
 |---|---|---|---|
-| Custom acceleration curve | ✅ | ✅ | |
+| Waterproof display with 3.5" screen | | ✅ | |
+| Progressive electric brake | ✅ | ✅ | |
+| Temporary disable electric brake on high voltage | ✅ | ✅ | |
+| Bluetooth android application with dashboard and settings | ✅ | ✅ | |
+| Wifi web application with dashboard and settings | ✅ | ✅ | |
+| Anti-theft with bluetooth proximity and manual locking | ✅ | ✅ | |
+| Fast mode, acceleration, eco switches with custom hardware remote or smartphone | ✅ | ✅ | |
+| Automatic shutdown after inactivity | ✅ | ✅ | |
+| Configurable speed limiter with fast on/off | ✅ | ✅ | |
+| Multiple monitoring option like temperature/humidity | ✅ | ✅ | |
+| PAS mode | ✅ | ✅ | |
+| Compatibility with Dualtron, Speedway, Futecher, Zero, Vsett | ✅ | ✅ | |
 
 
 ## What can be done ?
