@@ -268,9 +268,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 - [ ] iPhone application 🍏
     - [ ] A kind developper to do this part ? 😇
 
-## Let's go ! :kick_scooter
+## Let's go ! :kick_scooter:
 
-### Produce your own board
 - [Produce your own board](/documents/MAKE_IT.md)
 - [Wiring](/documents/WIRING.md)
 - [Run it !](/documents/RUN.md)
