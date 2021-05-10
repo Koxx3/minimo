@@ -284,7 +284,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 ## Ressources 🔗
 - [Serial links data decoding - Excel XLSX](/documents/MINIMO.xlsx)
 
-## Hardware revisions
+## Hardware revisions  :stopwatch:
 **1.4.2**
 - fix throttle ADC voltage for external throttle
 - add LCD display backlight control
