@@ -25,8 +25,8 @@ For hardware, you only need to add a small extension board with the correct FPC 
 - Some electronic skills
 
 ## Features
-| Features | SmartController | SmartDisplay | Note |
-|---|:---:|:---:|---|
+| **Features** | **SmartController** | **SmartDisplay** | **Note** |
+|:---|:---:|:---:|---:|
 | Waterproof display with 3.5" screen | | ✅ | Needs an case, not open-source. |
 | Progressive electric brake | ✅ | ✅ | |
 | Temporary disable electric brake on high voltage | ✅ | ✅ | |
