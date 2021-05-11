@@ -109,7 +109,7 @@ The software is designed for [ESP32 Dev Kit v4](https://docs.espressif.com/proje
 ### iPhone
 I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 
-## TODO / DONE
+## ToDo / Done
 
 - [✅] Serial Minimotors
     - [✅] Read/write serial link LCD_TO_CNTRL
