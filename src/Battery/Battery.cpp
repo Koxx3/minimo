@@ -82,8 +82,8 @@ uint8_t Battery::level(uint32_t voltage)
 		int currentMillis = millis();
 		uint8_t newPercent = max(0,(int)round(-1439.34794384241 * pow(voltByCell, 6)+ 31480.0982535788 * pow(voltByCell, 5) - 286201.985664439 * pow(voltByCell, 4) + 1384323.16517329 * pow(voltByCell, 3) - 3756691.18815474 * pow(voltByCell, 2) + 5422659.60130914 * voltByCell - 3252516.81708377));
 	
-		uint32_t Intervalle = 60000;
-		if (newPercent < 30) Intervalle = 20000;
+		uint8_t Intervalle = 60;
+		if (newPercent < 30) Intervalle = 20;
 
 		if (newPercent == OldPercent || currentMillis < 5000)
 		{
@@ -102,7 +102,7 @@ uint8_t Battery::level(uint32_t voltage)
 			Serial.printf("4- minVoltage = %d / maxVoltage = %d / nbcells = %d / voltage = %d / percent = %d\n", minVoltage, maxVoltage, nbcells, voltage, OldPercent);
 #endif
 		}
-		else if (currentMillis - OldMillis > Intervalle)
+		else if (currentMillis - OldMillis > Intervalle * 1000)
 		{ // toutes les 60 sec, on abaisse ou remonte le % si jamais la tension à varié. Basé sur le fait qu'on ne peut pas cramer plus d'1% de batt en 60 sec dans une utilisation normale.
 			OldMillis = currentMillis;
 			if (newPercent > OldPercent)
