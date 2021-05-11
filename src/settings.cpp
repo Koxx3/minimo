@@ -39,8 +39,10 @@ void Settings::restore() {
     Serial.println("  >> Bluetooth_lock_mode = " + (String)Bluetooth_lock_mode);
     Ble_pin_code = prefs.getInt(SETTINGS_BLE_PIN_CODE_STORAGE_KEY, 147258);
     Serial.println("  >> Ble_pin_code = " + (String)Ble_pin_code);
-    Ble_beacon_mac_address = prefs.getString(SETTINGS_BLE_BEACON_MAC_ADDRESS_STORAGE_KEY, "aa:bb:cc:dd:ee:ff");
-    Serial.println("  >> Ble_beacon_mac_address = " + (String)Ble_beacon_mac_address);
+    Ble_beacon_mac_address1 = prefs.getString(SETTINGS_BLE_BEACON_MAC_ADDRESS1_STORAGE_KEY, "aa:bb:cc:dd:ee:ff");
+    Serial.println("  >> Ble_beacon_mac_address1 = " + (String)Ble_beacon_mac_address1);
+    Ble_beacon_mac_address2 = prefs.getString(SETTINGS_BLE_BEACON_MAC_ADDRESS2_STORAGE_KEY, "aa:bb:cc:dd:ee:ff");
+    Serial.println("  >> Ble_beacon_mac_address2 = " + (String)Ble_beacon_mac_address2);
     Ble_beacon_range = prefs.getInt(SETTINGS_BLE_BEACON_RANGE_STORAGE_KEY, -80);
     Serial.println("  >> Ble_beacon_range = " + (String)Ble_beacon_range);
     Original_display_speed_adjustment = prefs.getInt(SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_STORAGE_KEY, 0);
@@ -130,7 +132,8 @@ void Settings::save() {
     prefs.putInt(SETTINGS_SPEED_LIMITER_MAX_SPEED_STORAGE_KEY, Speed_limiter_max_speed);
     prefs.putInt(SETTINGS_BLUETOOTH_LOCK_MODE_STORAGE_KEY, Bluetooth_lock_mode);
     prefs.putInt(SETTINGS_BLE_PIN_CODE_STORAGE_KEY, Ble_pin_code);
-    prefs.putString(SETTINGS_BLE_BEACON_MAC_ADDRESS_STORAGE_KEY, Ble_beacon_mac_address);
+    prefs.putString(SETTINGS_BLE_BEACON_MAC_ADDRESS1_STORAGE_KEY, Ble_beacon_mac_address1);
+    prefs.putString(SETTINGS_BLE_BEACON_MAC_ADDRESS2_STORAGE_KEY, Ble_beacon_mac_address2);
     prefs.putInt(SETTINGS_BLE_BEACON_RANGE_STORAGE_KEY, Ble_beacon_range);
     prefs.putInt(SETTINGS_ORIGINAL_DISPLAY_SPEED_ADJUSTMENT_STORAGE_KEY, Original_display_speed_adjustment);
     prefs.putInt(SETTINGS_TEMPERATURE_WARNING_STORAGE_KEY, Temperature_warning);
@@ -223,16 +226,28 @@ void Settings::unpack_setting_packet(uint8_t* packet, uint8_t length) {
         //Serial.print("unpack_setting_packet - Ble_pin_code : " + (String) Ble_pin_code + " / ");
         //buffer_display("", packet, length);
         break;
-    case SETTINGS_BLE_BEACON_MAC_ADDRESS_BLE_ID :
-        char Ble_beacon_mac_address_part[17];
-        memset(Ble_beacon_mac_address_part, 0, 17 );
+    case SETTINGS_BLE_BEACON_MAC_ADDRESS1_BLE_ID :
+        char Ble_beacon_mac_address1_part[17];
+        memset(Ble_beacon_mac_address1_part, 0, 17 );
         if (packetNumber == 0) {
-            Ble_beacon_mac_address = "";
+            Ble_beacon_mac_address1 = "";
         }
-        memcpy(Ble_beacon_mac_address_part, &packet[ind], length  - 4);
-        Ble_beacon_mac_address =  Ble_beacon_mac_address + Ble_beacon_mac_address_part;
-        set_Ble_beacon_mac_address( Ble_beacon_mac_address);
-        //Serial.print("unpack_setting_packet - Ble_beacon_mac_address : " + (String) Ble_beacon_mac_address + " / ");
+        memcpy(Ble_beacon_mac_address1_part, &packet[ind], length  - 4);
+        Ble_beacon_mac_address1 =  Ble_beacon_mac_address1 + Ble_beacon_mac_address1_part;
+        set_Ble_beacon_mac_address1( Ble_beacon_mac_address1);
+        //Serial.print("unpack_setting_packet - Ble_beacon_mac_address1 : " + (String) Ble_beacon_mac_address1 + " / ");
+        //buffer_display("", packet, length);
+        break;
+    case SETTINGS_BLE_BEACON_MAC_ADDRESS2_BLE_ID :
+        char Ble_beacon_mac_address2_part[17];
+        memset(Ble_beacon_mac_address2_part, 0, 17 );
+        if (packetNumber == 0) {
+            Ble_beacon_mac_address2 = "";
+        }
+        memcpy(Ble_beacon_mac_address2_part, &packet[ind], length  - 4);
+        Ble_beacon_mac_address2 =  Ble_beacon_mac_address2 + Ble_beacon_mac_address2_part;
+        set_Ble_beacon_mac_address2( Ble_beacon_mac_address2);
+        //Serial.print("unpack_setting_packet - Ble_beacon_mac_address2 : " + (String) Ble_beacon_mac_address2 + " / ");
         //buffer_display("", packet, length);
         break;
     case SETTINGS_BLE_BEACON_RANGE_BLE_ID :
@@ -498,23 +513,42 @@ bool Settings::pack_setting_packet(uint16_t settingId, uint16_t packetNumber, ui
         //Serial.print("pack_setting_packet - Ble_pin_code : " + (String) Ble_pin_code + " / ");
         //buffer_display("", packet, *ind);
         break;
-    case SETTINGS_BLE_BEACON_MAC_ADDRESS_BLE_ID :
+    case SETTINGS_BLE_BEACON_MAC_ADDRESS1_BLE_ID :
         if (packetNumber == 0) {
-            if (Ble_beacon_mac_address.length() > 16) {
+            if (Ble_beacon_mac_address1.length() > 16) {
                 hasNextPacket = true;
-                memcpy(&packet[*ind], &Ble_beacon_mac_address[0], 16);
+                memcpy(&packet[*ind], &Ble_beacon_mac_address1[0], 16);
                 *ind = *ind + 16;
             }
             else {
-                memcpy(&packet[*ind], &Ble_beacon_mac_address[0], Ble_beacon_mac_address.length());
-                *ind = *ind + Ble_beacon_mac_address.length();
+                memcpy(&packet[*ind], &Ble_beacon_mac_address1[0], Ble_beacon_mac_address1.length());
+                *ind = *ind + Ble_beacon_mac_address1.length();
             }
         }
         else if (packetNumber == 1) {
-            memcpy(&packet[*ind], &Ble_beacon_mac_address[16], Ble_beacon_mac_address.length() - 16);
-            *ind = *ind + Ble_beacon_mac_address.length() - 16;
+            memcpy(&packet[*ind], &Ble_beacon_mac_address1[16], Ble_beacon_mac_address1.length() - 16);
+            *ind = *ind + Ble_beacon_mac_address1.length() - 16;
         }
-        //Serial.print("pack_setting_packet - Ble_beacon_mac_address : " + (String) Ble_beacon_mac_address + " / ");
+        //Serial.print("pack_setting_packet - Ble_beacon_mac_address1 : " + (String) Ble_beacon_mac_address1 + " / ");
+        //buffer_display("", packet, *ind);
+        break;
+    case SETTINGS_BLE_BEACON_MAC_ADDRESS2_BLE_ID :
+        if (packetNumber == 0) {
+            if (Ble_beacon_mac_address2.length() > 16) {
+                hasNextPacket = true;
+                memcpy(&packet[*ind], &Ble_beacon_mac_address2[0], 16);
+                *ind = *ind + 16;
+            }
+            else {
+                memcpy(&packet[*ind], &Ble_beacon_mac_address2[0], Ble_beacon_mac_address2.length());
+                *ind = *ind + Ble_beacon_mac_address2.length();
+            }
+        }
+        else if (packetNumber == 1) {
+            memcpy(&packet[*ind], &Ble_beacon_mac_address2[16], Ble_beacon_mac_address2.length() - 16);
+            *ind = *ind + Ble_beacon_mac_address2.length() - 16;
+        }
+        //Serial.print("pack_setting_packet - Ble_beacon_mac_address2 : " + (String) Ble_beacon_mac_address2 + " / ");
         //buffer_display("", packet, *ind);
         break;
     case SETTINGS_BLE_BEACON_RANGE_BLE_ID :
@@ -923,21 +957,42 @@ void Settings::save_Ble_pin_code(uint32_t value) {
 
 /*-------------------------------------------------------*/
 
-void Settings::set_Ble_beacon_mac_address(String value) {
-    Ble_beacon_mac_address = value;
+void Settings::set_Ble_beacon_mac_address1(String value) {
+    Ble_beacon_mac_address1 = value;
 }
 
-String Settings::get_Ble_beacon_mac_address() {
-    return Ble_beacon_mac_address ;
+String Settings::get_Ble_beacon_mac_address1() {
+    return Ble_beacon_mac_address1 ;
 }
 
-void Settings::display_Ble_beacon_mac_address() {
-    Serial.println("  Ble_beacon_mac_address = " + (String) Ble_beacon_mac_address);
+void Settings::display_Ble_beacon_mac_address1() {
+    Serial.println("  Ble_beacon_mac_address1 = " + (String) Ble_beacon_mac_address1);
 }
 
-void Settings::save_Ble_beacon_mac_address(String value) {
+void Settings::save_Ble_beacon_mac_address1(String value) {
     prefs.begin(SETTINGS_STORAGE, false);
-    prefs.putString(SETTINGS_BLE_BEACON_MAC_ADDRESS_STORAGE_KEY, Ble_beacon_mac_address);
+    prefs.putString(SETTINGS_BLE_BEACON_MAC_ADDRESS1_STORAGE_KEY, Ble_beacon_mac_address1);
+    prefs.end();
+}
+                
+
+/*-------------------------------------------------------*/
+
+void Settings::set_Ble_beacon_mac_address2(String value) {
+    Ble_beacon_mac_address2 = value;
+}
+
+String Settings::get_Ble_beacon_mac_address2() {
+    return Ble_beacon_mac_address2 ;
+}
+
+void Settings::display_Ble_beacon_mac_address2() {
+    Serial.println("  Ble_beacon_mac_address2 = " + (String) Ble_beacon_mac_address2);
+}
+
+void Settings::save_Ble_beacon_mac_address2(String value) {
+    prefs.begin(SETTINGS_STORAGE, false);
+    prefs.putString(SETTINGS_BLE_BEACON_MAC_ADDRESS2_STORAGE_KEY, Ble_beacon_mac_address2);
     prefs.end();
 }
                 

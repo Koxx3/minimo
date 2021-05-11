@@ -153,16 +153,29 @@ public:
             
     /*-------------------------------------------------------*/
 
-    #define SETTINGS_BLE_BEACON_MAC_ADDRESS_BLE_ID 10
-    #define SETTINGS_BLE_BEACON_MAC_ADDRESS_STORAGE_KEY "grJjWy-LRTyc1A"
-    #define SETTINGS_BLE_BEACON_MAC_ADDRESS_NAME "Ble_beacon_mac_address"
+    #define SETTINGS_BLE_BEACON_MAC_ADDRESS1_BLE_ID 10
+    #define SETTINGS_BLE_BEACON_MAC_ADDRESS1_STORAGE_KEY "X1NhaAPbLuO8xA"
+    #define SETTINGS_BLE_BEACON_MAC_ADDRESS1_NAME "Ble_beacon_mac_address1"
 
-    String Ble_beacon_mac_address;
+    String Ble_beacon_mac_address1;
 
-    void set_Ble_beacon_mac_address (String value);
-    String get_Ble_beacon_mac_address();
-    void display_Ble_beacon_mac_address();
-    void save_Ble_beacon_mac_address(String value);
+    void set_Ble_beacon_mac_address1 (String value);
+    String get_Ble_beacon_mac_address1();
+    void display_Ble_beacon_mac_address1();
+    void save_Ble_beacon_mac_address1(String value);
+            
+    /*-------------------------------------------------------*/
+
+    #define SETTINGS_BLE_BEACON_MAC_ADDRESS2_BLE_ID 49
+    #define SETTINGS_BLE_BEACON_MAC_ADDRESS2_STORAGE_KEY "eKR3B5Nd21bK5Q"
+    #define SETTINGS_BLE_BEACON_MAC_ADDRESS2_NAME "Ble_beacon_mac_address2"
+
+    String Ble_beacon_mac_address2;
+
+    void set_Ble_beacon_mac_address2 (String value);
+    String get_Ble_beacon_mac_address2();
+    void display_Ble_beacon_mac_address2();
+    void save_Ble_beacon_mac_address2(String value);
             
     /*-------------------------------------------------------*/
 

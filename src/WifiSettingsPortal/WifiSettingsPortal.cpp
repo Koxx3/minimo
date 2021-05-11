@@ -476,8 +476,10 @@ void WifiSettingsPortal_sendValues()
     doc["batteryLevel"] = WifiSettingsPortal_shrd->batteryLevel;
     doc["autonomyLeft"] = WifiSettingsPortal_shrd->autonomyLeft;
     doc["isLocked"] = WifiSettingsPortal_shrd->isLocked;
-    doc["bleBeaconVisible"] = WifiSettingsPortal_shrd->bleBeaconVisible;
-    doc["beaconRSSI"] = WifiSettingsPortal_shrd->beaconRSSI;
+    doc["bleBeaconVisible1"] = WifiSettingsPortal_shrd->bleBeaconVisible1;
+    doc["beaconRSSI1"] = WifiSettingsPortal_shrd->beaconRSSI1;
+    doc["bleBeaconVisible2"] = WifiSettingsPortal_shrd->bleBeaconVisible2;
+    doc["beaconRSSI2"] = WifiSettingsPortal_shrd->beaconRSSI2;
     doc["bleLockForced"] = WifiSettingsPortal_shrd->bleLockForced;
     doc["modeOrder"] = WifiSettingsPortal_shrd->modeOrder;
     doc["speedLimiter"] = WifiSettingsPortal_shrd->speedLimiter;

@@ -25,12 +25,13 @@ ACCheckbox(ACS2_1, "ACS2_1", "Speed limiter at startup", false, AC_Infront);
 ACInput(ACS2_2, "37", "Speed limiter max speed", "", "", AC_Tag_BR, AC_Input_Text);
 ACSelect(ACS2_3, {"None","Smartphone connected","Smartphone connected or beacon visible","Beacon visible"}, "Bluetooth lock mode", 0);
 ACInput(ACS2_4, "147258", "PIN code", "^[0-9]{6,6}$", "", AC_Tag_BR, AC_Input_Text);
-ACInput(ACS2_5, "aa:bb:cc:dd:ee:ff", "Beacon Mac Address", "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$", "", AC_Tag_BR, AC_Input_Text);
-ACInput(ACS2_6, "-80", "Beacon range", "", "", AC_Tag_BR, AC_Input_Text);
-ACInput(ACS2_7, "0", "Speed adjustment", "^[-]?[0-9]+$", "", AC_Tag_BR, AC_Input_Text);
-ACInput(ACS2_8, "70", "Temperature warning", "", "", AC_Tag_BR, AC_Input_Text);
-ACInput(ACS2_9, "80", "Humidity warning", "", "", AC_Tag_BR, AC_Input_Text);
-ACSelect(ACS2_10, {"None","2 min","3 min","4 min","5 min","10 min","15 min","20 min","30 min","60 min"}, "Auto power off", 0);
+ACInput(ACS2_5, "aa:bb:cc:dd:ee:ff", "Smartphone or Beacon Mac Address 1", "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACS2_6, "aa:bb:cc:dd:ee:ff", "Smartphone or Beacon Mac Address 2", "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACS2_7, "-80", "Beacon range", "", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACS2_8, "0", "Speed adjustment", "^[-]?[0-9]+$", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACS2_9, "70", "Temperature warning", "", "", AC_Tag_BR, AC_Input_Text);
+ACInput(ACS2_10, "80", "Humidity warning", "", "", AC_Tag_BR, AC_Input_Text);
+ACSelect(ACS2_11, {"None","2 min","3 min","4 min","5 min","10 min","15 min","20 min","30 min","60 min"}, "Auto power off", 0);
 ACText(ACS3, "<h2>Smartphone display</h2>", "");
 ACInput(ACS3_1, "0", "Speed adjustment", "^[-]?[0-9]+$", "", AC_Tag_BR, AC_Input_Text);
 ACSelect(ACS3_2, {"AUX","DUAL","LIGHT","HORN","RELAY"}, "Aux relay name", 0);
@@ -95,6 +96,7 @@ AutoConnectAux settingsPageAux("/settingspage", "SmartElec settings", true, {
     ACS2_8,
     ACS2_9,
     ACS2_10,
+    ACS2_11,
         
     ACS3,
     ACS3_1,
@@ -155,12 +157,13 @@ void saveConfig(AutoConnectAux &aux)
     WifiSettingsPortal_settings->set_Speed_limiter_max_speed((settingsPageAux["ACS2_2"].as<AutoConnectInput>()).value.toInt());
     WifiSettingsPortal_settings->set_Bluetooth_lock_mode((settingsPageAux["ACS2_3"].as<AutoConnectSelect>()).selected - 1);
     WifiSettingsPortal_settings->set_Ble_pin_code((settingsPageAux["ACS2_4"].as<AutoConnectInput>()).value.toInt());
-    WifiSettingsPortal_settings->set_Ble_beacon_mac_address((settingsPageAux["ACS2_5"].as<AutoConnectInput>()).value);
-    WifiSettingsPortal_settings->set_Ble_beacon_range((settingsPageAux["ACS2_6"].as<AutoConnectInput>()).value.toInt());
-    WifiSettingsPortal_settings->set_Original_display_speed_adjustment((settingsPageAux["ACS2_7"].as<AutoConnectInput>()).value.toInt());
-    WifiSettingsPortal_settings->set_Temperature_warning((settingsPageAux["ACS2_8"].as<AutoConnectInput>()).value.toInt());
-    WifiSettingsPortal_settings->set_Humidity_warning((settingsPageAux["ACS2_9"].as<AutoConnectInput>()).value.toInt());
-    WifiSettingsPortal_settings->set_Auto_power_off((settingsPageAux["ACS2_10"].as<AutoConnectSelect>()).selected - 1);
+    WifiSettingsPortal_settings->set_Ble_beacon_mac_address1((settingsPageAux["ACS2_5"].as<AutoConnectInput>()).value);
+    WifiSettingsPortal_settings->set_Ble_beacon_mac_address2((settingsPageAux["ACS2_6"].as<AutoConnectInput>()).value);
+    WifiSettingsPortal_settings->set_Ble_beacon_range((settingsPageAux["ACS2_7"].as<AutoConnectInput>()).value.toInt());
+    WifiSettingsPortal_settings->set_Original_display_speed_adjustment((settingsPageAux["ACS2_8"].as<AutoConnectInput>()).value.toInt());
+    WifiSettingsPortal_settings->set_Temperature_warning((settingsPageAux["ACS2_9"].as<AutoConnectInput>()).value.toInt());
+    WifiSettingsPortal_settings->set_Humidity_warning((settingsPageAux["ACS2_10"].as<AutoConnectInput>()).value.toInt());
+    WifiSettingsPortal_settings->set_Auto_power_off((settingsPageAux["ACS2_11"].as<AutoConnectSelect>()).selected - 1);
     WifiSettingsPortal_settings->set_Smartdisplay_speed_adjustment((settingsPageAux["ACS3_1"].as<AutoConnectInput>()).value.toInt());
     WifiSettingsPortal_settings->set_Aux_relay_name((settingsPageAux["ACS3_2"].as<AutoConnectSelect>()).selected - 1);
     WifiSettingsPortal_settings->set_Display_gps_speed_instead_of_escooter_speed((settingsPageAux["ACS3_3"].as<AutoConnectCheckbox>()).checked ? 1 : 0);
@@ -228,32 +231,33 @@ void loadConfig(AutoConnectAux &aux)
     if (val_Bluetooth_lock_mode == 3)
         aux.setElementValue("ACS2_3", "Beacon visible");
     aux.setElementValue("ACS2_4", (String)WifiSettingsPortal_settings->get_Ble_pin_code());
-    aux.setElementValue("ACS2_5", (String)WifiSettingsPortal_settings->get_Ble_beacon_mac_address());
-    aux.setElementValue("ACS2_6", (String)WifiSettingsPortal_settings->get_Ble_beacon_range());
-    aux.setElementValue("ACS2_7", (String)WifiSettingsPortal_settings->get_Original_display_speed_adjustment());
-    aux.setElementValue("ACS2_8", (String)WifiSettingsPortal_settings->get_Temperature_warning());
-    aux.setElementValue("ACS2_9", (String)WifiSettingsPortal_settings->get_Humidity_warning());
+    aux.setElementValue("ACS2_5", (String)WifiSettingsPortal_settings->get_Ble_beacon_mac_address1());
+    aux.setElementValue("ACS2_6", (String)WifiSettingsPortal_settings->get_Ble_beacon_mac_address2());
+    aux.setElementValue("ACS2_7", (String)WifiSettingsPortal_settings->get_Ble_beacon_range());
+    aux.setElementValue("ACS2_8", (String)WifiSettingsPortal_settings->get_Original_display_speed_adjustment());
+    aux.setElementValue("ACS2_9", (String)WifiSettingsPortal_settings->get_Temperature_warning());
+    aux.setElementValue("ACS2_10", (String)WifiSettingsPortal_settings->get_Humidity_warning());
     uint8_t val_Auto_power_off = WifiSettingsPortal_settings->get_Auto_power_off();
     if (val_Auto_power_off == 0)
-        aux.setElementValue("ACS2_10", "None");
+        aux.setElementValue("ACS2_11", "None");
     if (val_Auto_power_off == 1)
-        aux.setElementValue("ACS2_10", "2 min");
+        aux.setElementValue("ACS2_11", "2 min");
     if (val_Auto_power_off == 2)
-        aux.setElementValue("ACS2_10", "3 min");
+        aux.setElementValue("ACS2_11", "3 min");
     if (val_Auto_power_off == 3)
-        aux.setElementValue("ACS2_10", "4 min");
+        aux.setElementValue("ACS2_11", "4 min");
     if (val_Auto_power_off == 4)
-        aux.setElementValue("ACS2_10", "5 min");
+        aux.setElementValue("ACS2_11", "5 min");
     if (val_Auto_power_off == 5)
-        aux.setElementValue("ACS2_10", "10 min");
+        aux.setElementValue("ACS2_11", "10 min");
     if (val_Auto_power_off == 6)
-        aux.setElementValue("ACS2_10", "15 min");
+        aux.setElementValue("ACS2_11", "15 min");
     if (val_Auto_power_off == 7)
-        aux.setElementValue("ACS2_10", "20 min");
+        aux.setElementValue("ACS2_11", "20 min");
     if (val_Auto_power_off == 8)
-        aux.setElementValue("ACS2_10", "30 min");
+        aux.setElementValue("ACS2_11", "30 min");
     if (val_Auto_power_off == 9)
-        aux.setElementValue("ACS2_10", "60 min");
+        aux.setElementValue("ACS2_11", "60 min");
     aux.setElementValue("ACS3_1", (String)WifiSettingsPortal_settings->get_Smartdisplay_speed_adjustment());
     uint8_t val_Aux_relay_name = WifiSettingsPortal_settings->get_Aux_relay_name();
     if (val_Aux_relay_name == 0)

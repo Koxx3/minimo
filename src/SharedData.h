@@ -134,10 +134,12 @@ public:
     boolean errorContrl = false;
 
 
-    int8_t bleBeaconVisible = 1;
+    int8_t bleBeaconVisible1 = 1;
+    int16_t beaconRSSI1 = -1;
+    int8_t bleBeaconVisible2 = 1;
+    int16_t beaconRSSI2 = -1;
     int8_t bleLockForced = 0;
     int8_t fastUpdate = 0;
-    int16_t beaconRSSI = -1;
 
 };
 

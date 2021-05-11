@@ -143,24 +143,46 @@ public:
   }
 };
 
-class beacon_rssi_item : public prompt
+class beacon_rssi1_item : public prompt
 {
 public:
-  beacon_rssi_item(constMEM promptShadow &p) : prompt(p) {}
+  beacon_rssi1_item(constMEM promptShadow &p) : prompt(p) {}
   Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
   {
-    String val = "  Beacon RSSI : " + (String)TFT_menu_shrd->beaconRSSI;
+    String val = "  Beacon RSSI 1 : " + (String)TFT_menu_shrd->beaconRSSI1;
     return out.printRaw(F(val.c_str()), len);
   }
 };
 
-class beacon_mac_item : public prompt
+class beacon_mac1_item : public prompt
 {
 public:
-  beacon_mac_item(constMEM promptShadow &p) : prompt(p) {}
+  beacon_mac1_item(constMEM promptShadow &p) : prompt(p) {}
   Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
   {
-    String val = "  Beacon MAC : " + (String)TFT_menu_settings->Ble_beacon_mac_address;
+    String val = "  Beacon MAC 1 : " + (String)TFT_menu_settings->Ble_beacon_mac_address1;
+    return out.printRaw(F(val.c_str()), len);
+  }
+};
+
+class beacon_rssi2_item : public prompt
+{
+public:
+  beacon_rssi2_item(constMEM promptShadow &p) : prompt(p) {}
+  Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
+  {
+    String val = "  Beacon RSSI 2 : " + (String)TFT_menu_shrd->beaconRSSI2;
+    return out.printRaw(F(val.c_str()), len);
+  }
+};
+
+class beacon_mac2_item : public prompt
+{
+public:
+  beacon_mac2_item(constMEM promptShadow &p) : prompt(p) {}
+  Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
+  {
+    String val = "  Beacon MAC 2 : " + (String)TFT_menu_settings->Ble_beacon_mac_address2;
     return out.printRaw(F(val.c_str()), len);
   }
 };
@@ -273,8 +295,10 @@ MENU(SUBMENU_MANUAL_calibrations, "  Calibrations", doNothing, noEvent, noStyle,
 MENU(SUBMENU_MANUAL_more, "  More", doNothing, noEvent, noStyle,
      altOP(firmware_type_item, "", doNothing, updateEvent),    // updateEvent
      altOP(firmware_version_item, "", doNothing, updateEvent), // updateEvent
-     altOP(beacon_rssi_item, "", doNothing, updateEvent),      // updateEvent
-     altOP(beacon_mac_item, "", doNothing, updateEvent),       // updateEvent
+     altOP(beacon_rssi1_item, "", doNothing, updateEvent),      // updateEvent
+     altOP(beacon_mac1_item, "", doNothing, updateEvent),       // updateEvent
+     altOP(beacon_rssi2_item, "", doNothing, updateEvent),      // updateEvent
+     altOP(beacon_mac2_item, "", doNothing, updateEvent),       // updateEvent
      altOP(ble_pin_code_item, "", doNothing, updateEvent),     // updateEvent
      OP("  Bluetooth reset PIN code to 147258", reset_ble_pin_code_item, enterEvent),
      altOP(wifi_conf_ap_ssid_item, "", doNothing, updateEvent), // updateEvent
