@@ -290,6 +290,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 - fix throttle ADC voltage for internal throttle
 - change buttons resistor from 1K to 470ohm to increase light
 - rename DHT to OW
+- change controler connector to JST-PH
 
 ## Donate to support :moneybag:
 - [If you want to support me, click here !](https://www.paypal.com/pools/c/8ut4175ux4)
