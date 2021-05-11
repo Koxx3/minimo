@@ -239,7 +239,7 @@ uint8_t MinimoUart::modifyPower(char var, char data_buffer[])
 {
   uint8_t newPower = 100;
 
-  float voltage = shrd->voltageFilterMean / 1000.0;
+  //float voltage = shrd->voltageFilterMean / 1000.0;
   //float bat_min = settings->get_Battery_minimum_voltage();
   //float bat_max = settings->get_Battery_maximum_voltage();
   //float bat_med_save = settings->getS3F().Battery_saving_medium_voltage;
