@@ -21,7 +21,7 @@ For hardware, you only need to add a small extension board with the correct FPC 
 - An e-scooter with any supported controllers (single or dual)
 - An power supply between 36V and 100V... (possible with external DC-DC providing 5V if needed)
 - If you want to use progressive brake feature, you must ensure no more than 60V pass in the brake handle (issue noted only for Kaabo)
-- The electronics (ESP32 Dev KitC V4 + SmartController shield + JST SM/PH connectors)
+- The electronics (ESP32 Dev KitC V4 + SmartController shield + JST SM/PH connectors + SmartDisplay shield if you want to connect the LCD display)
 - Some electronic skills
 
 ## Features
