@@ -34,7 +34,7 @@ For hardware, you only need to add a small extension board with the correct FPC 
 | Bluetooth and Wifi security integrated | ✅ | ✅ | BLE Encryption, Wifi WPA, HTTPS OTA |
 | Wifi web application with dashboard and settings | ✅ | ✅ | |
 | Intelligent battery autonomy computing with LG MJ1 cell reference | ✅ | ✅ | |
-| Anti-theft with bluetooth proximity and manual locking | ✅ | ✅ | |
+| Anti-theft with bluetooth proximity and manual locking | ✅ | ✅ | Up to 2 Bluetooth devices can be registered and scanned |
 | Fast mode, acceleration, eco switches with smartphone | ✅ | ✅ | |
 | Fast mode, acceleration, eco switches with custom hardware remote | ✅ | ✅ | Need a custom buttons enclosure with handlebar bracket, not open-source. |
 | Automatic shutdown after inactivity | ✅ | ✅ | |
