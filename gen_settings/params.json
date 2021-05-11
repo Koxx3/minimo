@@ -204,16 +204,16 @@
           "default": "aa:bb:cc:dd:ee:ff",
           "increment": "",
           "regex_valid": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
-          "smartphone_display_name": "Smartphone or Beacon Mac Address 1",
+          "smartphone_display_name": "Beacon Mac Address 1",
           "smartphone_display_unit": "",
           "smartphone_display_hint": "MAC address",
           "smartphone_display_type": "edit_text_string",
           "tft_menu_visible": 0.0,
-          "tft_display_name": "Smartphone or Beacon Mac Address 1",
+          "tft_display_name": "Beacon Mac Address 1",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "To search a beacon you must specify the beacon mac address. \nSearch on your smartphone store for a 'BLE Scanner', it will scan all Bluetooth devices and the MAC address (an unique identifier) for the beacon, then enter this MAC address in this setting.<br>\nYou can use any Bluetooth Low Energy device as beacon (any BLE band/bracelet for example) or use a BLE beacon (10$ on aliexpress)."
+          "help_en": "To search a beacon you must specify the beacon mac address. \nSearch on your smartphone store for a 'BLE Scanner', it will scan all Bluetooth devices and the MAC address (an unique identifier) for the beacon, then enter this MAC address in this setting.<br>\nYou can use any Bluetooth Low Energy device as beacon (any BLE band/bracelet for example) or use a BLE beacon (10$ on aliexpress).\nImportant : you cannot search for most smartphone because they are protected against search scan."
         },
         {
           "ble_id": 49,
@@ -227,16 +227,16 @@
           "default": "aa:bb:cc:dd:ee:ff",
           "increment": "",
           "regex_valid": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
-          "smartphone_display_name": "Smartphone or Beacon Mac Address 2",
+          "smartphone_display_name": "Beacon Mac Address 2",
           "smartphone_display_unit": "",
           "smartphone_display_hint": "MAC address",
           "smartphone_display_type": "edit_text_string",
           "tft_menu_visible": 0.0,
-          "tft_display_name": "Smartphone or Beacon Mac Address 2",
+          "tft_display_name": "Beacon Mac Address 2",
           "tft_fast_increment": "",
           "tft_slow_increment": "",
           "tft_unit": "",
-          "help_en": "Same as 'Smartphone or Beacon Mac Address 1' but for a second device. If one is found in range, the escooter is unlocked."
+          "help_en": "Same as 'Beacon Mac Address 1' but for a second device. If one is found in range, the escooter is unlocked."
         },
         {
           "ble_id": 11,

@@ -72,19 +72,20 @@ Default value : 147258<br>
 <br>
 Usage : Bluetooth PIN code is used when you want to connect a smartphone to your SmartElec device. <b>Change it to protect your SmartElec device from any anybody connection.</b><br>
                 
-### Smartphone or Beacon Mac Address 1
+### Beacon Mac Address 1
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : aa:bb:cc:dd:ee:ff<br>
 <br>
 Usage : To search a beacon you must specify the beacon mac address. 
 Search on your smartphone store for a 'BLE Scanner', it will scan all Bluetooth devices and the MAC address (an unique identifier) for the beacon, then enter this MAC address in this setting.<br>
-You can use any Bluetooth Low Energy device as beacon (any BLE band/bracelet for example) or use a BLE beacon (10$ on aliexpress).<br>
+You can use any Bluetooth Low Energy device as beacon (any BLE band/bracelet for example) or use a BLE beacon (10$ on aliexpress).
+Important : you cannot search for most smartphone because they are protected against search scan.<br>
                 
-### Smartphone or Beacon Mac Address 2
+### Beacon Mac Address 2
 Valid configuration : SmartController / SmartDisplay<br>
 Default value : aa:bb:cc:dd:ee:ff<br>
 <br>
-Usage : Same as 'Smartphone or Beacon Mac Address 1' but for a second device. If one is found in range, the escooter is unlocked.<br>
+Usage : Same as 'Beacon Mac Address 1' but for a second device. If one is found in range, the escooter is unlocked.<br>
                 
 ### Smartphone or Beacon Mac range
 Valid configuration : SmartController / SmartDisplay<br>
