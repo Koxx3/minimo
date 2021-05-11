@@ -9,6 +9,7 @@
 #include "Settings.h"
 #include "SharedData.h"
 #include "pinout.h"
+#include "WiFi.h"
 
 #include "TFT/fonts/FORCED_SQUARE10pt7b.h"
 #include "TFT/fonts/FORCED_SQUARE12pt7b.h"
@@ -579,9 +580,15 @@ void tftUpdateData(uint32_t i_loop)
       {
         str_ota_mode = "Mode : Wifi server / Version : " + (String)shrd.inOtaModeVersion;
       }
-      tft.drawString("Downloading and flashing", TFT_HEIGHT / 2, 180, GFXFF);
-      tft.drawString(str_ota_mode, TFT_HEIGHT / 2, 200, GFXFF);
-      tft.drawString("Wifi : " + settings.get_Wifi_ssid(), TFT_HEIGHT / 2, 220, GFXFF);
+      tft.drawString("Downloading and flashing", TFT_HEIGHT / 2, 190, GFXFF);
+      tft.drawString(str_ota_mode, TFT_HEIGHT / 2, 210, GFXFF);
+
+      String wifiStr = "";
+      if (shrd.inOtaMode == OTA_IDE)
+        wifiStr = "Wifi : " + settings.get_Wifi_ssid() + " / IP : " + WiFi.localIP().toString();
+      else
+        wifiStr = "Wifi : " + settings.get_Wifi_ssid();
+      tft.drawString(wifiStr, TFT_HEIGHT / 2, 230, GFXFF);
 
       old_substate_ota++;
     }
