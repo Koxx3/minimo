@@ -292,6 +292,9 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 - rename DHT to OW
 - change controler connector to JST-PH
 
+**1.6.1**
+- switch to SY8501 regulator
+
 ## Donate to support :moneybag:
 [If you want to support me, click here !](https://www.paypal.com/pools/c/8ut4175ux4)
 
