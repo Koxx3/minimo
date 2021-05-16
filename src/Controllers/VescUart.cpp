@@ -492,22 +492,30 @@ void VescUart::setMaxSpeed(uint8_t modeOrder)
 	{
 		if (modeOrder == 1)
 		{
-			mcconf.l_max_erpm = KmhToErpm2(settings, 25 + 0.5);
+			uint32_t max_rpm = KmhToErpm2(settings, 25 + 0.5);
+			mcconf.l_max_erpm = max_rpm;
+			mcconf.l_max_erpm_fbrake = max_rpm;
 		}
 		if (modeOrder == 2)
 		{
-			mcconf.l_max_erpm = KmhToErpm2(settings, 33 + 0.5);
+			uint32_t max_rpm = KmhToErpm2(settings, 33 + 0.5);
+			mcconf.l_max_erpm = max_rpm;
+			mcconf.l_max_erpm_fbrake = max_rpm;
 		}
 		if (modeOrder == 3)
 		{
-			mcconf.l_max_erpm = 1000000;
+			uint32_t max_rpm = 1000000;
+			mcconf.l_max_erpm = max_rpm;
+			mcconf.l_max_erpm_fbrake = max_rpm;
 		}
 		//		Serial.println("mode = " + (String)modeOrder + " / KmhToErpm2(1) = " + (String)KmhToErpm2(settings, 1) + " / l_max_erpm = " + (String)mcconf.l_max_erpm);
 
 		// override speed mode if speed limit is enabled
 		if ((shrd->speedLimiter) && (mcconf.l_max_erpm > KmhToErpm2(settings, settings->get_Speed_limiter_max_speed() + 0.5)))
 		{
-			mcconf.l_max_erpm = KmhToErpm2(settings, settings->get_Speed_limiter_max_speed() + 0.5);
+			uint32_t max_rpm = KmhToErpm2(settings, settings->get_Speed_limiter_max_speed() + 0.5);
+			mcconf.l_max_erpm = max_rpm;
+			mcconf.l_max_erpm_fbrake = max_rpm;
 		}
 		shrd->speedLimiterOld = shrd->speedLimiter;
 

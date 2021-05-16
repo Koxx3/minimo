@@ -364,7 +364,7 @@ void tftSetupBacklight()
 
   pinMode(PIN_SPI_BKL, OUTPUT);
   digitalWrite(PIN_SPI_BKL, 1);
-  ledcSetup(0, 1000, 10);
+  ledcSetup(0, 200, 10);
   ledcAttachPin(PIN_SPI_BKL, 0);
   ledcWrite(0, 0);
 }

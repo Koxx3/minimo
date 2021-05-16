@@ -196,7 +196,7 @@ Usage : Default electric brake power mode after escooter power up.<br>
                 
 ### PAS enabled
 Valid configuration : SmartDisplay<br>
-Default value : 1<br>
+Default value : 0<br>
 <br>
 Usage : The 'pedal assitance switch' will force you to push the escooter to start the engine. 
 If you don't push the scooter, the throttle is not effective. The motor will engage as soon as 1km/h is reached.<br>

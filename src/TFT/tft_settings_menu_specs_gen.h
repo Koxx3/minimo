@@ -61,7 +61,7 @@ TOGGLE(tft_Default_acceleration, tft_Default_acceleration_LIST,"  Startup accele
     ,VALUE("Very slow", 5 ,doNothing,noEvent) //
 );
 uint8_t tft_Default_electric_brake_at_startup = 3;
-uint8_t tft_Pas_enabled = 1;
+uint8_t tft_Pas_enabled = 0;
 TOGGLE(tft_Pas_enabled, tft_Pas_enabled_LIST,"  PAS enabled ",doNothing,noEvent,noStyle //
     ,VALUE("Off",0,doNothing,noEvent) //
     ,VALUE("On",1,doNothing,noEvent) //
