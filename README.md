@@ -294,7 +294,8 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 
 **1.6.1**
 - switch to SY8501 regulator
-- jumper to short CTNRL UART level shifter in 3.3V 
+- add jumper to short CTNRL UART level shifter in 3.3V
+- swtich to SMD jumpers for throttle mode and pwr mode
 
 ## Donate to support :moneybag:
 [If you want to support me, click here !](https://www.paypal.com/pools/c/8ut4175ux4)
