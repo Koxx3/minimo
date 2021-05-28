@@ -87,27 +87,27 @@ public:
     int count = 0;
     if (TFT_menu_shrd->errorBrake)
     {
-      val += "1 ";
+      val += "BRK ";
       count++;
     }
     if (TFT_menu_shrd->errorThrottle)
     {
-      val += "2 ";
+      val += "THR ";
       count++;
     }
     if (TFT_menu_shrd->errorContrl)
     {
-      val += "3 ";
+      val += "CNTRL ";
       count++;
     }
     if (TFT_menu_shrd->errorSerialFromContrl)
     {
-      val += "4 ";
+      val += "SERC ";
       count++;
     }
     if (TFT_menu_shrd->errorSerialFromDisplay)
     {
-      val += "5 ";
+      val += "SERD ";
       count++;
     }
     if (count == 0)
