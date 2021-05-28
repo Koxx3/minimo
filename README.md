@@ -164,14 +164,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
     - [✅] Read serial link
     - [✅] Decode datas : speed, voltage, controller temperature
     - [ ] Error codes processing
- 
-- [IN PROGRESS 🔄] [SmartESC v1](https://github.com/Koxx3/SmartESC_STM32)
-    - [✅] Read serial link
-    - [✅] Decode datas : speed, voltage, controller temperature
-    - [ ] Error codes processing
- 
-- [ ] Serial Zero / Appolo / Weped
-
+  
 - [✅] Bluetooth 
     - [✅] Communication with Android
     - [✅] Dashboard
@@ -294,6 +287,10 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 
 **1.6.1**
 - switch to SY8501 regulator
+- add jumper to short CTNRL UART level shifter in 3.3V
+- swtich to SMD jumpers for throttle mode and pwr mode
+- add AOP 5V capacitor
+- change 0805 by 0603
 
 ## Donate to support :moneybag:
 [If you want to support me, click here !](https://www.paypal.com/pools/c/8ut4175ux4)
