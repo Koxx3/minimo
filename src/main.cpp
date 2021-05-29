@@ -1934,6 +1934,23 @@ void loop()
     checkAndSaveOdo();
   }
 
+  // push error logs in BLE
+  if (i_loop % 100 == 99)
+  {
+    if (shrd.errorContrl)
+    {
+      blh.notifyBleLogs((char*)"controller error");
+    }
+    if (shrd.errorSerialFromDisplay)
+    {
+      blh.notifyBleLogs((char*)"serial display error");
+    }
+    if (shrd.errorSerialFromContrl)
+    {
+      blh.notifyBleLogs((char*)"serial controller error");
+    }
+  }
+
   // Give a time for ESP
   delay(1);
   //delayMicroseconds(1000);
