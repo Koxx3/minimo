@@ -944,7 +944,7 @@ void getBrakeFromAnalog()
       return;
     }
 
-    if (shrd.brakeAnalogValue > shrd.brakeMaxPressureRaw)
+    if ((shrd.brakeAnalogValue > shrd.brakeMaxPressureRaw) && (shrd.inSettingsMenu == SETTINGS_MENU_STATE_OUT))
       shrd.brakeAnalogValue = shrd.brakeMaxPressureRaw;
 
     brakeFilter.in(shrd.brakeAnalogValue);

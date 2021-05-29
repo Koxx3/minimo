@@ -16,6 +16,8 @@
 #include "SharedData.h"
 
 
+extern Menu::navRoot nav;
+
 
 ////////////////////////////////////////////////
 // Simple processing functions
@@ -44,6 +46,61 @@ result save_exit()
 
 ////////////////////////////////////////////////
 // Menu processing functions
+
+class ebrake_calib_min_item : public prompt
+{
+public:
+  ebrake_calib_min_item(constMEM promptShadow &p) : prompt(p) {}
+  Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
+  {
+    //Serial.println("refresh position"); 
+    String val = "  Calib ebrake min position : " + (String)( TFT_menu_shrd->brakeMinPressureRaw);
+    return out.printRaw(F(val.c_str()), len);
+  }
+};
+
+result calibration_brake_min_action(eventMask e) {
+  //Serial.println("event = "  + (String)e); 
+  if (e == enterEvent) {
+    //Serial.println("event taken = "  + (String)e); 
+    TFT_menu_shrd->brakeMinPressureRaw = TFT_menu_shrd->brakeAnalogValue;
+    saveBrakeMinPressure();
+    nav.refresh();
+  }
+  else
+  {
+    //Serial.println("event ignored = "  + (String)e);
+  }
+  return proceed;
+}
+
+class ebrake_calib_max_item : public prompt
+{
+public:
+  ebrake_calib_max_item(constMEM promptShadow &p) : prompt(p) {}
+  Used printTo(navRoot &root, bool sel, menuOut &out, idx_t idx, idx_t len, idx_t) override
+  {
+    //Serial.println("refresh position"); 
+    String val = "  Calib ebrake max position : " + (String)( TFT_menu_shrd->brakeMaxPressureRaw);
+    return out.printRaw(F(val.c_str()), len);
+  }
+};
+
+result calibration_brake_max_action(eventMask e) {
+  //Serial.println("event = "  + (String)e); 
+  if (e == enterEvent) {
+    //Serial.println("event taken = "  + (String)e); 
+    TFT_menu_shrd->brakeMaxPressureRaw = TFT_menu_shrd->brakeAnalogValue;
+    saveBrakeMaxPressure();
+    nav.refresh();
+  }
+  else
+  {
+    //Serial.println("event ignored = "  + (String)e);
+  }
+  return proceed;
+}
+
 class currrent_temperature_item : public prompt
 {
 public:
@@ -117,6 +174,7 @@ public:
     return out.printRaw(F(val.c_str()), len);
   }
 };
+
 
 class firmware_type_item : public prompt
 {
@@ -287,9 +345,24 @@ MENU(SUBMENU_MANUAL_status, "  Status", doNothing, noEvent, noStyle,
      altOP(errors_item, "", doNothing, updateEvent),               // updateEvent
      EXIT("< Back"));
 
+     /*
+
+      noEvent=0,//just ignore all stuff
+      activateEvent=1,//this item is about to be active (system event)
+      enterEvent=1<<1,//entering navigation level (this menu is now active)
+      exitEvent=1<<2,//leaving navigation level
+      returnEvent=1<<3,//TODO:entering previous level (return)
+      focusEvent=1<<4,//element just gained focus
+      blurEvent=1<<5,//element about to lose focus
+      selFocusEvent=1<<6,//TODO:child just gained focus
+      selBlurEvent=1<<7,//TODO:child about to lose focus
+      updateEvent=1<<8,//Field value has been updated
+      anyEvent=~0
+      */
+
 MENU(SUBMENU_MANUAL_calibrations, "  Calibrations", doNothing, noEvent, noStyle,
-     OP("  Calibrate ebrake min position", calibration_brake_min_item, enterEvent),
-     OP("  Calibrate ebrake max position", calibration_brake_max_item, enterEvent),
+     altOP(ebrake_calib_min_item, "", calibration_brake_min_action, anyEvent),      // updateEvent
+     altOP(ebrake_calib_max_item, "", calibration_brake_max_action, anyEvent),      // updateEvent
      EXIT("< Back"));
 
 MENU(SUBMENU_MANUAL_more, "  More", doNothing, noEvent, noStyle,
