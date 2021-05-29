@@ -174,129 +174,138 @@ void WifiSettingsPortal_setup()
   }
 
   // Responder to pages
-  server.on("/_ac", []() {
-    server.sendHeader("Location", "/settingspage", true);
-    server.send(302, "text/plain", "");
-  });
-  server.on("/dashboardpage", HTTP_GET, []() {
-    if (!handleFileRead("/dash.html"))
-    {
-      server.send(404, "text/plain", "FileNotFound");
-    }
-  });
-  server.on("/calibpage", HTTP_GET, []() {
-    if (!handleFileRead("/calib.html"))
-    {
-      server.send(404, "text/plain", "FileNotFound");
-    }
-  });
-  server.on("/otapage", HTTP_GET, []() {
-    if (!handleFileRead("/ota.html"))
-    {
-      server.send(404, "text/plain", "FileNotFound");
-    }
-  });
-  server.on("/otaflash", HTTP_GET, []() {
-    if (!handleFileRead("/otainprogress.html"))
-    {
-      server.send(404, "text/plain", "FileNotFound");
-    }
-  });
+  server.on("/_ac", []()
+            {
+              server.sendHeader("Location", "/settingspage", true);
+              server.send(302, "text/plain", "");
+            });
+  server.on("/dashboardpage", HTTP_GET, []()
+            {
+              if (!handleFileRead("/dash.html"))
+              {
+                server.send(404, "text/plain", "FileNotFound");
+              }
+            });
+  server.on("/calibpage", HTTP_GET, []()
+            {
+              if (!handleFileRead("/calib.html"))
+              {
+                server.send(404, "text/plain", "FileNotFound");
+              }
+            });
+  server.on("/otapage", HTTP_GET, []()
+            {
+              if (!handleFileRead("/ota.html"))
+              {
+                server.send(404, "text/plain", "FileNotFound");
+              }
+            });
+  server.on("/otaflash", HTTP_GET, []()
+            {
+              if (!handleFileRead("/otainprogress.html"))
+              {
+                server.send(404, "text/plain", "FileNotFound");
+              }
+            });
 
   // launch OTA flash
-  server.on("/otaflash", HTTP_POST, []() {
-    bool success = false;
+  server.on("/otaflash", HTTP_POST, []()
+            {
+              bool success = false;
 
-    Serial.println("flash process");
-    if (server.arg("version_selected") != "")
-    {
-      //Serial.println("flash process : version_selected = " + (String)server.arg("version_selected"));
+              Serial.println("flash process");
+              if (server.arg("version_selected") != "")
+              {
+                //Serial.println("flash process : version_selected = " + (String)server.arg("version_selected"));
 
-      WifiSettingsPortal_shrd->inOtaModeVersion = server.arg("version_selected").toInt();
-      WifiSettingsPortal_shrd->inOtaMode = OTA_SERVER;
+                WifiSettingsPortal_shrd->inOtaModeVersion = server.arg("version_selected").toInt();
+                WifiSettingsPortal_shrd->inOtaMode = OTA_SERVER;
 
-      success = true;
-    }
-    else if (server.arg("ACE_OTA_version_manual") != "")
-    {
-      //Serial.println("flash process ACE_OTA_version_manual : arg = " + (String)server.arg("ACE_OTA_version_manual"));
+                success = true;
+              }
+              else if (server.arg("ACE_OTA_version_manual") != "")
+              {
+                //Serial.println("flash process ACE_OTA_version_manual : arg = " + (String)server.arg("ACE_OTA_version_manual"));
 
-      WifiSettingsPortal_shrd->inOtaModeVersion = server.arg("ACE_OTA_version_manual").toInt();
-      WifiSettingsPortal_shrd->inOtaMode = OTA_SERVER;
+                WifiSettingsPortal_shrd->inOtaModeVersion = server.arg("ACE_OTA_version_manual").toInt();
+                WifiSettingsPortal_shrd->inOtaMode = OTA_SERVER;
 
-      success = true;
-    }
+                success = true;
+              }
 
-    if (success)
-    {
-      server.sendHeader("Location", "/otainprogress.html", true);
-      server.send(302, "text/plain", "");
-    }
-    else
-    {
-      return String("error");
-    }
+              if (success)
+              {
+                server.sendHeader("Location", "/otainprogress.html", true);
+                server.send(302, "text/plain", "");
+              }
+              else
+              {
+                return String("error");
+              }
 
-    return String();
-  });
+              return String();
+            });
 
   // get firmware version
-  server.on("/getversion", HTTP_GET, []() {
-    Serial.println("getversion");
-    DynamicJsonDocument doc(50);
-    String str;
-    doc["version"] = FIRMWARE_VERSION;
-    serializeJson(doc, str);
-    server.send(200, "application/json", str);
-    return String();
-  });
+  server.on("/getversion", HTTP_GET, []()
+            {
+              Serial.println("getversion");
+              DynamicJsonDocument doc(50);
+              String str;
+              doc["version"] = FIRMWARE_VERSION;
+              serializeJson(doc, str);
+              server.send(200, "application/json", str);
+              return String();
+            });
 
   // calibration
-  server.on("/calibpage", HTTP_POST, []() {
-    Serial.println("calib page");
+  server.on("/calibpage", HTTP_POST, []()
+            {
+              Serial.println("calib page");
 
-    if (server.arg("max") != "")
-    {
-      WifiSettingsPortal_shrd->brakeMaxPressureRaw = WifiSettingsPortal_shrd->brakeAnalogValue;
-      saveBrakeMaxPressure();
-      Serial.println("save max pressure");
+              if (server.arg("max") != "")
+              {
+                WifiSettingsPortal_shrd->brakeMaxPressureRaw = WifiSettingsPortal_shrd->brakeAnalogValue;
+                saveBrakeMaxPressure();
+                Serial.println("save max pressure");
 
-      server.sendHeader("Location", "/calibpage?calibmax=ok", true);
-      server.send(302, "text/plain", "");
+                server.sendHeader("Location", "/calibpage?calibmax=ok", true);
+                server.send(302, "text/plain", "");
+              }
+              else if (server.arg("min") != "")
+              {
+                WifiSettingsPortal_shrd->brakeMinPressureRaw = WifiSettingsPortal_shrd->brakeAnalogValue;
+                saveBrakeMinPressure();
+                Serial.println("save min pressure");
 
-    }
-    else if (server.arg("min") != "")
-    {
-      WifiSettingsPortal_shrd->brakeMinPressureRaw = WifiSettingsPortal_shrd->brakeAnalogValue;
-      saveBrakeMinPressure();
-      Serial.println("save min pressure");
-      
-      server.sendHeader("Location", "/calibpage?calibmin=ok", true);
-      server.send(302, "text/plain", "");
-    }
-    else
-    {
-      Serial.println("calib : no arg match");
-    }
-    return String();
-  });
+                server.sendHeader("Location", "/calibpage?calibmin=ok", true);
+                server.send(302, "text/plain", "");
+              }
+              else
+              {
+                Serial.println("calib : no arg match");
+              }
+              return String();
+            });
 
   // Load a custom web page described in JSON as PAGE_ELEMENT and
   // register a handler. This handler will be invoked from
   // AutoConnectSubmit named the Load defined on the same page.
-  settingsPageAux.on([](AutoConnectAux &aux, PageArgument &arg) {
-    Serial.println("load begin");
-    loadConfig(aux);
-    Serial.println("load end");
-    return String();
-  });
+  settingsPageAux.on([](AutoConnectAux &aux, PageArgument &arg)
+                     {
+                       Serial.println("load begin");
+                       loadConfig(aux);
+                       Serial.println("load end");
+                       return String();
+                     });
 
-  settingsSaveAux.on([](AutoConnectAux &aux, PageArgument &arg) {
-    Serial.println("save begin");
-    saveConfig(aux);
-    WifiSettingsPortal_blh->startBleScan();
-    return String();
-  });
+  settingsSaveAux.on([](AutoConnectAux &aux, PageArgument &arg)
+                     {
+                       Serial.println("save begin");
+                       saveConfig(aux);
+                       WifiSettingsPortal_blh->startBleScan();
+                       return String();
+                     });
 
   // Default handler for all URIs not defined above
   // Use it to read files from SPIFFS
@@ -304,12 +313,13 @@ void WifiSettingsPortal_setup()
   //called when the url is not defined here
   //use it to load content from SPIFFS
   // server.onNotFound([]() {
-  portal.onNotFound([]() {
-    if (!handleFileRead(server.uri()))
-    {
-      server.send(404, "text/plain", "FileNotFound");
-    }
-  });
+  portal.onNotFound([]()
+                    {
+                      if (!handleFileRead(server.uri()))
+                      {
+                        server.send(404, "text/plain", "FileNotFound");
+                      }
+                    });
 
   // In the setup(),
   // Join the custom Web pages and performs begin
@@ -353,74 +363,75 @@ void WifiSettingsPortal_begin()
   {
 
     webSocket.begin(); // <--- After AutoConnect::begin
-    webSocket.onEvent([](uint8_t num, WStype_t type, uint8_t *payload, size_t length) {
-      switch (type)
-      {
-      case WStype_TEXT:
-        Serial.printf("[%u] get Text: %s\n", num, payload);
-        // send some response to the client
+    webSocket.onEvent([](uint8_t num, WStype_t type, uint8_t *payload, size_t length)
+                      {
+                        switch (type)
+                        {
+                        case WStype_TEXT:
+                          Serial.printf("[%u] get Text: %s\n", num, payload);
+                          // send some response to the client
 
-        DynamicJsonDocument doc(1024);
-        DeserializationError error = deserializeJson(doc, payload);
+                          DynamicJsonDocument doc(1024);
+                          DeserializationError error = deserializeJson(doc, payload);
 
-        // Test if parsing succeeds.
-        if (error)
-        {
-          Serial.print(F("deserializeJson() failed: "));
-          Serial.println(error.f_str());
-          return;
-        }
+                          // Test if parsing succeeds.
+                          if (error)
+                          {
+                            Serial.print(F("deserializeJson() failed: "));
+                            Serial.println(error.f_str());
+                            return;
+                          }
 
-        // Fetch values.
-        if (doc.containsKey("modeOrder"))
-        {
-          WifiSettingsPortal_shrd->modeOrder = doc["modeOrder"];
-          Serial.println("WifiSettingsPortal_shrd modeOrder = " + (String)WifiSettingsPortal_shrd->modeOrder);
-        }
-        else if (doc.containsKey("distanceTrip"))
-        {
-          WifiSettingsPortal_shrd->distanceTrip = doc["distanceTrip"];
-          Serial.println("WifiSettingsPortal_shrd distanceTrip = " + (String)WifiSettingsPortal_shrd->distanceTrip);
-        }
-        else if (doc.containsKey("bleLockForced"))
-        {
-          WifiSettingsPortal_shrd->bleLockForced = doc["bleLockForced"];
-          Serial.println("WifiSettingsPortal_shrd bleLockForced = " + (String)WifiSettingsPortal_shrd->bleLockForced);
-        }
-        else if (doc.containsKey("speedLimiter"))
-        {
-          WifiSettingsPortal_shrd->speedLimiter = doc["speedLimiter"];
-          Serial.println("WifiSettingsPortal_shrd speedLimiter = " + (String)WifiSettingsPortal_shrd->speedLimiter);
-        }
-        else if (doc.containsKey("ecoOrder"))
-        {
-          WifiSettingsPortal_shrd->ecoOrder = doc["ecoOrder"];
-          Serial.println("WifiSettingsPortal_shrd ecoOrder = " + (String)WifiSettingsPortal_shrd->ecoOrder);
-        }
-        else if (doc.containsKey("accelOrder"))
-        {
-          WifiSettingsPortal_shrd->accelOrder = doc["accelOrder"];
-          Serial.println("WifiSettingsPortal_shrd accelOrder = " + (String)WifiSettingsPortal_shrd->accelOrder);
-        }
-        else if (doc.containsKey("auxOrder"))
-        {
-          WifiSettingsPortal_shrd->auxOrder = doc["auxOrder"];
-          Serial.println("WifiSettingsPortal_shrd auxOrder = " + (String)WifiSettingsPortal_shrd->auxOrder);
-        }
-        else if (doc.containsKey("brakeSentOrderFromBLE"))
-        {
-          WifiSettingsPortal_shrd->brakeSentOrderFromBLE = doc["brakeSentOrderFromBLE"];
-          Serial.println("WifiSettingsPortal_shrd brakeSentOrderFromBLE = " + (String)WifiSettingsPortal_shrd->brakeSentOrderFromBLE);
-        }
-        else if (doc.containsKey("speedMax"))
-        {
-          WifiSettingsPortal_shrd->speedMax = doc["speedMax"];
-          Serial.println("WifiSettingsPortal_shrd speedMax = " + (String)WifiSettingsPortal_shrd->speedMax);
-        }
+                          // Fetch values.
+                          if (doc.containsKey("modeOrder"))
+                          {
+                            WifiSettingsPortal_shrd->modeOrder = doc["modeOrder"];
+                            Serial.println("WifiSettingsPortal_shrd modeOrder = " + (String)WifiSettingsPortal_shrd->modeOrder);
+                          }
+                          else if (doc.containsKey("distanceTrip"))
+                          {
+                            WifiSettingsPortal_shrd->distanceTrip = doc["distanceTrip"];
+                            Serial.println("WifiSettingsPortal_shrd distanceTrip = " + (String)WifiSettingsPortal_shrd->distanceTrip);
+                          }
+                          else if (doc.containsKey("bleLockForced"))
+                          {
+                            WifiSettingsPortal_shrd->bleLockForced = doc["bleLockForced"];
+                            Serial.println("WifiSettingsPortal_shrd bleLockForced = " + (String)WifiSettingsPortal_shrd->bleLockForced);
+                          }
+                          else if (doc.containsKey("speedLimiter"))
+                          {
+                            WifiSettingsPortal_shrd->speedLimiter = doc["speedLimiter"];
+                            Serial.println("WifiSettingsPortal_shrd speedLimiter = " + (String)WifiSettingsPortal_shrd->speedLimiter);
+                          }
+                          else if (doc.containsKey("ecoOrder"))
+                          {
+                            WifiSettingsPortal_shrd->ecoOrder = doc["ecoOrder"];
+                            Serial.println("WifiSettingsPortal_shrd ecoOrder = " + (String)WifiSettingsPortal_shrd->ecoOrder);
+                          }
+                          else if (doc.containsKey("accelOrder"))
+                          {
+                            WifiSettingsPortal_shrd->accelOrder = doc["accelOrder"];
+                            Serial.println("WifiSettingsPortal_shrd accelOrder = " + (String)WifiSettingsPortal_shrd->accelOrder);
+                          }
+                          else if (doc.containsKey("auxOrder"))
+                          {
+                            WifiSettingsPortal_shrd->auxOrder = doc["auxOrder"];
+                            Serial.println("WifiSettingsPortal_shrd auxOrder = " + (String)WifiSettingsPortal_shrd->auxOrder);
+                          }
+                          else if (doc.containsKey("brakeSentOrderFromBLE"))
+                          {
+                            WifiSettingsPortal_shrd->brakeSentOrderFromBLE = doc["brakeSentOrderFromBLE"];
+                            Serial.println("WifiSettingsPortal_shrd brakeSentOrderFromBLE = " + (String)WifiSettingsPortal_shrd->brakeSentOrderFromBLE);
+                          }
+                          else if (doc.containsKey("speedMax"))
+                          {
+                            WifiSettingsPortal_shrd->speedMax = doc["speedMax"];
+                            Serial.println("WifiSettingsPortal_shrd speedMax = " + (String)WifiSettingsPortal_shrd->speedMax);
+                          }
+                          break;
 
-        break;
-      }
-    });
+                        }
+                      });
   }
   Serial.println("wifi portal open !");
 }
@@ -495,7 +506,7 @@ void WifiSettingsPortal_sendValues()
     doc["time"] = millis();
 
     serializeJson(doc, str);
-    
+
     //Serial.println("send WifiSettingsPortal_shrd->auxOrder : " + (String)WifiSettingsPortal_shrd->auxOrder);
 
     webSocket.sendTXT(0, str);
