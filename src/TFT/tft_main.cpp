@@ -144,6 +144,9 @@ const char *txt_max = "Max";
 const char *txt_w = "W ";
 const char *txt_v = "V";
 const char *txt_c = "C";
+const char *txt_space = " ";
+const char *txt_m = "M";
+const char *txt_h = "H";
 
 uint8_t oldShrdPasEnabled = 255;
 uint8_t oldShrdBrakePressedStatus = 255;
@@ -607,6 +610,7 @@ void tftUpdateData(uint32_t i_loop)
 
       sprintf(fmt, "%3d", (int)speed);
       tft_util_draw_number(&tft, fmt, COLUMN5, LINE_3Y, MY_TFT_WHITE, TFT_BLACK, 5, BIG_FONT_SIZE);
+
       break;
     }
 
@@ -625,8 +629,28 @@ void tftUpdateData(uint32_t i_loop)
 
     case 2:
     {
+      // mode
       sprintf(fmt, "%01.0f", (float)shrd.modeOrder);
       tft_util_draw_number(&tft, fmt, COLUMN1, LINE_1Y, MY_TFT_WHITE, TFT_BLACK, 5, MEDIUM_FONT_SIZE);
+
+      // eco mode
+      String txt_eco;
+      if (shrd.ecoOrder == 2)
+        txt_eco = "   ";
+      else if (shrd.ecoOrder == 1)
+        txt_eco = "L";
+      else if (shrd.ecoOrder == 0)
+        txt_eco = "H";
+
+      // Draw unit
+      tft.setTextColor(MY_TFT_WHITE, TFT_BLACK);                                //UNIT
+      tft.setTextDatum(BL_DATUM);                                               //UNIT
+      tft.setFreeFont(FONT_UNIT);                                               //UNIT SIZE/FONT
+      tft.drawString(txt_eco, COLUMN1 + UNIT_LEFT_MARGIN, LINE_2Y_UNIT, GFXFF); //DRAW UNIT ON DISPLAY
+
+      // Switch font back
+      tft.setFreeFont(FONT_NUMBER); //SET FONT FOR DATA
+
       break;
     }
 
