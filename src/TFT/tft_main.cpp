@@ -73,7 +73,7 @@
 #define LINE_2Y 23 * SCALE_FACTOR_Y
 #define LINE_2Y_UNIT LINE_2Y + (25 * SCALE_FACTOR_Y)
 #define LINE_3Y 79 * SCALE_FACTOR_Y
-#define LINE_3Y_UNIT1 LINE_3Y + (91 * SCALE_FACTOR_Y) // Km/m speed
+#define LINE_3Y_UNIT1 LINE_3Y + (92 * SCALE_FACTOR_Y) // Km/m speed
 #define LINE_3Y_UNIT2 LINE_3Y + (25 * SCALE_FACTOR_Y) // speed max
 #define LINE_3Y_UNIT3 LINE_3Y + (14 * SCALE_FACTOR_Y) // Km/h speed max
 #define LINE_4Y 210 * SCALE_FACTOR_Y
