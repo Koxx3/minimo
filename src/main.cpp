@@ -1627,63 +1627,61 @@ void processAutonomy()
 
 void processCurrent()
 {
-  if ((shrd.currentSensorPresent == -1) || (shrd.currentSensorPresent == 1))
-  {
-    int currentRead = analogRead(PIN_IN_CURRENT);
+  int currentRead = analogRead(PIN_IN_CURRENT);
 
 #if DEBUG_FAKE_CURRENT
-    currentRead = 2048;
+  currentRead = 2048;
 #endif
 
-    if (shrd.speedCurrent == 0)
+  // detect current sensor at startup
+  if (i_loop < 100 * NB_CURRENT_FILTER_CALIB_DATA)
+  {
+    if (currentRead > ANALOG_CURRENT_MIN_RAW_READING)
     {
-      if (currentRead < ANALOG_CURRENT_MIN_RAW_READING)
-      {
-        shrd.currentSensorPresent = 0;
-        Serial.println("Current sensor is not detected -> disable reading");
-      }
-      else
-      {
-        shrd.currentSensorPresent = 1;
-        currentRawFilterInit.in(currentRead);
-        Serial.println("Current sensor is detected -> enable reading");
-      }
-    }
-    currentRawFilter.in(currentRead);
+      shrd.currentSensorPresent = 1;
+      Serial.println("Current sensor is detected -> enable reading : currentRead = " + (String)currentRead);
 
-    if ((shrd.currentSensorPresent == -1) || (shrd.currentSensorPresent == 1))
-    {
-      // current rest value
-      int currentRawFilter2 = currentRawFilter.getMeanWithoutExtremes(2);
-      int currentRawFilterInit2 = currentRawFilterInit.getMeanWithoutExtremes(5);
-      int currentInMillamps = (currentRawFilter2 - currentRawFilterInit2) * (1000.0 / ANALOG_TO_CURRENT);
-      shrd.currentActual = currentInMillamps;
+      if (shrd.speedCurrent == 0)
+        currentRawFilterInit.in(currentRead);
     }
     else
     {
-      shrd.currentActual = 0;
+      Serial.println("Current sensor is not detected -> disable reading : currentRead = " + (String)currentRead);
+      shrd.currentSensorPresent = 0;
     }
 
-#if DEBUG_DISPLAY_CURRENT
-    Serial.print("currentRead : ");
-    Serial.print(currentRead);
-    Serial.print(" / currentFilterInit getMeanWithoutExtremes : ");
-    Serial.print(currentRawFilterInit.getMeanWithoutExtremes(5));
-    Serial.print(" / in amperes : ");
-    Serial.println(shrd.currentActual / 1000.0);
-#endif
+    return;
   }
-  else
+
+  if (shrd.currentSensorPresent == 1)
   {
-#if USE_CURRENT_FROM_MINIMO_CONTROLLER
-    // TEST // TEST // TEST // TEST // TEST //
-    shrd.currentSensorPresent = 2;
-    shrd.currentActual = shrd.currentFromController;
-    // TEST // TEST // TEST // TEST // TEST //
-#else
-    shrd.currentSensorPresent = 0;
-#endif
+    currentRawFilter.in(currentRead);
+
+    // current rest value
+    int currentRawFilter2 = currentRawFilter.getMeanWithoutExtremes(2);
+    int currentRawFilterInit2 = currentRawFilterInit.getMeanWithoutExtremes(5);
+    int currentInMillamps = (currentRawFilter2 - currentRawFilterInit2) * (1000.0 / ANALOG_TO_CURRENT);
+    shrd.currentActual = currentInMillamps;
   }
+  else if (shrd.currentSensorPresent == -1)
+  {
+    shrd.currentActual = 0;
+  }
+
+#if DEBUG_DISPLAY_CURRENT
+  Serial.print("currentRead : ");
+  Serial.print(currentRead);
+  Serial.print(" / currentFilterInit getMeanWithoutExtremes : ");
+  Serial.print(currentRawFilterInit.getMeanWithoutExtremes(5));
+  Serial.print(" / in amperes : ");
+  Serial.println(shrd.currentActual / 1000.0);
+#endif
+#if USE_CURRENT_FROM_MINIMO_CONTROLLER
+  // TEST // TEST // TEST // TEST // TEST //
+  shrd.currentSensorPresent = 2;
+  shrd.currentActual = shrd.currentFromController;
+  // TEST // TEST // TEST // TEST // TEST //
+#endif
 }
 
 void processRelay()
@@ -1870,14 +1868,19 @@ void loop()
     blh.processBLE();
   }
 
-#if ((CONTROLLER_TYPE == CONTROLLER_MINIMOTORS) || (CONTROLLER_TYPE == CONTROLLER_ZERO))
+#if (CONTROLLER_TYPE == CONTROLLER_MINIMOTORS) || (CONTROLLER_TYPE == CONTROLLER_ZERO)
   if (i_loop % 100 == 5)
   {
     processCurrent();
   }
 #else
-  shrd.currentSensorPresent = 1;
+  shrd.currentSensorPresent = 2;
 #endif
+
+/*
+  if (i_loop % 1000 == 0)
+    Serial.println("shrd.currentSensorPresent = " + (String)shrd.currentSensorPresent);
+*/
 
 // keep it fast (/100 not working)
 #if ENABLE_TEMPERATURE_EXT_READ
@@ -1939,15 +1942,15 @@ void loop()
   {
     if (shrd.errorContrl)
     {
-      blh.notifyBleLogs((char*)"controller error");
+      blh.notifyBleLogs((char *)"controller error");
     }
     if (shrd.errorSerialFromDisplay)
     {
-      blh.notifyBleLogs((char*)"serial display error");
+      blh.notifyBleLogs((char *)"serial display error");
     }
     if (shrd.errorSerialFromContrl)
     {
-      blh.notifyBleLogs((char*)"serial controller error");
+      blh.notifyBleLogs((char *)"serial controller error");
     }
   }
 
