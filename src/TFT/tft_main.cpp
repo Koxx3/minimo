@@ -36,12 +36,14 @@
 #if ((TFT_MODEL == 2) || (TFT_MODEL == 3)) // 3.5"
 #define FONT_RED_LABEL FONT_FORCED_SQUARE10pt7b
 #define FONT_UNIT FONT_FORCED_SQUARE10pt7b
+#define FONT_UNIT_SMALL FONT_FORCED_SQUARE10pt7b
 #define FONT_UNIT_HEIGH 10
 #define FONT_NUMBER FONT_FORCED_SQUARE18pt7b
 #define FONT_NUMBER_HEIGHT 18
 #else
 #define FONT_RED_LABEL FONT_FORCED_SQUARE6pt7b
 #define FONT_UNIT FONT_FORCED_SQUARE7pt7b
+#define FONT_UNIT_SMALL FONT_FORCED_SQUARE6pt7b
 #define FONT_UNIT_HEIGH 7
 #define FONT_NUMBER FONT_FORCED_SQUARE14pt7b
 #define FONT_NUMBER_HEIGHT 14
@@ -60,7 +62,7 @@
 #define LINE_2Y 23 * SCALE_FACTOR_Y
 #define LINE_2Y_UNIT LINE_2Y + (27 * SCALE_FACTOR_Y)
 #define LINE_3Y 79 * SCALE_FACTOR_Y
-#define LINE_3Y_UNIT1 LINE_3Y + (95 * SCALE_FACTOR_Y) // Km/m speed
+#define LINE_3Y_UNIT1 LINE_3Y + (94 * SCALE_FACTOR_Y) // Km/m speed
 #define LINE_3Y_UNIT2 LINE_3Y + (26 * SCALE_FACTOR_Y) // speed max
 #define LINE_3Y_UNIT3 LINE_3Y + (15 * SCALE_FACTOR_Y) // Km/h speed max
 #define LINE_4Y 210 * SCALE_FACTOR_Y
@@ -106,7 +108,7 @@
 #define COLUMN5 225 * SCALE_FACTOR_X
 #define COLUMN6 215 * SCALE_FACTOR_X
 #define COLUMN7 247 * SCALE_FACTOR_X
-#define COLUMN8 278 * SCALE_FACTOR_X //279
+#define COLUMN8 280 * SCALE_FACTOR_X //279
 #define COLUMN9 292 * SCALE_FACTOR_X
 
 #define SPEED_LIMITER_INDICATOR_WIDTH (7 * SCALE_FACTOR_X)
@@ -516,16 +518,21 @@ void tftUpdateData(uint32_t i_loop)
     tft.setFreeFont(FONT_UNIT);
     tft.setTextColor(MY_TFT_WHITE, TFT_BLACK);
     tft.setTextDatum(BL_DATUM);
+    // autonomy "kms"
     tft.drawString(txt_km, COLUMN3 + UNIT_LEFT_MARGIN, LINE_2Y_UNIT, GFXFF);
+    // voltage "volts"
     tft.drawString(txt_v, COLUMN4 + UNIT_LEFT_MARGIN, LINE_2Y_UNIT, GFXFF);
-    tft.drawString(txt_kmh, COLUMN8 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT2, GFXFF);
-
+    // power "watts"
     tft.drawString(txt_w, COLUMN2 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF);
+    // trip "km/h"
     tft.drawString(txt_km, COLUMN9 + UNIT_LEFT_MARGIN, LINE_4Y_UNIT, GFXFF);
 
-    tft.setFreeFont(FONT_RED_LABEL);
+    // Max Speed : "Max" & "km/h"
+    tft.setFreeFont(FONT_UNIT_SMALL);
+    tft.drawString(txt_kmh, COLUMN8 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT2, GFXFF);
     tft.drawString(txt_max, COLUMN8 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT3, GFXFF);
 
+    // Current speed : big "km/h"
     tft.setFreeFont(FONT_NUMBER);
     tft.drawString(txt_kmh, COLUMN5 + UNIT_LEFT_MARGIN, LINE_3Y_UNIT1, GFXFF);
 
