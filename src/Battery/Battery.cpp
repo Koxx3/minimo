@@ -48,7 +48,8 @@ Battery::Battery(Settings *settings)
 			this->minVoltage = 72000;
 			this->maxVoltage = 108000;
 			this->nbcells = 24;
-		} else
+		}
+		else
 		{
 			this->minVoltage = 42000;
 			this->maxVoltage = 58800;
@@ -80,10 +81,11 @@ uint8_t Battery::level(uint32_t voltage)
 		float voltByCell = (voltage / nbcells);
 		voltByCell /= 1000;
 		int currentMillis = millis();
-		uint8_t newPercent = max(0,(int)round(-1439.34794384241 * pow(voltByCell, 6)+ 31480.0982535788 * pow(voltByCell, 5) - 286201.985664439 * pow(voltByCell, 4) + 1384323.16517329 * pow(voltByCell, 3) - 3756691.18815474 * pow(voltByCell, 2) + 5422659.60130914 * voltByCell - 3252516.81708377));
-	
+		uint8_t newPercent = max(0, (int)round(-1439.34794384241 * pow(voltByCell, 6) + 31480.0982535788 * pow(voltByCell, 5) - 286201.985664439 * pow(voltByCell, 4) + 1384323.16517329 * pow(voltByCell, 3) - 3756691.18815474 * pow(voltByCell, 2) + 5422659.60130914 * voltByCell - 3252516.81708377));
+
 		uint8_t Intervalle = 60;
-		if (newPercent < 30) Intervalle = 20;
+		if (newPercent < 30)
+			Intervalle = 20;
 
 		if (newPercent == OldPercent || currentMillis < 5000)
 		{
@@ -110,6 +112,8 @@ uint8_t Battery::level(uint32_t voltage)
 			else
 				OldPercent--;
 		}
+
+		OldPercent = constrain(OldPercent, 0, 100);
 
 #if DEBUG_DISPLAY_BATTERY
 		Serial.printf("5- minVoltage = %d / maxVoltage = %d / nbcells = %d / voltage = %d / percent = %d\n", minVoltage, maxVoltage, nbcells, voltage, OldPercent);
