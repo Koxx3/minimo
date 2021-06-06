@@ -278,20 +278,6 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 - switch to LM5164 regulator
 - add power latch
 
-**1.6.0**
-- switch to LM5017 regulator
-- fix throttle ADC voltage for internal throttle
-- change buttons resistor from 1K to 470ohm to increase light
-- rename DHT to OW
-- change controler connector to JST-PH
-
-**1.6.1**
-- switch to SY8501 regulator
-- add jumper to short CTNRL UART level shifter in 3.3V
-- swtich to SMD jumpers for throttle mode and pwr mode
-- add AOP 5V capacitor
-- change 0805 by 0603
-
 ## Donate to support :moneybag:
 [If you want to support me, click here !](https://www.paypal.com/pools/c/8ut4175ux4)
 
