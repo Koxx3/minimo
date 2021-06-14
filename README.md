@@ -263,6 +263,7 @@ I have no skills in iPhone apps. If anyone wants to develop, let me know 😉
 
 ## Let's go ! :kick_scooter:
 
+- [Escooter wiring diagrams](https://oshwlab.com/Koxx3/smartelec_wiring)
 - [Produce your own board](/documents/MAKE_IT.md)
 - [Wiring](/documents/WIRING.md)
 - [Run it !](/documents/RUN.md)
