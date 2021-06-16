@@ -23,7 +23,7 @@ typedef enum
 typedef enum
 {
     SETTINGS_MENU_STATE_OUT,
-    SETTINGS_MENU_STATE_ENTERING, 
+    SETTINGS_MENU_STATE_ENTERING,
     SETTINGS_MENU_STATE_IN,
 } SettingsMenuState;
 
@@ -36,6 +36,9 @@ public:
 
     uint8_t inOtaMode = OTA_OFF;
     uint16_t inOtaModeVersion = 0;
+
+    boolean owb_ds9990_present = false;
+    boolean shtc3_present = false;
 
     float currentHumidity = 0.0;
     float currentTemperature = -45.0;
@@ -110,7 +113,7 @@ public:
     uint8_t autonomyLeft;
 
     //int32_t currentRawFilterMean = 0;
-    int32_t currentActual = 0; // in milliamps
+    int32_t currentActual = 0;         // in milliamps
     int32_t currentFromController = 0; // in milliamps
     uint8_t currentSensorPresent = -1;
 
@@ -133,14 +136,12 @@ public:
     boolean errorSerialFromContrl = false;
     boolean errorContrl = false;
 
-
     int8_t bleBeaconVisible1 = 1;
     int16_t beaconRSSI1 = -1;
     int8_t bleBeaconVisible2 = 1;
     int16_t beaconRSSI2 = -1;
     int8_t bleLockForced = 0;
     int8_t fastUpdate = 0;
-
 };
 
 #endif

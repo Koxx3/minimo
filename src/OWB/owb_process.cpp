@@ -49,13 +49,11 @@ OneWireBus_ROMCode device_rom_codes[MAX_DEVICES] = {0};
 
 SharedData *owb_shrd;
 
-void owb_setSharedData(SharedData *shrd)
+void owb_setup(SharedData *shrd)
 {
-    owb_shrd = shrd;
-}
 
-void owb_setup()
-{
+    owb_shrd = shrd;
+
     // Override global log level
     //esp_log_level_set("*", ESP_LOG_INFO);
 
@@ -81,6 +79,7 @@ void owb_setup()
         if (search_state.rom_code.fields.family[0] == DS9990_FAMILY_CODE)
         {
             printf("OW - device %d is DS9990\n", num_devices);
+            owb_shrd->owb_ds9990_present = true;
         }
         else
         {

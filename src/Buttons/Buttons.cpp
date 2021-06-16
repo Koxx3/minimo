@@ -3,7 +3,7 @@
 #include <jled.h>
 #include "debug.h"
 #include "TFT/tft_main.h"
-#include "main.h"
+#include "ioprocessing.h"
 
 #define ENABLE_LED 1
 

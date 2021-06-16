@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include <Settings2.h>
+#include "ioprocessing.h"
 #define APP_STORAGE "APP_STORAGE"
 
 // Settings2

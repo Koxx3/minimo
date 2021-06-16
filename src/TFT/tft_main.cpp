@@ -150,18 +150,18 @@ const char *txt_space = " ";
 const char *txt_m = "M";
 const char *txt_h = "H";
 
-uint8_t oldShrdPasEnabled = 255;
-uint8_t oldShrdBrakePressedStatus = 255;
-uint8_t oldShrdCurrentTemperature = 255;
-uint8_t oldShrdCurrentHumidity = 255;
-uint8_t oldError = 255;
-uint8_t oldShrdIsLocked = 255;
-uint8_t oldAuxOrder = 255;
+static uint8_t oldShrdPasEnabled = 255;
+static uint8_t oldShrdBrakePressedStatus = 255;
+static uint8_t oldShrdCurrentTemperature = 255;
+static uint8_t oldShrdCurrentHumidity = 255;
+static uint8_t oldError = 255;
+static uint8_t oldShrdIsLocked = 255;
+static uint8_t oldAuxOrder = 255;
 
-uint8_t old_substate_case3 = 0;
-uint8_t old_substate_case7 = 0;
-uint8_t old_substate_case6 = 0;
-uint8_t old_substate_ota = 0;
+static uint8_t old_substate_case3 = 0;
+static uint8_t old_substate_case7 = 0;
+static uint8_t old_substate_case6 = 0;
+static uint8_t old_substate_ota = 0;
 
 bool lock = false;
 
@@ -681,8 +681,8 @@ void tftUpdateData(uint32_t i_loop)
         if (old_substate_case3 == 1)
         {
           shouldClear = true;
-          old_substate_case3 = 0;
         }
+        old_substate_case3 = 0;
       }
       else
       {
@@ -696,8 +696,8 @@ void tftUpdateData(uint32_t i_loop)
         if (old_substate_case3 == 0)
         {
           shouldClear = true;
-          old_substate_case3 = 1;
         }
+        old_substate_case3 = 1;
       }
 
       if (shouldClear)

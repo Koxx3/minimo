@@ -8,7 +8,7 @@
 #define DEBUG_BLE_DISPLAY_COMMANDSFEEDBACK          0
 #define DEBUG_BLE_DISPLAY_SETTINGSCHANGED           0
 #define DEBUG_BLE_DISPLAY_VOLTAGE_TOO_HIGH          0
-#define DEBUG_BLE_DISPLAY_SCAN                      1
+#define DEBUG_BLE_DISPLAY_SCAN                      0
 
 // Perf debugs
 #define DEBUG_TIMELOOP_MS                           0
@@ -22,6 +22,7 @@
 #define DEBUG_DISPLAY_ANALOG_BRAKE                  0
 #define DEBUG_DISPLAY_DAC_OUTPUT                    0
 #define DEBUG_DISPLAY_THROTTLE                      0
+#define DEBUG_DISPLAY_THROTTLE_6_POINTS             0
 #define DEBUG_DISPLAY_ECO                           0
 #define DEBUG_DISPLAY_ACCEL                         0
 #define DEBUG_DISPLAY_NITRO                         0
@@ -50,7 +51,7 @@
 #define DEBUG_DISPLAY_DECODED_FRAME_CNTRL_TO_LCD    0
 #define DEBUG_SERIAL_CHECKSUM_LCD_TO_CNTRL          0
 #define DEBUG_SERIAL_CHECKSUM_CNTRL_TO_LCD          0
-#define DEBUG_DISPLAY_VESC_FRAME                    1
+#define DEBUG_DISPLAY_VESC_FRAME                    0
 
 #define SERIAL_FAKE_CURRENT                         0
 #define DEBUG_FAKE_SPEED                            0

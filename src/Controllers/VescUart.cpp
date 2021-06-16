@@ -53,7 +53,7 @@ int VescUart::receiveUartMessage(uint8_t *payloadReceived)
 	uint8_t messageReceived[256];
 	uint16_t lenPayload = 0;
 
-	uint32_t timeout = millis() + 20; // Defining the timestamp for timeout (100ms before timeout)
+	uint32_t timeout = millis() + 100; // Defining the timestamp for timeout (100ms before timeout)
 
 	while (millis() < timeout && messageRead == false)
 	{
@@ -273,35 +273,28 @@ bool VescUart::processReadPacket(uint8_t *message)
 
 	case COMM_GET_MCCONF_TEMP:
 	{
-		Serial.println("COMM_GET_MCCONF_TEMP -- received");
+
+		if (debugPort != NULL)
+		{
+			debugPort->println("COMM_GET_MCCONF_TEMP -- received");
+		}
 
 		//send_buffer[ind++] = packet_id;
 		mcconf.l_current_min_scale = buffer_get_float32_auto(message, &ind);
-		Serial.println("l_current_min_scale = " + (String)mcconf.l_current_min_scale);
 		mcconf.l_current_max_scale = buffer_get_float32_auto(message, &ind);
-		Serial.println("l_current_max_scale = " + (String)mcconf.l_current_max_scale);
 		mcconf.l_min_erpm = buffer_get_float32_auto(message, &ind);
-		Serial.println("l_min_erpm = " + (String)mcconf.l_min_erpm);
 		mcconf.l_max_erpm = buffer_get_float32_auto(message, &ind);
-		Serial.println("l_max_erpm = " + (String)mcconf.l_max_erpm);
 		mcconf.l_min_duty = buffer_get_float32_auto(message, &ind);
-		Serial.println("l_maxl_min_duty_erpm = " + (String)mcconf.l_min_duty);
 		mcconf.l_max_duty = buffer_get_float32_auto(message, &ind);
-		Serial.println("l_max_duty = " + (String)mcconf.l_max_duty);
 		mcconf.l_watt_min = buffer_get_float32_auto(message, &ind);
-		Serial.println("l_watt_min = " + (String)mcconf.l_watt_min);
 		mcconf.l_watt_max = buffer_get_float32_auto(message, &ind);
-		Serial.println("l_watt_max = " + (String)mcconf.l_watt_max);
 		mcconf.l_in_current_min = buffer_get_float32_auto(message, &ind);
-		Serial.println("l_in_current_min = " + (String)mcconf.l_in_current_min);
 		mcconf.l_in_current_max = buffer_get_float32_auto(message, &ind);
-		Serial.println("l_in_current_max = " + (String)mcconf.l_in_current_max);
 		mcconf.si_motor_poles = buffer_get_uint8(message, &ind);
-		Serial.println("si_motor_poles = " + (String)mcconf.si_motor_poles);
 		mcconf.si_gear_ratio = buffer_get_float32_auto(message, &ind);
-		Serial.println("si_gear_ratio = " + (String)mcconf.si_gear_ratio);
 		mcconf.si_wheel_diameter = buffer_get_float32_auto(message, &ind);
-		Serial.println("si_wheel_diameter = " + (String)mcconf.si_wheel_diameter);
+
+		motorSettingReceived = true;
 
 		return true;
 	}
@@ -371,12 +364,12 @@ bool VescUart::requestVescValues(void)
 	return true;
 }
 
-bool VescUart::readVescSerialFeedback(void)
+bool VescUart::readVescValuesFeedback(void)
 {
 	uint8_t payload[256];
 	int lenPayload = receiveUartMessage(payload);
 
-	if (lenPayload > 55)
+	if (lenPayload >= 50)
 	{
 		bool read = processReadPacket(payload); //returns true if sucessful
 
@@ -384,11 +377,12 @@ bool VescUart::readVescSerialFeedback(void)
 	}
 	else
 	{
+		Serial.println("readVescSerialFeedback / error  : lenPayload < 55 >> lenPayload = " + (String)lenPayload);
 		return false;
 	}
 }
 
-bool VescUart::requestMotorConfigTemp(void)
+bool VescUart::readMotorConfigTemp(void)
 {
 
 	uint8_t command[1] = {COMM_GET_MCCONF_TEMP};
@@ -406,13 +400,47 @@ bool VescUart::requestMotorConfigTemp(void)
 	if (lenPayload > 2)
 	{
 		bool read = processReadPacket(payload); //returns true if sucessful
-
 		return read;
 	}
 	else
 	{
+		Serial.println("requestMotorConfigTemp / error  : lenPayload < 2 >> lenPayload = " + (String)lenPayload);
 		return false;
 	}
+}
+
+bool VescUart::requestMotorConfigTemp(void)
+{
+
+	uint8_t command[1] = {COMM_GET_MCCONF_TEMP};
+
+	if (debugPort != NULL)
+	{
+		debugPort->println("Command: COMM_GET_MCCONF_TEMP");
+	}
+
+	packSendPayload(command, 1);
+	return true;
+}
+
+bool VescUart::readMotorConfigTempFeedback(void)
+{
+
+	uint8_t payload[256];
+
+	int lenPayload = receiveUartMessage(payload);
+
+	if (lenPayload > 2)
+	{
+		bool read = processReadPacket(payload); //returns true if sucessful
+		return read;
+	}
+	else
+	{
+		Serial.println("requestMotorConfigTemp / error  : lenPayload < 2 >> lenPayload = " + (String)lenPayload);
+		return false;
+	}
+	return false;
 }
 
 bool VescUart::requestMotorConfig(void)
@@ -524,7 +552,7 @@ void VescUart::setMaxSpeed(uint8_t modeOrder)
 		payload[index++] = COMM_SET_MCCONF_TEMP;
 
 		payload[index++] = 0; // store
-		payload[index++] = 0; // forward_can
+		payload[index++] = 1; // forward_can
 		payload[index++] = 0; // ack
 		payload[index++] = 0; // divide_by_controllers
 
@@ -545,7 +573,6 @@ void VescUart::setMaxSpeed(uint8_t modeOrder)
 
 		packSendPayload(payload, sizeof(payload));
 	}
-	
 }
 
 void VescUart::setCurrent(float current)
@@ -650,4 +677,21 @@ void VescUart::printVescValues()
 		debugPort->print("error: ");
 		debugPort->println(data.error);
 	}
+}
+
+void VescUart::printMotorValues()
+{
+	Serial.println("l_current_min_scale = " + (String)mcconf.l_current_min_scale);
+	Serial.println("l_current_max_scale = " + (String)mcconf.l_current_max_scale);
+	Serial.println("l_min_erpm = " + (String)mcconf.l_min_erpm);
+	Serial.println("l_max_erpm = " + (String)mcconf.l_max_erpm);
+	Serial.println("l_maxl_min_duty_erpm = " + (String)mcconf.l_min_duty);
+	Serial.println("l_max_duty = " + (String)mcconf.l_max_duty);
+	Serial.println("si_wheel_diameter = " + (String)mcconf.si_wheel_diameter);
+	Serial.println("si_gear_ratio = " + (String)mcconf.si_gear_ratio);
+	Serial.println("l_watt_min = " + (String)mcconf.l_watt_min);
+	Serial.println("l_watt_max = " + (String)mcconf.l_watt_max);
+	Serial.println("l_in_current_min = " + (String)mcconf.l_in_current_min);
+	Serial.println("l_in_current_max = " + (String)mcconf.l_in_current_max);
+	Serial.println("si_motor_poles = " + (String)mcconf.si_motor_poles);
 }

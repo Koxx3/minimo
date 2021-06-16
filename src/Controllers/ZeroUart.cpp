@@ -4,7 +4,9 @@
 #include "debug.h"
 #include "tools/utils.h"
 
-#ifndef ZERO_SIMULATED_DISPLAY
+#ifndef BUILD_DISPLAY_QSS4
+#define ZERO_SIMULATED_DISPLAY 1
+#else
 #define ZERO_SIMULATED_DISPLAY 0
 #endif
 
@@ -276,7 +278,7 @@ uint8_t ZeroUart::modifyPower(char var, char data_buffer[])
   Serial.print("V");
   */
 
-#if DEBUG_DISPLAY_MINIMO_MOD_POWER
+#if DEBUG_DISPLAY_ZERO_MOD_POWER
   Serial.print("blh->bleLockStatus = ");
   Serial.print(blh->bleLockStatus);
   Serial.print(" / shrd->speedLimiter = ");
@@ -301,7 +303,7 @@ uint8_t ZeroUart::modifyPower(char var, char data_buffer[])
       newPower = 5;
     }
 
-#if DEBUG_DISPLAY_MINIMO_MOD_POWER
+#if DEBUG_DISPLAY_ZERO_MOD_POWER
     Serial.print(" / new_power = ");
     Serial.print(newPower);
     Serial.println("%");
@@ -363,7 +365,7 @@ uint8_t ZeroUart::modifyPas(char var, char data_buffer[])
     shrd->pasEnabled = (var >> 1) & 0x01;
   }
 
-#if DEBUG_DISPLAY_MINIMO_MOD_PAS
+#if DEBUG_DISPLAY_ZERO_MOD_PAS
   Serial.printf("var = %02x / shrd->pasEnable = %d\n", var, shrd->pasEnabled);
 #endif
   return var;
@@ -700,7 +702,7 @@ uint8_t ZeroUart::modifyAccel(char var, char data_buffer[])
   {
     shrd->accelLcd = 4 - (var & 0x07);
 
-    // ignore value below 0 to match minimotors accel modes (0 - 5 minimo / 0 - 4 zero)
+    // ignore value below 0 to match zerotors accel modes (0 - 5 zero / 0 - 4 zero)
     if (shrd->accelLcd > 4)
       shrd->accelLcd = 0;
     if (shrd->accelLcd < 0)

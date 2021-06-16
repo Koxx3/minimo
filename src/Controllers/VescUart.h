@@ -10,7 +10,7 @@
 #include "Settings.h"
 #include "BLE/BluetoothHandler.h"
 
-#define BAUD_RATE_VESC 115200
+#define BAUD_RATE_VESC 9600
 
 #define VESC_SPEED_RPM_FACTOR 14.1
 
@@ -61,6 +61,8 @@ public:
 
 	/** Variable to hold nunchuck values */
 	nunchuckPackage nunchuck;
+
+	bool motorSettingReceived = false;
 
 	void setup(SharedData *shrd_p, BluetoothHandler *blh_p, Settings *settings_p);
 
@@ -135,12 +137,17 @@ public:
 		 *
 		 * @return     True if successfull otherwise false
 		 */
-	bool readVescSerialFeedback(void);
+	bool readVescValuesFeedback(void);
 
 	void setMaxSpeed(uint8_t);
-	bool requestMotorConfigTemp(void);
+
 	bool requestMotorConfig(void);
-	
+
+	bool readMotorConfigTemp(void);
+	bool requestMotorConfigTemp(void);
+	bool readMotorConfigTempFeedback(void);
+
+	void printMotorValues(void);
 
 private:
 	/** Variable to hold the reference to the Serial object to use for UART */

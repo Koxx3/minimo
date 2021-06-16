@@ -3,8 +3,7 @@
 
 #include "SharedData.h"
 
-void owb_setup();
+void owb_setup(SharedData *shrd);
 void owb_loop();
-void owb_setSharedData(SharedData *shrd);
 
 #endif
