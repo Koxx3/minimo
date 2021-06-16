@@ -1156,7 +1156,7 @@ void processDacOutput()
   uint32_t rangeInMilliv = tInMax - tInMin;
 
   // map to percent range
-  float throttlePercent = map(throttleInMillv - tInMin, 0, rangeInMilliv, 0, 100);
+  float throttlePercent = map(throttleInMillv - tInMin, 0, rangeInMilliv, 0, 10000)/100.0;
   throttlePercent = constrain(throttlePercent, 0, 100);
 
   // apply exponential curve
@@ -1180,16 +1180,16 @@ void processDacOutput()
   {
     int8_t index = 4;
     uint16_t low = 0;
-    uint16_t high = 1000;
-    uint16_t throttlePercentInt = throttlePercent * 10;
-    if ((throttlePercentInt > 0) && (throttlePercentInt < 1000))
+    uint16_t high = 10000;
+    uint16_t throttlePercentInt = throttlePercent * 100;
+    if ((throttlePercentInt > 0) && (throttlePercentInt < 10000))
     {
-      index = (throttlePercentInt / 200) - 1;
+      index = (throttlePercentInt / 2000) - 1;
       if (index >= 0)
-        low = getValueFromString(settings.get_Throttle_output_curve_custom4(), ',', index) * 10;
+        low = getValueFromString(settings.get_Throttle_output_curve_custom4(), ',', index) * 100;
       if (index < 3)
-        high = getValueFromString(settings.get_Throttle_output_curve_custom4(), ',', index + 1) * 10;
-      float throttlePercentNew = map(throttlePercentInt, (index + 1) * 200, (index + 2) * 200, low, high) / 10.0;
+        high = getValueFromString(settings.get_Throttle_output_curve_custom4(), ',', index + 1) * 100;
+      float throttlePercentNew = map(throttlePercentInt, (index + 1) * 2000, (index + 2) * 2000, low, high) / 100.0;
       //Serial.println("throttlePercentInt = " + (String)throttlePercentInt + " / index = " + (String)index + " / low = " + (String)low + " / high = " + (String)high + " / throttlePercentNew = " + (String)throttlePercentNew);
       throttlePercent = throttlePercentNew;
     }
@@ -1243,7 +1243,7 @@ void processDacOutput()
   }
   else if (((shrd.pasEnabled) && (shrd.speedCurrent > 1)) || (!shrd.pasEnabled)) // normal condition
   {
-    outputMilliv = map(throttlePercent, 0, 100, tOutMin, tOutMax);
+    outputMilliv = map(throttlePercent*100, 0, 10000, tOutMin, tOutMax);
   }
   else // souldn't occur
   {
@@ -1272,7 +1272,7 @@ void processDacOutput()
           outputMilliv,
           dacOutput);
 
-  if (millis() % 500 == 0)
+  if (millis() % 500 <= 10)
   {
     blh.notifyBleLogs(print_buffer);
     Serial.println(print_buffer);
