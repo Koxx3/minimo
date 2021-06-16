@@ -17,6 +17,8 @@ It is an extension of the SmartController to completly replace the standard disp
 It mainly uses the same hardware/software.
 For hardware, you only need to add a small extension board with the correct FPC connector... and of course, the LCD screen.
 
+![Render_night](/img/20210616_212405.jpg)
+
 ## Requirements
 - An e-scooter with any supported controllers (single or dual)
 - An power supply between 36V and 100V... (possible with external DC-DC providing 5V if needed)
